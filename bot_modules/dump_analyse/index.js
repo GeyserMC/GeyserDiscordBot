@@ -183,7 +183,7 @@ exports.init = function (client) {
     }
 
     const embed = {
-      title: '<:geyser:736173240170446909> Geyser ' + platformNamePretty,
+      title: '<:geyser:723981877773598771> Geyser ' + platformNamePretty,
       description: problems.length === 0
         ? undefined
         : '**Possible problems:**\n' + problems.join('\n'),
