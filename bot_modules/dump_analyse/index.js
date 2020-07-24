@@ -3,6 +3,8 @@ const GitHub = require('github-api')
 const ipRangeCheck = require('ip-range-check')
 const mcping = require('mcping-js')
 
+let config = {}
+
 function pingServer (address, port, timeout, protocolVersion) {
   return new Promise((resolve, reject) => {
     const server = new mcping.MinecraftServer(address, port)
@@ -35,7 +37,8 @@ async function compareToLatest (commitId) {
   }
 }
 
-exports.init = function (client) {
+exports.init = function (client, newConfig) {
+  config = newConfig
   client.on('message', async msg => {
     const match = msg.content.match(/dump\.geysermc\.org\/([0-9a-zA-Z]{32})/)
     if (match === null || !match[1]) {
@@ -64,9 +67,12 @@ exports.init = function (client) {
         let needsFloodgate = response.data.config.remote['auth-type'] === 'floodgate'
         let needsFloodgateAuthType = false
         response.data.bootstrapInfo.plugins.forEach(function (item) {
-          if (item.name === 'ProtocolSupport' && item.enabled) {
-            problems.push('- You have ProtocolSupport installed, which is known to have problems with Geyser! Try replacing it with [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/) and [ViaBackwards](https://www.spigotmc.org/resources/viabackwards.27448/) it if you have problems.')
-          } else if (item.name === 'ViaVersion' && item.enabled) {
+          config.get().problematicPlugins.forEach(function (problemPlugin) {
+            if (item.name === problemPlugin.name && item.enabled) {
+              problems.push(problemPlugin.message)
+            }
+          })
+          if (item.name === 'ViaVersion' && item.enabled) {
             isOldVersion = false
           } else if (item.name.toLowerCase().includes('floodgate') && item.enabled) {
             needsFloodgate = false
