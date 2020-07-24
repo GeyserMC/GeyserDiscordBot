@@ -1,0 +1,25 @@
+{
+  "name": "geyserbot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "discord.js": "^12.2.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "github-api": "^3.3.0",
+    "ip-range-check": "^0.2.0",
+    "mcping-js": "^1.5.0",
+    "node-nlp": "^4.4.0"
+  },
+  "devDependencies": {
+    "standard": "^14.3.4"
+  }
+}
