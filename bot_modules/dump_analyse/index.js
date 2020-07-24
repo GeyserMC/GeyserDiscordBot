@@ -37,7 +37,6 @@ async function compareToLatest (commitId) {
 
 exports.init = function (client) {
   client.on('message', async msg => {
-    console.log(msg.content)
     const match = msg.content.match(/dump\.geysermc\.org\/([0-9a-zA-Z]{32})/)
     if (match === null || !match[1]) {
       return
@@ -53,8 +52,10 @@ exports.init = function (client) {
       return
     }
     const problems = []
+    let getVersionFromPing = true
     const supportedMinecraft = response.data.versionInfo.mcInfo.javaVersion
     if (!(response.data.bootstrapInfo.platform === 'STANDALONE')) {
+      getVersionFromPing = false
       let isOldVersion = false
       if (!response.data.bootstrapInfo.platformVersion.includes(supportedMinecraft)) {
         isOldVersion = true
@@ -119,14 +120,13 @@ exports.init = function (client) {
       try {
         const pingResponse = await pingServer(response.data.config.remote.address,
           response.data.config.remote.port, 1500,
-          response.data.versionInfo.mcInfo.javaVersion)
+          response.data.versionInfo.mcInfo.javaProtocol)
         didPing = true
         addrText += ' [(server online)](' + statusUrl + ')'
         versionString = pingResponse.version.name.replace(/§[a-z0-9]/g, '') // Strip formatting
-        if (pingResponse.version.protocol !== response.data.versionInfo.mcInfo.javaVersion) {
-          const problemString = problems.push('- Your server needs to be on Minecraft ' + supportedMinecraft + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).")
-          if (!problems.includes(problemString)) {
-            problems.push(problemString)
+        if (pingResponse.version.protocol !== response.data.versionInfo.mcInfo.javaProtocol) {
+          if (getVersionFromPing) {
+            problems.push('- Your server needs to be on Minecraft ' + supportedMinecraft + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).")
           }
         }
       } catch (err) {
