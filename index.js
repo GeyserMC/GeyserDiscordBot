@@ -1,5 +1,11 @@
 const Discord = require('discord.js')
+const fs = require('fs')
 const client = new Discord.Client()
+
+if (!fs.existsSync('.env')) {
+  console.error('.env file missing! Closing!')
+  process.exit(1)
+}
 
 // Load in the .env file
 require('dotenv').config()
