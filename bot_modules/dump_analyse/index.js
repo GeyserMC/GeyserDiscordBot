@@ -30,7 +30,6 @@ function pingServer (address, port, timeout, protocolVersion) {
  * Get the status of a given commit hash, will return if commit is behind or ahead of master
  *
  * @param {String} commitId The SHA-1 hash of the commit to get the status for
- *
  * @returns {String} The status of the commit hash
  */
 async function compareToLatest (commitId) {
