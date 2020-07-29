@@ -1,0 +1,12 @@
+{
+  "problematicPlugins": [
+    {
+      "name": "ProtocolSupport",
+      "message": "- You have ProtocolSupport installed, which is known to have problems with Geyser! Try replacing it with [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/) and [ViaBackwards](https://www.spigotmc.org/resources/viabackwards.27448/) it if you have problems."
+    },
+    {
+      "name": "Geyser-Bukkit",
+      "message": "- You have Geyser-Bukkit which is an old version of Geyser. This may and probably will interfere with normal version of Geyser, so please delete it."
+    }
+  ]
+}

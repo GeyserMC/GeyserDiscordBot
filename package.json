@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -20,6 +22,17 @@
     "node-nlp": "^4.4.0"
   },
   "devDependencies": {
+    "nodemon": "^2.0.4",
     "standard": "^14.3.4"
+  },
+  "nodemonConfig": {
+    "exec": "npm start",
+    "ignore": [
+      "config.json"
+    ],
+    "watch": [
+      ".env",
+      "."
+    ]
   }
 }
