@@ -11,17 +11,14 @@ if (!fs.existsSync('.env')) {
 require('dotenv').config()
 
 function initialiseModule (name) {
-  return require('./bot_modules/' + name + '/index.js').init(client, config)
+  return require('./bot_modules/' + name + '/index.js').init(client)
 }
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`)
 })
 
-// Load the config
-const config = require('./bot_modules/config_manager/index.js').init(client)
-
-// Load the modules
+initialiseModule('config_manager')
 initialiseModule('dump_analyse')
 
 client.login(process.env.BOT_TOKEN)

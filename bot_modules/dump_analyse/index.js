@@ -3,7 +3,7 @@ const GitHub = require('github-api')
 const ipRangeCheck = require('ip-range-check')
 const mcping = require('mcping-js')
 
-let config = {}
+const { configEditor } = require('../config_manager/index.js')
 
 // From https://en.wikipedia.org/wiki/Reserved_IP_addresses
 const INTERNAL_IP_RANGES = ['0.0.0.0/8', '10.0.0.0/8', '100.64.0.0/10', '127.0.0.0/8', '169.254.0.0/16', '172.16.0.0/12', '192.0.0.0/24', '192.0.2.0/24', '192.88.99.0/24', '192.168.0.0/16', '198.18.0.0/15', '198.51.100.0/24', '203.0.113.0/24', '224.0.0.0/4', '240.0.0.0/4', '255.255.255.255/32']
@@ -52,9 +52,7 @@ async function compareToLatest (commitId) {
   }
 }
 
-exports.init = function (client, newConfig) {
-  config = newConfig
-
+exports.init = function (client) {
   client.on('message', async msg => {
     // Check if the message has a dump link in it
     const match = msg.content.match(/dump\.geysermc\.org\/([0-9a-zA-Z]{32})/)
@@ -95,7 +93,7 @@ exports.init = function (client, newConfig) {
 
         response.data.bootstrapInfo.plugins.forEach(function (item) {
           // Check for any problematic plugins and add the problem to the list
-          config.get().problematicPlugins.forEach(function (problemPlugin) {
+          configEditor.get().problematicPlugins.forEach(function (problemPlugin) {
             if (item.name === problemPlugin.name && item.enabled) {
               problems.push(problemPlugin.message)
             }

@@ -13,7 +13,7 @@ if (!fs.existsSync(configFileLocation)) {
 let config = require(path.resolve(configFileLocation))
 
 // A basic config controller for saving and returning the config
-const configEditor = {
+exports.configEditor = {
   get: function () { return config },
   set: function (newConfig) {
     config = newConfig
@@ -45,7 +45,7 @@ exports.init = function init (client) {
       if (args[1] === 'edit') {
         if (args[2] === 'all') {
           try {
-            configEditor.set(JSON.parse(args.slice(3).join(' ')))
+            exports.configEditor.set(JSON.parse(args.slice(3).join(' ')))
             msg.channel.send('Done!')
           } catch (err) {
             msg.channel.send('Error while editing config:\n```\n' + err + '\n```')
@@ -56,5 +56,4 @@ exports.init = function init (client) {
       }
     }
   })
-  return configEditor
 }
