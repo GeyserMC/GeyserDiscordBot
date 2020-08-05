@@ -1,6 +1,8 @@
 const path = require('path')
 const fs = require('fs')
 
+const logger = require('../log_manager/index.js')
+
 const configEditingUsers = JSON.parse(process.env.CONFIG_EDITING_USERS)
 const configEditingGroups = JSON.parse(process.env.CONFIG_EDITING_GROUPS)
 const configFileLocation = './config.json'
@@ -21,7 +23,7 @@ exports.configEditor = {
       JSON.stringify(newConfig, null, 2),
       function (err) {
         if (err) throw err
-        console.log('Saved config!')
+        logger.log('Saved config!')
       }
     )
   }

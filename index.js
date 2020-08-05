@@ -2,6 +2,8 @@ const Discord = require('discord.js')
 const fs = require('fs')
 const client = new Discord.Client()
 
+const logger = require('./bot_modules/log_manager/index.js')
+
 if (!fs.existsSync('.env')) {
   console.error('.env file missing! Closing!')
   process.exit(1)
@@ -15,10 +17,11 @@ function initialiseModule (name) {
 }
 
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`)
+  logger.log(`Logged in as ${client.user.tag}!`)
 })
 
 initialiseModule('config_manager')
+initialiseModule('log_manager')
 initialiseModule('dump_analyse')
 
 client.login(process.env.BOT_TOKEN)
