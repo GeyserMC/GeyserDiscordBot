@@ -177,7 +177,7 @@ exports.init = function (client) {
       } catch (err) {
         // Add the relevent error status to the server address
         if (didPing) {
-          logger.err(err)
+          logger.error(err)
           addrText += ' (error while pinging)'
         } else {
           addrText += ' [(server offline)](' + statusUrl + ')'
