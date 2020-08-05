@@ -22,4 +22,3 @@ initialiseModule('config_manager')
 initialiseModule('dump_analyse')
 
 client.login(process.env.BOT_TOKEN)
-So in the end, it turns out you can use a single forward slash and this will work for both Windows, OSX and Linux.
