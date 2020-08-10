@@ -13,7 +13,6 @@ exports.init = function init (client) {
       msg.channel.send('Restarting...')
       process.exit(0) // Bot is set up to auto-restart on exit
     } else if (msg.content.startsWith('!pull-restart')) {
-      console.log(process.cwd())
       const child = childProcess.spawn('git', ['pull'])
 
       const outputHandler = function (data) {
