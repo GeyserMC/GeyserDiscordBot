@@ -11,17 +11,21 @@ exports.init = function init (client) {
 
     if (msg.content.startsWith('!restart')) {
       msg.channel.send('Restarting...')
-      process.exit(0) // Bot is set up to auto-restart on exit
+      // Delay the restart to prevent exit before we have sent the message
+      setTimeout(() => {
+        process.exit(0) // Bot is set up to auto-restart on exit
+      }, 500)
     } else if (msg.content.startsWith('!pull-restart')) {
       const child = childProcess.spawn('git', ['pull'])
+      let logText = 'Updating...'
+      let logMessage = await msg.channel.send('```\n' + logText + '\n```')
+      logText += '\n'
 
-      const outputHandler = function (data) {
-        msg.channel.send(
-          '`' + (data.toString()
-            .split('@').join('@ ') // Makes pings impossble
-            .split('`').join('\\`') // Escape backticks
-          ) + '`'
-        )
+      const outputHandler = async function (data) {
+        logText += '\n' + data.toString()
+          .split('@').join('@ ') // Makes pings impossble
+          .split('`').join('\\`') // Escape backticks
+        logMessage = await logMessage.edit('```\n' + logText + '\n```')
       }
 
       child.stdout.on('data', outputHandler)
@@ -30,8 +34,13 @@ exports.init = function init (client) {
       child.on('error', outputHandler)
 
       child.on('exit', function () {
-        msg.channel.send('Restarting...')
-        process.exit(0)
+        logText += '\nRestarting...'
+        logMessage.edit('```\n' + logText + '\n```')
+
+        // Delay the restart to prevent exit before we have sent the message
+        setTimeout(() => {
+          process.exit(0)
+        }, 500)
       })
     }
   })
