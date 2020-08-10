@@ -20,5 +20,6 @@ client.on('ready', () => {
 
 initialiseModule('config_manager')
 initialiseModule('dump_analyse')
+initialiseModule('restart_command')
 
 client.login(process.env.BOT_TOKEN)
