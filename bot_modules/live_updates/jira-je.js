@@ -2,9 +2,13 @@ const axios = require('axios')
 
 const jiraVersionsCache = []
 
+/**
+ * Get all the current versions and cache them for comparing later
+ */
 exports.populateInitialJiraVersions = async function () {
   const versions = await getJiraVersions()
 
+  // Add each version name to the cache
   versions.forEach(version => {
     jiraVersionsCache.push(version.name)
   })
@@ -12,12 +16,19 @@ exports.populateInitialJiraVersions = async function () {
   console.log(`Loaded ${jiraVersionsCache.length} initial java jira versions`)
 }
 
+/**
+ * Fetch the latest versions and compare them with the cached list
+ *
+ * @param {Function} callback The function to call when a new version is found, takes a message as a string
+ */
 exports.jiraUpdateCheck = async function (callback) {
   const versions = await getJiraVersions()
 
   versions.forEach(version => {
     if (!jiraVersionsCache.includes(version.name)) {
       jiraVersionsCache.push(version.name)
+
+      // Make sure its not a future version
       if (!version.name.includes('Future Version')) {
         callback(jiraAsString(version))
       }
@@ -25,6 +36,11 @@ exports.jiraUpdateCheck = async function (callback) {
   })
 }
 
+/**
+ * Get the version data from the bug tracker
+ *
+ * @returns {Array} Each version as an object
+ */
 async function getJiraVersions () {
   // Fetch the raw response data
   let response
@@ -38,6 +54,11 @@ async function getJiraVersions () {
   return response.data
 }
 
+/**
+ * Take a version object and fomat it into a nice message for discord
+ *
+ * @param {Object} version The version data to insert into the message
+ */
 function jiraAsString (version) {
   return `A new java version (${version.name}) has been added to the minecraft issue tracker!`
 }
