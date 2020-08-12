@@ -1,0 +1,1 @@
+This module is based on the [Fabric](https://fabricmc.net/) discord bot version check feature as seen [here](https://github.com/FabricMC/fabric-discord-bot/tree/master/versioncheck).
