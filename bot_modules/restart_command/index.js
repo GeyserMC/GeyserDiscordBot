@@ -3,8 +3,8 @@ const childProcess = require('child_process')
 const configEditingUsers = JSON.parse(process.env.CONFIG_EDITING_USERS)
 const configEditingGroups = JSON.parse(process.env.CONFIG_EDITING_GROUPS)
 
-exports.init = function init (client) {
-  client.on('message', async msg => {
+exports.init = (client) => {
+  client.on('message', async (msg) => {
     if (!configEditingUsers.includes(msg.author.id) && !(msg.member !== null && msg.member.roles.cache.some(r => configEditingGroups.includes(r.id)))) {
       return
     }
@@ -21,7 +21,7 @@ exports.init = function init (client) {
       let logMessage = await msg.channel.send('```\n' + logText + '\n```')
       logText += '\n'
 
-      const outputHandler = async function (data) {
+      const outputHandler = async (data) => {
         logText += '\n' + data.toString()
           .split('@').join('@ ') // Makes pings impossble
           .split('`').join('\\`') // Escape backticks
@@ -33,7 +33,7 @@ exports.init = function init (client) {
 
       child.on('error', outputHandler)
 
-      child.on('exit', function () {
+      child.on('exit', () => {
         logText += '\nRestarting...'
         logMessage.edit('```\n' + logText + '\n```')
 

@@ -14,21 +14,18 @@ let config = require(path.resolve(configFileLocation))
 
 // A basic config controller for saving and returning the config
 exports.configEditor = {
-  get: function () { return config },
-  set: function (newConfig) {
+  get: () => { return config },
+  set: (newConfig) => {
     config = newConfig
-    fs.writeFile(configFileLocation,
-      JSON.stringify(newConfig, null, 2),
-      function (err) {
-        if (err) throw err
-        console.log('Saved config!')
-      }
-    )
+    fs.writeFile(configFileLocation, JSON.stringify(newConfig, null, 2), (err) => {
+      if (err) throw err
+      console.log('Saved config!')
+    })
   }
 }
 
-exports.init = function init (client) {
-  client.on('message', async msg => {
+exports.init = (client) => {
+  client.on('message', async (msg) => {
     if (!configEditingUsers.includes(msg.author.id) && !(msg.member !== null && msg.member.roles.cache.some(r => configEditingGroups.includes(r.id)))) {
       return
     }

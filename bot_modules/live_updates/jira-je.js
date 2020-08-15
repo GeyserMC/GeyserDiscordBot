@@ -5,7 +5,7 @@ const jiraVersionsCache = []
 /**
  * Get all the current versions and cache them for comparing later
  */
-exports.populateInitialJiraVersions = async function () {
+exports.populateInitialJiraVersions = async () => {
   const versions = await getJiraVersions()
 
   // Add each version name to the cache
@@ -21,7 +21,7 @@ exports.populateInitialJiraVersions = async function () {
  *
  * @param {Function} callback The function to call when a new version is found, takes a message as a string
  */
-exports.jiraUpdateCheck = async function (callback) {
+exports.jiraUpdateCheck = async (callback) => {
   const versions = await getJiraVersions()
 
   versions.forEach(version => {
