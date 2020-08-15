@@ -13,7 +13,7 @@ exports.populateInitialMinecraftVersions = async function () {
     minecraftVersionsCache.push(version.id)
   })
 
-  console.log(`Loaded ${minecraftVersionsCache.length} initial java minecraft versions`)
+  console.log(`Loaded ${minecraftVersionsCache.length} initial Java Minecraft versions`)
 }
 
 /**
@@ -56,5 +56,5 @@ async function getMinecraftVersions () {
  * @param {Object} version The version data to insert into the message
  */
 function minecraftVersionAsString (version) {
-  return `A new ${version.type} version of java minecraft was just released! : ${version.id}`
+  return `A new ${version.type} version of Java Minecraft was just released! : ${version.id}`
 }

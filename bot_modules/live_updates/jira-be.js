@@ -13,7 +13,7 @@ exports.populateInitialJiraVersions = async function () {
     jiraVersionsCache.push(version.name)
   })
 
-  console.log(`Loaded ${jiraVersionsCache.length} initial bedrock jira versions`)
+  console.log(`Loaded ${jiraVersionsCache.length} initial Bedrock jira versions`)
 }
 
 /**
@@ -60,5 +60,5 @@ async function getJiraVersions () {
  * @param {Object} version The version data to insert into the message
  */
 function jiraAsString (version) {
-  return `A new bedrock version (${version.name}) has been added to the minecraft issue tracker!`
+  return `A new Bedrock version (${version.name}) has been added to the Minecraft issue tracker!`
 }

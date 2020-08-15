@@ -13,7 +13,7 @@ exports.populateInitialJiraVersions = async function () {
     jiraVersionsCache.push(version.name)
   })
 
-  console.log(`Loaded ${jiraVersionsCache.length} initial java jira versions`)
+  console.log(`Loaded ${jiraVersionsCache.length} initial Java jira versions`)
 }
 
 /**
@@ -60,5 +60,5 @@ async function getJiraVersions () {
  * @param {Object} version The version data to insert into the message
  */
 function jiraAsString (version) {
-  return `A new java version (${version.name}) has been added to the minecraft issue tracker!`
+  return `A new Java version (${version.name}) has been added to the Minecraft issue tracker!`
 }
