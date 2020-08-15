@@ -5,7 +5,7 @@ const minecraftVersionsCache = []
 /**
  * Get all the current versions and cache them for comparing later
  */
-exports.populateInitialMinecraftVersions = async function () {
+exports.populateInitialMinecraftVersions = async () => {
   const versions = await getMinecraftVersions()
 
   // Add each version id to the cache
@@ -21,7 +21,7 @@ exports.populateInitialMinecraftVersions = async function () {
  *
  * @param {Function} callback The function to call when a new version is found, takes a message as a string
  */
-exports.minecraftUpdateCheck = async function (callback) {
+exports.minecraftUpdateCheck = async (callback) => {
   const versions = await getMinecraftVersions()
 
   versions.forEach(version => {

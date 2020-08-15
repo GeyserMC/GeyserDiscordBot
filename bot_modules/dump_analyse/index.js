@@ -52,8 +52,8 @@ async function compareToLatest (commitId) {
   }
 }
 
-exports.init = function (client) {
-  client.on('message', async msg => {
+exports.init = (client) => {
+  client.on('message', async (msg) => {
     // Check if the message has a dump link in it
     const match = msg.content.match(/dump\.geysermc\.org\/([0-9a-zA-Z]{32})/)
     if (match === null || !match[1]) {
@@ -92,9 +92,9 @@ exports.init = function (client) {
         let needsFloodgate = response.data.config.remote['auth-type'] === 'floodgate'
         let needsFloodgateAuthType = false
 
-        response.data.bootstrapInfo.plugins.forEach(function (item) {
+        response.data.bootstrapInfo.plugins.forEach((item) => {
           // Check for any problematic plugins and add the problem to the list
-          configEditor.get().problematicPlugins.forEach(function (problemPlugin) {
+          configEditor.get().problematicPlugins.forEach((problemPlugin) => {
             if (item.name === problemPlugin.name && item.enabled) {
               problems.push(problemPlugin.message)
             }
