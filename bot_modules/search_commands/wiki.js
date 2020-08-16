@@ -30,6 +30,7 @@ exports.handleWikiCommand = async (msg, args) => {
   // Set the title and color for the embed
   embed.setTitle(`Search for '${query}'`)
   embed.setColor(0x00ff00)
+  embed.setURL(`https://github.com/GeyserMC/Geyser/search?q=${encodeURIComponent(query)}&type=Wikis`)
 
   if (results.length >= 1) {
     // Replace the results with the identical title match
@@ -79,7 +80,7 @@ async function doSearch (query) {
   const results = []
 
   // Loop all search results
-  $('#wiki_search_results > div').children().each((i, child) => {
+  $('#wiki_search_results > div:first-child').children().each((i, child) => {
     const children = $(child).children()
 
     // Build a result from the entry
