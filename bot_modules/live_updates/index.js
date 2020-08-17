@@ -10,7 +10,7 @@ exports.init = async (client) => {
 
   await minecraft.populateInitialMinecraftVersions()
 
-  setInterval(() => doUpdateCheck(client), 1000 * 30)
+  setInterval(() => doUpdateCheck(client), 1000 * 60)
 }
 
 function doUpdateCheck (client) {
