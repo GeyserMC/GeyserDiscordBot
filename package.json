@@ -20,7 +20,8 @@
     "github-api": "^3.3.0",
     "ip-range-check": "^0.2.0",
     "mcping-js": "^1.5.0",
-    "node-nlp": "^4.4.0"
+    "node-nlp": "^4.4.0",
+    "string-similarity": "^4.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.4",

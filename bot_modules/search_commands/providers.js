@@ -1,3 +1,4 @@
+const stringSimilarity = require('string-similarity')
 const Discord = require('discord.js')
 const axios = require('axios')
 
@@ -8,7 +9,7 @@ const axios = require('axios')
  * @param {Array} args The list of arguments passed to the command
  */
 exports.handleProviderCommand = async (msg, args) => {
-  let embed = new Discord.MessageEmbed()
+  const embed = new Discord.MessageEmbed()
 
   // Check to make sure we have a provider
   if (args.length <= 1) {
@@ -23,28 +24,33 @@ exports.handleProviderCommand = async (msg, args) => {
   args.splice(0, 1)
 
   // Join the other arguments together and collect the providers
-  const query = args.join(' ')
+  const query = args.join(' ').trim()
   const providers = await getProviders()
   let foundProvider = false
 
+  // Search the providers by an exact starting match
   providers.forEach((provider) => {
     if (provider.name.toLowerCase().startsWith(query.toLowerCase())) {
       foundProvider = true
 
-      embed = new Discord.MessageEmbed()
-
-      // Build an embed for the provider
-      embed.setTitle(provider.name)
-      embed.setColor(0x00ff00)
-      embed.setURL(provider.url)
-      embed.addField('Category', provider.category)
-      embed.addField('Instructions', provider.instructions)
-
-      // Discord doesnt support sending multiple embeds
-      // per message via the client api
-      msg.channel.send(embed)
+      sendProviderEmbed(msg, provider)
     }
   })
+
+  // If we haven't found a provider yet use an
+  // algorythm to check for the most similar provider
+  if (!foundProvider) {
+    let similar = stringSimilarity.findBestMatch(query.toLowerCase(), providers.map(a => a.name.toLowerCase()))
+    similar = similar.bestMatch
+
+    // Make sure the rating is over 20%
+    if (similar.rating >= 0.2) {
+      const provider = providers.find(a => a.name.toLowerCase() === similar.target)
+      foundProvider = true
+
+      sendProviderEmbed(msg, provider)
+    }
+  }
 
   // Send a message if we dont know what provider
   if (!foundProvider) {
@@ -53,6 +59,27 @@ exports.handleProviderCommand = async (msg, args) => {
     embed.setColor(0xff0000)
     msg.channel.send(embed)
   }
+}
+
+/**
+ * Build an embed and send it based on the passed provider details
+ *
+ * @param {Discord.Message} msg The original message sent by the use
+ * @param {Object} provider The provider to use for the embed contents
+ */
+function sendProviderEmbed (msg, provider) {
+  const embed = new Discord.MessageEmbed()
+
+  // Build an embed for the provider
+  embed.setTitle(provider.name)
+  embed.setColor(0x00ff00)
+  embed.setURL(provider.url)
+  embed.addField('Category', provider.category)
+  embed.addField('Instructions', provider.instructions)
+
+  // Discord doesnt support sending multiple embeds
+  // per message via the client api
+  msg.channel.send(embed)
 }
 
 /**
