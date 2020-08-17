@@ -9,5 +9,6 @@
       "message": "- You have Geyser-Bukkit which is an old version of Geyser. This may and probably will interfere with normal version of Geyser, so please delete it."
     }
   ],
-  "discordUpdateChannels": ["349264069007638530"]
+  "discordUpdateChannels": ["349264069007638530"],
+  "convertExtensions": [".txt", ".log", ".yml"]
 }

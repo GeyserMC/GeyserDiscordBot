@@ -1,10 +1,13 @@
 const Discord = require('discord.js')
 const axios = require('axios')
+const path = require('path')
+
+const { configEditor: config } = require('../config_manager/index.js')
 
 exports.init = (client) => {
   client.on('message', async (msg) => {
     msg.attachments.forEach(async (attachment) => {
-      if (attachment.name === 'message.txt') {
+      if (config.get().convertExtensions.includes(path.extname(attachment.name))) {
         const contents = await getAttachmentContents(attachment.url)
 
         const hastebinPost = await postToHastebin(contents)
@@ -14,7 +17,7 @@ exports.init = (client) => {
         embed.setColor(0x00ff00)
         embed.setTitle(hastebinUrl)
         embed.setURL(hastebinUrl)
-        embed.setDescription('Converted `message.txt` to a hastebin link!')
+        embed.setDescription(`Converted \`${attachment.name}\` to a hastebin link!`)
 
         msg.channel.send(embed)
       }
