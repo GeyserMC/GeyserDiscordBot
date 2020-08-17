@@ -22,5 +22,6 @@ initialiseModule('config_manager')
 initialiseModule('dump_analyse')
 initialiseModule('restart_command')
 initialiseModule('live_updates')
+initialiseModule('message_converter')
 
 client.login(process.env.BOT_TOKEN)
