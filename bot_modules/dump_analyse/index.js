@@ -156,6 +156,8 @@ exports.init = (client) => {
     // Check if the server is listening on an internal ip and ping it if not
     if (ipRangeCheck(response.data.config.remote.address, INTERNAL_IP_RANGES)) {
       addrText += ' (internal IP)'
+    } else if (response.data.config.remote.address === "***") { // Censored dump
+      addrText = "\\*\\*\\*" + ':' + response.data.config.remote.port // Discord formatting
     } else {
       let didPing = false
       try {
@@ -185,6 +187,12 @@ exports.init = (client) => {
       }
     }
 
+    // If Bedrock address is censored, account for its formatting
+    let bedrockAddrText = response.data.config.bedrock.address
+    if (bedrockAddrText === "***") {
+      bedrockAddrText = "\\*\\*\\*"
+    }
+
     // Get the version string from the dump if it exists
     if (response.data.bootstrapInfo.platformVersion) {
       versionString = response.data.bootstrapInfo.platformVersion
@@ -212,7 +220,7 @@ exports.init = (client) => {
       },
       {
         name: 'Listen address',
-        value: response.data.config.bedrock.address + ':' + response.data.config.bedrock.port,
+        value: bedrockAddrText + ':' + response.data.config.bedrock.port,
         inline: true
       },
       {
