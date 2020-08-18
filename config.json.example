@@ -10,22 +10,27 @@
     }
   ],
   "discordUpdateChannels": ["349264069007638530"],
+  "exceptionExtensions": [".txt", ".log"],
   "exceptionChecks": [
     {
       "regex": "hastebin\\.com\\/([0-9a-zA-Z]+)",
-      "rawUrl": "https://hastebin.com/raw/{0}"
+      "rawUrl": "https://hastebin.com/raw/%s"
     },
     {
       "regex": "hasteb\\.in\\/([0-9a-zA-Z]+)",
-      "rawUrl": "https://hasteb.in/raw/{0}"
+      "rawUrl": "https://hasteb.in/raw/%s"
     },
     {
       "regex": "mclo\\.gs\\/([0-9a-zA-Z]+)",
-      "rawUrl": "https://api.mclo.gs/1/raw/{0}"
+      "rawUrl": "https://api.mclo.gs/1/raw/%s"
     },
     {
       "regex": "pastebin\\.com\\/([0-9a-zA-Z]+)",
-      "rawUrl": "https://pastebin.com/raw/{0}"
+      "rawUrl": "https://pastebin.com/raw/%s"
+    },
+    {
+      "regex": "gist\\.github\\.com\\/([0-9a-zA-Z]+\\/)([0-9a-zA-Z]+)",
+      "rawUrl": "https://gist.githubusercontent.com/%1$s/%2$s/raw/"
     }
   ],
   "exceptions" : [
