@@ -1,6 +1,6 @@
 const Discord = require('discord.js')
 const cheerio = require('cheerio')
-const axios = require('axios')
+const Utils = require('../../utils')
 
 /**
  * Handle the wiki command
@@ -66,17 +66,16 @@ exports.handleWikiCommand = async (msg, args) => {
  * @returns {Array} The list of provider objects with title, desc, updated and url
  */
 async function doSearch (query) {
-  // Fetch the raw response data
-  let response
-  try {
-    response = await axios.get(`https://github.com/GeyserMC/Geyser/search?q=${encodeURIComponent(query)}&type=Wikis`)
-  } catch (error) {
-    console.error(error)
+  // Fetch the search page
+  const { status, data: contents } = await Utils.getContents(`https://github.com/GeyserMC/Geyser/search?q=${encodeURIComponent(query)}&type=Wikis`)
+
+  // Make sure we got a response
+  if (contents === '' || status !== 200) {
     return
   }
 
   // Load the page response into a cheerio object
-  const $ = cheerio.load(response.data)
+  const $ = cheerio.load(contents)
   const results = []
 
   // Loop all search results
