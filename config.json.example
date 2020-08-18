@@ -9,5 +9,37 @@
       "message": "- You have Geyser-Bukkit which is an old version of Geyser. This may and probably will interfere with normal version of Geyser, so please delete it."
     }
   ],
-  "discordUpdateChannels": ["349264069007638530"]
+  "discordUpdateChannels": ["349264069007638530"],
+  "exceptionChecks": [
+    {
+      "regex": "hastebin\\.com\\/([0-9a-zA-Z]+)",
+      "rawUrl": "https://hastebin.com/raw/{0}"
+    },
+    {
+      "regex": "hasteb\\.in\\/([0-9a-zA-Z]+)",
+      "rawUrl": "https://hasteb.in/raw/{0}"
+    },
+    {
+      "regex": "mclo\\.gs\\/([0-9a-zA-Z]+)",
+      "rawUrl": "https://api.mclo.gs/1/raw/{0}"
+    },
+    {
+      "regex": "pastebin\\.com\\/([0-9a-zA-Z]+)",
+      "rawUrl": "https://pastebin.com/raw/{0}"
+    }
+  ],
+  "exceptions" : [
+    {
+      "error": "java.net.BindException: Address already in use: bind",
+      "message": "This means something (likely another instance of Geyser) is running on the port you have specified in the config. Please make sure you close all applications running on this port. If you don't recall opening anything, usually restarting your computer fixes this."
+    },    
+    {
+      "error": "java.net.BindException: Cannot assign requested address: bind",
+      "message": "This means the IP your server is trying to use is unavailable or disallowed by the system or firewall."
+    },
+    {
+      "error": "java.lang.AssertionError: Expected AES to be available",
+      "message": "Update your Java at [AdoptOpenJDK.net](https://adoptopenjdk.net/)."
+    }
+  ]
 }

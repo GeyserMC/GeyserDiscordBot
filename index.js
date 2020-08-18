@@ -23,5 +23,6 @@ initialiseModule('dump_analyse')
 initialiseModule('restart_command')
 initialiseModule('live_updates')
 initialiseModule('search_commands')
+initialiseModule('error_analyse')
 
 client.login(process.env.BOT_TOKEN)
