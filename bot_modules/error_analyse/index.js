@@ -5,7 +5,7 @@ const sprintf = require('sprintf-js').sprintf
 const path = require('path')
 
 const { configEditor: config } = require('../config_manager/index.js')
-const configExceptions = config.get().exceptions
+const configExceptionFixes = config.get().exceptionFixes
 const configExceptionChecks = config.get().exceptionChecks
 
 exports.init = (client) => {
@@ -70,28 +70,76 @@ function parseLog (msg, contents) {
 
   // Setup the embed
   const embed = new Discord.MessageEmbed()
-  let foundExceptions = false
+  let geyserException = false
 
-  // Loop each stacktrace and find any exceptions
+  // Break the stack down into a better format
+  // incase there are multiple errors
+  const exceptions = []
   stack.groups.forEach((group) => {
     if (group.exception) {
-      foundExceptions = true
+      exceptions.push({
+        exception: group.exception.exception,
+        message: group.exception.message,
+        lines: group.lines,
+        packages: [group.stackPackage]
+      })
+    } else {
+      exceptions[exceptions.length - 1].lines.concat(group.lines)
+      exceptions[exceptions.length - 1].packages.push(group.stackPackage)
+    }
+  })
 
-      // Build the exception title and see if we have a fix
-      const exceptionTitle = group.exception.exception + ': ' + group.exception.message
-      const exeption = configExceptions.find(x => exceptionTitle.startsWith(x.error))
+  if (exceptions.length <= 0) {
+    return false
+  }
 
-      // Check we dont already know about the exception in this log and add it
-      if (exeption && !embed.fields.find(x => x.name === exceptionTitle)) {
-        embed.addField(exceptionTitle, exeption.message)
+  // Loop each stacktrace and find any exceptions
+  exceptions.forEach((exception) => {
+    let currentGeyserException = false
+
+    // Check if we found a GeyserMC package in the stack trace
+    for (const stackPackage of exception.packages) {
+      if (stackPackage.name.startsWith('org.geysermc')) {
+        geyserException = true
+        currentGeyserException = true
+        break
+      }
+    }
+
+    // Build the exception title and see if we have a fix
+    const exceptionTitle = exception.exception + ': ' + exception.message
+    const exceptionFix = configExceptionFixes.find(x => exceptionTitle.startsWith(x.error))
+
+    // Check we dont already know about the exception in this log and add it
+    if (exceptionFix && !embed.fields.find(x => x.name === exceptionTitle)) {
+      embed.addField(exceptionTitle, exceptionFix.message)
+    } else if (currentGeyserException) {
+      // Find the first line causing the error in the org.geyser package
+      for (const line of exception.lines) {
+        if (line.stackPackage.name.startsWith('org.geysermc')) {
+          // Add a field with the exception details for debugging
+          embed.addField(exceptionTitle, `Unknown fix!\nClass: \`${line.javaClass}\`\nMethod: \`${line.method}\`\nLine: \`${line.line}\`\nLink: [${line.source}#L${line.line}](https://github.com/GeyserMC/Geyser/blob/master/connector/src/main/java/${line.stackPackage.name.replace(/\./g, '/')}/${line.source}#L${line.line})`)
+          break
+        }
       }
     }
   })
 
-  if (foundExceptions) {
-    embed.setTitle('Found errors in log!')
-    embed.setColor(0xff0000)
+  // Set the base title and description of the embed
+  embed.setTitle('Found errors in the log!')
+  embed.setDescription('See below for details and possible fixes')
+  embed.setColor(0xff0000)
 
-    msg.channel.send(embed)
+  // If we have no fields set the description acordingly
+  if (embed.fields.length <= 0) {
+    if (geyserException) {
+      embed.setDescription('We don\'t currently have automated responses for the detected errors!')
+    } else {
+      embed.setDescription('The errors you have are not Geyser related or caused!')
+    }
   }
+
+  msg.channel.send(embed)
+
+  return true
 }
