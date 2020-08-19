@@ -12,11 +12,11 @@ exports.init = (client) => {
   client.on('message', async (msg) => {
     let foundExceptions = false
 
-    configExceptionChecks.forEach(async (exceptionCheck) => {
+    for (const exceptionCheck of configExceptionChecks) {
       const match = msg.content.match(new RegExp(exceptionCheck.regex))
       // Make sure we matched atleast 1 group
       if (match === null || !match[1]) {
-        return
+        continue
       }
 
       // Remove the first part of the match
@@ -27,11 +27,11 @@ exports.init = (client) => {
 
       // Make sure we got a response
       if (contents === '' || status !== 200) {
-        return
+        continue
       }
 
       foundExceptions = parseLog(msg, contents)
-    })
+    }
 
     // If we have already found exceptions stop
     if (foundExceptions) {
@@ -39,19 +39,19 @@ exports.init = (client) => {
     }
 
     // Check attachments for logs
-    msg.attachments.forEach(async (attachment) => {
+    for (const attachment of msg.attachments) {
       if (config.get().exceptionExtensions.includes(path.extname(attachment.name))) {
         // Get the log content
         const { status, data: contents } = await Utils.getContents(attachment.url)
 
         // Make sure we got a response
         if (contents === '' || status !== 200) {
-          return
+          continue
         }
 
         foundExceptions = parseLog(msg, contents)
       }
-    })
+    }
 
     // If we have already found exceptions stop
     if (foundExceptions) {
