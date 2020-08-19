@@ -64,6 +64,13 @@ exports.init = (client) => {
 }
 
 function parseLog (msg, contents) {
+  // Get the branch from the log if its there
+  let branch = 'master'
+  const branchMatch = contents.match(/Geyser .* \(git-[0-9a-zA-Z]+-([0-9a-zA-Z]{7})\)/)
+  if (branchMatch !== null && branchMatch[1]) {
+    branch = branchMatch[1]
+  }
+
   // Parse the log for errors
   const stack = new stackParser.Stack()
   stack.parse(contents)
@@ -117,8 +124,18 @@ function parseLog (msg, contents) {
       // Find the first line causing the error in the org.geyser package
       for (const line of exception.lines) {
         if (line.stackPackage.name.startsWith('org.geysermc')) {
+          // Get the package url
+          const packageBreakdown = line.stackPackage.name.split('.')
+          let submodule = packageBreakdown[2]
+          if (submodule === 'platform') {
+            submodule = 'bootstrap/' + packageBreakdown[3]
+          }
+
+          // Work out the url for the error
+          const url = `https://github.com/GeyserMC/Geyser/blob/${branch}/${submodule}/src/main/java/${line.stackPackage.name.replace(/\./g, '/')}/${line.source}#L${line.line}`
+
           // Add a field with the exception details for debugging
-          embed.addField(exceptionTitle, `Unknown fix!\nClass: \`${line.javaClass}\`\nMethod: \`${line.method}\`\nLine: \`${line.line}\`\nLink: [${line.source}#L${line.line}](https://github.com/GeyserMC/Geyser/blob/master/connector/src/main/java/${line.stackPackage.name.replace(/\./g, '/')}/${line.source}#L${line.line})`)
+          embed.addField(exceptionTitle, `Unknown fix!\nClass: \`${line.javaClass}\`\nMethod: \`${line.method}\`\nLine: \`${line.line}\`\nLink: [${line.source}#L${line.line}](${url})`)
           break
         }
       }
