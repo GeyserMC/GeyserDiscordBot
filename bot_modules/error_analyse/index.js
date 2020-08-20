@@ -152,7 +152,7 @@ function parseLog (msg, contents) {
     if (geyserException) {
       embed.setDescription('We don\'t currently have automated responses for the detected errors!')
     } else {
-      embed.setDescription('The errors you have are not Geyser related or caused!')
+      embed.setDescription('The errors you have are unlikely to be Geyser related or caused!')
     }
   }
 
