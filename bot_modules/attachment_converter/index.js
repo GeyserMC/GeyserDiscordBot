@@ -12,7 +12,7 @@ exports.init = (client) => {
         if (attachment.size > 400000) {
           embed.setColor(0xff0000)
           embed.setTitle('Hastebin upload failed!')
-          embed.setDescription('The message.txt was larger than the max size hastebin allows')
+          embed.setDescription(`The ${attachment.name} was larger than the max size hastebin allows`)
         } else {
           const contents = await getAttachmentContents(attachment.url)
 
