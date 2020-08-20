@@ -39,7 +39,7 @@ exports.init = (client) => {
     }
 
     // Check attachments for logs
-    for (const attachment of msg.attachments) {
+    for (const [_, attachment] of msg.attachments) {
       if (config.get().exceptionExtensions.includes(path.extname(attachment.name))) {
         // Get the log content
         const { status, data: contents } = await Utils.getContents(attachment.url)
@@ -134,8 +134,15 @@ function parseLog (msg, contents) {
           // Work out the url for the error
           const url = `https://github.com/GeyserMC/Geyser/blob/${branch}/${submodule}/src/main/java/${line.stackPackage.name.replace(/\./g, '/')}/${line.source}#L${line.line}`
 
+          // Build the description
+          const exceptionDesc = `Unknown fix!\nClass: \`${line.javaClass}\`\nMethod: \`${line.method}\`\nLine: \`${line.line}\`\nLink: [${line.source}#L${line.line}](${url})`
+
+          // Make sure we dont already have that field
+          if (!embed.fields.find(x => x.name === exceptionTitle && x.value === exceptionDesc)) {
+            embed.addField(exceptionTitle, exceptionDesc)
+          }
+
           // Add a field with the exception details for debugging
-          embed.addField(exceptionTitle, `Unknown fix!\nClass: \`${line.javaClass}\`\nMethod: \`${line.method}\`\nLine: \`${line.line}\`\nLink: [${line.source}#L${line.line}](${url})`)
           break
         }
       }
