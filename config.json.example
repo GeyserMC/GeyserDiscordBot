@@ -10,6 +10,7 @@
     }
   ],
   "discordUpdateChannels": ["349264069007638530"],
+  "convertExtensions": [".txt", ".log", ".yml"],
   "exceptionExtensions": [".txt", ".log"],
   "exceptionChecks": [
     {
