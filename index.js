@@ -24,5 +24,6 @@ initialiseModule('restart_command')
 initialiseModule('live_updates')
 initialiseModule('search_commands')
 initialiseModule('attachment_converter')
+initialiseModule('error_analyse')
 
 client.login(process.env.BOT_TOKEN)
