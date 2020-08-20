@@ -76,24 +76,24 @@ exports.init = (client) => {
 
     const problems = []
     let getVersionFromPing = true
-    const supportedMinecraft = response.data.versionInfo.mcInfo.javaVersion
+    const supportedMinecraft = response.versionInfo.mcInfo.javaVersion
 
-    if (!(response.data.bootstrapInfo.platform === 'STANDALONE')) {
+    if (!(response.bootstrapInfo.platform === 'STANDALONE')) {
       getVersionFromPing = false
 
       // Check if we are running an old server version
       let isOldVersion = false
-      if (!response.data.bootstrapInfo.platformVersion.includes(supportedMinecraft) &&
-        !(response.data.bootstrapInfo.platform === 'BUNGEECORD' || response.data.bootstrapInfo.platform === 'VELOCITY')) {
+      if (!response.bootstrapInfo.platformVersion.includes(supportedMinecraft) &&
+        !(response.bootstrapInfo.platform === 'BUNGEECORD' || response.bootstrapInfo.platform === 'VELOCITY')) {
         isOldVersion = true
       }
 
       // Check plugins
-      if (response.data.bootstrapInfo.plugins) {
-        let needsFloodgate = response.data.config.remote['auth-type'] === 'floodgate'
+      if (response.bootstrapInfo.plugins) {
+        let needsFloodgate = response.config.remote['auth-type'] === 'floodgate'
         let needsFloodgateAuthType = false
 
-        response.data.bootstrapInfo.plugins.forEach((item) => {
+        response.bootstrapInfo.plugins.forEach((item) => {
           // Check for any problematic plugins and add the problem to the list
           config.get().problematicPlugins.forEach((problemPlugin) => {
             if (item.name === problemPlugin.name && item.enabled) {
@@ -112,8 +112,8 @@ exports.init = (client) => {
         // Add any problem messages relates to floodgate
         if (needsFloodgate) {
           problems.push('- `auth-type` is set to `floodgate`, but you don\'t have Floodgate installed! Download it [here](https://ci.nukkitx.com/job/GeyserMC/job/Floodgate/job/development/).')
-        } else if (needsFloodgateAuthType && response.data.config.remote['auth-type'] !== 'floodgate') {
-          problems.push(`- You have Floodgate installed, but \`auth-type\` is set to \`${response.data.config.remote['auth-type']}\`! Set it to \`floodgate\` if you want to use Floodgate,`)
+        } else if (needsFloodgateAuthType && response.config.remote['auth-type'] !== 'floodgate') {
+          problems.push(`- You have Floodgate installed, but \`auth-type\` is set to \`${response.config.remote['auth-type']}\`! Set it to \`floodgate\` if you want to use Floodgate,`)
         }
       }
 
@@ -124,10 +124,10 @@ exports.init = (client) => {
     }
 
     let gitInfo = ''
-    const gitUrl = response.data.gitInfo['git.remote.origin.url'].replace(/\.git$/, '')
+    const gitUrl = response.gitInfo['git.remote.origin.url'].replace(/\.git$/, '')
 
     // Get the git commit status
-    const comparison = await compareToLatest(response.data.gitInfo['git.commit.id'])
+    const comparison = await compareToLatest(response.gitInfo['git.commit.id'])
 
     // Set the latest info based on the returned comparison
     if (comparison.includes('Behind by ')) {
@@ -146,24 +146,24 @@ exports.init = (client) => {
       `(${gitUrl}))\n`
     }
 
-    gitInfo += `**Commit:** [\`${response.data.gitInfo['git.commit.id.abbrev']}\`](${gitUrl}/commit/${response.data.gitInfo['git.commit.id']})\n`
+    gitInfo += `**Commit:** [\`${response.gitInfo['git.commit.id.abbrev']}\`](${gitUrl}/commit/${response.gitInfo['git.commit.id']})\n`
     gitInfo += comparison
 
     let versionString = 'Unknown'
-    const addr = response.data.config.remote.address + ':' + response.data.config.remote.port
+    const addr = response.config.remote.address + ':' + response.config.remote.port
     let addrText = addr
     const statusUrl = 'https://mcsrvstat.us/server/' + addr
 
     // Check if the server is listening on an internal ip and ping it if not
-    if (ipRangeCheck(response.data.config.remote.address, INTERNAL_IP_RANGES)) {
+    if (ipRangeCheck(response.config.remote.address, INTERNAL_IP_RANGES)) {
       addrText += ' (internal IP)'
-    } else if (response.data.config.remote.address === '***') { // Censored dump
-      addrText = '\\*\\*\\*' + ':' + response.data.config.remote.port // Discord formatting
+    } else if (response.config.remote.address === '***') { // Censored dump
+      addrText = '\\*\\*\\*' + ':' + response.config.remote.port // Discord formatting
     } else {
       let didPing = false
       try {
         // Ping the server with a timeout of 1.5s
-        const pingResponse = await pingServer(response.data.config.remote.address, response.data.config.remote.port, 1500, response.data.versionInfo.mcInfo.javaProtocol)
+        const pingResponse = await pingServer(response.config.remote.address, response.config.remote.port, 1500, response.versionInfo.mcInfo.javaProtocol)
 
         // Mark the server as pinged and add the status to the address field
         didPing = true
@@ -172,7 +172,7 @@ exports.init = (client) => {
 
         // Compare the protocol version from the ping and the dump
         // If they are different add a problem
-        if (pingResponse.version.protocol !== response.data.versionInfo.mcInfo.javaProtocol) {
+        if (pingResponse.version.protocol !== response.versionInfo.mcInfo.javaProtocol) {
           if (getVersionFromPing) {
             problems.push('- Your server needs to be on Minecraft ' + supportedMinecraft + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).")
           }
@@ -189,19 +189,19 @@ exports.init = (client) => {
     }
 
     // If Bedrock address is censored, account for its formatting
-    let bedrockAddrText = response.data.config.bedrock.address
+    let bedrockAddrText = response.config.bedrock.address
     if (bedrockAddrText === '***') {
       bedrockAddrText = '\\*\\*\\*'
     }
 
     // Get the version string from the dump if it exists
-    if (response.data.bootstrapInfo.platformVersion) {
-      versionString = response.data.bootstrapInfo.platformVersion
+    if (response.bootstrapInfo.platformVersion) {
+      versionString = response.bootstrapInfo.platformVersion
     }
 
     // Get the platform name and format it to title case (Xxxxxx)
-    const platformNamePretty = response.data.bootstrapInfo.platform.charAt(0).toUpperCase() +
-                               response.data.bootstrapInfo.platform.slice(1).toLowerCase()
+    const platformNamePretty = response.bootstrapInfo.platform.charAt(0).toUpperCase() +
+                               response.bootstrapInfo.platform.slice(1).toLowerCase()
 
     // Build the fields for the embed
     const fields = [
@@ -221,12 +221,12 @@ exports.init = (client) => {
       },
       {
         name: 'Listen address',
-        value: bedrockAddrText + ':' + response.data.config.bedrock.port,
+        value: bedrockAddrText + ':' + response.config.bedrock.port,
         inline: true
       },
       {
         name: 'Auth type',
-        value: response.data.config.remote['auth-type'],
+        value: response.config.remote['auth-type'],
         inline: true
       },
       {
@@ -237,10 +237,10 @@ exports.init = (client) => {
     ]
 
     // If we are not running the spigot version add the chunk cache config option
-    if (response.data.bootstrapInfo.platform !== 'SPIGOT') {
+    if (response.bootstrapInfo.platform !== 'SPIGOT') {
       fields.push({
         name: 'Cache chunks?',
-        value: response.data.config['cache-chunks'],
+        value: response.config['cache-chunks'],
         inline: true
       })
     }
