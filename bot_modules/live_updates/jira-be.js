@@ -1,4 +1,4 @@
-const axios = require('axios')
+const Utils = require('../../utils')
 
 const jiraVersionsCache = []
 
@@ -6,7 +6,13 @@ const jiraVersionsCache = []
  * Get all the current versions and cache them for comparing later
  */
 exports.populateInitialJiraVersions = async () => {
-  const versions = await getJiraVersions()
+  const { status, data: versions } = await Utils.getContents('https://bugs.mojang.com/rest/api/latest/project/MCPE/versions')
+
+  // Make sure we got a response
+  if (versions === '' || status !== 200) {
+    console.log('Failed to load initial Bedrock jira versions')
+    return
+  }
 
   // Add each version name to the cache
   versions.forEach(version => {
@@ -22,7 +28,12 @@ exports.populateInitialJiraVersions = async () => {
  * @param {Function} callback The function to call when a new version is found, takes a message as a string
  */
 exports.jiraUpdateCheck = async (callback) => {
-  const versions = await getJiraVersions()
+  const { status, data: versions } = await Utils.getContents('https://bugs.mojang.com/rest/api/latest/project/MCPE/versions')
+
+  // Make sure we got a response
+  if (versions === '' || status !== 200) {
+    return
+  }
 
   versions.forEach(version => {
     if (!jiraVersionsCache.includes(version.name)) {
@@ -34,24 +45,6 @@ exports.jiraUpdateCheck = async (callback) => {
       }
     }
   })
-}
-
-/**
- * Get the version data from the bug tracker
- *
- * @returns {Array} Each version as an object
- */
-async function getJiraVersions () {
-  // Fetch the raw response data
-  let response
-  try {
-    response = await axios.get('https://bugs.mojang.com/rest/api/latest/project/MCPE/versions')
-  } catch (error) {
-    console.error(error)
-    return
-  }
-
-  return response.data
 }
 
 /**

@@ -1,4 +1,4 @@
-const axios = require('axios')
+const Utils = require('../../utils')
 
 const minecraftVersionsCache = []
 
@@ -6,10 +6,16 @@ const minecraftVersionsCache = []
  * Get all the current versions and cache them for comparing later
  */
 exports.populateInitialMinecraftVersions = async () => {
-  const versions = await getMinecraftVersions()
+  const { status, data: versions } = await Utils.getContents('https://launchermeta.mojang.com/mc/game/version_manifest.json')
+
+  // Make sure we got a response
+  if (versions === '' || status !== 200) {
+    console.log('Failed to load initial Java Minecraft versions')
+    return
+  }
 
   // Add each version id to the cache
-  versions.forEach(version => {
+  versions.versions.forEach(version => {
     minecraftVersionsCache.push(version.id)
   })
 
@@ -22,32 +28,19 @@ exports.populateInitialMinecraftVersions = async () => {
  * @param {Function} callback The function to call when a new version is found, takes a message as a string
  */
 exports.minecraftUpdateCheck = async (callback) => {
-  const versions = await getMinecraftVersions()
+  const { status, data: versions } = await Utils.getContents('https://launchermeta.mojang.com/mc/game/version_manifest.json')
 
-  versions.forEach(version => {
+  // Make sure we got a response
+  if (versions === '' || status !== 200) {
+    return
+  }
+
+  versions.versions.forEach(version => {
     if (!minecraftVersionsCache.includes(version.id)) {
       minecraftVersionsCache.push(version.id)
       callback(minecraftVersionAsString(version))
     }
   })
-}
-
-/**
- * Get the version data from the official version_manifest.json
- *
- * @returns {Array} Each version data as an object
- */
-async function getMinecraftVersions () {
-  // Fetch the raw response data
-  let response
-  try {
-    response = await axios.get('https://launchermeta.mojang.com/mc/game/version_manifest.json')
-  } catch (error) {
-    console.error(error)
-    return
-  }
-
-  return response.data.versions
 }
 
 /**

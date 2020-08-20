@@ -1,7 +1,8 @@
-const axios = require('axios')
 const GitHub = require('github-api')
 const ipRangeCheck = require('ip-range-check')
 const mcping = require('mcping-js')
+
+const Utils = require('../../utils')
 
 const { configEditor: config } = require('../config_manager/index.js')
 
@@ -65,11 +66,11 @@ exports.init = (client) => {
     const rawUrl = 'https://dump.geysermc.org/raw/' + match[1]
 
     // Fetch the raw response data
-    let response
-    try {
-      response = await axios.get(rawUrl)
-    } catch (error) {
-      console.error(error)
+
+    const { status, data: response } = await Utils.getContents(rawUrl)
+
+    // Make sure we got a response
+    if (response === '' || status !== 200) {
       return
     }
 
@@ -156,8 +157,8 @@ exports.init = (client) => {
     // Check if the server is listening on an internal ip and ping it if not
     if (ipRangeCheck(response.data.config.remote.address, INTERNAL_IP_RANGES)) {
       addrText += ' (internal IP)'
-    } else if (response.data.config.remote.address === "***") { // Censored dump
-      addrText = "\\*\\*\\*" + ':' + response.data.config.remote.port // Discord formatting
+    } else if (response.data.config.remote.address === '***') { // Censored dump
+      addrText = '\\*\\*\\*' + ':' + response.data.config.remote.port // Discord formatting
     } else {
       let didPing = false
       try {
@@ -189,8 +190,8 @@ exports.init = (client) => {
 
     // If Bedrock address is censored, account for its formatting
     let bedrockAddrText = response.data.config.bedrock.address
-    if (bedrockAddrText === "***") {
-      bedrockAddrText = "\\*\\*\\*"
+    if (bedrockAddrText === '***') {
+      bedrockAddrText = '\\*\\*\\*'
     }
 
     // Get the version string from the dump if it exists

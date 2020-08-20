@@ -1,6 +1,6 @@
 const stringSimilarity = require('string-similarity')
 const Discord = require('discord.js')
-const axios = require('axios')
+const Utils = require('../../utils')
 
 /**
  * Handle the provider command
@@ -89,19 +89,18 @@ function sendProviderEmbed (msg, provider) {
  * @returns {Array} The list of provider objects with name, url, instructions and category
  */
 async function getProviders () {
-  // Fetch the raw response data
-  let response
-  try {
-    response = await axios.get('https://raw.githubusercontent.com/wiki/GeyserMC/Geyser/Supported-Hosting-Providers.md')
-  } catch (error) {
-    console.error(error)
+  // Fetch the search page
+  const { status, data: contents } = await Utils.getContents('https://raw.githubusercontent.com/wiki/GeyserMC/Geyser/Supported-Hosting-Providers.md')
+
+  // Make sure we got a response
+  if (contents === '' || status !== 200) {
     return
   }
 
   let category = ''
   const providers = []
 
-  response.data.split('\n').forEach(line => {
+  contents.split('\n').forEach(line => {
     line = line.trim()
 
     // Check for a header line
