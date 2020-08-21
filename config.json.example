@@ -46,6 +46,10 @@
     {
       "error": "java.lang.AssertionError: Expected AES to be available",
       "message": "Update your Java at [AdoptOpenJDK.net](https://adoptopenjdk.net/)."
+    },
+    {
+      "error": "java.lang.IllegalArgumentException: Duplicate handler name: floodgate-init",
+      "message": "Please don't reload your server, do `!tag reload` for more info. Restart it to fix this issue."
     }
   ]
 }
