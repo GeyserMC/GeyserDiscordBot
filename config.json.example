@@ -36,11 +36,11 @@
   ],
   "exceptionFixes" : [
     {
-      "error": "java.net.BindException: Address already in use: bind",
+      "error": "java.net.BindException: Address already in use",
       "message": "This means something (likely another instance of Geyser) is running on the port you have specified in the config. Please make sure you close all applications running on this port. If you don't recall opening anything, usually restarting your computer fixes this."
     },    
     {
-      "error": "java.net.BindException: Cannot assign requested address: bind",
+      "error": "java.net.BindException: Cannot assign requested address",
       "message": "This means the IP your server is trying to use is unavailable or disallowed by the system or firewall."
     },
     {
