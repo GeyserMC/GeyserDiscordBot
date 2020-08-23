@@ -33,7 +33,7 @@ exports.init = (client) => {
       gitChild.on('error', outputHandler)
 
       gitChild.on('exit', () => {
-        const npmChild = childProcess.spawn('npm.cmd', ['i'])
+        const npmChild = childProcess.spawn(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['i'])
 
         npmChild.stdout.on('data', outputHandler)
         npmChild.stderr.on('data', outputHandler)
