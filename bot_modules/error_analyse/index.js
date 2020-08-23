@@ -91,8 +91,9 @@ function parseLog (msg, contents) {
         packages: [group.stackPackage]
       })
     } else {
-      exceptions[exceptions.length - 1].lines.concat(group.lines)
-      exceptions[exceptions.length - 1].packages.push(group.stackPackage)
+      const exception = exceptions[exceptions.length - 1]
+      exception.lines = exception.lines.concat(group.lines)
+      exception.packages.push(group.stackPackage)
     }
   })
 

@@ -10,13 +10,12 @@ exports.init = (client) => {
     }
 
     if (msg.content.startsWith('!restart')) {
-      msg.channel.send('Restarting...')
-      // Delay the restart to prevent exit before we have sent the message
-      setTimeout(() => {
-        process.exit(0) // Bot is set up to auto-restart on exit
-      }, 500)
+      await msg.channel.send('Restarting...')
+
+      // Exit after we attempted to update the message
+      process.exit(0)
     } else if (msg.content.startsWith('!pull-restart')) {
-      const child = childProcess.spawn('git', ['pull'])
+      const gitChild = childProcess.spawn('git', ['pull'])
       let logText = 'Updating...'
       let logMessage = await msg.channel.send('```\n' + logText + '\n```')
       logText += '\n'
@@ -28,19 +27,26 @@ exports.init = (client) => {
         logMessage = await logMessage.edit('```\n' + logText + '\n```')
       }
 
-      child.stdout.on('data', outputHandler)
-      child.stderr.on('data', outputHandler)
+      gitChild.stdout.on('data', outputHandler)
+      gitChild.stderr.on('data', outputHandler)
 
-      child.on('error', outputHandler)
+      gitChild.on('error', outputHandler)
 
-      child.on('exit', () => {
-        logText += '\nRestarting...'
-        logMessage.edit('```\n' + logText + '\n```')
+      gitChild.on('exit', () => {
+        const npmChild = childProcess.spawn(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['i'])
 
-        // Delay the restart to prevent exit before we have sent the message
-        setTimeout(() => {
+        npmChild.stdout.on('data', outputHandler)
+        npmChild.stderr.on('data', outputHandler)
+
+        npmChild.on('error', outputHandler)
+
+        npmChild.on('exit', async () => {
+          logText += '\nRestarting...'
+          await logMessage.edit('```\n' + logText + '\n```')
+
+          // Exit after we attempted to update the message
           process.exit(0)
-        }, 500)
+        })
       })
     }
   })
