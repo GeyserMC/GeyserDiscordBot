@@ -10,10 +10,10 @@ exports.init = (client) => {
     }
 
     if (msg.content.startsWith('!restart')) {
-      msg.channel.send('Restarting...').finally(() => {
-        // Exit after we attempted to update the message
-        process.exit(0)
-      })
+      await msg.channel.send('Restarting...')
+
+      // Exit after we attempted to update the message
+      process.exit(0)
     } else if (msg.content.startsWith('!pull-restart')) {
       const gitChild = childProcess.spawn('git', ['pull'])
       let logText = 'Updating...'
@@ -40,12 +40,12 @@ exports.init = (client) => {
 
         npmChild.on('error', outputHandler)
 
-        npmChild.on('exit', () => {
+        npmChild.on('exit', async () => {
           logText += '\nRestarting...'
-          logMessage.edit('```\n' + logText + '\n```').finally(() => {
-            // Exit after we attempted to update the message
-            process.exit(0)
-          })
+          await logMessage.edit('```\n' + logText + '\n```')
+
+          // Exit after we attempted to update the message
+          process.exit(0)
         })
       })
     }
