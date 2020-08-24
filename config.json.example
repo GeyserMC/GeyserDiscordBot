@@ -50,6 +50,10 @@
     {
       "error": "java.lang.IllegalArgumentException: Duplicate handler name: floodgate-init",
       "message": "Please don't reload your server, do `!tag reload` for more info. Restart it to fix this issue."
+    },
+    {
+      "error": "AnnotatedConnectException: Connection timed out",
+      "message": "The Geyser instance cannot connect to your Java server."
     }
   ]
 }
