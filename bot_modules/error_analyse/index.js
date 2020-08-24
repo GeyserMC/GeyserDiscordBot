@@ -107,7 +107,7 @@ function parseLog (msg, contents) {
 
     // Check if we found a GeyserMC package in the stack trace
     for (const stackPackage of exception.packages) {
-      if (stackPackage.name.startsWith('org.geysermc')) {
+      if (stackPackage.name.startsWith('org.geysermc') && !stackPackage.name.includes('shaded')) {
         geyserException = true
         currentGeyserException = true
         break
@@ -124,7 +124,7 @@ function parseLog (msg, contents) {
     } else if (currentGeyserException) {
       // Find the first line causing the error in the org.geyser package
       for (const line of exception.lines) {
-        if (line.stackPackage.name.startsWith('org.geysermc')) {
+        if (line.stackPackage.name.startsWith('org.geysermc') && !line.stackPackage.name.includes('shaded')) {
           // Get the package url
           const packageBreakdown = line.stackPackage.name.split('.')
           let submodule = packageBreakdown[2]
