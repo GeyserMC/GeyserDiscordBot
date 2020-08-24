@@ -92,8 +92,10 @@ function parseLog (msg, contents) {
       })
     } else {
       const exception = exceptions[exceptions.length - 1]
-      exception.lines = exception.lines.concat(group.lines)
-      exception.packages.push(group.stackPackage)
+      if (exception !== undefined) {
+        exception.lines = exception.lines.concat(group.lines)
+        exception.packages.push(group.stackPackage)
+      }
     }
   })
 
@@ -132,8 +134,16 @@ function parseLog (msg, contents) {
             submodule = 'bootstrap/' + packageBreakdown[3]
           }
 
+          let repo = 'Geyser'
+
+          if (submodule === 'floodgate') {
+            branch = 'development'
+            submodule = 'common' // This will likely become dynamic after the floodgate rewrite
+            repo = 'Floodgate'
+          }
+
           // Work out the url for the error
-          const url = `https://github.com/GeyserMC/Geyser/blob/${branch}/${submodule}/src/main/java/${line.stackPackage.name.replace(/\./g, '/')}/${line.source}#L${line.line}`
+          const url = `https://github.com/GeyserMC/${repo}/blob/${branch}/${submodule}/src/main/java/${line.stackPackage.name.replace(/\./g, '/')}/${line.source}#L${line.line}`
 
           // Build the description
           const exceptionDesc = `Unknown fix!\nClass: \`${line.javaClass}\`\nMethod: \`${line.method}\`\nLine: \`${line.line}\`\nLink: [${line.source}#L${line.line}](${url})`
