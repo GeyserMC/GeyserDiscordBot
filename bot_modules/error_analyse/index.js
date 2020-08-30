@@ -39,7 +39,7 @@ exports.init = (client) => {
     }
 
     // Check attachments for logs
-    for (const [_, attachment] of msg.attachments) {
+    for (const [, attachment] of msg.attachments) {
       if (config.get().exceptionExtensions.includes(path.extname(attachment.name))) {
         // Get the log content
         const { status, data: contents } = await Utils.getContents(attachment.url)
