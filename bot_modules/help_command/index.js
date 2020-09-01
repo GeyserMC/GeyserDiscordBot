@@ -1,7 +1,7 @@
 exports.init = (client) => {
   client.on('message', async (msg) => {
     if (msg.content.startsWith('!help')) {
-      // TODO: Add a command registration system instead of harcoding
+      // TODO: Add a command registration system instead of hardcoding
       msg.channel.send({
         embed: {
           title: 'Geyser Bot Help',
