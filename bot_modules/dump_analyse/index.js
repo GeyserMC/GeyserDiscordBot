@@ -1,31 +1,8 @@
 const GitHub = require('github-api')
-const ipRangeCheck = require('ip-range-check')
-const mcping = require('mcping-js')
 
 const Utils = require('../../utils')
 
 const { configEditor: config } = require('../config_manager/index.js')
-
-// From https://en.wikipedia.org/wiki/Reserved_IP_addresses
-const INTERNAL_IP_RANGES = ['0.0.0.0/8', '10.0.0.0/8', '100.64.0.0/10', '127.0.0.0/8', '169.254.0.0/16', '172.16.0.0/12', '192.0.0.0/24', '192.0.2.0/24', '192.88.99.0/24', '192.168.0.0/16', '198.18.0.0/15', '198.51.100.0/24', '203.0.113.0/24', '224.0.0.0/4', '240.0.0.0/4', '255.255.255.255/32']
-
-/**
- * Ping a Minecraft server and return the response
- *
- * @param {String} address The address of the Minecraft server to ping
- * @param {Number} port The port of the Mincraft server to ping
- * @param {Number} timeout The time to wait in milliseconds
- * @param {Number} protocolVersion The protocol version to use for the ping
- */
-function pingServer (address, port, timeout, protocolVersion) {
-  return new Promise((resolve, reject) => {
-    const server = new mcping.MinecraftServer(address, port)
-    server.ping(timeout, protocolVersion, (err, res) => {
-      if (err) reject(err)
-      resolve(res)
-    })
-  })
-}
 
 /**
  * Get the status of a given commit hash, will return if commit is behind or ahead of master
@@ -155,7 +132,7 @@ exports.init = (client) => {
     const statusUrl = 'https://mcsrvstat.us/server/' + addr
 
     // Check if the server is listening on an internal ip and ping it if not
-    if (ipRangeCheck(response.config.remote.address, INTERNAL_IP_RANGES)) {
+    if (Utils.isInternalIP(response.config.remote.address)) {
       addrText += ' (internal IP)'
     } else if (response.config.remote.address === '***') { // Censored dump
       addrText = '\\*\\*\\*' + ':' + response.config.remote.port // Discord formatting
@@ -163,7 +140,7 @@ exports.init = (client) => {
       let didPing = false
       try {
         // Ping the server with a timeout of 1.5s
-        const pingResponse = await pingServer(response.config.remote.address, response.config.remote.port, 1500, response.versionInfo.mcInfo.javaProtocol)
+        const pingResponse = await Utils.pingJavaServer(response.config.remote.address, response.config.remote.port, 1500, response.versionInfo.mcInfo.javaProtocol)
 
         // Mark the server as pinged and add the status to the address field
         didPing = true

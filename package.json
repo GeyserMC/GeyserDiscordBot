@@ -20,9 +20,14 @@
     "github-api": "^3.3.0",
     "ip-range-check": "^0.2.0",
     "java-stack-parser": "^1.0.0",
+    "mcpe-ping": "0.0.4",
     "mcping-js": "^1.5.0",
     "node-nlp": "^4.4.0",
-    "string-similarity": "^4.0.2"
+    "prismarine-chat": "^1.0.2",
+    "string-similarity": "^4.0.2",
+    "xmldom": "^0.3.0",
+    "xmlserializer": "^0.6.1",
+    "xpath": "0.0.29"
   },
   "devDependencies": {
     "nodemon": "^2.0.4",
