@@ -36,7 +36,7 @@ exports.init = (client) => {
 
 /**
  * Pings the Java server and sends an embed to the channel specified
- * 
+ *
  * @param {Discord.Channel} channel TODO: TODO TODO TODO
  * @param {String} address The address to ping
  * @param {String} edition The edition (Bedrock or Java)

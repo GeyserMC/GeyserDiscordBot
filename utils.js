@@ -87,7 +87,7 @@ exports.pingBedrockServer = function (address, port, timeout) {
 
 /**
  * Returns if the IP is an internal IP
- * 
+ *
  * @param {String} ip The IP address to check
  */
 exports.isInternalIP = function (ip) {
@@ -96,7 +96,7 @@ exports.isInternalIP = function (ip) {
 
 /**
  * Splits the address into a JSON object containing the IP and port
- * 
+ *
  * @param {String} address The address to split
  * @param {Number} [defaultPort] The default port to use if the address does not include a port
  */
