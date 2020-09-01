@@ -1,3 +1,5 @@
+const Discord = require('discord.js')
+
 exports.init = (client) => {
   client.on('message', async (msg) => {
     if (msg.content.startsWith('!help')) {
