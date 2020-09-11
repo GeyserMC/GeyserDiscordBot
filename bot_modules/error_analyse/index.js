@@ -167,11 +167,7 @@ function parseLog (msg, contents) {
 
   // If we have no fields set the description acordingly
   if (embed.fields.length <= 0) {
-    if (geyserException) {
-      embed.setDescription('We don\'t currently have automated responses for the detected errors!')
-    } else {
-      embed.setDescription('The errors you have are unlikely to be Geyser related or caused!')
-    }
+    embed.setDescription('We don\'t currently have automated responses for the detected errors!')
   }
 
   msg.channel.send(embed)
