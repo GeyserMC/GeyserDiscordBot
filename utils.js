@@ -76,7 +76,6 @@ exports.pingJavaServer = function (address, port, timeout, protocolVersion) {
  * @param {Number} timeout The time to wait in milliseconds
  */
 exports.pingBedrockServer = function (address, port, timeout) {
-  console.log(address, port)
   return new Promise((resolve, reject) => {
     mcpeping(address, Number(port), (err, res) => {
       if (err) reject(err)
