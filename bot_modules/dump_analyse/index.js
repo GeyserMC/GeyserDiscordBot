@@ -258,5 +258,20 @@ exports.init = (client) => {
     }
 
     msg.channel.send({ embed })
+
+    // Citizens
+    if (response.config.remote['auth-type'] === 'floodgate' && response.bootstrapInfo.platform === 'SPIGOT') {
+      for (const item of response.bootstrapInfo.plugins) {
+        if (item.name === 'Citizens' || item.name === 'Denizen') {
+          const embed = {
+            title: 'Citizens/Denizen Discord Warning',
+            color: 0xff0000,
+            description: "The Citizens Discord will not give support for users who are running Floodgate."
+          }
+          msg.channel.send({ embed })
+          break
+        }
+      }
+    }
   })
 }
