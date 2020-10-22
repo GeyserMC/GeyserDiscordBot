@@ -83,8 +83,8 @@ exports.init = (client) => {
 
       // Check if we are running an old server version
       let isOldVersion = false
-      if (!response.bootstrapInfo.platformVersion.includes(supportedMinecraft) &&
-        !(response.bootstrapInfo.platform === 'BUNGEECORD' || response.bootstrapInfo.platform === 'VELOCITY')) {
+      if (!(response.bootstrapInfo.platform === 'BUNGEECORD' || response.bootstrapInfo.platform === 'VELOCITY' || response.bootstrapInfo.platform === 'ANDROID') &&
+          !response.bootstrapInfo.platformVersion.includes(supportedMinecraft)) {
         isOldVersion = true
       }
 
