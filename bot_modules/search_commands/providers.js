@@ -125,7 +125,11 @@ async function getProviders () {
       })
     } else if (line.startsWith('- ')) { // Check for indented instructions
       const provider = providers[providers.length - 1]
-      provider.instructions = (provider.instructions + '\n' + line.replace('- ', '')).trim()
+      if (provider.instructions === 'None') {
+        provider.instructions = line.replace('- ', '').trim()
+      } else {
+        provider.instructions = (provider.instructions + '\n' + line.replace('- ', '')).trim()
+      }
     }
   })
 
