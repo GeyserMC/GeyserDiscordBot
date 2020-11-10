@@ -90,7 +90,7 @@ function sendTagEmbed (msg, tag) {
  */
 async function getTags () {
   // Fetch the search page
-  const { status, data: contents } = await Utils.getContents('https://raw.githubusercontent.com/wiki/GeyserMC/Geyser/Supported-Hosting-Tags.md')
+  const { status, data: contents } = await Utils.getContents('https://raw.githubusercontent.com/wiki/GeyserMC/Geyser/Tags.md')
 
   // Make sure we got a response
   if (contents === '' || status !== 200) {
