@@ -26,5 +26,6 @@ initialiseModule('search_commands')
 initialiseModule('attachment_converter')
 initialiseModule('error_analyse')
 initialiseModule('help_command')
+initialiseModule('tags')
 
 client.login(process.env.BOT_TOKEN)
