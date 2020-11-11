@@ -4,6 +4,9 @@ const fs = require('fs')
 // Relative to the project root
 const tagFolder = './tags'
 
+/**
+ * Load the tags from file and return them
+ */
 exports.load = () => {
   const tags = {}
 
