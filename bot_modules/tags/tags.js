@@ -92,7 +92,7 @@ exports.handleTagCommand = async (msg, args) => {
       return
     }
 
-    tagName = args[2]
+    tagName = args[2].toLowerCase()
     showAliases = true
   }
 

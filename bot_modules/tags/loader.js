@@ -46,11 +46,11 @@ exports.load = () => {
         const lineParts = line.split(':')
         switch (lineParts[0]) {
           case 'type':
-            tag.type = lineParts[1].trim()
+            tag.type = lineParts[1].trim().toLowerCase()
             break
 
           case 'target':
-            tag.target = lineParts[1].trim()
+            tag.target = lineParts[1].trim().toLowerCase()
             break
 
           default:
