@@ -14,4 +14,4 @@ jobs:
         with:
           node-version: 14.x
 
-      - run: npm validate-tags
+      - run: npm run validate-tags
