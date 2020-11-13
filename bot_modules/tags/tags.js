@@ -79,7 +79,7 @@ exports.handleTagCommand = async (msg, args) => {
   }
 
   // Get the tag name
-  let tagName = args[1]
+  let tagName = args[1].toLowerCase()
 
   let showAliases = false
   if (tagName === 'aliases' || tagName === 'alias') {

@@ -20,7 +20,7 @@ exports.load = () => {
     const content = fs.readFileSync(path.join(tagFolder, file), { encoding: 'utf-8' })
 
     // Get the name and set the base tag
-    const tagName = file.substr(0, file.length - 4)
+    const tagName = file.substr(0, file.length - 4).toLowerCase()
     const tag = {
       type: 'text',
       target: '',

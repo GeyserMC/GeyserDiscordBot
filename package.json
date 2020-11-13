@@ -33,6 +33,7 @@
     "ignore": [
       "config.json"
     ],
+    "ext": "js,json,tag",
     "watch": [
       ".env",
       "."
