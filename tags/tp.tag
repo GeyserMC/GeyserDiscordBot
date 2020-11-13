@@ -1,0 +1,5 @@
+type: text
+
+---
+
+`/tp "*BedrockPlayer"`
