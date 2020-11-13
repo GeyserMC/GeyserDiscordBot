@@ -27,7 +27,7 @@ exports.initTags = () => {
 
       // Log the error if we have one
       if (reason !== '') {
-        console.error(`The alias tag '${tagName}' has an invalid target (${reason})`)
+        throw new Error(`The alias tag '${tagName}' has an invalid target (${reason})`)
       }
     }
   })
@@ -55,7 +55,7 @@ exports.handleTagsCommand = async (msg, args) => {
 
   embed.setColor(0x00ff00)
   embed.setTitle(`Tags (${tagNameList.length})`)
-  embed.setDescription(`\`${tagNameList.join(', ')}\``)
+  embed.setDescription(`\`${tagNameList.join('`, `')}\``)
   embed.setFooter('Use "!tag name" to show a tag')
 
   msg.channel.send(embed)

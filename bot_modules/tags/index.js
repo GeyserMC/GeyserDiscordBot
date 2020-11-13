@@ -1,7 +1,13 @@
 const tags = require('./tags')
 
 exports.init = async (client) => {
-  tags.initTags()
+  try {
+    tags.initTags()
+  } catch (e) {
+    console.log('An error occured loading the tag system, disabling...')
+    console.error(e)
+    return
+  }
 
   client.on('message', async (msg) => {
     const args = msg.content.split(' ')
