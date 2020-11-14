@@ -137,7 +137,7 @@ function parseLog (msg, contents) {
           let repo = 'Geyser'
 
           if (submodule === 'floodgate') {
-            branch = 'development'
+            branch = 'master'
             submodule = 'common' // This will likely become dynamic after the floodgate rewrite
             repo = 'Floodgate'
           }
