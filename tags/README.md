@@ -20,9 +20,20 @@ target: rules
 ```
 
 ## Type: Text
-The below lays out the `text` tag type, allows for Markdown to be sent as a basic message.
+The below lays out the `text` tag type, allows for Markdown to be sent as an embed. It also has an optional `image` attribute.
 ```markdown
 type: text
+image: https://example.com/example.png
+
+---
+
+Test
+```
+
+## Type: Raw Text 
+The below lays out the `text-raw` tag type, allows for Markdown to be sent as a basic message.
+```markdown
+type: text-raw
 
 ---
 

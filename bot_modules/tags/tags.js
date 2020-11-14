@@ -2,7 +2,7 @@ const Discord = require('discord.js')
 const loader = require('./loader')
 
 let tags = {}
-let tagList
+let tagList = []
 
 /**
  * Initialise the tag system
@@ -46,9 +46,15 @@ exports.handleTagsCommand = async (msg, args) => {
   // Ignore args, unless we want search?
   const embed = new Discord.MessageEmbed()
 
+  let search = ''
+
+  if (args.length >= 2) {
+    search = args[1]
+  }
+
   const tagNameList = []
   tagList.forEach(tagName => {
-    if (tags[tagName].type !== 'alias') {
+    if (tags[tagName].type !== 'alias' && tagName.includes(search)) {
       tagNameList.push(tagName)
     }
   })
@@ -68,9 +74,10 @@ exports.handleTagsCommand = async (msg, args) => {
  * @param {Array} args The list of arguments passed to the command
  */
 exports.handleTagCommand = async (msg, args) => {
+  const embed = new Discord.MessageEmbed()
+
   // Check we were sent a tag
   if (args.length <= 1) {
-    const embed = new Discord.MessageEmbed()
     embed.setTitle('Invalid usage')
     embed.setDescription('Missing tag name. `!tag <name>`')
     embed.setColor(0xff0000)
@@ -84,7 +91,6 @@ exports.handleTagCommand = async (msg, args) => {
   let showAliases = false
   if (tagName === 'aliases' || tagName === 'alias') {
     if (args.length <= 2) {
-      const embed = new Discord.MessageEmbed()
       embed.setTitle('Invalid usage')
       embed.setDescription(`Missing tag name. \`!tag ${tagName} <name>\``)
       embed.setColor(0xff0000)
@@ -98,7 +104,6 @@ exports.handleTagCommand = async (msg, args) => {
 
   // Check if the tag exists
   if (!tagList.includes(tagName)) {
-    const embed = new Discord.MessageEmbed()
     embed.setTitle('Missing tag')
     embed.setDescription(`No tag with the name \`${tagName}\`, do \`!tags\` for the full list.`)
     embed.setColor(0xff0000)
@@ -107,13 +112,11 @@ exports.handleTagCommand = async (msg, args) => {
   }
 
   // Get the tag and contents
-  const tag = tags[tagName]
-  let content = tag.content
+  let tag = tags[tagName]
 
   if (showAliases) {
     // Check we are not checking an alias tag
     if (tag.type === 'alias') {
-      const embed = new Discord.MessageEmbed()
       embed.setTitle('Invalid usage')
       embed.setDescription('You cannot check the aliases of an alias.')
       embed.setColor(0xff0000)
@@ -131,7 +134,6 @@ exports.handleTagCommand = async (msg, args) => {
 
     // Check if the alias list is empty
     if (aliases.length === 0) {
-      const embed = new Discord.MessageEmbed()
       embed.setTitle(`No aliases for ${tagName}`)
       embed.setDescription(`No aliases where found for the tag with the name \`${tagName}\`.`)
       embed.setColor(0xff0000)
@@ -140,20 +142,30 @@ exports.handleTagCommand = async (msg, args) => {
     }
 
     // Build the embed for the list of aliases
-    const embed = new Discord.MessageEmbed()
     embed.setColor(0x00ff00)
     embed.setTitle(`Aliases for ${tagName} (${aliases.length})`)
     embed.setDescription(`\`${aliases.join(', ')}\``)
     embed.setFooter('Use "!tag name" to show a tag')
-
-    content = embed
   } else {
-    // Get the target contents if its an alias
+    embed.setColor(0x00ff00)
+
+    // Get the target tag if its an alias
     if (tag.type === 'alias') {
-      content = tags[tag.target].content
+      tag = tags[tag.target]
+    }
+
+    embed.setDescription(tag.content)
+
+    // Set the image if we have one
+    if (tag.image !== '') {
+      embed.setImage(tag.image)
     }
   }
 
-  // Send the tag content
-  msg.channel.send(content)
+  if (tag.type === 'text-raw') {
+    msg.channel.send(tag.content)
+  } else {
+    // Send the tag content
+    msg.channel.send(embed)
+  }
 }

@@ -2,5 +2,4 @@ type: text
 
 ---
 
-You can find a Bedrock's player before they join here (for whitelists for example):
-https://floodgate-uuid.heathmitchell1.repl.co/
+You can find a Bedrock player's UUID before they join using this (for whitelists for example): https://floodgate-uuid.heathmitchell1.repl.co/

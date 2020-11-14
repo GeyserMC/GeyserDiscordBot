@@ -2,4 +2,4 @@ type: text
 
 ---
 
-Its `!openthefloodgates`
+https://github.com/GeyserMC/Geyser/wiki/Floodgate yeet

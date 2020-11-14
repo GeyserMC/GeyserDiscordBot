@@ -1,5 +1,0 @@
-type: text
-
----
-
-No.

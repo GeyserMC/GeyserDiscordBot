@@ -1,5 +1,2 @@
-type: text
-
----
-
-https://www.spigotmc.org/resources/viaversion.19254/
+type: alias
+target: viaversion

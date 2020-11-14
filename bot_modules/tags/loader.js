@@ -24,6 +24,7 @@ exports.load = () => {
     const tag = {
       type: 'text',
       target: '',
+      image: '',
       content: ''
     }
 
@@ -51,6 +52,10 @@ exports.load = () => {
 
           case 'target':
             tag.target = lineParts[1].trim().toLowerCase()
+            break
+
+          case 'image':
+            tag.image = lineParts.slice(1).join(':').trim()
             break
 
           default:

@@ -1,5 +1,2 @@
-type: text
-
----
-
-**Deprecated. Use `!tag consoles` instead.**
+type: alias
+target: consoles
