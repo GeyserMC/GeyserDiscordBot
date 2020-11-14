@@ -119,7 +119,7 @@ exports.init = (client) => {
 
         // Add any problem messages relates to floodgate
         if (needsFloodgate) {
-          problems.push('- `auth-type` is set to `floodgate`, but you don\'t have Floodgate installed! Download it [here](https://ci.nukkitx.com/job/GeyserMC/job/Floodgate/job/development/).')
+          problems.push('- `auth-type` is set to `floodgate`, but you don\'t have Floodgate installed! Download it [here](https://ci.nukkitx.com/job/GeyserMC/job/Floodgate/job/master/).')
         } else if (needsFloodgateAuthType && response.config.remote['auth-type'] !== 'floodgate') {
           problems.push(`- You have Floodgate installed, but \`auth-type\` is set to \`${response.config.remote['auth-type']}\`! Set it to \`floodgate\` if you want to use Floodgate,`)
         }
