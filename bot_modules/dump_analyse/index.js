@@ -103,9 +103,17 @@ exports.init = (client) => {
 
           if (item.name === 'ViaVersion' && item.enabled) { // Check if VV is installed
             isOldVersion = false
-          } else if (item.name.toLowerCase().includes('floodgate') && item.enabled) { // Check if floodgate is installed
-            needsFloodgate = false
-            needsFloodgateAuthType = true
+          } else if (item.name.toLowerCase().includes('floodgate')) { // Check if floodgate is installed
+            // Check if its enabled
+            if (item.enabled) {
+              needsFloodgate = false
+              needsFloodgateAuthType = true
+            }
+
+            // Check we aren't on an old version of 1.8
+            if (response.bootstrapInfo.platformAPIVersion.startsWith('1.8-R0.1')) {
+              problems.push('- You run on an outdated and unsupported version of 1.8, you can download the latest Paper build (1.8.8) [here](https://papermc.io/api/v1/paper/1.8.8/443/download).')
+            }
           }
         })
 
