@@ -2,4 +2,4 @@ type: text
 
 ---
 
-Please download Geyser at: https://ci.nukkitx.com/job/GeyserMC/job/Geyser/job/master/
+Please download the master branch Geyser at: https://ci.nukkitx.com/job/GeyserMC/job/Geyser/job/master/

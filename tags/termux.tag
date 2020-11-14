@@ -2,4 +2,5 @@ type: text
 
 ---
 
-This link contains a guide on how to set up Geyser on android using Termux, although, you should use the android app instead, if you ran this tag instead of `!tag android`. https://github.com/GeyserMC/Geyser/wiki/Setup#Termux-Android
+The included link contains a guide on how to set up Geyser on Android using the third-party program called Termux. However, using the Android app is easier if possible (see `!tag android` for more information).
+https://github.com/GeyserMC/Geyser/wiki/Setup#Termux-Android

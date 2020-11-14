@@ -2,5 +2,6 @@ type: text
 
 ---
 
-If you want to run commands when a Bedrock player joins (for example turning off anticheat), use this (unofficial) plugin.
-https://www.spigotmc.org/resources/bedrock-player-managment-for-floodgate-geyser.82278/
+You can allow Bedrock players to bypass the anticheat or run commands on player join for your server with this plugin: https://www.spigotmc.org/resources/bedrock-player-managment-for-floodgate-geyser.82278/
+For anticheat you can set it up to exempt them either from all checks or the ones that cause problems on join.
+Note that this plugin is unofficial and not related to GeyserMC.
