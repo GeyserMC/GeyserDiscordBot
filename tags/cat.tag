@@ -1,4 +1,4 @@
-type: text
+type: text-raw
 
 ---
 
