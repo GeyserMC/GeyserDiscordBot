@@ -12,7 +12,7 @@ exports.getContents = async (url) => {
     response = await axios.get(url)
   } catch (error) {
     console.error(error)
-    return { status: error.response.status, data: error.response.data }
+    return { status: error.response !== undefined ? error.response.status : error.code, data: error.response !== undefined ? error.response.data : '' }
   }
 
   return { status: response.status, data: response.data }
@@ -31,7 +31,7 @@ exports.postContents = async (url, contents) => {
     response = await axios.post(url, contents)
   } catch (error) {
     console.error(error)
-    return { status: error.response.status, data: error.response.data }
+    return { status: error.response !== undefined ? error.response.status : error.code, data: error.response !== undefined ? error.response.data : '' }
   }
 
   return { status: response.status, data: response.data }

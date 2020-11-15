@@ -77,7 +77,6 @@ function parseLog (msg, contents) {
 
   // Setup the embed
   const embed = new Discord.MessageEmbed()
-  let geyserException = false
 
   // Break the stack down into a better format
   // incase there are multiple errors
@@ -110,7 +109,6 @@ function parseLog (msg, contents) {
     // Check if we found a GeyserMC package in the stack trace
     for (const stackPackage of exception.packages) {
       if (stackPackage.name.startsWith('org.geysermc') && !stackPackage.name.includes('shaded')) {
-        geyserException = true
         currentGeyserException = true
         break
       }

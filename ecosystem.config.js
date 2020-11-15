@@ -1,7 +1,7 @@
 module.exports = {
-  apps : [{
+  apps: [{
     name: 'discord-bot',
     script: 'npm',
     args: 'start'
   }]
-};
+}
