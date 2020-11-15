@@ -111,7 +111,7 @@ exports.init = (client) => {
             }
 
             // Check we aren't on an old version of 1.8
-            if (response.bootstrapInfo.platformAPIVersion.startsWith('1.8-R0.1')) {
+            if (response.bootstrapInfo.platformAPIVersion && response.bootstrapInfo.platformAPIVersion.startsWith('1.8-R0.1')) {
               problems.push('- You run on an outdated and unsupported version of 1.8, you can download the latest Paper build (1.8.8) [here](https://papermc.io/api/v1/paper/1.8.8/443/download).')
             }
           }
