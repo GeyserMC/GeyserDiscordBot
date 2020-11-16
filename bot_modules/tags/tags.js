@@ -88,6 +88,14 @@ exports.handleTagCommand = async (msg, args) => {
   // Get the tag name
   let tagName = args[1].toLowerCase()
 
+  if (!tagName.match(/^[\w-]+$/)) {
+    embed.setTitle('Invalid tag')
+    embed.setDescription('Invalid characters in the requested tag')
+    embed.setColor(0xff0000)
+    msg.channel.send(embed)
+    return
+  }
+
   let showAliases = false
   if (tagName === 'aliases' || tagName === 'alias') {
     if (args.length <= 2) {
