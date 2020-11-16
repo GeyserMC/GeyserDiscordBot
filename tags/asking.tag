@@ -1,2 +1,2 @@
 type: text
-image: https://media.discordapp.net/attachments/613194762249437245/777821588921253888/unknown.png
+image: https://media.discordapp.net/attachments/744287608217272351/777824821345386506/unknown.png
