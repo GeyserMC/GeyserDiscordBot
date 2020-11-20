@@ -51,10 +51,16 @@ exports.init = (client) => {
 
           const embed = new Discord.MessageEmbed()
           embed.setTitle('Profanity removed')
-          embed.setDescription(`Sender: ${msg.author}\nRegex: \`${wordRegex}\`\nMessage: ${msg.content}`)
+          embed.setDescription(`**Sender:** ${msg.author}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
           embed.setColor(0xff0000)
           logChannel.send(embed)
         }).catch(err => {
+          const embed = new Discord.MessageEmbed()
+          embed.setTitle('Profanity failed to be removed')
+          embed.setDescription(`**Error:** ${err.message}\n**Sender:** ${msg.author}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
+          embed.setColor(0xff0000)
+          logChannel.send(embed)
+
           console.error('Failed to delete message: ' + err.message)
         })
         return
