@@ -16,16 +16,22 @@ function initialiseModule (name) {
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`)
-})
 
-initialiseModule('config_manager')
-initialiseModule('dump_analyse')
-initialiseModule('restart_command')
-initialiseModule('live_updates')
-initialiseModule('search_commands')
-initialiseModule('attachment_converter')
-initialiseModule('error_analyse')
-initialiseModule('help_command')
-initialiseModule('tags')
+  // Load the modules after the login
+
+  // Handle important or long running init first
+  initialiseModule('config_manager')
+  initialiseModule('live_updates')
+  initialiseModule('tags')
+  initialiseModule('swear_filter')
+
+  // Everything else after
+  initialiseModule('dump_analyse')
+  initialiseModule('restart_command')
+  initialiseModule('search_commands')
+  initialiseModule('attachment_converter')
+  initialiseModule('error_analyse')
+  initialiseModule('help_command')
+})
 
 client.login(process.env.BOT_TOKEN)
