@@ -5,6 +5,7 @@ const Utils = require('../../utils')
 const { configEditor: config } = require('../config_manager/index.js')
 
 const listFile = 'profanity_filter.wlist'
+const listAllowedFile = 'profanity_filter_allowed.wlist'
 
 exports.init = (client) => {
   // Check the list file exists
@@ -28,11 +29,19 @@ exports.init = (client) => {
     }
   })
 
+  // Load the allowed list and remove them from the banned list
+  if (fs.existsSync(listAllowedFile)) {
+    fs.readFileSync(listAllowedFile, { encoding: 'utf-8' }).split('\n').forEach(word => {
+      const newWord = word.toLowerCase().trim()
+      delete bannedWords[newWord]
+    })
+  }
+
   // Log the amount of words loaded
   const bannedWordsRegex = Object.values(bannedWords)
   console.log(`Loaded ${bannedWordsRegex.length} banned words`)
 
-  client.on('message', async (msg) => {
+  function checkMessage (msg) {
     // Loop the list looking for a regex match
     // This isn't super efficient but it is fast enough
     for (const wordRegex of bannedWordsRegex) {
@@ -49,5 +58,15 @@ exports.init = (client) => {
         return
       }
     }
+  }
+
+  // Check on new messages
+  client.on('message', async (msg) => {
+    checkMessage(msg)
+  })
+
+  // Check on message edits
+  client.on('messageUpdate', async (oldMsg, newMsg) => {
+    checkMessage(newMsg)
   })
 }
