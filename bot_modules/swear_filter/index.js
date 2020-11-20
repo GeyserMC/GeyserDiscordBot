@@ -55,7 +55,7 @@ exports.init = (client) => {
           embed.setColor(0xff0000)
           logChannel.send(embed)
         }).catch(err => {
-          console.log('Failed to delete message: ' + err.message)
+          console.error('Failed to delete message: ' + err.message)
         })
         return
       }
