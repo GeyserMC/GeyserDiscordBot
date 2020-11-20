@@ -54,6 +54,8 @@ exports.init = (client) => {
           embed.setDescription(`Sender: ${msg.author}\nRegex: \`${wordRegex}\`\nMessage: ${msg.content}`)
           embed.setColor(0xff0000)
           logChannel.send(embed)
+        }).catch(err => {
+          console.log('Failed to delete message: ' + err.message)
         })
         return
       }
