@@ -126,3 +126,6 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode
 
 config.json
+
+# Ignore the profanity list as its from the bedrock client files
+profanity_filter.wlist

@@ -1,12 +1,11 @@
 const Discord = require('discord.js')
 
-/**
- * Handle the help command
- *
- * @param {Discord.Message} msg The original message send by the user
- * @param {Array} args The list of arguments passed to the command
- */
 exports.init = (client) => {
+  /**
+   * Handle the help command
+   *
+   * @param {Discord.Message} msg The original message send by the user
+   */
   client.on('message', async (msg) => {
     if (msg.content.startsWith('!help')) {
       // TODO: Add a command registration system instead of hardcoding
