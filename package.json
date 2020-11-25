@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.0",
     "cheerio": "^1.0.0-rc.3",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.4",
-    "standard": "^14.3.4"
+    "standard": "^16.0.3"
   },
   "nodemonConfig": {
     "exec": "npm start",
