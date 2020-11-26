@@ -1,4 +1,3 @@
-const removeMd = require('remove-markdown')
 const axios = require('axios')
 
 /**
