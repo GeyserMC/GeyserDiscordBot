@@ -23,7 +23,6 @@
     "java-stack-parser": "^1.0.0",
     "mcping-js": "^1.5.0",
     "node-nlp": "^4.4.0",
-    "remove-markdown": "^0.3.0",
     "string-similarity": "^4.0.2"
   },
   "devDependencies": {
