@@ -53,11 +53,6 @@ exports.escapeRegExp = (string) => {
  *
  * @param {String} string String to sanitise
  */
-exports.cleanMarkdown = (string) => {
-  return removeMd(string, {
-    stripListLeaders: true,
-    listUnicodeChar: '',
-    gfm: true,
-    useImgAltText: true
-  })
+exports.cleanText = (string) => {
+  return string.replace(/[`#_\-~|*]/g, '')
 }

@@ -42,22 +42,24 @@ exports.init = (client) => {
   console.log(`Loaded ${bannedWordsRegex.length} banned words`)
 
   function checkMessage (msg) {
+    const cleanedContent = Utils.cleanText(msg.content)
+
     // Loop the list looking for a regex match
     // This isn't super efficient but it is fast enough
     for (const wordRegex of bannedWordsRegex) {
-      if (Utils.cleanMarkdown(msg.content).match(wordRegex)) {
+      if (cleanedContent.match(wordRegex)) {
         msg.delete().then(msg => {
           msg.reply('your message has been removed because it contains profanity! Please read our rules for more information.')
 
           const embed = new Discord.MessageEmbed()
           embed.setTitle('Profanity removed')
-          embed.setDescription(`**Sender:** ${msg.author}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
+          embed.setDescription(`**Sender:** ${msg.author}\n**Channel:** ${msg.channel}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
           embed.setColor(0xff0000)
           logChannel.send(embed)
         }).catch(err => {
           const embed = new Discord.MessageEmbed()
           embed.setTitle('Profanity failed to be removed')
-          embed.setDescription(`**Error:** ${err.message}\n**Sender:** ${msg.author}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
+          embed.setDescription(`**Error:** ${err.message}\n**Channel:** ${msg.channel}\n**Sender:** ${msg.author}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
           embed.setColor(0xff0000)
           logChannel.send(embed)
 
