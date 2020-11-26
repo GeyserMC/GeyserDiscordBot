@@ -53,5 +53,5 @@ exports.escapeRegExp = (string) => {
  * @param {String} string String to sanitise
  */
 exports.cleanText = (string) => {
-  return string.replace(/[`#_\-~|*]/g, '')
+  return string.replace(/[^\p{N}\p{L} ]/gu, '')
 }
