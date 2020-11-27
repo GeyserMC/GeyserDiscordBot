@@ -1,3 +1,4 @@
+const cleanTextUtils = require('clean-text-utils')
 const axios = require('axios')
 
 /**
@@ -48,10 +49,19 @@ exports.escapeRegExp = (string) => {
 }
 
 /**
- * Util function to clean the markdown from a message
+ * Util function to clean any symbols from a message
  *
  * @param {String} string String to sanitise
  */
 exports.cleanText = (string) => {
   return string.replace(/[^\p{N}\p{L} ]/gu, '')
+}
+
+/**
+ * Util function to normalise any unicode characters from a message
+ *
+ * @param {String} string String to sanitise
+ */
+exports.normaliseText = (string) => {
+  return cleanTextUtils.replace.exoticChars(string)
 }

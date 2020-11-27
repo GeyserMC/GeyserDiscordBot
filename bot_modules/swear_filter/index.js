@@ -7,6 +7,8 @@ const { configEditor: config } = require('../config_manager/index.js')
 const listFile = 'profanity_filter.wlist'
 const listAllowedFile = 'profanity_filter_allowed.wlist'
 
+let bannedWordsRegex = []
+
 exports.init = (client) => {
   // Check the list file exists
   if (!fs.existsSync(listFile)) {
@@ -38,45 +40,60 @@ exports.init = (client) => {
   }
 
   // Log the amount of words loaded
-  const bannedWordsRegex = Object.values(bannedWords)
+  bannedWordsRegex = Object.values(bannedWords)
   console.log(`Loaded ${bannedWordsRegex.length} banned words`)
 
-  function checkMessage (msg) {
-    const cleanedContent = Utils.cleanText(msg.content)
+  function handleMessage (msg) {
+    const wordRegex = exports.checkMessage(msg.content)
+    if (wordRegex != null) {
+      msg.delete().then(msg => {
+        msg.reply('your message has been removed because it contains profanity! Please read our rules for more information.')
 
-    // Loop the list looking for a regex match
-    // This isn't super efficient but it is fast enough
-    for (const wordRegex of bannedWordsRegex) {
-      if (cleanedContent.match(wordRegex)) {
-        msg.delete().then(msg => {
-          msg.reply('your message has been removed because it contains profanity! Please read our rules for more information.')
+        const embed = new Discord.MessageEmbed()
+        embed.setTitle('Profanity removed')
+        embed.setDescription(`**Sender:** ${msg.author}\n**Channel:** ${msg.channel}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
+        embed.setColor(0xff0000)
+        logChannel.send(embed)
+      }).catch(err => {
+        const embed = new Discord.MessageEmbed()
+        embed.setTitle('Profanity failed to be removed')
+        embed.setDescription(`**Error:** ${err.message}\n**Channel:** ${msg.channel}\n**Sender:** ${msg.author}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
+        embed.setColor(0xff0000)
+        logChannel.send(embed)
 
-          const embed = new Discord.MessageEmbed()
-          embed.setTitle('Profanity removed')
-          embed.setDescription(`**Sender:** ${msg.author}\n**Channel:** ${msg.channel}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
-          embed.setColor(0xff0000)
-          logChannel.send(embed)
-        }).catch(err => {
-          const embed = new Discord.MessageEmbed()
-          embed.setTitle('Profanity failed to be removed')
-          embed.setDescription(`**Error:** ${err.message}\n**Channel:** ${msg.channel}\n**Sender:** ${msg.author}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
-          embed.setColor(0xff0000)
-          logChannel.send(embed)
-
-          console.error('Failed to delete message: ' + err.message)
-        })
-        return
-      }
+        console.error('Failed to delete message: ' + err.message)
+      })
     }
   }
 
   // Check on new messages
   client.on('message', async (msg) => {
-    checkMessage(msg)
+    handleMessage(msg)
   })
 
   // Check on message edits
   client.on('messageUpdate', async (oldMsg, newMsg) => {
-    checkMessage(newMsg)
+    handleMessage(newMsg)
   })
+}
+
+/**
+ * Check if a message is safe to display
+ * 
+ * @param {Discord.Message} content Content to check
+ */
+exports.checkMessage = (content) => {
+  // We get both to catch more
+  const cleanedContent = Utils.cleanText(content)
+  const normalisedContent = Utils.normaliseText(cleanedContent)
+
+  // Loop the list looking for a regex match
+  // This isn't super efficient but it is fast enough
+  for (const wordRegex of bannedWordsRegex) {
+    if (cleanedContent.match(wordRegex) || normalisedContent.match(wordRegex)) {
+      return wordRegex
+    }
+  }
+
+  return null
 }
