@@ -79,7 +79,7 @@ exports.init = (client) => {
 
 /**
  * Check if a message is safe to display
- * 
+ *
  * @param {Discord.Message} content Content to check
  */
 exports.checkMessage = (content) => {
