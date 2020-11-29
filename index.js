@@ -21,9 +21,9 @@ client.on('ready', () => {
 
   // Handle important or long running init first
   initialiseModule('config_manager')
+  initialiseModule('swear_filter')
   initialiseModule('live_updates')
   initialiseModule('tags')
-  initialiseModule('swear_filter')
 
   // Everything else after
   initialiseModule('dump_analyse')
