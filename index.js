@@ -32,6 +32,7 @@ client.on('ready', () => {
   initialiseModule('attachment_converter')
   initialiseModule('error_analyse')
   initialiseModule('help_command')
+  initialiseModule('say_command')
 })
 
 client.login(process.env.BOT_TOKEN)

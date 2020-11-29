@@ -4,7 +4,7 @@ exports.init = (client) => {
   /**
    * Handle the help command
    *
-   * @param {Discord.Message} msg The original message send by the user
+   * @param {Discord.Message} msg The original message sent by the user
    */
   client.on('message', async (msg) => {
     if (msg.content.startsWith('!help')) {
