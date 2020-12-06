@@ -1,5 +1,5 @@
 type: text
-aliases: developerguide
+aliases: learnjava
 
 ---
 

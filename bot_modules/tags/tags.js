@@ -19,8 +19,9 @@ exports.initTags = () => {
   tagList.sort()
 
   // Check we dont have any aliases and tags with the same name
-  if (Object.keys(tags).some(item => Object.keys(aliases).includes(item))) {
-    throw new Error('1 or more tags also registered as an alias!')
+  let lastTagChecked
+  if (Object.keys(tags).some(item => { lastTagChecked = item; return Object.keys(aliases).includes(item) })) {
+    throw new Error('1 or more tags also registered as an alias! ' + lastTagChecked)
   }
 
   console.log(`Loaded ${tagList.length} tags`)
