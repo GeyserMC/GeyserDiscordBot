@@ -1,4 +1,5 @@
 type: text-raw
+aliases: tias, tryit
 
 ---
 

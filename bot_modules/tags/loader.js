@@ -9,6 +9,7 @@ const tagFolder = './tags'
  */
 exports.load = () => {
   const tags = {}
+  const aliases = {}
 
   // Read tags from files
   fs.readdirSync(tagFolder).forEach(file => {
@@ -20,15 +21,15 @@ exports.load = () => {
         const subFilePath = path.join(filePath, subFile)
 
         if (fs.lstatSync(subFilePath).isFile()) {
-          checkForTag(subFilePath, subFile, tags)
+          checkForTag(subFilePath, subFile, tags, aliases)
         }
       })
     } else {
-      checkForTag(filePath, file, tags)
+      checkForTag(filePath, file, tags, aliases)
     }
   })
 
-  return tags
+  return { tags: tags, aliases: aliases }
 }
 
 /**
@@ -38,7 +39,7 @@ exports.load = () => {
  * @param {String} file Name of the tag file
  * @param {Object} tags List of all tags
  */
-function checkForTag (filePath, file, tags) {
+function checkForTag (filePath, file, tags, aliases) {
   if (!file.endsWith('.tag')) {
     return
   }
@@ -46,6 +47,14 @@ function checkForTag (filePath, file, tags) {
   const { tagName, tag } = buildTagFromFile(filePath, file)
 
   tags[tagName] = tag
+
+  tag.aliases.forEach(alias => {
+    if (alias in aliases) {
+      console.error(`Duplicate alias registed for '${alias}' on both '${tagName}' and '${aliases[alias]}'`)
+    } else {
+      aliases[alias] = tagName
+    }
+  })
 }
 
 /**
@@ -62,7 +71,7 @@ function buildTagFromFile (filePath, fileName) {
   const tagName = fileName.substr(0, fileName.length - 4).toLowerCase()
   const tag = {
     type: 'text',
-    target: '',
+    aliases: [],
     image: '',
     content: ''
   }
@@ -90,11 +99,17 @@ function buildTagFromFile (filePath, fileName) {
           break
 
         case 'target':
-          tag.target = lineParts[1].trim().toLowerCase()
           break
 
         case 'image':
           tag.image = lineParts.slice(1).join(':').trim()
+          break
+
+        case 'aliases':
+          lineParts[1].split(',').forEach(alias => {
+            tag.aliases.push(alias.trim())
+          })
+          tag.aliases.sort()
           break
 
         default:

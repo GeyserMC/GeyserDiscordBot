@@ -2,6 +2,7 @@ const Discord = require('discord.js')
 const loader = require('./loader')
 
 let tags = {}
+let aliases = {}
 let tagList = []
 
 /**
@@ -9,28 +10,18 @@ let tagList = []
  */
 exports.initTags = () => {
   // Load tags from file
-  tags = loader.load()
+  const data = loader.load()
+  tags = data.tags
+  aliases = data.aliases
 
   // Cache the list of tag names
   tagList = Object.keys(tags)
+  tagList.sort()
 
-  // Check all aliases are valid
-  tagList.forEach(tagName => {
-    const tag = tags[tagName]
-    if (tag.type === 'alias') {
-      let reason = ''
-      if (!tagList.includes(tag.target)) {
-        reason = 'missing, ' + tag.target
-      } else if (tags[tag.target].type === 'alias') {
-        reason = 'alias'
-      }
-
-      // Log the error if we have one
-      if (reason !== '') {
-        throw new Error(`The alias tag '${tagName}' has an invalid target (${reason})`)
-      }
-    }
-  })
+  // Check we dont have any aliases and tags with the same name
+  if (Object.keys(tags).some(item => Object.keys(aliases).includes(item))) {
+    throw new Error('1 or more tags also registered as an alias!')
+  }
 
   console.log(`Loaded ${tagList.length} tags`)
 }
@@ -54,7 +45,7 @@ exports.handleTagsCommand = async (msg, args) => {
 
   const tagNameList = []
   tagList.forEach(tagName => {
-    if (tags[tagName].type !== 'alias' && tagName.includes(search)) {
+    if (tagName.includes(search)) {
       tagNameList.push(tagName)
     }
   })
@@ -88,6 +79,7 @@ exports.handleTagCommand = async (msg, args) => {
   // Get the tag name
   let tagName = args[1].toLowerCase()
 
+  // Check for invalid characters
   if (!tagName.match(/^[\w-]+$/)) {
     embed.setTitle('Invalid tag')
     embed.setDescription('Invalid characters in the requested tag')
@@ -110,6 +102,10 @@ exports.handleTagCommand = async (msg, args) => {
     showAliases = true
   }
 
+  if (tagName in aliases) {
+    tagName = aliases[tagName]
+  }
+
   // Check if the tag exists
   if (!tagList.includes(tagName)) {
     embed.setTitle('Missing tag')
@@ -120,28 +116,11 @@ exports.handleTagCommand = async (msg, args) => {
   }
 
   // Get the tag and contents
-  let tag = tags[tagName]
+  const tag = tags[tagName]
 
   if (showAliases) {
-    // Check we are not checking an alias tag
-    if (tag.type === 'alias') {
-      embed.setTitle('Invalid usage')
-      embed.setDescription('You cannot check the aliases of an alias.')
-      embed.setColor(0xff0000)
-      msg.channel.send(embed)
-      return
-    }
-
-    const aliases = []
-    tagList.forEach(tmpTagName => {
-      const tmpTag = tags[tmpTagName]
-      if (tmpTag.type === 'alias' && tmpTag.target === tagName) {
-        aliases.push(tmpTagName)
-      }
-    })
-
     // Check if the alias list is empty
-    if (aliases.length === 0) {
+    if (tag.aliases.length === 0) {
       embed.setTitle(`No aliases for ${tagName}`)
       embed.setDescription(`No aliases where found for the tag with the name \`${tagName}\`.`)
       embed.setColor(0xff0000)
@@ -151,17 +130,11 @@ exports.handleTagCommand = async (msg, args) => {
 
     // Build the embed for the list of aliases
     embed.setColor(0x00ff00)
-    embed.setTitle(`Aliases for ${tagName} (${aliases.length})`)
-    embed.setDescription(`\`${aliases.join(', ')}\``)
+    embed.setTitle(`Aliases for ${tagName} (${tag.aliases.length})`)
+    embed.setDescription(`\`${tag.aliases.join('`, `')}\``)
     embed.setFooter('Use "!tag name" to show a tag')
   } else {
     embed.setColor(0x00ff00)
-
-    // Get the target tag if its an alias
-    if (tag.type === 'alias') {
-      tag = tags[tag.target]
-    }
-
     embed.setDescription(tag.content)
 
     // Set the image if we have one
@@ -170,10 +143,10 @@ exports.handleTagCommand = async (msg, args) => {
     }
   }
 
+  // Send the tag content
   if (tag.type === 'text-raw') {
     msg.channel.send(tag.content)
   } else {
-    // Send the tag content
     msg.channel.send(embed)
   }
 }
