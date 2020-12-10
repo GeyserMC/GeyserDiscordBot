@@ -112,7 +112,7 @@ async function getProviders () {
     // Check for a provider line
     if (line.startsWith('* ')) {
       // Get the provider name and url
-      const provider = line.match(/\[([A-Za-z \\.-]+)\]\(([a-z\\.\\/:-]+)\)/)
+      const provider = line.match(/\[([\w \\.-]+)\]\(([\w\\.\\/:-]+)\)/)
 
       // Get the inline instructions
       const instructions = line.match(/ \((.+)\)/)
