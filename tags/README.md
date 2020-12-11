@@ -4,7 +4,7 @@ This directory contains the tags that the bot will use. `.tag` files contain the
 ## Format
 All tags follow this format:
 ```markdown
-type text
+type: text
 
 ---
 
