@@ -1,4 +1,5 @@
 type: text
+aliases: betojeskin, skinrestorer
 
 ---
 
