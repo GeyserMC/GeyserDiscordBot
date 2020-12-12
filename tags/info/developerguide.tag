@@ -1,10 +1,9 @@
 type: text
-aliases: learnjava
+aliases: learnjava, contribute, contributing
 
 ---
 
-You want to contribute to Geyser? This page has some useful things to start contributing to Geyser and links to some of the tools we use.
-https://github.com/GeyserMC/Geyser/wiki/Developer-Guide
+You want to contribute to Geyser? [Here](https://github.com/GeyserMC/Geyser/wiki/Developer-Guide) You can find some useful things to start contributing to Geyser and links to some of the tools we use.
 
 And here are some useful Java guides:
  - https://docs.oracle.com/javase/tutorial/
