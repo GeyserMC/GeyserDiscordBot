@@ -1,5 +1,5 @@
 type: text
-aliases: commonissues
+aliases: commonissues, outdatedclient
 
 ---
 
