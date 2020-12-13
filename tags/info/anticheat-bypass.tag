@@ -1,5 +1,4 @@
 type: text
-aliases: anticheat-bypass
 
 ---
 
