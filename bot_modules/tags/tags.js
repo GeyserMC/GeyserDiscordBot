@@ -50,12 +50,16 @@ exports.handleTagsCommand = async (msg, args) => {
       tagNameList.push(tagName)
     }
   })
-
-  embed.setColor(0x00ff00)
-  embed.setTitle(`Tags (${tagNameList.length})`)
-  embed.setDescription(`\`${tagNameList.join('`, `')}\``)
-  embed.setFooter('Use "!tag name" to show a tag')
-
+  embed.setColor(0xff0000)
+    if (tagNameList.length == 0) {
+      embed.setTitle('No tags found.')
+      embed.setDescription('No tags were found for your search.')
+      embed.setFooter('Use "!tag aliases" to see all the aliases for a certain tag')
+    } else {
+      embed.setTitle(`Tags (${tagNameList.length})`)
+      embed.setDescription(`\`${tagNameList.join('`, `')}\``)
+      embed.setFooter('Use "!tag name" to show a tag')
+    }
   msg.channel.send(embed)
 }
 
