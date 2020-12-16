@@ -1,5 +1,5 @@
 type: text
-aliases: msft
+aliases: msft, microsoftauth, microsoftauthentication, microsoft
 
 ---
 

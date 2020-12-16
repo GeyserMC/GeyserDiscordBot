@@ -1,5 +1,5 @@
 type: text
-aliases: stats
+aliases: stats, statistics
 
 ---
 
