@@ -1,8 +1,8 @@
 const path = require('path')
 const fs = require('fs')
 
-const configEditingUsers = JSON.parse(process.env.CONFIG_EDITING_USERS)
-const configEditingGroups = JSON.parse(process.env.CONFIG_EDITING_GROUPS)
+const configEditingUsers = JSON.parse(process.env.CONFIG_EDITING_USERS || '[]')
+const configEditingGroups = JSON.parse(process.env.CONFIG_EDITING_GROUPS || '[]')
 const configFileLocation = './config.json'
 
 // Create the config based on the example if it doesnt exist
