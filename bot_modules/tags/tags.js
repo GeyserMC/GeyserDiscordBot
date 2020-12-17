@@ -53,7 +53,7 @@ exports.handleTagsCommand = async (msg, args) => {
 
   if (tagNameList.length === 0) {
     embed.setColor(0xff0000)
-    embed.setTitle('No tags found.')
+    embed.setTitle('No tags found')
     embed.setDescription('No tags were found for your search.')
     embed.setFooter('Use "!tag aliases name" to see all the aliases for a certain tag')
   } else {
