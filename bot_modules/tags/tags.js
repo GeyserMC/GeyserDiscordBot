@@ -50,7 +50,7 @@ exports.handleTagsCommand = async (msg, args) => {
       tagNameList.push(tagName)
     }
   })
-  
+
   if (tagNameList.length === 0) {
     embed.setColor(0xff0000)
     embed.setTitle('No tags found.')
@@ -62,7 +62,7 @@ exports.handleTagsCommand = async (msg, args) => {
     embed.setDescription(`\`${tagNameList.join('`, `')}\``)
     embed.setFooter('Use "!tag name" to show a tag')
   }
-  
+
   msg.channel.send(embed)
 }
 
