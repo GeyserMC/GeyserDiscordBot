@@ -1,4 +1,5 @@
 type: text
+aliases: anticheat-bypass, bedrock-player-management, bedrockplayermanager
 
 ---
 
