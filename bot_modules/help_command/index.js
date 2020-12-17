@@ -1,25 +1,29 @@
 const Discord = require('discord.js')
 
-exports.init = (client) => {
-  /**
-   * Handle the help command
-   *
-   * @param {Discord.Message} msg The original message send by the user
-   */
-  client.on('message', async (msg) => {
-    if (msg.content.startsWith('!help')) {
-      // TODO: Add a command registration system instead of hardcoding
+const commandManager = require('../command_manager/index.js')
+
+exports.commands = [
+  {
+    name: 'help',
+    description: 'I think you already know what this does',
+    run: async (msg, args) => {
       const helpEmbed = new Discord.MessageEmbed()
         .setColor('#00FF00')
         .setTitle('Geyser Bot Help')
 
-      helpEmbed.addField('`!help`', 'I think you already know what this does', true)
-      helpEmbed.addField('`!wiki <search>`', 'Search the Geyser wiki', true)
-      helpEmbed.addField('`!provider <provider>`', 'Search the Supported Providers page on the Geyser wiki to see if a provider is supported', true)
-      helpEmbed.addField('`!tags`', 'List all the known (non-alias) tags', true)
-      helpEmbed.addField('`!tag <name>`', 'Display a tag for the given name', true)
+      Object.values(commandManager.getCommands()).forEach(command => {
+        if (!('description' in command) || command.description.trim() === '') {
+          return
+        }
+
+        let commandName = commandManager.prefix + command.name
+        if ('args' in command) {
+          commandName += ' ' + command.args
+        }
+        helpEmbed.addField(`\`${commandName}\``, command.description, true)
+      })
 
       msg.channel.send(helpEmbed)
     }
-  })
-}
+  }
+]

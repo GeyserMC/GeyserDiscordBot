@@ -1,24 +1,21 @@
 const { handleWikiCommand } = require('./wiki')
 const { handleProviderCommand } = require('./providers')
 
-exports.init = async (client) => {
-  client.on('message', async (msg) => {
-    // Check the message is clean, not super efficient but
-    // the best we can do without rewriting a tonne of code
-    if (require('../swear_filter/index.js').checkMessage(msg.content) != null) {
-      return
+exports.commands = [
+  {
+    name: 'wiki',
+    args: '<search>',
+    description: 'Search the Geyser wiki',
+    run: async (msg, args) => {
+      await handleWikiCommand(msg, ['wiki', ...args])
     }
-
-    const args = msg.content.split(' ')
-
-    // Run the relevent function for the command
-    switch (args[0]) {
-      case '!wiki':
-        await handleWikiCommand(msg, args)
-        break
-      case '!provider':
-        await handleProviderCommand(msg, args)
-        break
+  },
+  {
+    name: 'provider',
+    args: '<provider>',
+    description: 'Search the Supported Providers page on the Geyser wiki to see if a provider is supported',
+    run: async (msg, args) => {
+      await handleProviderCommand(msg, ['provider', ...args])
     }
-  })
-}
+  }
+]

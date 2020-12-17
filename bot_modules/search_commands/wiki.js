@@ -23,8 +23,18 @@ exports.handleWikiCommand = async (msg, args) => {
   // Remove the first argument (the command)
   args.splice(0, 1)
 
-  // Join the other arguments together and collect the search results
-  const query = args.join(' ')
+  // Join the other arguments together
+  const query = Utils.cleanText(args.join(' ').trim()).trim()
+
+  if (query.length === 0) {
+    embed.setTitle('Invalid search')
+    embed.setDescription('You provided an invalid search term.')
+    embed.setColor(0xff0000)
+    msg.channel.send(embed)
+    return
+  }
+
+  // Collect the search results
   let results = await doSearch(query)
 
   // Set the title and color for the embed

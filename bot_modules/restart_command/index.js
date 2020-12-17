@@ -3,18 +3,24 @@ const childProcess = require('child_process')
 const configEditingUsers = JSON.parse(process.env.CONFIG_EDITING_USERS)
 const configEditingGroups = JSON.parse(process.env.CONFIG_EDITING_GROUPS)
 
-exports.init = (client) => {
-  client.on('message', async (msg) => {
-    if (!configEditingUsers.includes(msg.author.id) && !(msg.member !== null && msg.member.roles.cache.some(r => configEditingGroups.includes(r.id)))) {
-      return
-    }
-
-    if (msg.content.startsWith('!restart')) {
+exports.commands = [
+  {
+    name: 'restart',
+    description: '',
+    run: async (msg, args) => {
       await msg.channel.send('Restarting...')
 
-      // Exit after we attempted to update the message
+      // Exit after we attempted to send the message
       process.exit(0)
-    } else if (msg.content.startsWith('!pull-restart')) {
+    },
+    canRun: (msg) => {
+      return (configEditingUsers.includes(msg.author.id) || (msg.member !== null && msg.member.roles.cache.some(r => configEditingGroups.includes(r.id))))
+    }
+  },
+  {
+    name: 'pull-restart',
+    description: '',
+    run: async (msg, args) => {
       const gitChild = childProcess.spawn('git', ['pull'])
       let logText = 'Updating...'
       let logMessage = await msg.channel.send('```\n' + logText + '\n```')
@@ -48,6 +54,9 @@ exports.init = (client) => {
           process.exit(0)
         })
       })
+    },
+    canRun: (msg) => {
+      return (configEditingUsers.includes(msg.author.id) || (msg.member !== null && msg.member.roles.cache.some(r => configEditingGroups.includes(r.id))))
     }
-  })
-}
+  }
+]

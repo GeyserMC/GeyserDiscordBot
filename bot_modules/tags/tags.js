@@ -1,6 +1,8 @@
 const Discord = require('discord.js')
 const loader = require('./loader')
 
+const commandManager = require('../command_manager/index.js')
+
 let tags = {}
 let aliases = {}
 let tagList = []
@@ -55,12 +57,12 @@ exports.handleTagsCommand = async (msg, args) => {
     embed.setColor(0xff0000)
     embed.setTitle('No tags found')
     embed.setDescription('No tags were found for your search.')
-    embed.setFooter('Use "!tag aliases name" to see all the aliases for a certain tag')
+    embed.setFooter(`Use "${commandManager.prefix}tag aliases name" to see all the aliases for a certain tag`)
   } else {
     embed.setColor(0x00ff00)
     embed.setTitle(`Tags (${tagNameList.length})`)
     embed.setDescription(`\`${tagNameList.join('`, `')}\``)
-    embed.setFooter('Use "!tag name" to show a tag')
+    embed.setFooter(`Use "${commandManager.prefix}tag name" to show a tag`)
   }
 
   msg.channel.send(embed)
@@ -78,7 +80,7 @@ exports.handleTagCommand = async (msg, args) => {
   // Check we were sent a tag
   if (args.length <= 1) {
     embed.setTitle('Invalid usage')
-    embed.setDescription('Missing tag name. `!tag <name>`')
+    embed.setDescription(`Missing tag name. \`${commandManager.prefix}tag <name>\``)
     embed.setColor(0xff0000)
     msg.channel.send(embed)
     return
@@ -100,7 +102,7 @@ exports.handleTagCommand = async (msg, args) => {
   if (tagName === 'aliases' || tagName === 'alias') {
     if (args.length <= 2) {
       embed.setTitle('Invalid usage')
-      embed.setDescription(`Missing tag name. \`!tag ${tagName} <name>\``)
+      embed.setDescription(`Missing tag name. \`${commandManager.prefix}tag ${tagName} <name>\``)
       embed.setColor(0xff0000)
       msg.channel.send(embed)
       return
@@ -117,7 +119,7 @@ exports.handleTagCommand = async (msg, args) => {
   // Check if the tag exists
   if (!tagList.includes(tagName)) {
     embed.setTitle('Missing tag')
-    embed.setDescription(`No tag with the name \`${tagName}\`, do \`!tags\` for the full list.`)
+    embed.setDescription(`No tag with the name \`${tagName}\`, do \`${commandManager.prefix}tags\` for the full list.`)
     embed.setColor(0xff0000)
     msg.channel.send(embed)
     return
@@ -140,7 +142,7 @@ exports.handleTagCommand = async (msg, args) => {
     embed.setColor(0x00ff00)
     embed.setTitle(`Aliases for ${tagName} (${tag.aliases.length})`)
     embed.setDescription(`\`${tag.aliases.join('`, `')}\``)
-    embed.setFooter('Use "!tag name" to show a tag')
+    embed.setFooter(`Use "${commandManager.prefix}tag name" to show a tag`)
   } else {
     embed.setColor(0x00ff00)
     embed.setDescription(tag.content)

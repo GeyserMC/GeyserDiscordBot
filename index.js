@@ -10,8 +10,24 @@ if (!fs.existsSync('.env')) {
 // Load in the .env file
 require('dotenv').config()
 
+const modules = {}
+
 function initialiseModule (name) {
-  return require('./bot_modules/' + name + '/index.js').init(client)
+  const module = require('./bot_modules/' + name + '/index.js')
+
+  // Check if there is an init and run it
+  if ('init' in module && module.init instanceof Function) {
+    module.init(client)
+  }
+
+  // Register any commands
+  if ('commands' in module && 'command_manager' in modules) {
+    for (const command of module.commands) {
+      modules.command_manager.registerCommand(command)
+    }
+  }
+
+  modules[name] = module
 }
 
 client.on('ready', () => {
@@ -20,6 +36,7 @@ client.on('ready', () => {
   // Load the modules after the login
 
   // Handle important or long running init first
+  initialiseModule('command_manager')
   initialiseModule('config_manager')
   initialiseModule('swear_filter')
   initialiseModule('live_updates')

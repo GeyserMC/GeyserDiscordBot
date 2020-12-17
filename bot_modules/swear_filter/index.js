@@ -20,7 +20,7 @@ exports.init = (client) => {
   let logChannel
   client.channels.fetch(config.get().logChannel).then(channel => {
     logChannel = channel
-  })
+  }).catch(console.error)
 
   // Load the word list and build regex expressions from it
   const bannedWords = {}
@@ -49,17 +49,21 @@ exports.init = (client) => {
       msg.delete().then(msg => {
         msg.reply('your message has been removed because it contains profanity! Please read our rules for more information.')
 
-        const embed = new Discord.MessageEmbed()
-        embed.setTitle('Profanity removed')
-        embed.setDescription(`**Sender:** ${msg.author}\n**Channel:** ${msg.channel}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
-        embed.setColor(0xff0000)
-        logChannel.send(embed)
+        if (logChannel != null) {
+          const embed = new Discord.MessageEmbed()
+          embed.setTitle('Profanity removed')
+          embed.setDescription(`**Sender:** ${msg.author}\n**Channel:** ${msg.channel}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
+          embed.setColor(0xff0000)
+          logChannel.send(embed)
+        }
       }).catch(err => {
-        const embed = new Discord.MessageEmbed()
-        embed.setTitle('Profanity failed to be removed')
-        embed.setDescription(`**Error:** ${err.message}\n**Channel:** ${msg.channel}\n**Sender:** ${msg.author}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
-        embed.setColor(0xff0000)
-        logChannel.send(embed)
+        if (logChannel != null) {
+          const embed = new Discord.MessageEmbed()
+          embed.setTitle('Profanity failed to be removed')
+          embed.setDescription(`**Error:** ${err.message}\n**Channel:** ${msg.channel}\n**Sender:** ${msg.author}\n**Regex:** \`${wordRegex}\`\n**Message:** ${msg.content}`)
+          embed.setColor(0xff0000)
+          logChannel.send(embed)
+        }
 
         console.error('Failed to delete message: ' + err.message)
       })
