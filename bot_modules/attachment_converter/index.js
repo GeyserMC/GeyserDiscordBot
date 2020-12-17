@@ -17,7 +17,7 @@ exports.init = (client) => {
           const contents = await getAttachmentContents(attachment.url)
 
           const hastebinPost = await postToHastebin(contents)
-          const hastebinUrl = 'https://hasteb.in/' + hastebinPost.key
+          const hastebinUrl = 'https://hastebin.com/' + hastebinPost.key
 
           embed.setColor(0x00ff00)
           embed.setTitle(hastebinUrl)
@@ -48,7 +48,7 @@ async function postToHastebin (contents) {
   // Fetch the raw response data
   let response
   try {
-    response = await axios.post('https://hasteb.in/documents', contents)
+    response = await axios.post('https://hastebin.com/documents', contents)
   } catch (error) {
     console.error(error)
     return
