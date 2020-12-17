@@ -27,6 +27,14 @@ function initialiseModule (name) {
     }
   }
 
+  // Register any aliases
+  if ('aliases' in module && 'command_manager' in modules) {
+    for (const alias in module.aliases) {
+      const target = module.aliases[alias]
+      modules.command_manager.registerAlias(alias, target)
+    }
+  }
+
   modules[name] = module
 }
 

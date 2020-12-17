@@ -1,6 +1,7 @@
 const swearFilter = require('../swear_filter/index.js')
 
 const commands = {}
+const aliases = {}
 
 exports.prefix = '!'
 
@@ -11,8 +12,17 @@ exports.prefix = '!'
  * @param {String[]} args Arguments to pass
  */
 exports.handleCommand = (msg, command, args) => {
+  let commandObj
+
   if (command in commands) {
-    const commandObj = commands[command]
+    commandObj = commands[command]
+  }
+
+  if (command in aliases) {
+    commandObj = commands[aliases[command]]
+  }
+
+  if (commandObj) {
     if ('canRun' in commandObj && commandObj.canRun instanceof Function && !commandObj.canRun(msg)) {
       return
     }
@@ -47,6 +57,20 @@ exports.init = (client) => {
  */
 exports.registerCommand = (command) => {
   commands[command.name] = command
+}
+
+/**
+ * Register an alias for a command for future use
+ *
+ * @param {String} alias Alias to register
+ * @param {String} target The target command to assign the alias to
+ */
+exports.registerAlias = (alias, target) => {
+  if (target in commands) {
+    aliases[alias] = target
+  } else {
+    console.error(`Cannot register alias '${alias}' for unknown command '${target}'`)
+  }
 }
 
 /**
