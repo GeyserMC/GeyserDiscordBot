@@ -1,5 +1,5 @@
 type: text
-aliases: updatejava
+aliases: updatejava, openjdk
 
 ---
 
