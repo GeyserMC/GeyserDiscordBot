@@ -129,3 +129,5 @@ config.json
 
 # Ignore the profanity list as its from the bedrock client files
 profanity_filter.wlist
+
+.idea/
