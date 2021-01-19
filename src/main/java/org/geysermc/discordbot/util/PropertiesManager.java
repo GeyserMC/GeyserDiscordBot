@@ -1,3 +1,28 @@
+/*
+ * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @author GeyserMC
+ * @link https://github.com/GeyserMC/GeyserDiscordBot
+ */
+
 package org.geysermc.discordbot.util;
 
 import java.util.Properties;
@@ -11,59 +36,10 @@ public class PropertiesManager {
     }
 
     /**
-     * @return bot token from discord
+     * @return Bot token from discord
      */
     public static String getToken() {
         return System.getenv("BOT_TOKEN");
-    }
-
-    /**
-     * @return who can edit the config
-     */
-    public static String getConfigEditingUsers() {
-        return System.getenv("CONFIG_EDITING_USERS");
-    }
-
-    /**
-     * @return what groups can edit config
-     */
-    public static String getConfigEditingGroups() {
-        return System.getenv("CONFIG_EDITING_GROUPS");
-    }
-
-    /**
-     * @return Top.gg token for DBL/Top.gg bot info command
-     */
-    public static String getTopggToken() {
-        return properties.getProperty("dbl");
-    }
-
-    /**
-     * @return Owner ID of the bot, all perms
-     */
-    public static String getOwnerId() {
-        return properties.getProperty("owner_id");
-    }
-
-    /**
-     * @return Wordnik token for define command
-     */
-    public static String getWordnikToken() {
-        return properties.getProperty("wordnik");
-    }
-
-    /**
-     * @return Google key for YouTube command
-     */
-    public static String getGoogleKey() {
-        return properties.getProperty("google");
-    }
-
-    /**
-     * @return Last.fm token for LastFM command
-     */
-    public static String getLastfmToken() {
-        return properties.getProperty("lastfm");
     }
 
     /**
@@ -71,54 +47,5 @@ public class PropertiesManager {
      */
     public static String getPrefix() {
         return properties.getProperty("prefix");
-    }
-
-    /**
-     * @return Github token for github commands
-     */
-    public static String getGithubToken() {
-        return properties.getProperty("github");
-    }
-
-    /**
-     * @return Sentry DSN for error tracking
-     */
-    public static String getSentryDsn() {
-        return properties.getProperty("sentry-dsn");
-    }
-
-    /**
-     * @return Sentry Environment for error tracking
-     */
-    public static String getSentryEnv() {
-        return properties.getProperty("sentry-env");
-    }
-
-    /**
-     * @return Chew's API key for Chew's bot profiles/server settings.
-     */
-    public static String getChewKey() {
-        return properties.getProperty("chewkey");
-    }
-
-    /**
-     * @return a DiscordExtremeList api token
-     */
-    public static String getDELToken() {
-        return properties.getProperty("del");
-    }
-
-    /**
-     * @return the key for paste.gg
-     */
-    public static String getPasteGgKey() {
-        return properties.getProperty("pastegg");
-    }
-
-    /**
-     * @return the Memerator API key
-     */
-    public static String getMemeratorKey() {
-        return properties.getProperty("memerator");
     }
 }

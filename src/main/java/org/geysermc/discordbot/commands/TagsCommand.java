@@ -28,37 +28,47 @@ package org.geysermc.discordbot.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.PropertiesManager;
 
-import java.awt.Color;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Handle the help command
- */
-public class HelpCommand extends Command {
-
-    public HelpCommand() {
-        this.name = "help";
-        this.help = "I think you already know what this does";
+public class TagsCommand extends Command {
+    public TagsCommand() {
+        this.name = "tags";
+        this.arguments = "[search]";
+        this.help = "List all the known (non-alias) tags";
         this.guildOnly = false;
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        EmbedBuilder helpEmbed = new EmbedBuilder()
-            .setColor(Color.green)
-            .setTitle("Geyser Bot Help");
+        EmbedBuilder embed = new EmbedBuilder();
 
-        for (Command command : GeyserBot.COMMANDS) {
-            if (!command.isHidden()) {
-                helpEmbed.addField("`" + PropertiesManager.getPrefix() + command.getName() + (command.getArguments() != null ? " " + command.getArguments() : "") + "`", command.getHelp(), true);
+        String search = event.getArgs();
+
+        // Get tag names based on search
+        List<String> tagNames = new ArrayList<>();
+        for (Command tag : TagsManager.getTags()) {
+            if (tag.getName().contains(search)) {
+                tagNames.add(tag.getName());
             }
         }
 
-        helpEmbed.addField("`!tags`", "List all the known (non-alias) tags", true);
-        helpEmbed.addField("`!tag <name>`", "Display a tag for the given name", true);
+        if (tagNames.isEmpty()) {
+            embed.setColor(Color.red);
+            embed.setTitle("No tags found");
+            embed.setDescription("No tags were found for your search.");
+            embed.setFooter("Use `" + PropertiesManager.getPrefix() + "tag aliases <name>` to see all the aliases for a certain tag");
+        } else {
+            embed.setColor(Color.green);
+            embed.setTitle("Tags (" + tagNames.size() + ")");
+            embed.setDescription("`" + String.join("`, `", tagNames) + "`");
+            embed.setFooter("Use `" + PropertiesManager.getPrefix() + "tag <name>` to show a tag");
+        }
 
-        event.reply(helpEmbed.build());
+        event.reply(embed.build());
     }
 }

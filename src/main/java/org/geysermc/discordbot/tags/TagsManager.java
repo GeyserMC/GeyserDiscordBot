@@ -23,7 +23,31 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.listeners;
+package org.geysermc.discordbot.tags;
 
-public class SwearHandler {
+import com.jagrosh.jdautilities.command.Command;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class TagsManager {
+
+    private static final List<Command> TAGS = new ArrayList<>();
+    private static boolean tagsLoaded = false;
+
+    public static List<Command> getTags() {
+        if (!tagsLoaded) {
+            loadTags();
+        }
+
+        return TAGS;
+    }
+
+    private static void loadTags() {
+        TAGS.add(new TagAliasCommand());
+        TAGS.add(new RawTag("test", "This is a test tag"));
+        TAGS.add(new EmbedTag("test2", "This is a test tag2", ""));
+
+        tagsLoaded = true;
+    }
 }

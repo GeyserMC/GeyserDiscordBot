@@ -23,7 +23,23 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.listeners;
+package org.geysermc.discordbot.commands.restart;
 
-public class SwearHandler {
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.api.Permission;
+
+public class RestartCommand extends Command {
+
+    public RestartCommand() {
+        this.name = "restart";
+        this.hidden = true;
+        this.userMissingPermMessage = "";
+        this.userPermissions = new Permission[] { Permission.MANAGE_ROLES };
+    }
+
+    @Override
+    protected void execute(CommandEvent event) {
+        System.exit(0);
+    }
 }

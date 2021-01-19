@@ -1,8 +1,34 @@
+/*
+ * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @author GeyserMC
+ * @link https://github.com/GeyserMC/GeyserDiscordBot
+ */
+
 package org.geysermc.discordbot.commands.search;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import org.geysermc.discordbot.util.PropertiesManager;
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.DomSerializer;
 import org.htmlcleaner.HtmlCleaner;
@@ -17,6 +43,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.awt.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -26,6 +53,8 @@ public class WikiCommand extends Command {
 
     public WikiCommand() {
         this.name = "wiki";
+        this.arguments = "<search>";
+        this.help = "Search the Geyser wiki";
         this.guildOnly = false;
     }
 
@@ -38,8 +67,8 @@ public class WikiCommand extends Command {
         // Check to make sure we have a search term
         if (query.isEmpty()) {
             embed.setTitle("Invalid usage");
-            embed.setDescription("Missing search term. `!wiki <search>`");
-            embed.setColor(0xff0000);
+            embed.setDescription("Missing search term. `" + PropertiesManager.getPrefix() + name + " <search>`");
+            embed.setColor(Color.red);
             event.reply(embed.build());
             return;
         }
@@ -54,7 +83,7 @@ public class WikiCommand extends Command {
 
         // Set the title and color for the embed
         embed.setTitle("Search for " + query, "https://github.com/GeyserMC/Geyser/search?q=" + query + "&type=Wikis");
-        embed.setColor(0x00ff00);
+        embed.setColor(Color.green);
 
         if (results.size() >= 1) {
             // Replace the results with the identical title match
@@ -66,7 +95,7 @@ public class WikiCommand extends Command {
             }
 
             for (WikiResult result : results) {
-                // Ignore pages starting with_ which are usually meta pages
+                // Ignore pages starting with `_` which are usually meta pages
                 if (result.getTitle().startsWith("_")) {
                     return;
                 }
@@ -77,12 +106,11 @@ public class WikiCommand extends Command {
         } else {
             // We found no results
             embed.setDescription("No results");
-            embed.setColor(0xff0000);
+            embed.setColor(Color.red);
         }
 
         event.reply(embed.build());
     }
-
 
     /**
      * Search the wiki on GitHub
@@ -139,7 +167,6 @@ public class WikiCommand extends Command {
 
         return results;
     }
-
 
     private static class WikiResult {
         private final String title, description, updated, url;

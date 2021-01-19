@@ -23,7 +23,37 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.listeners;
+package org.geysermc.discordbot.tags;
 
-public class SwearHandler {
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
+
+import java.awt.*;
+
+public class EmbedTag extends Command {
+
+    private String description;
+    private String image;
+
+    public EmbedTag(String name, String description, String image) {
+        this.name = name;
+        this.description = description;
+        this.image = image;
+        this.guildOnly = false;
+    }
+
+    @Override
+    protected void execute(CommandEvent event) {
+        EmbedBuilder embed = new EmbedBuilder();
+
+        embed.setColor(Color.green);
+        embed.setDescription(description);
+
+        if (image != null && !image.isEmpty()) {
+            embed.setImage(image);
+        }
+
+        event.reply(embed.build());
+    }
 }

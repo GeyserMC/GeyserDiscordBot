@@ -23,7 +23,23 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.listeners;
+package org.geysermc.discordbot.tags;
 
-public class SwearHandler {
+import com.jagrosh.jdautilities.command.Command;
+import com.jagrosh.jdautilities.command.CommandEvent;
+
+public class RawTag extends Command {
+
+    private String content;
+
+    public RawTag(String name, String content) {
+        this.name = name;
+        this.content = content;
+        this.guildOnly = false;
+    }
+
+    @Override
+    protected void execute(CommandEvent event) {
+        event.reply(content);
+    }
 }
