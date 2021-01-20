@@ -33,6 +33,7 @@ import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TagsCommand extends Command {
@@ -52,10 +53,13 @@ public class TagsCommand extends Command {
         // Get tag names based on search
         List<String> tagNames = new ArrayList<>();
         for (Command tag : TagsManager.getTags()) {
-            if (tag.getName().contains(search)) {
+            if (!tag.getName().equals("alias") && tag.getName().contains(search)) {
                 tagNames.add(tag.getName());
             }
         }
+
+        // Sort the tag names
+        Collections.sort(tagNames);
 
         if (tagNames.isEmpty()) {
             embed.setColor(Color.red);
@@ -69,6 +73,6 @@ public class TagsCommand extends Command {
             embed.setFooter("Use `" + PropertiesManager.getPrefix() + "tag <name>` to show a tag");
         }
 
-        event.reply(embed.build());
+        event.getMessage().reply(embed.build()).queue();
     }
 }

@@ -23,42 +23,27 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.commands;
+package org.geysermc.discordbot.storage;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.EmbedBuilder;
-import org.geysermc.discordbot.GeyserBot;
-import org.geysermc.discordbot.util.PropertiesManager;
-
-import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Handle the help command
+ * This class gives easy methods for accessing stored data about a server
+ * such as configs and settings
+ *
+ * TODO: Link with sqlite db
  */
-public class HelpCommand extends Command {
+public class ServerSettings {
 
-    public HelpCommand() {
-        this.name = "help";
-        this.help = "I think you already know what this does";
-        this.guildOnly = false;
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-        EmbedBuilder helpEmbed = new EmbedBuilder()
-            .setColor(Color.green)
-            .setTitle("Geyser Bot Help");
-
-        for (Command command : GeyserBot.COMMANDS) {
-            if (!command.isHidden()) {
-                helpEmbed.addField("`" + PropertiesManager.getPrefix() + command.getName() + (command.getArguments() != null ? " " + command.getArguments() : "") + "`", command.getHelp(), true);
-            }
+    public static List<String> getList(String key) {
+        List<String> data = new ArrayList<>();
+        if (key.equals("convertExtensions")) {
+            data.add("txt");
+            data.add("log");
+            data.add("yml");
         }
 
-        helpEmbed.addField("`!tag <name>`", "Display a tag for the given name", true);
-
-
-        event.getMessage().reply(helpEmbed.build()).queue();
+        return data;
     }
 }

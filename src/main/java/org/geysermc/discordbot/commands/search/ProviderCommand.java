@@ -30,24 +30,9 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.geysermc.discordbot.util.DicesCoefficient;
 import org.geysermc.discordbot.util.PropertiesManager;
-import org.htmlcleaner.CleanerProperties;
-import org.htmlcleaner.DomSerializer;
-import org.htmlcleaner.HtmlCleaner;
-import org.htmlcleaner.TagNode;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import pw.chew.chewbotcca.util.RestClient;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import java.awt.*;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -73,7 +58,7 @@ public class ProviderCommand extends Command {
             embed.setTitle("Invalid usage");
             embed.setDescription("Missing provider to check. `" + PropertiesManager.getPrefix() + name + " <provider>`");
             embed.setColor(Color.red);
-            event.reply(embed.build());
+            event.getMessage().reply(embed.build()).queue();
             return;
         }
 
@@ -118,7 +103,7 @@ public class ProviderCommand extends Command {
             embed.setTitle("Unknown provider");
             embed.setDescription("That provider is not on our GitHub so it is untested!");
             embed.setColor(Color.red);
-            event.reply(embed.build());
+            event.getMessage().reply(embed.build()).queue();
         }
     }
 
@@ -136,7 +121,7 @@ public class ProviderCommand extends Command {
         embed.addField("Category", provider.getCategory(), false);
         embed.addField("Instructions", provider.getInstructions(), false);
 
-        event.reply(embed.build());
+        event.getMessage().reply(embed.build()).queue();
     }
 
     /**

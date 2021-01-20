@@ -69,11 +69,11 @@ public class WikiCommand extends Command {
             embed.setTitle("Invalid usage");
             embed.setDescription("Missing search term. `" + PropertiesManager.getPrefix() + name + " <search>`");
             embed.setColor(Color.red);
-            event.reply(embed.build());
+            event.getMessage().reply(embed.build()).queue();
             return;
         }
 
-        List<WikiResult> results = new ArrayList<>();
+        List<WikiResult> results;
         try {
             results = doSearch(query);
         } catch (UnsupportedEncodingException e) {
@@ -109,7 +109,7 @@ public class WikiCommand extends Command {
             embed.setColor(Color.red);
         }
 
-        event.reply(embed.build());
+        event.getMessage().reply(embed.build()).queue();
     }
 
     /**

@@ -53,7 +53,7 @@ public class TagAliasCommand extends Command {
             embed.setDescription("Missing tag name. `" + PropertiesManager .getPrefix() + "tag alias <name>`");
             embed.setColor(Color.red);
 
-            event.reply(embed.build());
+            event.getMessage().reply(embed.build()).queue();
             return;
         }
 
@@ -69,7 +69,7 @@ public class TagAliasCommand extends Command {
             embed.setTitle("Missing tag");
             embed.setDescription("No tag with the name `" + args[0] + "`, do `" + PropertiesManager.getPrefix() + "tags` for the full list.");
             embed.setColor(Color.red);
-            event.reply(embed.build());
+            event.getMessage().reply(embed.build()).queue();
             return;
         }
 
@@ -84,6 +84,6 @@ public class TagAliasCommand extends Command {
             embed.setColor(Color.red);
         }
 
-        event.reply(embed.build());
+        event.getMessage().reply(embed.build()).queue();
     }
 }

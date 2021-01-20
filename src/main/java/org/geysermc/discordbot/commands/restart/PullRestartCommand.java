@@ -27,9 +27,7 @@ package org.geysermc.discordbot.commands.restart;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Message;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,6 +35,7 @@ import java.io.InputStreamReader;
 
 public class PullRestartCommand extends Command {
 
+    // TODO: Make this download from the ci and rename update-restart
     public PullRestartCommand() {
         this.name = "pull-restart";
         this.hidden = true;
@@ -46,7 +45,7 @@ public class PullRestartCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        event.getChannel().sendMessage("```\nUpdating...\n```").queue(message -> {
+        event.getMessage().reply("```\nUpdating...\n```").queue(message -> {
             StringBuilder logText = new StringBuilder("Updating...");
             logText.append("\n");
             try {

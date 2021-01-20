@@ -30,17 +30,21 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class EmbedTag extends Command {
 
-    private String description;
-    private String image;
+    private final String description;
+    private final String image;
 
-    public EmbedTag(String name, String description, String image) {
+    public EmbedTag(String name, String description, String image, String aliases) {
         this.name = name;
         this.description = description;
         this.image = image;
         this.guildOnly = false;
+        if (aliases != null) {
+            this.aliases = Arrays.stream(aliases.split(",")).map(String::trim).toArray(String[]::new);
+        }
     }
 
     @Override
@@ -54,6 +58,6 @@ public class EmbedTag extends Command {
             embed.setImage(image);
         }
 
-        event.reply(embed.build());
+        event.getMessage().reply(embed.build()).queue();
     }
 }

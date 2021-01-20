@@ -28,18 +28,23 @@ package org.geysermc.discordbot.tags;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 
+import java.util.Arrays;
+
 public class RawTag extends Command {
 
-    private String content;
+    private final String content;
 
-    public RawTag(String name, String content) {
+    public RawTag(String name, String content, String aliases) {
         this.name = name;
         this.content = content;
         this.guildOnly = false;
+        if (aliases != null) {
+            this.aliases = Arrays.stream(aliases.split(",")).map(String::trim).toArray(String[]::new);
+        }
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        event.reply(content);
+        event.getMessage().reply(content).queue();
     }
 }
