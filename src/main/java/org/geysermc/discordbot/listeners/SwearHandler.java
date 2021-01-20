@@ -25,5 +25,82 @@
 
 package org.geysermc.discordbot.listeners;
 
-public class SwearHandler {
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.storage.ServerSettings;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+
+public class SwearHandler extends ListenerAdapter {
+
+    public static List<Long> filteredMessages = new ArrayList<>();
+    public static List<Pattern> filterPatterns = new ArrayList<>();
+
+    public static void loadFilters() {
+        int fileCount = 0;
+        for (File file : new File(SwearHandler.class.getClassLoader().getResource("filters").getPath()).listFiles()) {
+            if (file.isFile() && file.getName().endsWith(".wlist")) {
+                fileCount++;
+                try {
+                    // Load the lines
+                    String[] lines = new String(Files.readAllBytes(file.toPath())).split("\n");
+                    for (String line : lines) {
+                        filterPatterns.add(Pattern.compile("(^| )" + line.trim() + "( |$)", Pattern.CASE_INSENSITIVE));
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    // TODO: Handle error
+                }
+            }
+        }
+
+        GeyserBot.LOGGER.info("Loaded " + filterPatterns.size() + " filter patterns from " + fileCount + " files");
+    }
+
+    @Override
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        for (Pattern filterPattern : filterPatterns) {
+            if (filterPattern.matcher(event.getMessage().getContentRaw()).matches()) {
+                filteredMessages.add(event.getMessageIdLong());
+
+                // Delete message
+                event.getMessage().delete().queue(unused -> {
+                    // Alert the user message
+                    event.getChannel().sendMessage(new MessageBuilder()
+                            .append(event.getAuthor().getAsMention())
+                            .append(" your message has been removed because it contains profanity! Please read our rules for more information.")
+                            .build()).queue();
+
+                    // Send a log to the admin channel
+                    ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                            .setTitle("Profanity removed")
+                            .setDescription("**Sender:** " + event.getAuthor().getAsMention() + "\n" +
+                                    "**Channel:** <#" + event.getChannel().getId() + ">\n" +
+                                    "**Regex:** `" + filterPattern + "`\n" +
+                                    "**Message:** " + event.getMessage().getContentRaw())
+                            .setColor(Color.red)
+                            .build()).queue();
+
+                    // Remove the message from filteredMessages after 5s
+                    // this should be enough time for the rest of the events to fire
+                    GeyserBot.getGeneralThreadPool().schedule(() -> {
+                        filteredMessages.remove(event.getMessageIdLong());
+                    }, 5, TimeUnit.SECONDS);
+                });
+
+                return;
+            }
+        }
+    }
 }

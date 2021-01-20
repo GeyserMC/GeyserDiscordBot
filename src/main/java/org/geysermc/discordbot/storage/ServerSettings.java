@@ -25,6 +25,9 @@
 
 package org.geysermc.discordbot.storage;
 
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.TextChannel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,5 +48,9 @@ public class ServerSettings {
         }
 
         return data;
+    }
+
+    public static TextChannel getLogChannel(Guild guild) {
+        return guild.getTextChannelById(801556783302180865l);
     }
 }

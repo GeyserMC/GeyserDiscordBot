@@ -38,6 +38,7 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.geysermc.discordbot.listeners.FileHandler;
+import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.tags.TagsListener;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.PropertiesManager;
@@ -53,20 +54,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class GeyserBot {
     // Instance Variables
-    private static final Logger logger = LoggerFactory.getLogger(GeyserBot.class);
-    private static JDA jda;
+    public static final Logger LOGGER = LoggerFactory.getLogger(GeyserBot.class);
+    public static final List<Command> COMMANDS;
 
-    public static List<Command> COMMANDS;
+    private static ScheduledExecutorService generalThreadPool;
+
+    private static JDA jda;
 
     static {
         // Gathers all commands from "commands" package.
+        List<Command> commands = new ArrayList<>();
         try {
             Reflections reflections = new Reflections("org.geysermc.discordbot.commands");
             Set<Class<? extends Command>> subTypes = reflections.getSubTypesOf(Command.class);
-            List<Command> commands = new ArrayList<>();
 
             for (Class<? extends Command> theClass : subTypes) {
                 // Don't load SubCommands
@@ -76,10 +81,10 @@ public class GeyserBot {
                 LoggerFactory.getLogger(theClass).debug("Loaded Successfully!");
             }
 
-            COMMANDS = commands;
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            logger.error("Unable to load commands", e);
+            LOGGER.error("Unable to load commands", e);
         }
+        COMMANDS = commands;
     }
 
     public static void main(String[] args) throws IOException, LoginException {
@@ -93,6 +98,9 @@ public class GeyserBot {
 
         Activity activity = Activity.playing(PropertiesManager.getPrefix() + "help");
 
+        // Load filters
+        SwearHandler.loadFilters();
+
         // Setup the main client
         CommandClientBuilder client = new CommandClientBuilder();
         client.setActivity(activity);
@@ -100,7 +108,6 @@ public class GeyserBot {
         client.setPrefix(PropertiesManager.getPrefix());
         client.useHelpBuilder(false);
         client.addCommands(COMMANDS.toArray(new Command[0]));
-
 
         // Setup the tag client
         CommandClientBuilder tagClient = new CommandClientBuilder();
@@ -126,14 +133,20 @@ public class GeyserBot {
             .enableCache(CacheFlag.ROLE_TAGS)
             .setStatus(OnlineStatus.ONLINE)
             .setActivity(Activity.playing("Booting..."))
-            .addEventListeners(waiter, new FileHandler(), client.build(), tagClient.build())
+            .addEventListeners(waiter, new SwearHandler(), new FileHandler(), client.build(), tagClient.build())
             .build();
 
         // Register listeners
         jda.addEventListener();
+
+        generalThreadPool = Executors.newScheduledThreadPool(5);
     }
 
     public static JDA getJDA() {
         return jda;
+    }
+
+    public static ScheduledExecutorService getGeneralThreadPool() {
+        return generalThreadPool;
     }
 }

@@ -28,6 +28,7 @@ package org.geysermc.discordbot.commands.restart;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.Permission;
+import org.geysermc.discordbot.listeners.SwearHandler;
 
 public class RestartCommand extends Command {
 
@@ -40,6 +41,10 @@ public class RestartCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (SwearHandler.filteredMessages.contains(event.getMessage().getIdLong())) {
+            return;
+        }
+
         System.exit(0);
     }
 }

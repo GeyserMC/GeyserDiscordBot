@@ -27,6 +27,7 @@ package org.geysermc.discordbot.tags;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import org.geysermc.discordbot.listeners.SwearHandler;
 
 import java.util.Arrays;
 
@@ -45,6 +46,10 @@ public class RawTag extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (SwearHandler.filteredMessages.contains(event.getMessage().getIdLong())) {
+            return;
+        }
+
         event.getMessage().reply(content).queue();
     }
 }

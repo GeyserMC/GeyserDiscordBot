@@ -28,6 +28,7 @@ package org.geysermc.discordbot.tags;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.awt.*;
@@ -44,6 +45,10 @@ public class TagAliasCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (SwearHandler.filteredMessages.contains(event.getMessage().getIdLong())) {
+            return;
+        }
+
         EmbedBuilder embed = new EmbedBuilder();
 
         String[] args = event.getArgs().split(" ");

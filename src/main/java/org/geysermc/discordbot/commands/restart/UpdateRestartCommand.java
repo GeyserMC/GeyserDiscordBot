@@ -28,16 +28,17 @@ package org.geysermc.discordbot.commands.restart;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.Permission;
+import org.geysermc.discordbot.listeners.SwearHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class PullRestartCommand extends Command {
+public class UpdateRestartCommand extends Command {
 
     // TODO: Make this download from the ci and rename update-restart
-    public PullRestartCommand() {
-        this.name = "pull-restart";
+    public UpdateRestartCommand() {
+        this.name = "update-restart";
         this.hidden = true;
         this.userMissingPermMessage = "";
         this.userPermissions = new Permission[] { Permission.MANAGE_ROLES };
@@ -45,6 +46,10 @@ public class PullRestartCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (SwearHandler.filteredMessages.contains(event.getMessage().getIdLong())) {
+            return;
+        }
+
         event.getMessage().reply("```\nUpdating...\n```").queue(message -> {
             StringBuilder logText = new StringBuilder("Updating...");
             logText.append("\n");
