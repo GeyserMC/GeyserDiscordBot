@@ -34,6 +34,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotHelpers;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -57,14 +58,8 @@ public class BanCommand extends Command {
 
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
-        // Clean input
-        String userTag = args.remove(0);
-        if (userTag.startsWith("<@!") && userTag.endsWith(">")) {
-            userTag = userTag.substring(3, userTag.length() - 1);
-        }
-
         // Fetch the user
-        Member member = event.getGuild().getMemberById(userTag);
+        Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
 
         // Check user is valid
         if (member == null) {
