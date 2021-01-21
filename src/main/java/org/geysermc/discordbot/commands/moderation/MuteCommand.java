@@ -76,11 +76,9 @@ public class MuteCommand extends Command {
             return;
         }
 
-        // Maybe worth getting rid of this depends on how many times its used
+        // Get the user from the member
         User user = member.getUser();
-        int delDays = 0;
         boolean silent = false;
-        boolean noPersist = false;
 
 
         // Handle all the option args
