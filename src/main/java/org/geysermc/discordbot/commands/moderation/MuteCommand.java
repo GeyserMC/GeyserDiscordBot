@@ -96,14 +96,6 @@ public class MuteCommand extends Command {
                     silent = true;
                     break;
 
-                // Check the delete days flag
-                case 'd':
-                    try {
-                        delDays = Integer.parseInt(arg.replace("d", ""));
-                    } catch (NumberFormatException ignored) {
-                        event.getMessage().reply("Please specify an integer for days to delete messages!").queue();
-                        return;
-                    }
 
                 default:
                     event.getMessage().reply(new EmbedBuilder()
