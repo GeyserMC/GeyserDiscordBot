@@ -115,9 +115,8 @@ public class UnmuteCommand extends Command {
                             .build()).queue());
         }
 
+        // TODO: Remove rolepersist (after thats implemented)
         member.mute(false);
-        //TODO: Add rolepersist
-
 
         MessageEmbed mutedEmbed = new EmbedBuilder()
                 .setTitle("Unmuted user")
