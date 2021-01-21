@@ -104,7 +104,7 @@ public class UnbanCommand extends Command {
             args.remove(0);
         }
 
-        // Let the user know they're banned if we are not being silent
+        // Let the user know they're unbanned if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) ->
                     channel.sendMessage(new EmbedBuilder()
