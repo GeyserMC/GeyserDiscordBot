@@ -29,7 +29,6 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -42,12 +41,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BanCommand extends Command {
+public class KickCommand extends Command {
 
-    public BanCommand() {
-        this.name = "ban";
+    public KickCommand() {
+        this.name = "kick";
         this.hidden = true;
-        this.userPermissions = new Permission[] { Permission.BAN_MEMBERS };
+        this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
     }
 
     @Override
@@ -79,7 +78,6 @@ public class BanCommand extends Command {
 
         // Maybe worth getting rid of this depends on how many times its used
         User user = member.getUser();
-        int delDays = 0;
         boolean silent = false;
 
 
@@ -94,16 +92,6 @@ public class BanCommand extends Command {
                 // Check for silent flag
                 case 's':
                     silent = true;
-                    break;
-
-                // Check the delete days flag
-                case 'd':
-                    try {
-                        delDays = Integer.parseInt(arg.replace("d", ""));
-                    } catch (NumberFormatException ignored) {
-                        event.getMessage().reply("Please specify an integer for days to delete messages!").queue();
-                        return;
-                    }
                     break;
 
                 default:
@@ -122,18 +110,18 @@ public class BanCommand extends Command {
         if (!silent) {
             user.openPrivateChannel().queue((channel) ->
                     channel.sendMessage(new EmbedBuilder()
-                            .setTitle("You have been banned from GeyserMC!")
+                            .setTitle("You have been kicked from GeyserMC!")
                             .addField("Reason", String.join(" ", args), false)
                             .setTimestamp(Instant.now())
                             .setColor(Color.red)
                             .build()).queue());
         }
 
-        // Ban user
-        member.ban(delDays, String.join(" ", args)).queue();
+        // Kick user
+        //member.kick(String.join(" ", args)).queue();
 
-        MessageEmbed bannedEmbed = new EmbedBuilder()
-                .setTitle("Banned user")
+        MessageEmbed kickEmbed = new EmbedBuilder()
+                .setTitle("Kicked user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Reason", String.join(" ", args), false)
@@ -142,7 +130,7 @@ public class BanCommand extends Command {
                 .build();
 
         // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(bannedEmbed).queue();
-        event.getMessage().reply(bannedEmbed).queue();
+        ServerSettings.getLogChannel(event.getGuild()).sendMessage(kickEmbed).queue();
+        event.getMessage().reply(kickEmbed).queue();
     }
 }
