@@ -104,9 +104,6 @@ public class MuteCommand extends Command {
                         event.getMessage().reply("Please specify an integer for days to delete messages!").queue();
                         return;
                     }
-                case 'n':
-                    noPersist = true;
-                    break;
 
                 default:
                     event.getMessage().reply(new EmbedBuilder()
