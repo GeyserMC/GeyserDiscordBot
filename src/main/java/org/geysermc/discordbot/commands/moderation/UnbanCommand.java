@@ -41,12 +41,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MuteCommand extends Command {
+public class UnbanCommand extends Command {
 
-    public MuteCommand() {
-        this.name = "mute";
+    public UnbanCommand() {
+        this.name = "unban";
         this.hidden = true;
-        this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
+        this.userPermissions = new Permission[] { Permission.BAN_MEMBERS };
     }
 
     @Override
@@ -80,7 +80,6 @@ public class MuteCommand extends Command {
         User user = member.getUser();
         int delDays = 0;
         boolean silent = false;
-        boolean noPersist = false;
 
 
         // Handle all the option args
@@ -90,54 +89,37 @@ public class MuteCommand extends Command {
                 break;
             }
 
-            switch (arg.toCharArray()[1]) {
-                // Check for silent flag
-                case 's':
-                    silent = true;
-                    break;
+            if (arg.toCharArray()[1] == ('s')) {
+                silent = true;
+            } else {
 
-                // Check the delete days flag
-                case 'd':
-                    try {
-                        delDays = Integer.parseInt(arg.replace("d", ""));
-                    } catch (NumberFormatException ignored) {
-                        event.getMessage().reply("Please specify an integer for days to delete messages!").queue();
-                        return;
-                    }
-                case 'n':
-                    noPersist = true;
-                    break;
 
-                default:
-                    event.getMessage().reply(new EmbedBuilder()
-                            .setTitle("Invalid option")
-                            .setDescription("The option `" + arg + "` is invalid")
-                            .setColor(Color.red)
-                            .build()).queue();
-                    break;
+                event.getMessage().reply(new EmbedBuilder()
+                        .setTitle("Invalid option")
+                        .setDescription("The option `" + arg + "` is invalid")
+                        .setColor(Color.red)
+                        .build()).queue();
             }
 
             args.remove(0);
         }
 
-        // Let the user know they're muted if we are not being silent
+        // Let the user know they're banned if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) ->
                     channel.sendMessage(new EmbedBuilder()
-                            .setTitle("You have been muted from GeyserMC!")
+                            .setTitle("You have been unbanned from GeyserMC!")
                             .addField("Reason", String.join(" ", args), false)
                             .setTimestamp(Instant.now())
-                            .setColor(Color.red)
+                            .setColor(Color.green)
                             .build()).queue());
         }
-        if (noPersist) {
-            member.mute(true);
-        } else {
-            //TODO: Add rolepersist
-        }
 
-        MessageEmbed mutedEmbed = new EmbedBuilder()
-                .setTitle("Muted user")
+        // Ban user
+        member.ban(delDays, String.join(" ", args)).queue();
+
+        MessageEmbed unbannedEmbed = new EmbedBuilder()
+                .setTitle("Unbanned user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Reason", String.join(" ", args), false)
@@ -146,7 +128,7 @@ public class MuteCommand extends Command {
                 .build();
 
         // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(mutedEmbed).queue();
-        event.getMessage().reply(mutedEmbed).queue();
+        ServerSettings.getLogChannel(event.getGuild()).sendMessage(unbannedEmbed).queue();
+        event.getMessage().reply(unbannedEmbed).queue();
     }
 }

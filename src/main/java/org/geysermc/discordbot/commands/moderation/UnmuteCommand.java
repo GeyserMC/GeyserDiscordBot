@@ -41,10 +41,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MuteCommand extends Command {
+public class UnmuteCommand extends Command {
 
-    public MuteCommand() {
-        this.name = "mute";
+    public UnmuteCommand() {
+        this.name = "unmute";
         this.hidden = true;
         this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
     }
@@ -80,7 +80,6 @@ public class MuteCommand extends Command {
         User user = member.getUser();
         int delDays = 0;
         boolean silent = false;
-        boolean noPersist = false;
 
 
         // Handle all the option args
@@ -90,31 +89,16 @@ public class MuteCommand extends Command {
                 break;
             }
 
-            switch (arg.toCharArray()[1]) {
+            if (arg.toCharArray()[1] == 's') {
                 // Check for silent flag
-                case 's':
-                    silent = true;
-                    break;
 
-                // Check the delete days flag
-                case 'd':
-                    try {
-                        delDays = Integer.parseInt(arg.replace("d", ""));
-                    } catch (NumberFormatException ignored) {
-                        event.getMessage().reply("Please specify an integer for days to delete messages!").queue();
-                        return;
-                    }
-                case 'n':
-                    noPersist = true;
-                    break;
-
-                default:
-                    event.getMessage().reply(new EmbedBuilder()
-                            .setTitle("Invalid option")
-                            .setDescription("The option `" + arg + "` is invalid")
-                            .setColor(Color.red)
-                            .build()).queue();
-                    break;
+                silent = true;
+            } else {
+                event.getMessage().reply(new EmbedBuilder()
+                        .setTitle("Invalid option")
+                        .setDescription("The option `" + arg + "` is invalid")
+                        .setColor(Color.red)
+                        .build()).queue();
             }
 
             args.remove(0);
@@ -124,20 +108,19 @@ public class MuteCommand extends Command {
         if (!silent) {
             user.openPrivateChannel().queue((channel) ->
                     channel.sendMessage(new EmbedBuilder()
-                            .setTitle("You have been muted from GeyserMC!")
+                            .setTitle("You have been unmuted from GeyserMC!")
                             .addField("Reason", String.join(" ", args), false)
                             .setTimestamp(Instant.now())
                             .setColor(Color.red)
                             .build()).queue());
         }
-        if (noPersist) {
-            member.mute(true);
-        } else {
-            //TODO: Add rolepersist
-        }
+
+        member.mute(false);
+        //TODO: Add rolepersist
+
 
         MessageEmbed mutedEmbed = new EmbedBuilder()
-                .setTitle("Muted user")
+                .setTitle("Unmuted user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Reason", String.join(" ", args), false)
