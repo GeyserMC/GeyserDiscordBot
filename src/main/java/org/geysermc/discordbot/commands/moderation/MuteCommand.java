@@ -34,7 +34,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.storage.ServerSettings;
-import org.geysermc.discordbot.util.BotHelpers;
 
 import java.awt.Color;
 import java.time.Instant;
@@ -58,8 +57,14 @@ public class MuteCommand extends Command {
 
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
+        // Clean input
+        String userTag = args.remove(0);
+        if (userTag.startsWith("<@!") && userTag.endsWith(">")) {
+            userTag = userTag.substring(3, userTag.length() - 1);
+        }
+
         // Fetch the user
-        Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
+        Member member = event.getGuild().getMemberById(userTag);
 
         // Check user is valid
         if (member == null) {
@@ -112,9 +117,8 @@ public class MuteCommand extends Command {
                             .setColor(Color.red)
                             .build()).queue());
         }
-
         // TODO: Add rolepersist
-        event.getGuild().addRoleToMember(member, event.getGuild().getRolesByName("muted", true).get(0)).queue();
+        member.mute(true);
 
         MessageEmbed mutedEmbed = new EmbedBuilder()
                 .setTitle("Muted user")
