@@ -130,11 +130,8 @@ public class MuteCommand extends Command {
                             .setColor(Color.red)
                             .build()).queue());
         }
-        if (noPersist) {
-            member.mute(true);
-        } else {
-            //TODO: Add rolepersist
-        }
+        // TODO: Add rolepersist
+        member.mute(true);
 
         MessageEmbed mutedEmbed = new EmbedBuilder()
                 .setTitle("Muted user")
