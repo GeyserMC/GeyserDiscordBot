@@ -91,7 +91,6 @@ public class UnmuteCommand extends Command {
 
             if (arg.toCharArray()[1] == 's') {
                 // Check for silent flag
-
                 silent = true;
             } else {
                 event.getMessage().reply(new EmbedBuilder()
