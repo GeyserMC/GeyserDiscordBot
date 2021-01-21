@@ -236,7 +236,3 @@ nbdist/
 # End of https://www.gitignore.io/api/git,java,maven,eclipse,netbeans,jetbrains+all,visualstudiocode
 
 bot.properties
-.env
-
-# Ignore the profanity list as its from the bedrock client files
-profanity_filter.wlist

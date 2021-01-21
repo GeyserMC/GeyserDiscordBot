@@ -34,11 +34,15 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import org.geysermc.discordbot.listeners.SwearHandler;
+import org.geysermc.discordbot.util.BotHelpers;
 
 import java.awt.*;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WhoisCommand extends Command {
 
@@ -54,14 +58,8 @@ public class WhoisCommand extends Command {
         }
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
-        // Clean input
-        String userTag = args.remove(0);
-        if (userTag.startsWith("<@!") && userTag.endsWith(">")) {
-            userTag = userTag.substring(3, userTag.length() - 1);
-        }
-
         // Fetch the user
-        Member member = event.getGuild().getMemberById(userTag);
+        Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
 
         // Check user is valid
         if (member == null) {
@@ -72,28 +70,27 @@ public class WhoisCommand extends Command {
                     .build()).queue();
             return;
         }
-        List<String> roles = new ArrayList<>();
-        for (Role role : member.getRoles()) {
-            roles.add(role.getAsMention());
-        }
-        if (roles.isEmpty()) {
-            roles.add("No roles");
-        }
 
-        // Maybe worth getting rid of this depends on how many times its used
+        // Get the user from the member
         User user = member.getUser();
-        MessageEmbed embed = new EmbedBuilder()
-                .setTitle("Showing info for " + user.getName())
-                .addField("Nick", user.getAsMention(), false)
-                .addField("Joined", member.getTimeJoined().getMonth().getValue() + "/" + member.getTimeJoined().getDayOfMonth() + "/" + member.getTimeJoined().getYear() + " at " + member.getTimeJoined().getHour() + ":" + member.getTimeJoined().getMinute(), false)
-                .addField("Registered", user.getTimeCreated().getMonth().getValue() + "/" + user.getTimeCreated().getDayOfMonth() + "/" + user.getTimeCreated().getYear() + " at " + user.getTimeCreated().getHour() + ":" + user.getTimeCreated().getMinute(), false)
-                .addField("Roles [" + member.getRoles().size() + "]", String.join(" ", roles), false)
-                .addField("ID", user.getId(), false)
-                .addField("Key Permissions", member.getPermissions().toString().replace("_", " ").toLowerCase(), false)
-                .setThumbnail(user.getAvatarUrl())
-                .setColor(Color.green)
-                .build();
-        event.getChannel().sendMessage(embed).queue();
 
+        // Get the roles
+        String roles = "None";
+        if (member.getRoles().size() > 0) {
+            roles = member.getRoles().stream().map(Role::getAsMention).collect(Collectors.joining(" "));
+        }
+
+        event.getChannel().sendMessage(new EmbedBuilder()
+                .setAuthor(user.getAsTag(), null, user.getAvatarUrl())
+                .setDescription(user.getAsMention())
+                .addField("Joined", member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                .addField("Registered", member.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                .addField("Roles [" + member.getRoles().size() + "]", roles, false)
+                .addField("Key Permissions", member.getPermissions().stream().map(Permission::getName).collect(Collectors.joining(", ")), false)
+                .setThumbnail(user.getAvatarUrl())
+                .setFooter("ID: " + user.getId())
+                .setTimestamp(Instant.now())
+                .setColor(member.getColor())
+                .build()).queue();
     }
 }

@@ -27,8 +27,10 @@ package org.geysermc.discordbot.util;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 
 import javax.annotation.Nullable;
+import java.util.regex.Matcher;
 
 public class BotHelpers {
 
@@ -45,10 +47,18 @@ public class BotHelpers {
     @Nullable
     public static Member getMember(Guild guild, String userTag) {
         try {
+            // Check for a mention (<@!1234>)
             if (userTag.startsWith("<@!") && userTag.endsWith(">")) {
                 userTag = userTag.substring(3, userTag.length() - 1);
+            } else {
+                // Check for a user tag (example#1234)
+                Matcher m = User.USER_TAG.matcher(userTag);
+                if (m.matches()) {
+                    return guild.getMemberByTag(m.group(1), m.group(2));
+                }
             }
 
+            // Try to get the member by ID
             return guild.getMemberById(userTag);
         } catch (NumberFormatException ignored) {
             return null;

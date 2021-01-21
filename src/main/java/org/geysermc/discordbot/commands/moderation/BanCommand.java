@@ -76,7 +76,6 @@ public class BanCommand extends Command {
         int delDays = 0;
         boolean silent = false;
 
-
         // Handle all the option args
         // We clone the args here to prevent a CME
         for (String arg : args.toArray(new String[0])) {

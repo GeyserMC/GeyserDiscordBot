@@ -75,7 +75,6 @@ public class UnmuteCommand extends Command {
         User user = member.getUser();
         boolean silent = false;
 
-
         // Handle all the option args
         // We clone the args here to prevent a CME
         for (String arg : args.toArray(new String[0])) {
