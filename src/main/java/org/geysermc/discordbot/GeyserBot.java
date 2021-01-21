@@ -38,6 +38,7 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.geysermc.discordbot.listeners.FileHandler;
+import org.geysermc.discordbot.listeners.LogHandler;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.tags.TagsListener;
 import org.geysermc.discordbot.tags.TagsManager;
@@ -133,7 +134,7 @@ public class GeyserBot {
             .enableCache(CacheFlag.ROLE_TAGS)
             .setStatus(OnlineStatus.ONLINE)
             .setActivity(Activity.playing("Booting..."))
-            .addEventListeners(waiter, new SwearHandler(), new FileHandler(), client.build(), tagClient.build())
+            .addEventListeners(waiter, new LogHandler(), new SwearHandler(), new FileHandler(), client.build(), tagClient.build())
             .build();
 
         // Register listeners
