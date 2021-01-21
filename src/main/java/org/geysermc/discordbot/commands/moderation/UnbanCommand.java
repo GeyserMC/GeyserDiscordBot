@@ -115,8 +115,8 @@ public class UnbanCommand extends Command {
                             .build()).queue());
         }
 
-        // Ban user
-        member.ban(delDays, String.join(" ", args)).queue();
+        // Unban user
+        member.getGuild().unban(user);
 
         MessageEmbed unbannedEmbed = new EmbedBuilder()
                 .setTitle("Unbanned user")
