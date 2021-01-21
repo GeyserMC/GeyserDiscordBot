@@ -33,7 +33,7 @@ import org.geysermc.discordbot.util.DicesCoefficient;
 import org.geysermc.discordbot.util.PropertiesManager;
 import pw.chew.chewbotcca.util.RestClient;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;

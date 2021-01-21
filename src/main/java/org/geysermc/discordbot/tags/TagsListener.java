@@ -29,7 +29,7 @@ import com.jagrosh.jdautilities.command.CommandListener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class TagsListener implements CommandListener {
 

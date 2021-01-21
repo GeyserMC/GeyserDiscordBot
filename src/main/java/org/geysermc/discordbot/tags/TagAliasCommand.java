@@ -31,7 +31,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.util.PropertiesManager;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 
 public class TagAliasCommand extends Command {

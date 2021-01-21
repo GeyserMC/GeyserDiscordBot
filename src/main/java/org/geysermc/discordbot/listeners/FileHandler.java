@@ -37,7 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

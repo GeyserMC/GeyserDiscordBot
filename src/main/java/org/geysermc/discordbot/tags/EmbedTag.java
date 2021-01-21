@@ -30,7 +30,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.geysermc.discordbot.listeners.SwearHandler;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Arrays;
 
 public class EmbedTag extends Command {

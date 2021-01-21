@@ -32,7 +32,7 @@ import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.PropertiesManager;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
