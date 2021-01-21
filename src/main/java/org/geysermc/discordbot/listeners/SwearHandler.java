@@ -27,6 +27,7 @@ package org.geysermc.discordbot.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
@@ -37,8 +38,10 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -46,6 +49,7 @@ public class SwearHandler extends ListenerAdapter {
 
     public static List<Long> filteredMessages = new ArrayList<>();
     public static List<Pattern> filterPatterns = new ArrayList<>();
+    public static String[] nicknames;
 
     public static void loadFilters() {
         int fileCount = 0;
@@ -66,6 +70,16 @@ public class SwearHandler extends ListenerAdapter {
         }
 
         GeyserBot.LOGGER.info("Loaded " + filterPatterns.size() + " filter patterns from " + fileCount + " files");
+
+        try {
+            nicknames = new String(Files.readAllBytes(new File(SwearHandler.class.getClassLoader().getResource("nicknames.wlist").getPath()).toPath())).split("\n");
+
+            GeyserBot.LOGGER.info("Loaded " + nicknames.length + " nicknames");
+        } catch (IOException e) {
+            e.printStackTrace();
+            // TODO: Handle error
+        }
+
     }
 
     @Override
@@ -99,6 +113,21 @@ public class SwearHandler extends ListenerAdapter {
                     }, 5, TimeUnit.SECONDS);
                 });
 
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
+        String name = event.getNewNickname();
+        if (name == null) {
+            name = event.getMember().getUser().getName();
+        }
+
+        for (Pattern filterPattern : filterPatterns) {
+            if (filterPattern.matcher(name).matches()) {
+                event.getMember().modifyNickname(nicknames[new Random().nextInt(nicknames.length)]).queue();
                 return;
             }
         }
