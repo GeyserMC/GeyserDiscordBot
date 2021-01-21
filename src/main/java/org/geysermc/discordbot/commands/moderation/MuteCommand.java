@@ -41,10 +41,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class KickCommand extends Command {
+public class MuteCommand extends Command {
 
-    public KickCommand() {
-        this.name = "kick";
+    public MuteCommand() {
+        this.name = "mute";
         this.hidden = true;
         this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
     }
@@ -76,7 +76,7 @@ public class KickCommand extends Command {
             return;
         }
 
-        // Maybe worth getting rid of this depends on how many times its used
+        // Get the user from the member
         User user = member.getUser();
         boolean silent = false;
 
@@ -94,6 +94,7 @@ public class KickCommand extends Command {
                     silent = true;
                     break;
 
+
                 default:
                     event.getMessage().reply(new EmbedBuilder()
                             .setTitle("Invalid option")
@@ -106,22 +107,21 @@ public class KickCommand extends Command {
             args.remove(0);
         }
 
-        // Let the user know they're banned if we are not being silent
+        // Let the user know they're muted if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) ->
                     channel.sendMessage(new EmbedBuilder()
-                            .setTitle("You have been kicked from GeyserMC!")
+                            .setTitle("You have been muted from GeyserMC!")
                             .addField("Reason", String.join(" ", args), false)
                             .setTimestamp(Instant.now())
                             .setColor(Color.red)
                             .build()).queue());
         }
+        // TODO: Add rolepersist
+        member.mute(true);
 
-        // Kick user
-        member.kick(String.join(" ", args)).queue();
-
-        MessageEmbed kickEmbed = new EmbedBuilder()
-                .setTitle("Kicked user")
+        MessageEmbed mutedEmbed = new EmbedBuilder()
+                .setTitle("Muted user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Reason", String.join(" ", args), false)
@@ -130,7 +130,7 @@ public class KickCommand extends Command {
                 .build();
 
         // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(kickEmbed).queue();
-        event.getMessage().reply(kickEmbed).queue();
+        ServerSettings.getLogChannel(event.getGuild()).sendMessage(mutedEmbed).queue();
+        event.getMessage().reply(mutedEmbed).queue();
     }
 }

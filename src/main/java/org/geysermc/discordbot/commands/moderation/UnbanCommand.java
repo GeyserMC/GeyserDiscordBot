@@ -41,12 +41,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class KickCommand extends Command {
+public class UnbanCommand extends Command {
 
-    public KickCommand() {
-        this.name = "kick";
+    public UnbanCommand() {
+        this.name = "unban";
         this.hidden = true;
-        this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
+        this.userPermissions = new Permission[] { Permission.BAN_MEMBERS };
     }
 
     @Override
@@ -76,7 +76,7 @@ public class KickCommand extends Command {
             return;
         }
 
-        // Maybe worth getting rid of this depends on how many times its used
+        // Get the user from the member
         User user = member.getUser();
         boolean silent = false;
 
@@ -88,40 +88,37 @@ public class KickCommand extends Command {
                 break;
             }
 
-            switch (arg.toCharArray()[1]) {
-                // Check for silent flag
-                case 's':
-                    silent = true;
-                    break;
+            if (arg.toCharArray()[1] == ('s')) {
+                silent = true;
+            } else {
 
-                default:
-                    event.getMessage().reply(new EmbedBuilder()
-                            .setTitle("Invalid option")
-                            .setDescription("The option `" + arg + "` is invalid")
-                            .setColor(Color.red)
-                            .build()).queue();
-                    break;
+
+                event.getMessage().reply(new EmbedBuilder()
+                        .setTitle("Invalid option")
+                        .setDescription("The option `" + arg + "` is invalid")
+                        .setColor(Color.red)
+                        .build()).queue();
             }
 
             args.remove(0);
         }
 
-        // Let the user know they're banned if we are not being silent
+        // Let the user know they're unbanned if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) ->
                     channel.sendMessage(new EmbedBuilder()
-                            .setTitle("You have been kicked from GeyserMC!")
+                            .setTitle("You have been unbanned from GeyserMC!")
                             .addField("Reason", String.join(" ", args), false)
                             .setTimestamp(Instant.now())
-                            .setColor(Color.red)
+                            .setColor(Color.green)
                             .build()).queue());
         }
 
-        // Kick user
-        member.kick(String.join(" ", args)).queue();
+        // Unban user
+        member.getGuild().unban(user);
 
-        MessageEmbed kickEmbed = new EmbedBuilder()
-                .setTitle("Kicked user")
+        MessageEmbed unbannedEmbed = new EmbedBuilder()
+                .setTitle("Unbanned user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Reason", String.join(" ", args), false)
@@ -130,7 +127,7 @@ public class KickCommand extends Command {
                 .build();
 
         // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(kickEmbed).queue();
-        event.getMessage().reply(kickEmbed).queue();
+        ServerSettings.getLogChannel(event.getGuild()).sendMessage(unbannedEmbed).queue();
+        event.getMessage().reply(unbannedEmbed).queue();
     }
 }
