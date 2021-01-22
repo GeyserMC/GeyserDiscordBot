@@ -27,6 +27,7 @@ package org.geysermc.discordbot.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -34,22 +35,39 @@ import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.text.Normalizer;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SwearHandler extends ListenerAdapter {
 
+    private static final Pattern CLEAN_PATTERN = Pattern.compile("[^\\p{N}\\p{L} ]", Pattern.UNICODE_CHARACTER_CLASS);
+    private static final Pattern NON_ASCII_PATTERN = Pattern.compile("([^\\p{ASCII}])");
+    private static final Map<String,String> REPLACE_TOKENS = new HashMap<>();
+
     public static List<Long> filteredMessages = new ArrayList<>();
     public static List<Pattern> filterPatterns = new ArrayList<>();
     public static String[] nicknames;
+
+    static {
+        // Add some standard replacement tokens
+        // TODO: Find a better way of doing this if we get duplicate chars
+        REPLACE_TOKENS.put("\u0430", "a");
+        REPLACE_TOKENS.put("\u043A", "k");
+        REPLACE_TOKENS.put("\u0441", "c");
+        REPLACE_TOKENS.put("\u0443", "y");
+        REPLACE_TOKENS.put("\u0435", "e");
+        REPLACE_TOKENS.put("\u0445", "x");
+        REPLACE_TOKENS.put("\u0440", "p");
+        REPLACE_TOKENS.put("\u043e", "o");
+    }
 
     public static void loadFilters() {
         int fileCount = 0;
@@ -72,49 +90,82 @@ public class SwearHandler extends ListenerAdapter {
         GeyserBot.LOGGER.info("Loaded " + filterPatterns.size() + " filter patterns from " + fileCount + " files");
 
         try {
-            nicknames = new String(Files.readAllBytes(new File(SwearHandler.class.getClassLoader().getResource("nicknames.wlist").getPath()).toPath())).split("\n");
+            nicknames = new String(Files.readAllBytes(new File(SwearHandler.class.getClassLoader().getResource("nicknames.wlist").getPath()).toPath())).trim().split("\n");
 
             GeyserBot.LOGGER.info("Loaded " + nicknames.length + " nicknames");
         } catch (IOException e) {
             e.printStackTrace();
             // TODO: Handle error
         }
+    }
 
+    @Nullable
+    private Pattern checkString(String input) {
+        // TODO: Maybe only clean start and end? Then run through the same as normalInput?
+        String cleanInput = CLEAN_PATTERN.matcher(input).replaceAll("");
+        String normalInput = Normalizer.normalize(input, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
+        // Find all non ascii chars and normalise them based on REPLACE_TOKENS
+        Matcher matcher = NON_ASCII_PATTERN.matcher(normalInput);
+
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, REPLACE_TOKENS.getOrDefault(matcher.group(1), matcher.group(1)));
+        }
+        matcher.appendTail(sb);
+
+        normalInput = sb.toString();
+
+        for (Pattern filterPattern : filterPatterns) {
+            if (filterPattern.matcher(cleanInput).matches() || filterPattern.matcher(normalInput).matches()) {
+                return filterPattern;
+            }
+        }
+
+        return null;
     }
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        for (Pattern filterPattern : filterPatterns) {
-            if (filterPattern.matcher(event.getMessage().getContentRaw()).matches()) {
-                filteredMessages.add(event.getMessageIdLong());
+        if (event.getAuthor().isBot()) {
+            return;
+        }
 
-                // Delete message
-                event.getMessage().delete().queue(unused -> {
-                    // Alert the user message
-                    event.getChannel().sendMessage(new MessageBuilder()
-                            .append(event.getAuthor().getAsMention())
-                            .append(" your message has been removed because it contains profanity! Please read our rules for more information.")
-                            .build()).queue();
+        Pattern filterPattern;
+        if ((filterPattern = checkString(event.getMessage().getContentRaw())) != null) {
+            filteredMessages.add(event.getMessageIdLong());
 
-                    // Send a log to the admin channel
-                    ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
-                            .setTitle("Profanity removed")
-                            .setDescription("**Sender:** " + event.getAuthor().getAsMention() + "\n" +
-                                    "**Channel:** <#" + event.getChannel().getId() + ">\n" +
-                                    "**Regex:** `" + filterPattern + "`\n" +
-                                    "**Message:** " + event.getMessage().getContentRaw())
-                            .setColor(Color.red)
-                            .build()).queue();
+            // Delete message
+            event.getMessage().delete().queue(unused -> {
+                // Alert the user message
+                event.getChannel().sendMessage(new MessageBuilder()
+                        .append(event.getAuthor().getAsMention())
+                        .append(" your message has been removed because it contains profanity! Please read our rules for more information.")
+                        .build()).queue();
 
-                    // Remove the message from filteredMessages after 5s
-                    // this should be enough time for the rest of the events to fire
-                    GeyserBot.getGeneralThreadPool().schedule(() -> {
-                        filteredMessages.remove(event.getMessageIdLong());
-                    }, 5, TimeUnit.SECONDS);
-                });
+                // Send a log to the admin channel
+                ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                        .setTitle("Profanity removed")
+                        .setDescription("**Sender:** " + event.getAuthor().getAsMention() + "\n" +
+                                "**Channel:** <#" + event.getChannel().getId() + ">\n" +
+                                "**Regex:** `" + filterPattern + "`\n" +
+                                "**Message:** " + event.getMessage().getContentRaw())
+                        .setColor(Color.red)
+                        .build()).queue();
 
-                return;
-            }
+                // Remove the message from filteredMessages after 5s
+                // this should be enough time for the rest of the events to fire
+                GeyserBot.getGeneralThreadPool().schedule(() -> {
+                    filteredMessages.remove(event.getMessageIdLong());
+                }, 5, TimeUnit.SECONDS);
+            });
+        }
+    }
+
+    @Override
+    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
+        if (checkString(event.getMember().getUser().getName()) != null) {
+            event.getMember().modifyNickname(nicknames[new Random().nextInt(nicknames.length)]).queue();
         }
     }
 
@@ -125,11 +176,8 @@ public class SwearHandler extends ListenerAdapter {
             name = event.getMember().getUser().getName();
         }
 
-        for (Pattern filterPattern : filterPatterns) {
-            if (filterPattern.matcher(name).matches()) {
-                event.getMember().modifyNickname(nicknames[new Random().nextInt(nicknames.length)]).queue();
-                return;
-            }
+        if (checkString(name) != null) {
+            event.getMember().modifyNickname(nicknames[new Random().nextInt(nicknames.length)]).queue();
         }
     }
 }

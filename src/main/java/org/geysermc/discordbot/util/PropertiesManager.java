@@ -39,7 +39,7 @@ public class PropertiesManager {
      * @return Bot token from discord
      */
     public static String getToken() {
-        return System.getenv("BOT_TOKEN");
+        return properties.getProperty("token");
     }
 
     /**
@@ -47,5 +47,40 @@ public class PropertiesManager {
      */
     public static String getPrefix() {
         return properties.getProperty("prefix");
+    }
+
+    /**
+     * @return Database connection type
+     */
+    public static String getDatabaseType() {
+        return properties.getProperty("db-type");
+    }
+
+    /**
+     * @return Database server hostname
+     */
+    public static String getHost() {
+        return properties.getProperty("db-host");
+    }
+
+    /**
+     * @return Database server database
+     */
+    public static String getDatabase() {
+        return properties.getProperty("db-database");
+    }
+
+    /**
+     * @return Database server database
+     */
+    public static String getUser() {
+        return properties.getProperty("db-user");
+    }
+
+    /**
+     * @return Database server database
+     */
+    public static String getPass() {
+        return properties.getProperty("db-pass");
     }
 }

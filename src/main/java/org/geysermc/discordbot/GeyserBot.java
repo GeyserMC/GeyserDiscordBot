@@ -40,6 +40,8 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.geysermc.discordbot.listeners.FileHandler;
 import org.geysermc.discordbot.listeners.LogHandler;
 import org.geysermc.discordbot.listeners.SwearHandler;
+import org.geysermc.discordbot.storage.AbstractStorageManager;
+import org.geysermc.discordbot.storage.StorageType;
 import org.geysermc.discordbot.tags.TagsListener;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.PropertiesManager;
@@ -62,6 +64,8 @@ public class GeyserBot {
     // Instance Variables
     public static final Logger LOGGER = LoggerFactory.getLogger(GeyserBot.class);
     public static final List<Command> COMMANDS;
+
+    public static AbstractStorageManager storageManager;
 
     private static ScheduledExecutorService generalThreadPool;
 
@@ -101,6 +105,20 @@ public class GeyserBot {
 
         // Load filters
         SwearHandler.loadFilters();
+
+        // Load the db
+        StorageType storageType = StorageType.getByName(PropertiesManager.getDatabaseType());
+        if (storageType == StorageType.UNKNOWN) {
+            LOGGER.error("Invalid database type! '" + PropertiesManager.getDatabaseType() + "'");
+            System.exit(0);
+        }
+
+        try {
+            storageManager = storageType.getStorageManager().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            LOGGER.error("Unable to create database link!");
+            System.exit(0);
+        }
 
         // Setup the main client
         CommandClientBuilder client = new CommandClientBuilder();
