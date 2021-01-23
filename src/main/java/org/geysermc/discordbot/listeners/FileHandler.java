@@ -47,7 +47,7 @@ public class FileHandler extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         for (Message.Attachment attachment : event.getMessage().getAttachments()) {
-            if (ServerSettings.getList("convertExtensions").contains(attachment.getFileExtension())) {
+            if (ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions").contains(attachment.getFileExtension())) {
                 EmbedBuilder embed = new EmbedBuilder();
 
                 if (attachment.getSize() > 400000) {

@@ -30,9 +30,9 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.util.BotHelpers;
 
@@ -42,13 +42,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
 import java.util.stream.Collectors;
 
-public class WhoisCommand extends Command {
+public class SettingsCommand extends Command {
 
-    public WhoisCommand() {
-        this.name = "whois";
+    public SettingsCommand() {
+        this.name = "settings";
         this.hidden = true;
+        this.userPermissions = new Permission[] { Permission.MANAGE_ROLES };
     }
 
     @Override
@@ -59,39 +61,38 @@ public class WhoisCommand extends Command {
 
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
-        // Fetch the user
-        Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
+        String title;
+        String key = args.get(1);
+        String value;
 
-        // Check user is valid
-        if (member == null) {
-            event.getMessage().reply(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(Color.red)
-                    .build()).queue();
-            return;
-        }
+        switch (args.get(0)) {
+            case "get":
+                title = "Setting value";
+                value = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), key);
+                break;
 
-        // Get the user from the member
-        User user = member.getUser();
+            case "set":
+                title = "Updated setting";
+                value = args.get(2);
+                GeyserBot.storageManager.setServerPreference(event.getGuild().getIdLong(), key, value);
+                break;
 
-        // Get the roles
-        String roles = "None";
-        if (member.getRoles().size() > 0) {
-            roles = member.getRoles().stream().map(Role::getAsMention).collect(Collectors.joining(" "));
+            default:
+                event.getChannel().sendMessage(new EmbedBuilder()
+                        .setTitle("Invalid action specified")
+                        .setDescription("Unknown action `" + args.get(0) + "`, it can be one of: `get`, `set`")
+                        .setTimestamp(Instant.now())
+                        .setColor(Color.red)
+                        .build()).queue();
+                return;
         }
 
         event.getChannel().sendMessage(new EmbedBuilder()
-                .setAuthor(user.getAsTag(), null, user.getAvatarUrl())
-                .setDescription(user.getAsMention())
-                .addField("Joined", member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Registered", member.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Roles [" + member.getRoles().size() + "]", roles, false)
-                .addField("Key Permissions", member.getPermissions().stream().map(Permission::getName).collect(Collectors.joining(", ")), false)
-                .setThumbnail(user.getAvatarUrl())
-                .setFooter("ID: " + user.getId())
+                .setTitle(title)
+                .addField("Key", "`" + key + "`", false)
+                .addField("Value", "`" + value + "`", false)
                 .setTimestamp(Instant.now())
-                .setColor(member.getColor())
+                .setColor(Color.green)
                 .build()).queue();
     }
 }

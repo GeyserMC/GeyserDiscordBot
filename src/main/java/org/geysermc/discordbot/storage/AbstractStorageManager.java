@@ -25,13 +25,29 @@
 
 package org.geysermc.discordbot.storage;
 
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
+
+import java.util.List;
+
 public abstract class AbstractStorageManager {
 
-    abstract void setupStorage();
+    public abstract void setupStorage();
 
-    abstract void closeStorage();
+    public abstract void closeStorage();
 
-    abstract String getServerPreference(int serverID, String preference);
+    public abstract String getServerPreference(long serverID, String preference);
 
-    abstract void setServerPreference(int serverID, String preference, String value);
+    public abstract void setServerPreference(long serverID, String preference, String value);
+
+    public abstract void addPersistentRole(Member member, Role role);
+
+    public abstract void removePersistentRole(Member member, Role role);
+
+    public abstract List<Role> getPersistentRoles(Member member);
+
+    public abstract void addLog(Member user, String action, User target, String reason);
+
+    public abstract List<ModLog> getLog(Member user, String action, User target, String reason);
 }

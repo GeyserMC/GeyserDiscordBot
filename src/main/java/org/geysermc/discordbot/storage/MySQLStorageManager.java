@@ -26,10 +26,16 @@
 package org.geysermc.discordbot.storage;
 
 
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.User;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.sql.*;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MySQLStorageManager extends AbstractStorageManager {
 
@@ -41,9 +47,10 @@ public class MySQLStorageManager extends AbstractStorageManager {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://" + PropertiesManager.getHost() + "/" + PropertiesManager.getDatabase(), PropertiesManager.getUser(), PropertiesManager.getPass());
 
-            Statement createPreferencesTable = connection.createStatement();
-            createPreferencesTable.executeUpdate("CREATE TABLE IF NOT EXISTS `preferences` (`id` INT NOT NULL AUTO_INCREMENT, `server` INT NOT NULL, `key` VARCHAR(32), `value` TEXT NOT NULL, PRIMARY KEY(`id`));");
-            createPreferencesTable.close();
+            Statement createTables = connection.createStatement();
+            createTables.executeUpdate("CREATE TABLE IF NOT EXISTS `preferences` (`id` INT NOT NULL AUTO_INCREMENT, `server` BIGINT NOT NULL, `key` VARCHAR(32), `value` TEXT NOT NULL, PRIMARY KEY(`id`), UNIQUE KEY `pref_constraint` (`server`,`key`));");
+            createTables.executeUpdate("CREATE TABLE IF NOT EXISTS `persistent_roles` (`id` INT NOT NULL AUTO_INCREMENT, `server` BIGINT NOT NULL, `user` BIGINT NOT NULL, `role` BIGINT NOT NULL, PRIMARY KEY(`id`), UNIQUE KEY `role_constraint` (`server`,`user`,`role`));");
+            createTables.close();
         } catch (ClassNotFoundException | SQLException e) {
             GeyserBot.LOGGER.error("Unable to connect to MySQL database!", e);
         }
@@ -57,12 +64,73 @@ public class MySQLStorageManager extends AbstractStorageManager {
     }
 
     @Override
-    String getServerPreference(int serverID, String preference) {
+    public String getServerPreference(long serverID, String preference) {
+        try {
+            Statement getPreferenceValue = connection.createStatement();
+            ResultSet rs = getPreferenceValue.executeQuery("SELECT `value` FROM `preferences` WHERE `server`=" + serverID + " AND `key`='" + preference + "';");
+
+            if (rs.next()) {
+                return rs.getString("value");
+            }
+
+            getPreferenceValue.close();
+        } catch (SQLException ignored) { }
+
         return null;
     }
 
     @Override
-    void setServerPreference(int serverID, String preference, String value) {
+    public void setServerPreference(long serverID, String preference, String value) {
+        try {
+            Statement updatePreferenceValue = connection.createStatement();
+            updatePreferenceValue.executeUpdate("INSERT INTO `preferences` (`server`, `key`, `value`) VALUES (" + serverID + ", '" + preference + "', '" + value + "') ON DUPLICATE KEY UPDATE `value`='" + value + "';");
+            updatePreferenceValue.close();
+        } catch (SQLException ignored) { }
+    }
+
+    @Override
+    public void addPersistentRole(Member member, Role role) {
+        try {
+            Statement addPersistentRole = connection.createStatement();
+            addPersistentRole.executeUpdate("INSERT INTO `persistent_roles` (`server`, `user`, `role`) VALUES (" + member.getGuild().getId() + ", " + member.getId() + ", " + role.getId() + ");");
+            addPersistentRole.close();
+        } catch (SQLException ignored) { }
+    }
+
+    @Override
+    public void removePersistentRole(Member member, Role role) {
+        try {
+            Statement removePersistentRole = connection.createStatement();
+            removePersistentRole.executeUpdate("DELETE FROM `persistent_roles` WHERE `server`=" + member.getGuild().getId() + " AND `user`=" + member.getId() + " AND `role`=" + role.getId() + ");");
+            removePersistentRole.close();
+        } catch (SQLException ignored) { }
+    }
+
+    @Override
+    public List<Role> getPersistentRoles(Member member) {
+        List<Role> roles = new ArrayList<>();
+
+        try {
+            Statement getPreferenceValue = connection.createStatement();
+            ResultSet rs = getPreferenceValue.executeQuery("SELECT `role` FROM `persistent_roles` WHERE `server`=" + member.getGuild().getId() + " AND " + member.getId() + ";");
+
+            while (rs.next()) {
+                roles.add(member.getGuild().getRoleById(rs.getString("role")));
+            }
+
+            getPreferenceValue.close();
+        } catch (SQLException ignored) { }
+
+        return roles;
+    }
+
+    @Override
+    public void addLog(Member user, String action, User target, String reason) {
+        try {
+            Statement addPersistentRole = connection.createStatement();
+            addPersistentRole.executeUpdate("INSERT INTO `mod_log` (`server`, `time`, `user`, `action`, `target`, `reason`) VALUES (" + user.getGuild().getId() + ", " + Instant.now().getEpochSecond() + ", " + user.getId() + ", '" + action + "', " + target.getId() + ", '" + reason + "');");
+            addPersistentRole.close();
+        } catch (SQLException ignored) { }
 
     }
 }

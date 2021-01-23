@@ -23,30 +23,23 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.storage;
+package org.geysermc.discordbot.listeners;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 
-/**
- * This class gives easy methods for accessing stored data about a server
- * such as configs and settings
- *
- * TODO: Link with sqlite db
- */
-public class ServerSettings {
+public class PersistentRoleHandler extends ListenerAdapter {
+    @Override
+    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
+        List<Role> roles = GeyserBot.storageManager.getPersistentRoles(event.getMember());
 
-    public static List<String> getList(long serverID, String key) {
-        String listData = GeyserBot.storageManager.getServerPreference(serverID, key);
-        return Arrays.asList(listData.split(",").clone());
-    }
-
-    public static TextChannel getLogChannel(Guild guild) {
-        String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "log-channel");
-        return guild.getTextChannelById(channel);
+        for (Role role : roles) {
+            event.getGuild().addRoleToMember(event.getMember(), role).queue();
+        }
     }
 }

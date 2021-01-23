@@ -39,15 +39,20 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.geysermc.discordbot.listeners.FileHandler;
 import org.geysermc.discordbot.listeners.LogHandler;
+import org.geysermc.discordbot.listeners.PersistentRoleHandler;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.storage.AbstractStorageManager;
 import org.geysermc.discordbot.storage.StorageType;
 import org.geysermc.discordbot.tags.TagsListener;
 import org.geysermc.discordbot.tags.TagsManager;
+import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.PropertiesManager;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pw.chew.chewbotcca.util.RestClient;
 
 import javax.security.auth.login.LoginException;
 import java.io.FileInputStream;
@@ -59,6 +64,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class GeyserBot {
     // Instance Variables
@@ -101,8 +107,6 @@ public class GeyserBot {
         // Initialize the waiter
         EventWaiter waiter = new EventWaiter();
 
-        Activity activity = Activity.playing(PropertiesManager.getPrefix() + "help");
-
         // Load filters
         SwearHandler.loadFilters();
 
@@ -115,6 +119,7 @@ public class GeyserBot {
 
         try {
             storageManager = storageType.getStorageManager().newInstance();
+            storageManager.setupStorage();
         } catch (InstantiationException | IllegalAccessException e) {
             LOGGER.error("Unable to create database link!");
             System.exit(0);
@@ -122,7 +127,7 @@ public class GeyserBot {
 
         // Setup the main client
         CommandClientBuilder client = new CommandClientBuilder();
-        client.setActivity(activity);
+        client.setActivity(null);
         client.setOwnerId("0"); // No owner
         client.setPrefix(PropertiesManager.getPrefix());
         client.useHelpBuilder(false);
@@ -130,7 +135,7 @@ public class GeyserBot {
 
         // Setup the tag client
         CommandClientBuilder tagClient = new CommandClientBuilder();
-        tagClient.setActivity(activity); // Set the same activity
+        tagClient.setActivity(null);
         tagClient.setOwnerId("0"); // No owner
         String tagPrefix = PropertiesManager.getPrefix() + PropertiesManager.getPrefix();
         tagClient.setPrefix(tagPrefix);
@@ -152,13 +157,22 @@ public class GeyserBot {
             .enableCache(CacheFlag.ROLE_TAGS)
             .setStatus(OnlineStatus.ONLINE)
             .setActivity(Activity.playing("Booting..."))
-            .addEventListeners(waiter, new LogHandler(), new SwearHandler(), new FileHandler(), client.build(), tagClient.build())
+            .addEventListeners(waiter, new LogHandler(), new SwearHandler(), new PersistentRoleHandler(), new FileHandler(), client.build(), tagClient.build())
             .build();
 
         // Register listeners
         jda.addEventListener();
 
         generalThreadPool = Executors.newScheduledThreadPool(5);
+
+        // Start the bStats tracking thread
+        generalThreadPool.scheduleAtFixedRate(() -> {
+            JSONArray servers = new JSONArray(RestClient.get("https://bstats.org/api/v1/plugins/5273/charts/servers/data"));
+            JSONArray players = new JSONArray(RestClient.get("https://bstats.org/api/v1/plugins/5273/charts/players/data"));
+            int serverCount = servers.getJSONArray(servers.length() - 1).getInt(1);
+            int playerCount = players.getJSONArray(players.length() - 1).getInt(1);
+            jda.getPresence().setActivity(Activity.playing(BotHelpers.coolFormat(serverCount) + " servers, " + BotHelpers.coolFormat(playerCount) + " players"));
+        }, 5, 60 * 5, TimeUnit.SECONDS);
     }
 
     public static JDA getJDA() {

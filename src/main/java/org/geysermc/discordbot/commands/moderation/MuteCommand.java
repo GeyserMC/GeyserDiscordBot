@@ -31,7 +31,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotHelpers;
@@ -112,8 +114,12 @@ public class MuteCommand extends Command {
                             .build()).queue());
         }
 
-        // TODO: Add rolepersist
-        event.getGuild().addRoleToMember(member, event.getGuild().getRolesByName("muted", true).get(0)).queue();
+        // Find and add the 'muted' role
+        Role muteRole = event.getGuild().getRolesByName("muted", true).get(0);
+        event.getGuild().addRoleToMember(member, muteRole).queue();
+
+        // Persist the role
+        GeyserBot.storageManager.addPersistentRole(event.getMember(), muteRole);
 
         MessageEmbed mutedEmbed = new EmbedBuilder()
                 .setTitle("Muted user")

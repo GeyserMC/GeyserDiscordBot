@@ -64,4 +64,31 @@ public class BotHelpers {
             return null;
         }
     }
+
+
+    private static final char[] FORMAT_CHARS = new char[]{'k', 'm', 'b', 't'};
+
+    public static String coolFormat(int n) {
+        return n < 1000 ? String.valueOf(n) : coolFormat(n, 0);
+    }
+
+    /**
+     * Recursive implementation, invokes itself for each factor of a thousand, increasing the class on each invokation.
+     *
+     * https://stackoverflow.com/a/4753866/5299903
+     *
+     * @param n the number to format
+     * @param iteration in fact this is the class from the array c
+     * @return a String representing the number n formatted in a cool looking way.
+     */
+    private static String coolFormat(double n, int iteration) {
+        double d = ((long) n / 100) / 10.0;
+        boolean isRound = (d * 10) % 10 == 0;//true if the decimal part is equal to 0 (then it's trimmed anyway)
+        return (d < 1000? //this determines the class, i.e. 'k', 'm' etc
+                ((d > 99.9 || isRound || (!isRound && d > 9.99)? //this decides whether to trim the decimals
+                        (int) d * 10 / 10 : d + "" // (int) d * 10 / 10 drops the decimal
+                ) + "" + FORMAT_CHARS[iteration])
+                : coolFormat(d, iteration+1));
+
+    }
 }
