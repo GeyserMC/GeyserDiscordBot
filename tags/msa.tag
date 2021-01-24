@@ -11,3 +11,5 @@ This may be a result of one of three common things:
 2. Your account may not be an MSA, but may still be the old Mojang account system.
 
 3. The GeyserConnect sees a lot of use, and the password login is notoriously unreliable as a result of how the username/password system works. Try using the web method instead.
+
+P.S. The password login will be disabled once the account migration rollout has been made available to all regions. This is for account and server security.
