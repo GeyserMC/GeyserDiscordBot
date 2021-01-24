@@ -2,7 +2,7 @@ type: text
 
 ---
 
-There is an **Unofficial** public [GeyserConnect](https://github.com/GeyserMC/GeyserConnect) instance running. You can connect to it via
+The public [GeyserConnect](https://github.com/GeyserMC/GeyserConnect) instance can be connected to it via
 Address: `geyserconnect.gq`
 Port: `19132`
 
