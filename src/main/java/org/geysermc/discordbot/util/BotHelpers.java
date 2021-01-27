@@ -28,6 +28,7 @@ package org.geysermc.discordbot.util;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import org.geysermc.discordbot.GeyserBot;
 
 import javax.annotation.Nullable;
 import java.util.regex.Matcher;
@@ -36,9 +37,6 @@ public class BotHelpers {
 
     /**
      * Get a guild member from a given id string
-     * Input examples:
-     *  <@!1234>
-     *  1234
      *
      * @param guild Guild to get the member for
      * @param userTag The tag to use to find the member
@@ -47,6 +45,25 @@ public class BotHelpers {
     @Nullable
     public static Member getMember(Guild guild, String userTag) {
         try {
+            return guild.getMember(getUser(userTag));
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * Get a discord user from a given id string
+     * Input examples:
+     *  <@!1234>
+     *  1234
+     *  abc#1234
+     *
+     * @param userTag The tag to use to find the member
+     * @return The found User or null
+     */
+    @Nullable
+    public static User getUser(String userTag) {
+        try {
             // Check for a mention (<@!1234>)
             if (userTag.startsWith("<@!") && userTag.endsWith(">")) {
                 userTag = userTag.substring(3, userTag.length() - 1);
@@ -54,17 +71,16 @@ public class BotHelpers {
                 // Check for a user tag (example#1234)
                 Matcher m = User.USER_TAG.matcher(userTag);
                 if (m.matches()) {
-                    return guild.getMemberByTag(m.group(1), m.group(2));
+                    return GeyserBot.getJDA().getUserByTag(m.group(1), m.group(2));
                 }
             }
 
             // Try to get the member by ID
-            return guild.getMemberById(userTag);
+            return GeyserBot.getJDA().getUserById(userTag);
         } catch (NumberFormatException ignored) {
             return null;
         }
     }
-
 
     private static final char[] FORMAT_CHARS = new char[]{'k', 'm', 'b', 't'};
 

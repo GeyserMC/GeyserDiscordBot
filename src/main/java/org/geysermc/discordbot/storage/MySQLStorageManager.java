@@ -26,6 +26,7 @@
 package org.geysermc.discordbot.storage;
 
 
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
@@ -50,6 +51,7 @@ public class MySQLStorageManager extends AbstractStorageManager {
             Statement createTables = connection.createStatement();
             createTables.executeUpdate("CREATE TABLE IF NOT EXISTS `preferences` (`id` INT NOT NULL AUTO_INCREMENT, `server` BIGINT NOT NULL, `key` VARCHAR(32), `value` TEXT NOT NULL, PRIMARY KEY(`id`), UNIQUE KEY `pref_constraint` (`server`,`key`));");
             createTables.executeUpdate("CREATE TABLE IF NOT EXISTS `persistent_roles` (`id` INT NOT NULL AUTO_INCREMENT, `server` BIGINT NOT NULL, `user` BIGINT NOT NULL, `role` BIGINT NOT NULL, PRIMARY KEY(`id`), UNIQUE KEY `role_constraint` (`server`,`user`,`role`));");
+            createTables.executeUpdate("CREATE TABLE IF NOT EXISTS `mod_log` (`id` INT NOT NULL AUTO_INCREMENT, `server` BIGINT NOT NULL, `time` BIGINT NOT NULL, `user` BIGINT NOT NULL, `action` VARCHAR(32) NOT NULL, `target` BIGINT NOT NULL, `reason` TEXT NOT NULL, PRIMARY KEY(`id`));");
             createTables.close();
         } catch (ClassNotFoundException | SQLException e) {
             GeyserBot.LOGGER.error("Unable to connect to MySQL database!", e);
@@ -112,7 +114,7 @@ public class MySQLStorageManager extends AbstractStorageManager {
 
         try {
             Statement getPreferenceValue = connection.createStatement();
-            ResultSet rs = getPreferenceValue.executeQuery("SELECT `role` FROM `persistent_roles` WHERE `server`=" + member.getGuild().getId() + " AND " + member.getId() + ";");
+            ResultSet rs = getPreferenceValue.executeQuery("SELECT `role` FROM `persistent_roles` WHERE `server`=" + member.getGuild().getId() + " AND `user`=" + member.getId() + ";");
 
             while (rs.next()) {
                 roles.add(member.getGuild().getRoleById(rs.getString("role")));
@@ -131,6 +133,26 @@ public class MySQLStorageManager extends AbstractStorageManager {
             addPersistentRole.executeUpdate("INSERT INTO `mod_log` (`server`, `time`, `user`, `action`, `target`, `reason`) VALUES (" + user.getGuild().getId() + ", " + Instant.now().getEpochSecond() + ", " + user.getId() + ", '" + action + "', " + target.getId() + ", '" + reason + "');");
             addPersistentRole.close();
         } catch (SQLException ignored) { }
+    }
 
+    @Override
+    public List<ModLog> getLog(Guild guild, User target, int limit) {
+        List<ModLog> logs = new ArrayList<>();
+
+        try {
+            Statement getPreferenceValue = connection.createStatement();
+            ResultSet rs = getPreferenceValue.executeQuery("SELECT `time`, `user`, `action`, `reason` FROM `mod_log` WHERE `server`=" + guild.getId() + " AND `target`=" + target.getId() + " LIMIT " + limit + ";");
+
+            while (rs.next()) {
+                Instant time = Instant.ofEpochSecond(rs.getLong("time"));
+                Member user = guild.getMemberById(rs.getLong("user"));
+
+                logs.add(new ModLog(time, user, rs.getString("action"), target, rs.getString("reason")));
+            }
+
+            getPreferenceValue.close();
+        } catch (SQLException ignored) { }
+
+        return logs;
     }
 }

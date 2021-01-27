@@ -35,18 +35,42 @@ import java.util.List;
 /**
  * This class gives easy methods for accessing stored data about a server
  * such as configs and settings
- *
- * TODO: Link with sqlite db
  */
 public class ServerSettings {
 
+    /**
+     * Get a preference as a list of strings delimited by `,`
+     *
+     * @param serverID ID of the guild to get the preference for
+     * @param key The preference key to get
+     * @return The list of strings or null if they dont exist
+     */
     public static List<String> getList(long serverID, String key) {
         String listData = GeyserBot.storageManager.getServerPreference(serverID, key);
         return Arrays.asList(listData.split(",").clone());
     }
 
-    public static TextChannel getLogChannel(Guild guild) {
+    /**
+     * Get the log channel for the selected guild
+     *
+     * @param guild ID of the guild to get the channel for
+     * @return The {@link TextChannel} for logs
+     * @throws IllegalArgumentException If the channel is null or invalid
+     */
+    public static TextChannel getLogChannel(Guild guild) throws IllegalArgumentException {
         String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "log-channel");
+        return guild.getTextChannelById(channel);
+    }
+
+    /**
+     * Get the update channel for the selected guild
+     *
+     * @param guild ID of the guild to get the channel for
+     * @return The {@link TextChannel} for updates
+     * @throws IllegalArgumentException If the channel is null or invalid
+     */
+    public static TextChannel getUpdateChannel(Guild guild) throws IllegalArgumentException {
+        String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "update-channel");
         return guild.getTextChannelById(channel);
     }
 }
