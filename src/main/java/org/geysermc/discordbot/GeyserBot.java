@@ -45,6 +45,7 @@ import org.geysermc.discordbot.storage.AbstractStorageManager;
 import org.geysermc.discordbot.storage.StorageType;
 import org.geysermc.discordbot.tags.TagsListener;
 import org.geysermc.discordbot.tags.TagsManager;
+import org.geysermc.discordbot.updates.UpdateManager;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.json.JSONArray;
@@ -164,6 +165,9 @@ public class GeyserBot {
         jda.addEventListener();
 
         generalThreadPool = Executors.newScheduledThreadPool(5);
+
+        // Setup the update check scheduler
+        UpdateManager.setup();
 
         // Start the bStats tracking thread
         generalThreadPool.scheduleAtFixedRate(() -> {
