@@ -32,6 +32,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotHelpers;
@@ -97,12 +98,14 @@ public class UnbanCommand extends Command {
             args.remove(0);
         }
 
+        String reason = String.join(" ", args);
+
         // Let the user know they're unbanned if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) ->
                     channel.sendMessage(new EmbedBuilder()
                             .setTitle("You have been unbanned from GeyserMC!")
-                            .addField("Reason", String.join(" ", args), false)
+                            .addField("Reason", reason, false)
                             .setTimestamp(Instant.now())
                             .setColor(Color.green)
                             .build()).queue());
@@ -111,11 +114,14 @@ public class UnbanCommand extends Command {
         // Unban user
         member.getGuild().unban(user).queue();
 
+        // Log the change
+        GeyserBot.storageManager.addLog(event.getMember(), "unban", user, reason);
+
         MessageEmbed unbannedEmbed = new EmbedBuilder()
                 .setTitle("Unbanned user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
-                .addField("Reason", String.join(" ", args), false)
+                .addField("Reason", reason, false)
                 .setTimestamp(Instant.now())
                 .setColor(Color.green)
                 .build();

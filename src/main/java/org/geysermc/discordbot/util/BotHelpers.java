@@ -76,7 +76,7 @@ public class BotHelpers {
             }
 
             // Try to get the member by ID
-            return GeyserBot.getJDA().getUserById(userTag);
+            return GeyserBot.getJDA().retrieveUserById(userTag).complete();
         } catch (NumberFormatException ignored) {
             return null;
         }

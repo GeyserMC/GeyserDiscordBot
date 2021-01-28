@@ -90,7 +90,6 @@ public class MuteCommand extends Command {
                     silent = true;
                     break;
 
-
                 default:
                     event.getMessage().reply(new EmbedBuilder()
                             .setTitle("Invalid option")

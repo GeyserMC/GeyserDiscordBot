@@ -48,6 +48,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * TODO: Add pagination
+ */
 public class LogCommand extends Command {
 
     public LogCommand() {

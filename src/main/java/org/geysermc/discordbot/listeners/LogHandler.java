@@ -26,12 +26,19 @@
 package org.geysermc.discordbot.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.audit.ActionType;
+import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Invite;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.guild.GuildBanEvent;
+import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -41,23 +48,51 @@ import java.time.Instant;
 
 public class LogHandler extends ListenerAdapter {
 
-//    @Override
-//    public void onGuildBan(@NotNull GuildBanEvent event) {
-//
-//        Guild.Ban ban = event.getGuild().retrieveBan(event.getUser()).complete();
-//
-//        // Don't log bans by the bot (they are handled separately)
-//        if (ban.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong()) {
-//            // Send the embed as a reply and to the log
-//            ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
-//                    .setTitle("Banned user")
-//                    .addField("User", event.getUser().getAsMention(), false)
-//                    .addField("Reason", ban.getReason(), false)
-//                    .setTimestamp(Instant.now())
-//                    .setColor(Color.green)
-//                    .build()).queue();
-//        }
-//    }
+    @Override
+    public void onGuildBan(@NotNull GuildBanEvent event) {
+        Guild.Ban ban = event.getGuild().retrieveBan(event.getUser()).complete();
+
+        // Get the ban from the audit log to get the user that created it
+        AuditLogEntry banLog = event.getGuild().retrieveAuditLogs().type(ActionType.BAN).stream().filter(auditLogEntry -> auditLogEntry.getTargetIdLong() == ban.getUser().getIdLong()).findFirst().orElse(null);
+
+        // Don't log bans by the bot (they are handled separately)
+        if (banLog.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong()) {
+            // Log the change
+            GeyserBot.storageManager.addLog(event.getGuild().getMember(banLog.getUser()), "ban", event.getUser(), ban.getReason());
+
+            // Send the embed as a reply and to the log
+            ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                    .setTitle("Banned user")
+                    .addField("User", event.getUser().getAsMention(), false)
+                    .addField("Staff member", banLog.getUser().getAsMention(), false)
+                    .addField("Reason", ban.getReason(), false)
+                    .setTimestamp(Instant.now())
+                    .setColor(Color.green)
+                    .build()).queue();
+        }
+    }
+
+    @Override
+    public void onGuildUnban(@NotNull GuildUnbanEvent event) {
+        // Get the unban from the audit log to get the user that created it
+        AuditLogEntry banLog = event.getGuild().retrieveAuditLogs().type(ActionType.UNBAN).stream().filter(auditLogEntry -> auditLogEntry.getTargetIdLong() == event.getUser().getIdLong()).findFirst().orElse(null);
+
+        // Don't log bans by the bot (they are handled separately)
+        if (banLog.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong()) {
+            // Log the change
+            GeyserBot.storageManager.addLog(event.getGuild().getMember(banLog.getUser()), "unban", event.getUser(), "");
+
+            // Send the embed as a reply and to the log
+            ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                    .setTitle("Unbanned user")
+                    .addField("User", event.getUser().getAsMention(), false)
+                    .addField("Staff member", banLog.getUser().getAsMention(), false)
+                    .addField("Reason", "", false)
+                    .setTimestamp(Instant.now())
+                    .setColor(Color.green)
+                    .build()).queue();
+        }
+    }
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {

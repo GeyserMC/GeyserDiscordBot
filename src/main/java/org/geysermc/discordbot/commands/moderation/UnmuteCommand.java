@@ -98,12 +98,14 @@ public class UnmuteCommand extends Command {
             args.remove(0);
         }
 
+        String reason = String.join(" ", args);
+
         // Let the user know they're muted if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) ->
                     channel.sendMessage(new EmbedBuilder()
                             .setTitle("You have been unmuted from GeyserMC!")
-                            .addField("Reason", String.join(" ", args), false)
+                            .addField("Reason", reason, false)
                             .setTimestamp(Instant.now())
                             .setColor(Color.red)
                             .build()).queue());
@@ -116,11 +118,14 @@ public class UnmuteCommand extends Command {
         // UnPersist the role
         GeyserBot.storageManager.removePersistentRole(event.getMember(), muteRole);
 
+        // Log the change
+        GeyserBot.storageManager.addLog(event.getMember(), "unmute", user, reason);
+
         MessageEmbed mutedEmbed = new EmbedBuilder()
                 .setTitle("Unmuted user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
-                .addField("Reason", String.join(" ", args), false)
+                .addField("Reason", reason, false)
                 .setTimestamp(Instant.now())
                 .setColor(Color.green)
                 .build();
