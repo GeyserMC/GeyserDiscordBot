@@ -37,10 +37,7 @@ import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.geysermc.discordbot.listeners.FileHandler;
-import org.geysermc.discordbot.listeners.LogHandler;
-import org.geysermc.discordbot.listeners.PersistentRoleHandler;
-import org.geysermc.discordbot.listeners.SwearHandler;
+import org.geysermc.discordbot.listeners.*;
 import org.geysermc.discordbot.storage.AbstractStorageManager;
 import org.geysermc.discordbot.storage.StorageType;
 import org.geysermc.discordbot.tags.TagsListener;
@@ -158,7 +155,14 @@ public class GeyserBot {
             .enableCache(CacheFlag.ROLE_TAGS)
             .setStatus(OnlineStatus.ONLINE)
             .setActivity(Activity.playing("Booting..."))
-            .addEventListeners(waiter, new LogHandler(), new SwearHandler(), new PersistentRoleHandler(), new FileHandler(), client.build(), tagClient.build())
+            .addEventListeners(waiter,
+                    new LogHandler(),
+                    new SwearHandler(),
+                    new PersistentRoleHandler(),
+                    new FileHandler(),
+                    new LevelHandler(),
+                    client.build(),
+                    tagClient.build())
             .build();
 
         // Register listeners

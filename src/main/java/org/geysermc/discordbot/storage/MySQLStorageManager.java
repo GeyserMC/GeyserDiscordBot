@@ -52,6 +52,7 @@ public class MySQLStorageManager extends AbstractStorageManager {
             createTables.executeUpdate("CREATE TABLE IF NOT EXISTS `preferences` (`id` INT NOT NULL AUTO_INCREMENT, `server` BIGINT NOT NULL, `key` VARCHAR(32), `value` TEXT NOT NULL, PRIMARY KEY(`id`), UNIQUE KEY `pref_constraint` (`server`,`key`));");
             createTables.executeUpdate("CREATE TABLE IF NOT EXISTS `persistent_roles` (`id` INT NOT NULL AUTO_INCREMENT, `server` BIGINT NOT NULL, `user` BIGINT NOT NULL, `role` BIGINT NOT NULL, PRIMARY KEY(`id`), UNIQUE KEY `role_constraint` (`server`,`user`,`role`));");
             createTables.executeUpdate("CREATE TABLE IF NOT EXISTS `mod_log` (`id` INT NOT NULL AUTO_INCREMENT, `server` BIGINT NOT NULL, `time` BIGINT NOT NULL, `user` BIGINT NOT NULL, `action` VARCHAR(32) NOT NULL, `target` BIGINT NOT NULL, `reason` TEXT NOT NULL, PRIMARY KEY(`id`));");
+            createTables.executeUpdate("CREATE TABLE IF NOT EXISTS `levels` (`id` INT NOT NULL AUTO_INCREMENT, `server` BIGINT NOT NULL, `user` BIGINT NOT NULL, `level` INT NOT NULL, `xp` INT NOT NULL, PRIMARY KEY(`id`), UNIQUE KEY `level_constraint` (`server`,`user`));");
             createTables.close();
         } catch (ClassNotFoundException | SQLException e) {
             GeyserBot.LOGGER.error("Unable to connect to MySQL database!", e);
@@ -113,14 +114,14 @@ public class MySQLStorageManager extends AbstractStorageManager {
         List<Role> roles = new ArrayList<>();
 
         try {
-            Statement getPreferenceValue = connection.createStatement();
-            ResultSet rs = getPreferenceValue.executeQuery("SELECT `role` FROM `persistent_roles` WHERE `server`=" + member.getGuild().getId() + " AND `user`=" + member.getId() + ";");
+            Statement getPersistentRoles = connection.createStatement();
+            ResultSet rs = getPersistentRoles.executeQuery("SELECT `role` FROM `persistent_roles` WHERE `server`=" + member.getGuild().getId() + " AND `user`=" + member.getId() + ";");
 
             while (rs.next()) {
                 roles.add(member.getGuild().getRoleById(rs.getString("role")));
             }
 
-            getPreferenceValue.close();
+            getPersistentRoles.close();
         } catch (SQLException ignored) { }
 
         return roles;
@@ -129,9 +130,9 @@ public class MySQLStorageManager extends AbstractStorageManager {
     @Override
     public void addLog(Member user, String action, User target, String reason) {
         try {
-            Statement addPersistentRole = connection.createStatement();
-            addPersistentRole.executeUpdate("INSERT INTO `mod_log` (`server`, `time`, `user`, `action`, `target`, `reason`) VALUES (" + user.getGuild().getId() + ", " + Instant.now().getEpochSecond() + ", " + user.getId() + ", '" + action + "', " + target.getId() + ", '" + reason + "');");
-            addPersistentRole.close();
+            Statement addLogEntry = connection.createStatement();
+            addLogEntry.executeUpdate("INSERT INTO `mod_log` (`server`, `time`, `user`, `action`, `target`, `reason`) VALUES (" + user.getGuild().getId() + ", " + Instant.now().getEpochSecond() + ", " + user.getId() + ", '" + action + "', " + target.getId() + ", '" + reason + "');");
+            addLogEntry.close();
         } catch (SQLException ignored) { }
     }
 
@@ -140,8 +141,8 @@ public class MySQLStorageManager extends AbstractStorageManager {
         List<ModLog> logs = new ArrayList<>();
 
         try {
-            Statement getPreferenceValue = connection.createStatement();
-            ResultSet rs = getPreferenceValue.executeQuery("SELECT `time`, `user`, `action`, `reason` FROM `mod_log` WHERE `server`=" + guild.getId() + " AND `target`=" + target.getId() + " LIMIT " + limit + ";");
+            Statement getLogEntry = connection.createStatement();
+            ResultSet rs = getLogEntry.executeQuery("SELECT `time`, `user`, `action`, `reason` FROM `mod_log` WHERE `server`=" + guild.getId() + " AND `target`=" + target.getId() + " LIMIT " + limit + ";");
 
             while (rs.next()) {
                 Instant time = Instant.ofEpochSecond(rs.getLong("time"));
@@ -150,9 +151,36 @@ public class MySQLStorageManager extends AbstractStorageManager {
                 logs.add(new ModLog(time, user, rs.getString("action"), target, rs.getString("reason")));
             }
 
-            getPreferenceValue.close();
+            getLogEntry.close();
         } catch (SQLException ignored) { }
 
         return logs;
+    }
+
+    @Override
+    public LevelInfo getLevel(Member user) {
+        try {
+            Statement getLevelValue = connection.createStatement();
+            ResultSet rs = getLevelValue.executeQuery("SELECT `level`, `xp` FROM `levels` WHERE `server`=" + user.getGuild().getId() + " AND `user`=" + user.getId() + ";");
+
+            if (rs.next()) {
+                return new LevelInfo(rs.getInt("level"), rs.getInt("xp"));
+            }
+
+            getLevelValue.close();
+
+            return new LevelInfo(0, 0);
+        } catch (SQLException ignored) { }
+
+        return null;
+    }
+
+    @Override
+    public void setLevel(Member user, LevelInfo levelInfo) {
+        try {
+            Statement updateLevelValue = connection.createStatement();
+            updateLevelValue.executeUpdate("INSERT INTO `levels` (`server`, `user`, `level`, `xp`) VALUES (" + user.getGuild().getId() + ", " + user.getId() + ", " + levelInfo.getLevel() + ", " + levelInfo.getXp() + ") ON DUPLICATE KEY UPDATE `level`=" + levelInfo.getLevel() + ", `xp`=" + levelInfo.getXp() + ";");
+            updateLevelValue.close();
+        } catch (SQLException ignored) { }
     }
 }

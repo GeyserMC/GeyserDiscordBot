@@ -25,44 +25,40 @@
 
 package org.geysermc.discordbot.storage;
 
-public enum StorageType {
-    //    SQLITE("sqlite", SQLiteStorageManager.class), // This maybe added in the future for local development
-    MYSQL("mysql", MySQLStorageManager.class),
-    UNKNOWN("unknown", AbstractStorageManager.class);
+public class LevelInfo {
+    private int level;
+    private int xp;
 
-    private final String name;
-
-    private final Class<? extends AbstractStorageManager> storageManager;
-
-    StorageType(String name, Class<? extends AbstractStorageManager> storageManager) {
-        this.name = name;
-        this.storageManager = storageManager;
+    public LevelInfo(int level, int xp) {
+        this.level = level;
+        this.xp = xp;
     }
 
-    public static final StorageType[] VALUES = values();
-
-    /**
-     * Convert the StorageType string (from properties) to the enum, UNKNOWN on fail
-     *
-     * @param name StorageType string
-     *
-     * @return The converted StorageType
-     */
-    public static StorageType getByName(String name) {
-        String upperCase = name.toUpperCase();
-        for (StorageType type : VALUES) {
-            if (type.name().equals(upperCase)) {
-                return type;
-            }
-        }
-        return UNKNOWN;
+    public int getLevel() {
+        return level;
     }
 
-    public String getName() {
-        return name;
+    public int getXp() {
+        return xp;
     }
 
-    public Class<? extends AbstractStorageManager> getStorageManager() {
-        return storageManager;
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setXp(int xp) {
+        this.xp = xp;
+    }
+
+    public int getNextLevel() {
+        return level + 1;
+    }
+
+    public int getXpForNextLevel() {
+        return Math.round(5f / 6 * getNextLevel() * (2 * getNextLevel() * getNextLevel() + 27 * getNextLevel() + 91));
+    }
+
+    public int getXpToNextLevel() {
+        return getXpForNextLevel() - getXp();
     }
 }

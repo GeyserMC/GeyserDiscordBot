@@ -115,4 +115,8 @@ public abstract class AbstractStorageManager {
     public List<ModLog> getLog(Guild guild, User target) {
         return getLog(guild, target, 5);
     }
+
+    public abstract LevelInfo getLevel(Member user);
+
+    public abstract void setLevel(Member user, LevelInfo levelInfo);
 }
