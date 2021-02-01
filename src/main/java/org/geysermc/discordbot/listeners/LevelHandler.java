@@ -66,7 +66,7 @@ public class LevelHandler extends ListenerAdapter {
         if (LAST_MESSAGE_LOG.containsKey(event.getMember().getIdLong())) {
             long time = LAST_MESSAGE_LOG.get(event.getMember().getIdLong());
 
-            // Check if the message hasnt expired
+            // Check if the message hasn't expired
             if (time >= Instant.now().toEpochMilli()) {
                 return;
             }

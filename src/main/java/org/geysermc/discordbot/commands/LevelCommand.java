@@ -30,10 +30,11 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.listeners.SwearHandler;
+import org.geysermc.discordbot.storage.LevelInfo;
 import org.geysermc.discordbot.util.BotHelpers;
 
 import java.awt.*;
@@ -44,10 +45,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class WhoisCommand extends Command {
+public class LevelCommand extends Command {
 
-    public WhoisCommand() {
-        this.name = "whois";
+    public LevelCommand() {
+        this.name = "level";
         this.hidden = true;
     }
 
@@ -59,8 +60,12 @@ public class WhoisCommand extends Command {
 
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
-        // Fetch the user
-        Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
+        Member member;
+        if (args.size() == 0 || args.get(0).isEmpty()) {
+            member = event.getMember();
+        } else {
+            member = BotHelpers.getMember(event.getGuild(), args.remove(0));
+        }
 
         // Check user is valid
         if (member == null) {
@@ -75,23 +80,33 @@ public class WhoisCommand extends Command {
         // Get the user from the member
         User user = member.getUser();
 
-        // Get the roles
-        String roles = "None";
-        if (member.getRoles().size() > 0) {
-            roles = member.getRoles().stream().map(Role::getAsMention).collect(Collectors.joining(" "));
+        LevelInfo levelInfo = GeyserBot.storageManager.getLevel(member);
+
+        // Get the level progress
+        float progress = (float)levelInfo.getXp() / levelInfo.getXpForNextLevel();
+        int size = 20;
+
+        // Generate the progress bar
+        StringBuilder progressText = new StringBuilder();
+        progressText.append("[");
+        for (int i = 0; i < Math.round(size * progress); i++) {
+            progressText.append("\u2550");
         }
+        for (int i = 0; i < (size - Math.round(size * progress)); i++) {
+            progressText.append("\u2500");
+        }
+        progressText.append("]");
 
         event.getMessage().reply(new EmbedBuilder()
-                .setAuthor(user.getAsTag(), null, user.getAvatarUrl())
+                .setTitle("Level")
                 .setDescription(user.getAsMention())
-                .addField("Joined", member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Registered", member.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Roles [" + member.getRoles().size() + "]", roles, false)
-                .addField("Key Permissions", member.getPermissions().stream().map(Permission::getName).collect(Collectors.joining(", ")), false)
+                .addField("Level", String.valueOf(levelInfo.getLevel()), true)
+                .addField("XP", levelInfo.getXp() + "/" + levelInfo.getXpForNextLevel(), true)
+                .addField("Progress (" + Math.round(progress * 100) + "%)", progressText.toString(), false)
                 .setThumbnail(user.getAvatarUrl())
                 .setFooter("ID: " + user.getId())
                 .setTimestamp(Instant.now())
-                .setColor(member.getColor())
+                .setColor(Color.green)
                 .build()).queue();
     }
 }
