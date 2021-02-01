@@ -145,6 +145,9 @@ public class GeyserBot {
         // Disable pings on replys
         MessageAction.setDefaultMentionRepliedUser(false);
 
+        // Setup the thread pool
+        generalThreadPool = Executors.newScheduledThreadPool(5);
+
         // Register JDA
         jda = JDABuilder.createDefault(PropertiesManager.getToken())
             .setChunkingFilter(ChunkingFilter.ALL)
@@ -167,8 +170,6 @@ public class GeyserBot {
 
         // Register listeners
         jda.addEventListener();
-
-        generalThreadPool = Executors.newScheduledThreadPool(5);
 
         // Setup the update check scheduler
         UpdateManager.setup();

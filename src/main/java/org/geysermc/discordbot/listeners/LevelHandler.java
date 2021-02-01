@@ -25,6 +25,8 @@
 
 package org.geysermc.discordbot.listeners;
 
+import it.unimi.dsi.fastutil.longs.Long2LongMap;
+import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -33,10 +35,26 @@ import org.geysermc.discordbot.storage.LevelInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.time.Instant;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class LevelHandler extends ListenerAdapter {
     private static final Random RANDOM = new Random();
+
+    private static final Long2LongMap LAST_MESSAGE_LOG = new Long2LongOpenHashMap();
+
+    public LevelHandler() {
+        GeyserBot.getGeneralThreadPool().scheduleAtFixedRate(() -> {
+            for (long user : LAST_MESSAGE_LOG.keySet()) {
+                long time = LAST_MESSAGE_LOG.get(user);
+                // Remove any old entry's to keep memory usage lower
+                if (time <= Instant.now().toEpochMilli()) {
+                    LAST_MESSAGE_LOG.remove(user, time);
+                }
+            }
+        }, 5, 5, TimeUnit.MINUTES);
+    }
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
@@ -45,7 +63,17 @@ public class LevelHandler extends ListenerAdapter {
             return;
         }
 
-        // TODO: Add a 1 lot of xp per min cooldown
+        if (LAST_MESSAGE_LOG.containsKey(event.getMember().getIdLong())) {
+            long time = LAST_MESSAGE_LOG.get(event.getMember().getIdLong());
+
+            // Check if the message hasnt expired
+            if (time >= Instant.now().toEpochMilli()) {
+                return;
+            }
+        }
+
+        // Set the new value
+        LAST_MESSAGE_LOG.put(event.getMember().getIdLong(), Instant.now().toEpochMilli() + (1000 * 60));
 
         int xp = 15 + RANDOM.nextInt(11);
 

@@ -31,6 +31,16 @@
             <id>chew-jenkins</id>
             <url>https://jenkins.chew.pw/plugin/repository/everything/</url>
         </repository>
+        <repository>
+            <id>opencollab-release-repo</id>
+            <url>https://repo.opencollab.dev/maven-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -100,6 +110,13 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.23</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.nukkitx.fastutil</groupId>
+            <artifactId>fastutil-long-long-maps</artifactId>
+            <version>8.3.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
