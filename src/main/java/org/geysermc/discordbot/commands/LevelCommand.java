@@ -49,7 +49,8 @@ public class LevelCommand extends Command {
 
     public LevelCommand() {
         this.name = "level";
-        this.hidden = true;
+        this.arguments = "[member]";
+        this.help = "Show the level for a member";
     }
 
     @Override
@@ -97,12 +98,22 @@ public class LevelCommand extends Command {
         }
         progressText.append("]");
 
+        // Do some fancy stuff so we can add an easter egg
+        int progressRounded = Math.round(progress * 100);
+        String progressTitle = " (" + progressRounded + "%)";
+        if (progressRounded == 99) {
+            // Shh leave this easter egg here
+            progressTitle = "Pogress" + progressTitle;
+        } else {
+            progressTitle = "Progress" + progressTitle;
+        }
+
         event.getMessage().reply(new EmbedBuilder()
                 .setTitle("Level")
                 .setDescription(user.getAsMention())
                 .addField("Level", String.valueOf(levelInfo.getLevel()), true)
                 .addField("XP", levelInfo.getXp() + "/" + levelInfo.getXpForNextLevel(), true)
-                .addField("Progress (" + Math.round(progress * 100) + "%)", progressText.toString(), false)
+                .addField(progressTitle, progressText.toString(), false)
                 .setThumbnail(user.getAvatarUrl())
                 .setFooter("ID: " + user.getId())
                 .setTimestamp(Instant.now())
