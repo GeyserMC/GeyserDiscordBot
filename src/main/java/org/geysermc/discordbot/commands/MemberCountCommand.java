@@ -45,6 +45,7 @@ public class MemberCountCommand extends Command {
 
     public MemberCountCommand() {
         this.name = "membercount";
+        this.aliases = new String[] {"members"};
         this.help = "Show the current member count";
     }
 

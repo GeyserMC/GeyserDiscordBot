@@ -116,7 +116,18 @@ public abstract class AbstractStorageManager {
         return getLog(guild, target, 5);
     }
 
+    /**
+     * Get the level info for a given Guild Member
+     *
+     * @param user Member to get level for
+     * @return The level info from the database
+     */
     public abstract LevelInfo getLevel(Member user);
 
+    /**
+     * Set the level data for a given Guild Member
+     * @param user Member to set the level data of
+     * @param levelInfo The data to set
+     */
     public abstract void setLevel(Member user, LevelInfo levelInfo);
 }
