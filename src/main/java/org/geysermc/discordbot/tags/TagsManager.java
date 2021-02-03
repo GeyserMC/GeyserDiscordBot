@@ -26,10 +26,10 @@
 package org.geysermc.discordbot.tags;
 
 import com.jagrosh.jdautilities.command.Command;
+import org.geysermc.discordbot.util.BotHelpers;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.net.URISyntaxException;
 import java.util.*;
 
 public class TagsManager {
@@ -48,14 +48,20 @@ public class TagsManager {
     private static void loadTags() {
         TAGS.add(new TagAliasCommand());
 
-        for (File folder : new File(TagsManager.class.getClassLoader().getResource("tags").getPath()).listFiles()) {
-            if (folder.isDirectory()) {
-                for (File file : folder.listFiles()) {
-                    if (file.isFile() && file.getName().endsWith(".tag")) {
-                        try {
-                            String tagName = file.getName().replace(".tag", "");
+        try {
+            for (String folderName : BotHelpers.getResourceListing(TagsManager.class, "tags/")) {
+                try {
+                    String[] files = BotHelpers.getResourceListing(TagsManager.class, "tags/" + folderName + "/");
 
-                            String[] lines = new String(Files.readAllBytes(file.toPath())).split("\n");
+                    if (files == null) {
+                        continue;
+                    }
+
+                    for (String fileName : files) {
+                        if (fileName.endsWith(".tag")) {
+                            String tagName = fileName.replace(".tag", "");
+
+                            String[] lines = new String(BotHelpers.bytesFromResource("tags/" + folderName + "/" + fileName)).split("\n");
                             Map<String, String> tagData = new HashMap<>();
                             StringBuilder content = new StringBuilder();
                             boolean hitSeperator = false;
@@ -111,13 +117,16 @@ public class TagsManager {
                             if (tag != null) {
                                 TAGS.add(tag);
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            // TODO: Add a decent error message
                         }
                     }
+                } catch (IOException | URISyntaxException e) {
+                    e.printStackTrace();
+                    // TODO: Handle error
                 }
             }
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+            // TODO: Handle error
         }
 
         tagsLoaded = true;

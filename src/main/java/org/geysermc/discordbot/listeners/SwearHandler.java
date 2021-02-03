@@ -33,13 +33,13 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.awt.Color;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.net.URISyntaxException;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -71,32 +71,27 @@ public class SwearHandler extends ListenerAdapter {
 
     public static void loadFilters() {
         int fileCount = 0;
-        for (File file : new File(SwearHandler.class.getClassLoader().getResource("filters").getPath()).listFiles()) {
-            if (file.isFile() && file.getName().endsWith(".wlist")) {
-                fileCount++;
-                try {
+        try {
+            for (String fileName : BotHelpers.getResourceListing(SwearHandler.class, "filters/")) {
+                if (fileName.endsWith(".wlist")) {
+                    fileCount++;
                     // Load the lines
-                    String[] lines = new String(Files.readAllBytes(file.toPath())).split("\n");
+                    String[] lines = new String(BotHelpers.bytesFromResource("filters/" + fileName)).split("\n");
                     for (String line : lines) {
                         filterPatterns.add(Pattern.compile("(^| )" + line.trim() + "( |$)", Pattern.CASE_INSENSITIVE));
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    // TODO: Handle error
                 }
             }
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+            // TODO: Handle error
         }
 
         GeyserBot.LOGGER.info("Loaded " + filterPatterns.size() + " filter patterns from " + fileCount + " files");
 
-        try {
-            nicknames = new String(Files.readAllBytes(new File(SwearHandler.class.getClassLoader().getResource("nicknames.wlist").getPath()).toPath())).trim().split("\n");
+        nicknames = new String(BotHelpers.bytesFromResource("nicknames.wlist")).trim().split("\n");
 
-            GeyserBot.LOGGER.info("Loaded " + nicknames.length + " nicknames");
-        } catch (IOException e) {
-            e.printStackTrace();
-            // TODO: Handle error
-        }
+        GeyserBot.LOGGER.info("Loaded " + nicknames.length + " nicknames");
     }
 
     @Nullable
