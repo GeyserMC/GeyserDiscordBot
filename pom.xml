@@ -112,11 +112,34 @@
             <version>8.0.23</version>
         </dependency>
 
+        <!-- For the leveling system to track messages -->
         <dependency>
             <groupId>com.nukkitx.fastutil</groupId>
             <artifactId>fastutil-long-long-maps</artifactId>
             <version>8.3.1</version>
             <scope>compile</scope>
+        </dependency>
+
+        <!-- For bedrock version name list -->
+        <dependency>
+            <groupId>com.nukkitx.fastutil</groupId>
+            <artifactId>fastutil-int-object-maps</artifactId>
+            <version>8.3.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- For pinging Java servers -->
+        <dependency>
+            <groupId>com.github.lucaazalim</groupId>
+            <artifactId>minecraft-server-ping</artifactId>
+            <version>842faa084a</version>
+        </dependency>
+
+        <!-- For pinging Bedrock servers -->
+        <dependency>
+            <groupId>com.nukkitx.protocol</groupId>
+            <artifactId>bedrock-common</artifactId>
+            <version>2.5.6</version>
         </dependency>
     </dependencies>
 

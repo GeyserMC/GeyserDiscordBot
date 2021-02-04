@@ -25,6 +25,8 @@
 
 package org.geysermc.discordbot.util;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
@@ -38,10 +40,6 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,6 +48,24 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 
 public class BotHelpers {
+
+    private static final Int2ObjectMap<String> BEDROCK_VERSIONS = new Int2ObjectOpenHashMap<>();
+
+    static {
+        BEDROCK_VERSIONS.put(291, "1.7.0");
+        BEDROCK_VERSIONS.put(313, "1.8.0");
+        BEDROCK_VERSIONS.put(332, "1.9.0");
+        BEDROCK_VERSIONS.put(340, "1.10.0");
+        BEDROCK_VERSIONS.put(354, "1.11.0");
+        BEDROCK_VERSIONS.put(361, "1.12.0");
+        BEDROCK_VERSIONS.put(388, "1.13.0");
+        BEDROCK_VERSIONS.put(389, "1.14.0 - 1.14.50");
+        BEDROCK_VERSIONS.put(390, "1.14.60");
+        BEDROCK_VERSIONS.put(407, "1.16.0 - 1.16.10");
+        BEDROCK_VERSIONS.put(408, "1.16.20");
+        BEDROCK_VERSIONS.put(419, "1.16.100");
+        BEDROCK_VERSIONS.put(422, "1.16.200 - 1.16.201");
+    }
 
     /**
      * Get a guild member from a given id string
@@ -195,5 +211,15 @@ public class BotHelpers {
         } catch (IOException e) {
             throw new RuntimeException("Error while trying to read input stream!");
         }
+    }
+
+    /**
+     * Get the name of a bedrock version from the protocol version number
+     *
+     * @param protocolVersion Protocol version number
+     * @return The name of the version or 'Unknown'
+     */
+    public static String getBedrockVersionName(int protocolVersion) {
+        return BEDROCK_VERSIONS.getOrDefault(protocolVersion, "Unknown");
     }
 }
