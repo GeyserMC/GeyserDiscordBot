@@ -164,6 +164,7 @@ public class GeyserBot {
                     new PersistentRoleHandler(),
                     new FileHandler(),
                     new LevelHandler(),
+                    new DumpHandler(),
                     client.build(),
                     tagClient.build())
             .build();
