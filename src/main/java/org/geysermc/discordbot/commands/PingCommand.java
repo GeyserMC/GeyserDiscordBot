@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class PingCommand extends Command {
 
@@ -81,6 +82,7 @@ public class PingCommand extends Command {
             MCPingOptions options = MCPingOptions.builder()
                     .hostname(hostname)
                     .port(jePort)
+                    .timeout(1500)
                     .build();
 
             MCPingResponse data = MCPing.getPing(options);
@@ -98,7 +100,7 @@ public class PingCommand extends Command {
             client.bind().join();
 
             InetSocketAddress addressToPing = new InetSocketAddress(hostname, bePort);
-            BedrockPong pong = client.ping(addressToPing).get();
+            BedrockPong pong = client.ping(addressToPing, 1500, TimeUnit.MILLISECONDS).get();
 
             bedrockInfo = "**MOTD:** \n```\n" + MCPingUtil.stripColors(pong.getMotd()) + (pong.getSubMotd() != null ? "\n" + MCPingUtil.stripColors(pong.getSubMotd()) : "") + "\n```\n" +
                     "**Players:** " + pong.getPlayerCount() + "/" + pong.getMaximumPlayerCount() + "\n" +
