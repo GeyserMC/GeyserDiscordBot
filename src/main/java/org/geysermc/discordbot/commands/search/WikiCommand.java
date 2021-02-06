@@ -150,9 +150,9 @@ public class WikiCommand extends Command {
         XPath xPath = XPathFactory.newInstance().newXPath();
         Node src;
         try {
-            src = (Node) xPath.evaluate("/html/body/div[4]/div/main/div/div/div/div[3]/div/div[3]/div", doc, XPathConstants.NODE);
+            src = (Node) xPath.evaluate("//*[@id=\"wiki_search_results\"]/div", doc, XPathConstants.NODE);
             NodeList nodeList = src.getChildNodes();
-            src.getChildNodes();
+            //src.getChildNodes();
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node child = nodeList.item(i);
                 NodeList children = child.getChildNodes();
