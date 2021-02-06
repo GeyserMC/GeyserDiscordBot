@@ -35,7 +35,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.net.util.SubnetUtils;
 import org.geysermc.discordbot.GeyserBot;
-import org.geysermc.discordbot.dumpissues.AbstractDumpIssueCheck;
+import org.geysermc.discordbot.dump_issues.AbstractDumpIssueCheck;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -67,7 +67,7 @@ public class DumpHandler extends ListenerAdapter {
         // Gathers all checks from "dumpissues" package.
         List<AbstractDumpIssueCheck> checks = new ArrayList<>();
         try {
-            Reflections reflections = new Reflections("org.geysermc.discordbot.dumpissues");
+            Reflections reflections = new Reflections("org.geysermc.discordbot.dump_issues");
             Set<Class<? extends AbstractDumpIssueCheck>> subTypes = reflections.getSubTypesOf(AbstractDumpIssueCheck.class);
 
             for (Class<? extends AbstractDumpIssueCheck> theClass : subTypes) {
@@ -182,7 +182,7 @@ public class DumpHandler extends ListenerAdapter {
             // TODO: Change the emote to not be hardcoded
             // Not sure how to do that the best as searching for it everytime seems pointless and expensive
             event.getMessage().reply(new EmbedBuilder()
-                    .setTitle("<:geyser:723981877773598771> Geyser", cleanURL)
+                    .setTitle("<:geyser:723981877773598771> Geyser " + platformNamePretty, cleanURL)
                     .setDescription(problems.size() != 0 ? "**Possible problems:**\n" + problems.stream().map(Object::toString).collect(Collectors.joining("\n")) : "")
                     .addField("Git info", gitData.toString(), false)
                     .addField("Platform", platformNamePretty, true)

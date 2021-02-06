@@ -23,7 +23,7 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.dumpissues;
+package org.geysermc.discordbot.dump_issues;
 
 import org.json.JSONObject;
 

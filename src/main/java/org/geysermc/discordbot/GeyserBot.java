@@ -27,6 +27,8 @@ package org.geysermc.discordbot;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.CommandListener;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -130,6 +132,7 @@ public class GeyserBot {
         client.setPrefix(PropertiesManager.getPrefix());
         client.useHelpBuilder(false);
         client.addCommands(COMMANDS.toArray(new Command[0]));
+        client.setListener(new CommandErrorHandler());
 
         // Setup the tag client
         CommandClientBuilder tagClient = new CommandClientBuilder();

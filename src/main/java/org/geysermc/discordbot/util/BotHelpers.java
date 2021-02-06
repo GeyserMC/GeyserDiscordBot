@@ -30,6 +30,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.geysermc.discordbot.GeyserBot;
 
 import javax.annotation.Nullable;
@@ -109,7 +110,7 @@ public class BotHelpers {
 
             // Try to get the member by ID
             return GeyserBot.getJDA().retrieveUserById(userTag).complete();
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException | ErrorResponseException ignored) {
             return null;
         }
     }

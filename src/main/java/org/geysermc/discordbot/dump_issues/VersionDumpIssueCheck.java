@@ -23,7 +23,7 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.dumpissues;
+package org.geysermc.discordbot.dump_issues;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FloodgateDumpIssueCheck extends AbstractDumpIssueCheck {
+public class VersionDumpIssueCheck extends AbstractDumpIssueCheck {
 
     @Override
     public boolean compatablePlatform(String platform) {
@@ -44,43 +44,35 @@ public class FloodgateDumpIssueCheck extends AbstractDumpIssueCheck {
     @Override
     public List<String> checkIssues(JSONObject dump) {
         JSONObject bootstrapInfo = dump.getJSONObject("bootstrapInfo");
-        JSONObject configRemote = dump.getJSONObject("config").getJSONObject("remote");
+        String platform = bootstrapInfo.getString("platform");
+        String supportedMinecraft = dump.getJSONObject("versionInfo").getJSONObject("mcInfo").getString("javaVersion");
 
-        List<String> problems = new ArrayList<>();
+        boolean isOldVersion = false;
+
+        // Check if we are running an old server version
+        if (!(platform.equals("BUNGEECORD") || platform.equals("VELOCITY") || platform.equals("FABRIC") || platform.equals("ANDROID")) &&
+                !bootstrapInfo.getString("platformVersion").contains(supportedMinecraft)) {
+            isOldVersion = true;
+        }
 
         // Check plugins
         if (bootstrapInfo.has("plugins")) {
-            boolean needsFloodgate = configRemote.getString("auth-type").equals("floodgate");
-            boolean needsFloodgateAuthType = false;
-
             JSONArray plugins = bootstrapInfo.getJSONArray("plugins");
             for (int i = 0; i < plugins.length(); i++) {
                 JSONObject plugin = plugins.getJSONObject(i);
 
-                // Check if floodgate is installed
-                if (plugin.getString("name").toLowerCase().contains("floodgate")) {
-                    // Check if its enabled
-                    if (plugin.getBoolean("enabled")) {
-                        needsFloodgate = false;
-                        needsFloodgateAuthType = true;
-                    }
-
-                    // Check we aren't on an old version of 1.8
-                    if (bootstrapInfo.has("platformAPIVersion") && bootstrapInfo.getString("platformAPIVersion").startsWith("1.8-R0.1")) {
-                        problems.add("- You run on an outdated and unsupported version of 1.8, you can download the latest Paper build (1.8.8) [here](https://papermc.io/api/v1/paper/1.8.8/443/download).");
-                    }
+                // Check if VV is installed
+                if (plugin.getString("name").equals("ViaVersion") && plugin.getBoolean("enabled")) {
+                    isOldVersion = false;
                     break;
                 }
             }
-
-            // Add any problem messages relates to floodgate
-            if (needsFloodgate) {
-                problems.add("- `auth-type` is set to `floodgate`, but you don't have Floodgate installed! Download it [here](https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/).");
-            } else if (needsFloodgateAuthType && !configRemote.getString("auth-type").equals("floodgate")) {
-                problems.add("- You have Floodgate installed, but `auth-type` is set to `" + configRemote.getString("auth-type") + "`! Set it to `floodgate` if you want to use Floodgate.");
-            }
         }
 
-        return problems;
+        if (isOldVersion) {
+            return Collections.singletonList("- Your server needs to be on Minecraft " + supportedMinecraft + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).");
+        }
+
+        return new ArrayList<>();
     }
 }

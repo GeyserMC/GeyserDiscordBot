@@ -51,6 +51,7 @@ public class PingCommand extends Command {
 
     public PingCommand() {
         this.name = "ping";
+        this.aliases = new String[] {"status"};
         this.arguments = "<server>";
         this.help = "Ping a server to check if its accessible";
     }

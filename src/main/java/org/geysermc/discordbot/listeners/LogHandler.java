@@ -35,6 +35,7 @@ import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -121,6 +122,11 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event) {
+        // Ignore bots
+        if (event.getAuthor().isBot()) {
+            return;
+        }
+
         ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
                 .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
                 .setDescription("**Message edited in **" + event.getChannel().getAsMention() + " [Jump to Message](" + event.getMessage().getJumpUrl() + ")")
@@ -148,5 +154,16 @@ public class LogHandler extends ListenerAdapter {
                     .setColor(Color.green)
                     .build()).queue();
         }
+    }
+
+    @Override
+    public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
+        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
+                .setDescription("**Message sent by** " + "" + " **deleted in** " + event.getChannel().getAsMention() + "\n" + message)
+                .setFooter("Author: " + event.getAuthor().getId() + " | Message ID: " + event.getMessageId())
+                .setTimestamp(Instant.now())
+                .setColor(Color.green)
+                .build()).queue();
     }
 }

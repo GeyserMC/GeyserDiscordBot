@@ -60,7 +60,12 @@ public class WhoisCommand extends Command {
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
         // Fetch the user
-        Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
+        Member member;
+        if (args.size() == 0 || args.get(0).isEmpty()) {
+            member = event.getMember();
+        } else {
+            member = BotHelpers.getMember(event.getGuild(), args.remove(0));
+        }
 
         // Check user is valid
         if (member == null) {
@@ -87,7 +92,8 @@ public class WhoisCommand extends Command {
                 .addField("Joined", member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Registered", member.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Roles [" + member.getRoles().size() + "]", roles, false)
-                .addField("Key Permissions", member.getPermissions().stream().map(Permission::getName).collect(Collectors.joining(", ")), false)
+                // TODO: Filter perms to only 'key' ones
+                .addField("Permissions", member.getPermissions().stream().map(Permission::getName).collect(Collectors.joining(", ")), false)
                 .setThumbnail(user.getAvatarUrl())
                 .setFooter("ID: " + user.getId())
                 .setTimestamp(Instant.now())

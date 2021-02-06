@@ -58,7 +58,7 @@ public class RankCommand extends Command {
         List<String> roles = ServerSettings.getList(event.getGuild().getIdLong(), "roles");
         for (String roleData : roles) {
             String[] data = roleData.split("\\|");
-            if (args.get(0).equals(data[0])) {
+            if (args.get(0).equalsIgnoreCase(data[0])) {
                 Role role = event.getGuild().getRoleById(data[1]);
                 if (role == null) {
                     event.getMessage().reply(new EmbedBuilder()
