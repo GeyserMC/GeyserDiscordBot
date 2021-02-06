@@ -64,6 +64,16 @@ public class PingCommand extends Command {
 
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
+        // Check they specified an ip
+        if (args.get(0).isEmpty()) {
+            event.getMessage().reply(new EmbedBuilder()
+                    .setTitle("Missing IP")
+                    .setDescription("Please specify an IP to ping.")
+                    .setColor(Color.red)
+                    .build()).queue();
+            return;
+        }
+
         String[] ipParts = args.get(0).split(":");
 
         String hostname = ipParts[0];
@@ -92,11 +102,13 @@ public class PingCommand extends Command {
                     "**Players:** " + data.getPlayers().getOnline() + "/" + data.getPlayers().getMax() + "\n" +
                     "**Version:** " + data.getVersion().getName() + " (" + data.getVersion().getProtocol() + ")";
             success = true;
-        } catch (IOException ignored) { }
+        } catch (IOException ignored) {
+        }
 
+        BedrockClient client = null;
         try {
             InetSocketAddress bindAddress = new InetSocketAddress("0.0.0.0", (int) (10000 + Math.round(Math.random() * 1000)));
-            BedrockClient client = new BedrockClient(bindAddress);
+            client = new BedrockClient(bindAddress);
 
             client.bind().join();
 
@@ -107,7 +119,12 @@ public class PingCommand extends Command {
                     "**Players:** " + pong.getPlayerCount() + "/" + pong.getMaximumPlayerCount() + "\n" +
                     "**Version:** " + BotHelpers.getBedrockVersionName(pong.getProtocolVersion()) + " (" + pong.getProtocolVersion() + ")";
             success = true;
-        } catch (InterruptedException | ExecutionException ignored) { }
+        } catch (InterruptedException | ExecutionException ignored) {
+        } finally {
+            if (client != null) {
+                client.close();
+            }
+        }
 
         event.getMessage().reply(new EmbedBuilder()
                 .setTitle("Pinging server: " + args.get(0))

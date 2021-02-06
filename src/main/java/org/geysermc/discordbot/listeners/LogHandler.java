@@ -47,6 +47,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.awt.Color;
 import java.time.Instant;
 
+// TODO: Add a message cache for before edit and deletion data
 public class LogHandler extends ListenerAdapter {
 
     @Override
@@ -156,14 +157,14 @@ public class LogHandler extends ListenerAdapter {
         }
     }
 
-    @Override
-    public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
-                .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
-                .setDescription("**Message sent by** " + "" + " **deleted in** " + event.getChannel().getAsMention() + "\n" + message)
-                .setFooter("Author: " + event.getAuthor().getId() + " | Message ID: " + event.getMessageId())
-                .setTimestamp(Instant.now())
-                .setColor(Color.green)
-                .build()).queue();
-    }
+//    @Override
+//    public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
+//        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+//                .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
+//                .setDescription("**Message sent by** " + "" + " **deleted in** " + event.getChannel().getAsMention() + "\n" + message)
+//                .setFooter("Author: " + event.getAuthor().getId() + " | Message ID: " + event.getMessageId())
+//                .setTimestamp(Instant.now())
+//                .setColor(Color.green)
+//                .build()).queue();
+//    }
 }
