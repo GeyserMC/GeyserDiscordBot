@@ -25,6 +25,7 @@
 
 package org.geysermc.discordbot.util;
 
+import java.awt.*;
 import java.util.Properties;
 
 // config.json and .env manager
@@ -40,6 +41,13 @@ public class PropertiesManager {
      */
     public static String getToken() {
         return properties.getProperty("token");
+    }
+
+    /**
+     * @return Default embed color
+     */
+    public static int getDefaultColor() {
+        return Integer.valueOf(properties.getProperty("default-color"), 16);
     }
 
     /**

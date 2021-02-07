@@ -36,6 +36,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.net.util.SubnetUtils;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.dump_issues.AbstractDumpIssueCheck;
+import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -192,7 +193,7 @@ public class DumpHandler extends ListenerAdapter {
                     .addField("Server version", versionString, true)
                     .addField("Cache chunks?", (platform.equals("SPIGOT") || config.getBoolean("cache-chunks")) ? "Yes" : "No", true)
                     .setTimestamp(Instant.now())
-                    .setColor(Color.green)
+                    .setColor(PropertiesManager.getDefaultColor())
                     .build()).queue();
         }
     }

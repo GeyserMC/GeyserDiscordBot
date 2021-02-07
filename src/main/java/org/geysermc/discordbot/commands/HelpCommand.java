@@ -52,7 +52,7 @@ public class HelpCommand extends Command {
         }
 
         EmbedBuilder helpEmbed = new EmbedBuilder()
-            .setColor(Color.green)
+            .setColor(PropertiesManager.getDefaultColor())
             .setTitle("Geyser Bot Help");
 
         for (Command command : GeyserBot.COMMANDS) {

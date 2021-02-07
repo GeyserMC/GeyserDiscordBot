@@ -34,6 +34,7 @@ import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.storage.LevelInfo;
 import org.geysermc.discordbot.util.BotHelpers;
+import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.awt.*;
 import java.time.Instant;
@@ -58,7 +59,7 @@ public class MemberCountCommand extends Command {
         event.getMessage().reply(new EmbedBuilder()
                 .addField("Members", String.valueOf(event.getGuild().getMemberCount()), false)
                 .setTimestamp(Instant.now())
-                .setColor(Color.green)
+                .setColor(PropertiesManager.getDefaultColor())
                 .build()).queue();
     }
 }

@@ -80,7 +80,7 @@ public class WikiCommand extends Command {
 
         // Set the title and color for the embed
         embed.setTitle("Search for " + query, "https://github.com/GeyserMC/Geyser/search?q=" + query + "&type=Wikis");
-        embed.setColor(Color.green);
+        embed.setColor(PropertiesManager.getDefaultColor());
 
         if (results.size() >= 1) {
             // Replace the results with the identical title match

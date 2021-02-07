@@ -33,6 +33,7 @@ import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
@@ -77,7 +78,7 @@ public class FileHandler extends ListenerAdapter {
 
                         String hastebinUrl = "https://hastebin.com/" + response.get("key");
 
-                        embed.setColor(Color.green);
+                        embed.setColor(PropertiesManager.getDefaultColor());
                         embed.setTitle(hastebinUrl, hastebinUrl);
                         embed.setDescription("Converted `" + attachment.getFileName() + "` to a hastebin link!");
                     } catch (InterruptedException | ExecutionException | IOException | AssertionError e) {

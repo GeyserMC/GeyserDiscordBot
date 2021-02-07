@@ -72,7 +72,7 @@ public class TagsCommand extends Command {
             embed.setDescription("No tags were found for your search.");
             embed.setFooter("Use `" + PropertiesManager.getPrefix() + "tag aliases <name>` to see all the aliases for a certain tag");
         } else {
-            embed.setColor(Color.green);
+            embed.setColor(PropertiesManager.getDefaultColor());
             embed.setTitle("Tags (" + tagNames.size() + ")");
             embed.setDescription("`" + String.join("`, `", tagNames) + "`");
             embed.setFooter("Use `" + PropertiesManager.getPrefix() + "tag <name>` to show a tag");

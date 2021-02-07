@@ -37,6 +37,7 @@ import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.storage.ModLog;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotHelpers;
+import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.awt.*;
 import java.time.Instant;
@@ -83,7 +84,7 @@ public class LogCommand extends Command {
         EmbedBuilder logEmbedBuilder = new EmbedBuilder()
                 .setTitle("Mod log for: " + user.getId())
                 .setTimestamp(Instant.now())
-                .setColor(Color.green);
+                .setColor(PropertiesManager.getDefaultColor());
 
         List<ModLog> logs = GeyserBot.storageManager.getLog(event.getGuild(), user);
 

@@ -122,7 +122,7 @@ public class ProviderCommand extends Command {
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setTitle(provider.getName(), provider.getUrl());
-        embed.setColor(Color.green);
+        embed.setColor(PropertiesManager.getDefaultColor());
         embed.addField("Category", provider.getCategory(), false);
         embed.addField("Instructions", provider.getInstructions(), false);
 
