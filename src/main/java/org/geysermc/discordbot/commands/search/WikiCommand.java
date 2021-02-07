@@ -30,20 +30,12 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.util.PropertiesManager;
-import org.htmlcleaner.CleanerProperties;
-import org.htmlcleaner.DomSerializer;
-import org.htmlcleaner.HtmlCleaner;
-import org.htmlcleaner.TagNode;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import pw.chew.chewbotcca.util.RestClient;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import java.awt.Color;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -106,7 +98,7 @@ public class WikiCommand extends Command {
                 }
 
                 // Add the result as a field
-                embed.addField(result.getTitle(), result.getUrl() + "\n" + result.getDescription(), true);
+                embed.addField(result.getTitle(), result.getUrl() + "\n" + result.getDescription(), false);
             }
         } else {
             // We found no results
@@ -136,38 +128,20 @@ public class WikiCommand extends Command {
         // Load the page response into a cheerio object
         List<WikiResult> results = new ArrayList<>();
 
-        // Configure parser for later
-        TagNode tagNode = new HtmlCleaner().clean(contents);
-        Document doc;
-        try {
-            doc = new DomSerializer(new CleanerProperties()).createDOM(tagNode);
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-            return null;
-        }
+        // Parse the page content
+        Document doc = Jsoup.parse(contents);
 
-        // Find the summary text and image (if there is one)
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        Node src;
-        try {
-            src = (Node) xPath.evaluate("//*[@id=\"wiki_search_results\"]/div", doc, XPathConstants.NODE);
-            NodeList nodeList = src.getChildNodes();
-            //src.getChildNodes();
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                Node child = nodeList.item(i);
-                NodeList children = child.getChildNodes();
+        // Get the result elements
+        Elements resultElements = doc.select("#wiki_search_results > div:first-child > div");
 
-                String title = children.item(0).getTextContent().trim();
-                String desc = children.item(1).getNodeValue().replaceAll("<em>", "").replaceAll("</em>", "").trim();
-                String updated = children.item(2).getTextContent().trim();
-                String url = "https://github.com" + children.item(0).getAttributes().getNamedItem("a").toString();
+        // Build a result for each element
+        for (Element result : resultElements) {
+            String title = result.children().get(0).text().trim();
+            String desc = result.children().get(1).html().replaceAll("<em>", "**").replaceAll("</em>", "**").trim();
+            String updated = result.children().get(2).text().trim();
+            String url = "https://github.com" + result.children().get(0).getElementsByAttribute("href").get(0).attr("href");
 
-                results.add(new WikiResult(title, desc, updated, url));
-            }
-        } catch (NullPointerException ignored) {
-        } catch (XPathExpressionException e) {
-            e.printStackTrace();
-            return null;
+            results.add(new WikiResult(title, desc, updated, url));
         }
 
         return results;
