@@ -106,96 +106,100 @@ public class DumpHandler extends ListenerAdapter {
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         Matcher matcher = DUMP_URL.matcher(event.getMessage().getContentRaw());
 
-        if (matcher.find()) {
-            String cleanURL = "https://dump.geysermc.org/" + matcher.group(1);
-            String rawURL = "https://dump.geysermc.org/raw/" + matcher.group(1);
-
-            // Get json data from dump
-            JSONObject dump = new JSONObject(RestClient.get(rawURL));
-
-            // Setup some helper vars for quicker access
-            JSONObject config = dump.getJSONObject("config");
-            JSONObject configBedrock = config.getJSONObject("bedrock");
-            JSONObject configRemote = config.getJSONObject("remote");
-            JSONObject gitInfo = dump.getJSONObject("gitInfo");
-            JSONObject bootstrapInfo = dump.getJSONObject("bootstrapInfo");
-
-            String platform = bootstrapInfo.getString("platform");
-            List<String> problems = new ArrayList<>();
-
-            // Check plugins and stuff for potential issues
-            for (AbstractDumpIssueCheck issueCheck : ISSUE_CHECKS) {
-                if (issueCheck.compatablePlatform(platform)) {
-                    problems.addAll(issueCheck.checkIssues(dump));
-                }
-            }
-
-            StringBuilder gitData = new StringBuilder();
-            String gitUrl = gitInfo.getString("git.remote.origin.url").replaceAll("\\.git$", "");
-
-            // Get the commit hash
-            String latestCommit = new JSONArray(RestClient.get("https://api.github.com/repos/GeyserMC/Geyser/commits?per_page=1")).getJSONObject(0).getString("sha");
-
-            // Compare latest and current
-            JSONObject compare = new JSONObject(RestClient.get("https://api.github.com/repos/GeyserMC/Geyser/compare/" + latestCommit + "..." + gitInfo.getString("git.commit.id")));
-
-            // Set the latest info based on the returned comparison
-            if (compare.getInt("behind_by") != 0 || compare.getInt("ahead_by") != 0) {
-                gitData.append("**Latest:** No\n");
-                problems.add("- You aren't on the latest Geyser version! Please [download](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/) the latest version.");
-            } else {
-                gitData.append("**Latest:** Yes\n");
-            }
-
-            // Check if they are using a custom fork
-            if (!gitUrl.startsWith("https://github.com/GeyserMC/Geyser")) {
-                gitData.append("**Is fork:** Yes ([").append(gitUrl.replace("https://github.com/", "")).append("](").append(gitUrl).append("))\n");
-            }
-
-            gitData.append("**Commit:** [`").append(gitInfo.getString("git.commit.id.abbrev")).append("`](").append(gitUrl).append("/commit/").append(gitInfo.getString("git.commit.id")).append(")\n");
-            gitData.append("**Branch:** [`").append(gitInfo.getString("git.branch")).append("`](").append(gitUrl).append("/tree/").append(gitInfo.getString("git.branch")).append(")\n");
-
-            if (compare.getInt("ahead_by") != 0) {
-                gitData.append("Ahead by ").append(compare.getInt("ahead_by")).append(" commit").append(compare.getInt("ahead_by") == 1 ? "" : "s").append("\n");
-            }
-
-            if (compare.getInt("behind_by") != 0) {
-                gitData.append("Behind by ").append(compare.getInt("behind_by")).append(" commit").append(compare.getInt("behind_by") == 1 ? "" : "s").append("\n");
-            }
-
-            String versionString = "Unknown";
-
-            // Ping java server
-            String javaAddrText = getJavaServerText(configRemote.getString("address"), configRemote.getInt("port"));
-
-            // Ping bedrock server
-            String bedrockAddrText = getBedrockServerText(configBedrock.getString("address"), configBedrock.getInt("port"));
-
-            // Get the version string from the dump if it exists
-            if (bootstrapInfo.has("platformVersion")) {
-                versionString = bootstrapInfo.getString("platformVersion");
-            }
-
-            // Get the platform name and format it to title case (Xxxxxx)
-            String platformNamePretty = platform.substring(0, 1).toUpperCase() +
-                    platform.substring(1).toLowerCase();
-
-            // TODO: Change the emote to not be hardcoded
-            // Not sure how to do that the best as searching for it everytime seems pointless and expensive
-            event.getMessage().reply(new EmbedBuilder()
-                    .setTitle("<:geyser:723981877773598771> Geyser " + platformNamePretty, cleanURL)
-                    .setDescription(problems.size() != 0 ? "**Possible problems:**\n" + problems.stream().map(Object::toString).collect(Collectors.joining("\n")) : "")
-                    .addField("Git info", gitData.toString(), false)
-                    .addField("Platform", platformNamePretty, true)
-                    .addField("Remote address", javaAddrText, true)
-                    .addField("Listen address", bedrockAddrText, true)
-                    .addField("Auth type", configRemote.getString("auth-type"), true)
-                    .addField("Server version", versionString, true)
-                    .addField("Cache chunks?", (platform.equals("SPIGOT") || config.getBoolean("cache-chunks")) ? "Yes" : "No", true)
-                    .setTimestamp(Instant.now())
-                    .setColor(PropertiesManager.getDefaultColor())
-                    .build()).queue();
+        if (!matcher.find()) {
+            return;
         }
+
+        String cleanURL = "https://dump.geysermc.org/" + matcher.group(1);
+        String rawURL = "https://dump.geysermc.org/raw/" + matcher.group(1);
+
+        // Get json data from dump
+        JSONObject dump = new JSONObject(RestClient.get(rawURL));
+
+        // Setup some helper vars for quicker access
+        JSONObject config = dump.getJSONObject("config");
+        JSONObject configBedrock = config.getJSONObject("bedrock");
+        JSONObject configRemote = config.getJSONObject("remote");
+        JSONObject gitInfo = dump.getJSONObject("gitInfo");
+        JSONObject bootstrapInfo = dump.getJSONObject("bootstrapInfo");
+
+        String platform = bootstrapInfo.getString("platform");
+        List<String> problems = new ArrayList<>();
+
+        // Check plugins and stuff for potential issues
+        for (AbstractDumpIssueCheck issueCheck : ISSUE_CHECKS) {
+            if (issueCheck.compatablePlatform(platform)) {
+                problems.addAll(issueCheck.checkIssues(dump));
+            }
+        }
+
+        StringBuilder gitData = new StringBuilder();
+        String gitUrl = gitInfo.getString("git.remote.origin.url").replaceAll("\\.git$", "");
+
+        // TODO: Migrate this over to the github-api lib we have
+
+        // Get the commit hash
+        String latestCommit = new JSONArray(RestClient.get("https://api.github.com/repos/GeyserMC/Geyser/commits?per_page=1")).getJSONObject(0).getString("sha");
+
+        // Compare latest and current
+        JSONObject compare = new JSONObject(RestClient.get("https://api.github.com/repos/GeyserMC/Geyser/compare/" + latestCommit + "..." + gitInfo.getString("git.commit.id")));
+
+        // Set the latest info based on the returned comparison
+        if (compare.getInt("behind_by") != 0 || compare.getInt("ahead_by") != 0) {
+            gitData.append("**Latest:** No\n");
+            problems.add("- You aren't on the latest Geyser version! Please [download](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/) the latest version.");
+        } else {
+            gitData.append("**Latest:** Yes\n");
+        }
+
+        // Check if they are using a custom fork
+        if (!gitUrl.startsWith("https://github.com/GeyserMC/Geyser")) {
+            gitData.append("**Is fork:** Yes ([").append(gitUrl.replace("https://github.com/", "")).append("](").append(gitUrl).append("))\n");
+        }
+
+        gitData.append("**Commit:** [`").append(gitInfo.getString("git.commit.id.abbrev")).append("`](").append(gitUrl).append("/commit/").append(gitInfo.getString("git.commit.id")).append(")\n");
+        gitData.append("**Branch:** [`").append(gitInfo.getString("git.branch")).append("`](").append(gitUrl).append("/tree/").append(gitInfo.getString("git.branch")).append(")\n");
+
+        if (compare.getInt("ahead_by") != 0) {
+            gitData.append("Ahead by ").append(compare.getInt("ahead_by")).append(" commit").append(compare.getInt("ahead_by") == 1 ? "" : "s").append("\n");
+        }
+
+        if (compare.getInt("behind_by") != 0) {
+            gitData.append("Behind by ").append(compare.getInt("behind_by")).append(" commit").append(compare.getInt("behind_by") == 1 ? "" : "s").append("\n");
+        }
+
+        String versionString = "Unknown";
+
+        // Ping java server
+        String javaAddrText = getJavaServerText(configRemote.getString("address"), configRemote.getInt("port"));
+
+        // Ping bedrock server
+        String bedrockAddrText = getBedrockServerText(configBedrock.getString("address"), configBedrock.getInt("port"));
+
+        // Get the version string from the dump if it exists
+        if (bootstrapInfo.has("platformVersion")) {
+            versionString = bootstrapInfo.getString("platformVersion");
+        }
+
+        // Get the platform name and format it to title case (Xxxxxx)
+        String platformNamePretty = platform.substring(0, 1).toUpperCase() +
+                platform.substring(1).toLowerCase();
+
+        // TODO: Change the emote to not be hardcoded
+        // Not sure how to do that the best as searching for it everytime seems pointless and expensive
+        event.getMessage().reply(new EmbedBuilder()
+                .setTitle("<:geyser:723981877773598771> Geyser " + platformNamePretty, cleanURL)
+                .setDescription(problems.size() != 0 ? "**Possible problems:**\n" + problems.stream().map(Object::toString).collect(Collectors.joining("\n")) : "")
+                .addField("Git info", gitData.toString(), false)
+                .addField("Platform", platformNamePretty, true)
+                .addField("Remote address", javaAddrText, true)
+                .addField("Listen address", bedrockAddrText, true)
+                .addField("Auth type", configRemote.getString("auth-type"), true)
+                .addField("Server version", versionString, true)
+                .addField("Cache chunks?", (platform.equals("SPIGOT") || config.getBoolean("cache-chunks")) ? "Yes" : "No", true)
+                .setTimestamp(Instant.now())
+                .setColor(PropertiesManager.getDefaultColor())
+                .build()).queue();
     }
 
     /**

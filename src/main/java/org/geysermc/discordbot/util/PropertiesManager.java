@@ -46,8 +46,8 @@ public class PropertiesManager {
     /**
      * @return Default embed color
      */
-    public static int getDefaultColor() {
-        return Integer.valueOf(properties.getProperty("default-color"), 16);
+    public static Color getDefaultColor() {
+        return Color.decode(properties.getProperty("default-color"));
     }
 
     /**

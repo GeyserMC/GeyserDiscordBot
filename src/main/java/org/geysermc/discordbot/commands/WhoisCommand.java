@@ -46,6 +46,8 @@ import java.util.stream.Collectors;
 
 public class WhoisCommand extends Command {
 
+    private static final List<Permission> PRIVILEGED_PERMISSIONS = Arrays.asList(Permission.ADMINISTRATOR, Permission.MANAGE_SERVER, Permission.MANAGE_ROLES, Permission.MANAGE_CHANNEL, Permission.MESSAGE_MANAGE, Permission.MANAGE_WEBHOOKS, Permission.NICKNAME_MANAGE, Permission.MANAGE_EMOTES, Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.MESSAGE_MENTION_EVERYONE);
+
     public WhoisCommand() {
         this.name = "whois";
         this.hidden = true;
@@ -92,8 +94,7 @@ public class WhoisCommand extends Command {
                 .addField("Joined", member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Registered", member.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Roles [" + member.getRoles().size() + "]", roles, false)
-                // TODO: Filter perms to only 'key' ones
-                .addField("Permissions", member.getPermissions().stream().map(Permission::getName).collect(Collectors.joining(", ")), false)
+                .addField("Key Permissions", member.getPermissions().stream().filter(PRIVILEGED_PERMISSIONS::contains).map(Permission::getName).collect(Collectors.joining(", ")), false)
                 .setThumbnail(user.getAvatarUrl())
                 .setFooter("ID: " + user.getId())
                 .setTimestamp(Instant.now())
