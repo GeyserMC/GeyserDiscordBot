@@ -53,10 +53,6 @@ public class IssueCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (SwearHandler.filteredMessages.contains(event.getMessage().getIdLong())) {
-            return;
-        }
-
         Matcher matcherIssue = ISSUE_PATTERN.matcher(event.getArgs());
 
         if (!matcherIssue.find()) {

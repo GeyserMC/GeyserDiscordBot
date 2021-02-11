@@ -47,10 +47,6 @@ public class TagsCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (SwearHandler.filteredMessages.contains(event.getMessage().getIdLong())) {
-            return;
-        }
-
         EmbedBuilder embed = new EmbedBuilder();
 
         String search = event.getArgs();

@@ -49,10 +49,6 @@ public class RankCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (SwearHandler.filteredMessages.contains(event.getMessage().getIdLong())) {
-            return;
-        }
-
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
         List<String> roles = ServerSettings.getList(event.getGuild().getIdLong(), "roles");

@@ -53,10 +53,6 @@ public class UpdateCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (SwearHandler.filteredMessages.contains(event.getMessage().getIdLong())) {
-            return;
-        }
-
         event.getMessage().reply("```\nChecking for updates...\n```").queue(message -> {
             StringBuilder logText = new StringBuilder("Checking for updates...");
             logText.append("\n");

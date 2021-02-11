@@ -133,6 +133,7 @@ public class GeyserBot {
         client.useHelpBuilder(false);
         client.addCommands(COMMANDS.toArray(new Command[0]));
         client.setListener(new CommandErrorHandler());
+        client.setCommandPreProcessFunction(event -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
 
         // Setup the tag client
         CommandClientBuilder tagClient = new CommandClientBuilder();
