@@ -103,6 +103,7 @@ public class IssueCommand extends Command {
                 .setAuthor(userName, String.valueOf(user.getHtmlUrl()), user.getAvatarUrl())
                 .setTitle(issue.getTitle() + " (#" + issue.getNumber() + ")", String.valueOf(issue.getHtmlUrl()))
                 .setDescription(cleanBody.length() > 400 ? cleanBody.substring(0, 400) + "..." : cleanBody)
+                .setFooter("Created")
                 .setTimestamp(timestamp)
                 .setColor(PropertiesManager.getDefaultColor());
 

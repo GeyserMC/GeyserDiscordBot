@@ -112,7 +112,7 @@ public class SwearHandler extends ListenerAdapter {
         normalInput = sb.toString();
 
         for (Pattern filterPattern : filterPatterns) {
-            if (filterPattern.matcher(cleanInput).matches() || filterPattern.matcher(normalInput).matches()) {
+            if (filterPattern.matcher(cleanInput).find() || filterPattern.matcher(normalInput).find()) {
                 return filterPattern;
             }
         }
