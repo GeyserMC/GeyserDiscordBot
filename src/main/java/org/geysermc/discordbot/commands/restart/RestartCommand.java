@@ -41,10 +41,6 @@ public class RestartCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (SwearHandler.filteredMessages.contains(event.getMessage().getIdLong())) {
-            return;
-        }
-
         System.exit(0);
     }
 }

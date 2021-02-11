@@ -52,10 +52,6 @@ public class MemberCountCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (SwearHandler.filteredMessages.contains(event.getMessage().getIdLong())) {
-            return;
-        }
-
         event.getMessage().reply(new EmbedBuilder()
                 .addField("Members", String.valueOf(event.getGuild().getMemberCount()), false)
                 .setTimestamp(Instant.now())

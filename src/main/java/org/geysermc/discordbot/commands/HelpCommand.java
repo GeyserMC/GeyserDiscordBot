@@ -47,10 +47,6 @@ public class HelpCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        if (SwearHandler.filteredMessages.contains(event.getMessage().getIdLong())) {
-            return;
-        }
-
         EmbedBuilder helpEmbed = new EmbedBuilder()
             .setColor(PropertiesManager.getDefaultColor())
             .setTitle("Geyser Bot Help");
