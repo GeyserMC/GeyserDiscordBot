@@ -25,8 +25,8 @@
 
 package org.geysermc.discordbot.listeners;
 
-import it.unimi.dsi.fastutil.longs.Long2LongMap;
-import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -35,7 +35,6 @@ import org.geysermc.discordbot.storage.LevelInfo;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.time.Instant;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -43,38 +42,29 @@ import java.util.concurrent.TimeUnit;
 public class LevelHandler extends ListenerAdapter {
     private static final Random RANDOM = new Random();
 
-    private static final Long2LongMap LAST_MESSAGE_LOG = new Long2LongOpenHashMap();
+    private final Cache<Long, Long> messageCache;
 
     public LevelHandler() {
-        GeyserBot.getGeneralThreadPool().scheduleAtFixedRate(() -> {
-            for (long user : LAST_MESSAGE_LOG.keySet()) {
-                long time = LAST_MESSAGE_LOG.get(user);
-                // Remove any old entry's to keep memory usage lower
-                if (time <= Instant.now().toEpochMilli()) {
-                    LAST_MESSAGE_LOG.remove(user, time);
-                }
-            }
-        }, 5, 5, TimeUnit.MINUTES);
+        this.messageCache = CacheBuilder.newBuilder()
+                .expireAfterWrite(1, TimeUnit.MINUTES)
+                .build();
     }
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         // Ignore bots
-        if (event.getMember().getUser().isBot()) {
+        if (event.getAuthor().isBot()) {
             return;
         }
 
-        if (LAST_MESSAGE_LOG.containsKey(event.getMember().getIdLong())) {
-            long time = LAST_MESSAGE_LOG.get(event.getMember().getIdLong());
-
-            // Check if the message hasn't expired
-            if (time >= Instant.now().toEpochMilli()) {
-                return;
-            }
+        // Check if the message hasn't expired
+        Long time = messageCache.getIfPresent(event.getAuthor().getIdLong()) ;
+        if (time != null && time >= Instant.now().toEpochMilli()) {
+            return;
         }
 
         // Set the new value
-        LAST_MESSAGE_LOG.put(event.getMember().getIdLong(), Instant.now().toEpochMilli() + (1000 * 60));
+        messageCache.put(event.getAuthor().getIdLong(), Instant.now().toEpochMilli() + (1000 * 60));
 
         int xp = 15 + RANDOM.nextInt(11);
 
@@ -91,6 +81,7 @@ public class LevelHandler extends ListenerAdapter {
             event.getMessage().reply(new EmbedBuilder()
                     .setTitle("Level Up!")
                     .setDescription("You leveled up to level " + levelInfo.getLevel() + "!")
+                    .setTimestamp(Instant.now())
                     .setColor(PropertiesManager.getDefaultColor())
                     .build()).queue();
         }

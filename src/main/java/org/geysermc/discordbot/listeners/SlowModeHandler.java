@@ -10,21 +10,23 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.awt.*;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class SlowModeHandler extends ListenerAdapter {
     private final long channelId;
-    private final int minutes;
+    private final int seconds;
     private final Cache<OffsetDateTime, User> messageCache;
 
-    public SlowModeHandler(long channelId, int minutes) {
+    public SlowModeHandler(long channelId, int seconds) {
         this.channelId = channelId;
-        this.minutes = minutes;
+        this.seconds = seconds;
 
         this.messageCache = CacheBuilder.newBuilder()
-                .expireAfterWrite(minutes, TimeUnit.MINUTES)
+                .expireAfterWrite(seconds, TimeUnit.SECONDS)
                 .build();
     }
 
@@ -37,15 +39,16 @@ public class SlowModeHandler extends ListenerAdapter {
 
             OffsetDateTime dateTime = getLastPosted(event.getAuthor());
             if (dateTime != null) {
-                PrettyTime t = new PrettyTime(dateTime.plusMinutes(minutes).toInstant());
+                PrettyTime t = new PrettyTime(dateTime.plusSeconds(seconds).toInstant());
                 event.getMessage().delete().queue(unused ->
                         event.getAuthor().openPrivateChannel().queue(channel ->
                                 channel.sendMessage(new EmbedBuilder()
                                         .setTitle("Message deleted")
-                                        .appendDescription(event.getAuthor().getAsMention())
-                                        .appendDescription(", your message in ").appendDescription(event.getMessage().getChannel().getName())
-                                        .appendDescription(" has been removed because there is still a delay before you can type!\nWhen you can post again: ")
-                                        .appendDescription(t.format(t.calculatePreciseDuration(event.getMessage().getTimeCreated().toInstant())).replace(" ago", ""))
+                                        .appendDescription("Your message has been removed because there is still a delay before you can type!")
+                                        .addField("Channel", event.getMessage().getTextChannel().getAsMention(), false)
+                                        .addField("When you can post again", t.format(t.calculatePreciseDuration(event.getMessage().getTimeCreated().toInstant())).replace(" ago", ""), false)
+                                        .setTimestamp(Instant.now())
+                                        .setColor(Color.red)
                                         .build()).queue()));
             } else {
                 // Don't add to the cache if a message is deleted - that way the timer doesn't reset.

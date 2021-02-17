@@ -142,8 +142,9 @@ public class GeyserBot {
         tagClient.useHelpBuilder(false);
         tagClient.addCommands(TagsManager.getTags().toArray(new Command[0]));
         tagClient.setListener(new TagsListener());
+        tagClient.setCommandPreProcessFunction(event -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
 
-        // Disable pings on replys
+        // Disable pings on replies
         MessageAction.setDefaultMentionRepliedUser(false);
 
         // Setup the thread pool
@@ -166,7 +167,7 @@ public class GeyserBot {
                     new FileHandler(),
                     new LevelHandler(),
                     new DumpHandler(),
-                    new SlowModeHandler(Long.parseLong("742759235364061198"), 60 * 24),
+                    new SlowModeHandler(742759235364061198L, 60 * 60 * 24),
                     client.build(),
                     tagClient.build())
             .build();
