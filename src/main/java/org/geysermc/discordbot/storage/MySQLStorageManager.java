@@ -26,10 +26,7 @@
 package org.geysermc.discordbot.storage;
 
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.PropertiesManager;
 
@@ -53,6 +50,7 @@ public class MySQLStorageManager extends AbstractStorageManager {
             createTables.executeUpdate("CREATE TABLE IF NOT EXISTS `persistent_roles` (`id` INT NOT NULL AUTO_INCREMENT, `server` BIGINT NOT NULL, `user` BIGINT NOT NULL, `role` BIGINT NOT NULL, PRIMARY KEY(`id`), UNIQUE KEY `role_constraint` (`server`,`user`,`role`));");
             createTables.executeUpdate("CREATE TABLE IF NOT EXISTS `mod_log` (`id` INT NOT NULL AUTO_INCREMENT, `server` BIGINT NOT NULL, `time` BIGINT NOT NULL, `user` BIGINT NOT NULL, `action` VARCHAR(32) NOT NULL, `target` BIGINT NOT NULL, `reason` TEXT NOT NULL, PRIMARY KEY(`id`));");
             createTables.executeUpdate("CREATE TABLE IF NOT EXISTS `levels` (`id` INT NOT NULL AUTO_INCREMENT, `server` BIGINT NOT NULL, `user` BIGINT NOT NULL, `level` INT NOT NULL, `xp` INT NOT NULL, PRIMARY KEY(`id`), UNIQUE KEY `level_constraint` (`server`,`user`));");
+            createTables.executeUpdate("CREATE TABLE IF NOT EXISTS `slow_mode` (`channel` BIGINT NOT NULL, `server` BIGINT NOT NULL, `delay` INT NOT NULL, PRIMARY KEY(`channel`));");
             createTables.close();
         } catch (ClassNotFoundException | SQLException e) {
             GeyserBot.LOGGER.error("Unable to connect to MySQL database!", e);
@@ -180,6 +178,33 @@ public class MySQLStorageManager extends AbstractStorageManager {
         try {
             Statement updateLevelValue = connection.createStatement();
             updateLevelValue.executeUpdate("INSERT INTO `levels` (`server`, `user`, `level`, `xp`) VALUES (" + user.getGuild().getId() + ", " + user.getId() + ", " + levelInfo.getLevel() + ", " + levelInfo.getXp() + ") ON DUPLICATE KEY UPDATE `level`=" + levelInfo.getLevel() + ", `xp`=" + levelInfo.getXp() + ";");
+            updateLevelValue.close();
+        } catch (SQLException ignored) { }
+    }
+
+    @Override
+    public List<SlowModeInfo> getSlowModeChannels(Guild guild) {
+        List<SlowModeInfo> infos = new ArrayList<>();
+
+        try {
+            Statement getLogEntry = connection.createStatement();
+            ResultSet rs = getLogEntry.executeQuery("SELECT `channel`, `server`, `delay` FROM `slow_mode` WHERE `server`=" + guild.getId() + ";");
+
+            while (rs.next()) {
+                infos.add(new SlowModeInfo(rs.getLong("server"), rs.getLong("channel"), rs.getInt("delay")));
+            }
+
+            getLogEntry.close();
+        } catch (SQLException ignored) { }
+
+        return infos;
+    }
+
+    @Override
+    public void setSlowModeChannel(TextChannel channel, int delay) {
+        try {
+            Statement updateLevelValue = connection.createStatement();
+            updateLevelValue.executeUpdate("INSERT INTO `slow_mode` (`channel`, `server`, `delay`) VALUES (" + channel.getId() + ", " + channel.getGuild().getId() + ", " + delay + ") ON DUPLICATE KEY UPDATE `delay`=" + delay + ";");
             updateLevelValue.close();
         } catch (SQLException ignored) { }
     }

@@ -39,14 +39,14 @@ public class SlowModeHandler extends ListenerAdapter {
 
             OffsetDateTime dateTime = getLastPosted(event.getAuthor());
             if (dateTime != null) {
-                PrettyTime t = new PrettyTime(dateTime.plusSeconds(seconds).toInstant());
+                PrettyTime t = new PrettyTime(event.getMessage().getTimeCreated().toInstant());
                 event.getMessage().delete().queue(unused ->
                         event.getAuthor().openPrivateChannel().queue(channel ->
                                 channel.sendMessage(new EmbedBuilder()
                                         .setTitle("Message deleted")
                                         .appendDescription("Your message has been removed because there is still a delay before you can type!")
                                         .addField("Channel", event.getMessage().getTextChannel().getAsMention(), false)
-                                        .addField("When you can post again", t.format(t.calculatePreciseDuration(event.getMessage().getTimeCreated().toInstant())).replace(" ago", ""), false)
+                                        .addField("When you can post again", t.format(dateTime.plusSeconds(seconds).toInstant()), false)
                                         .setTimestamp(Instant.now())
                                         .setColor(Color.red)
                                         .build()).queue()));

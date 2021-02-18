@@ -32,6 +32,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
@@ -39,6 +40,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.geysermc.discordbot.listeners.*;
 import org.geysermc.discordbot.storage.AbstractStorageManager;
+import org.geysermc.discordbot.storage.SlowModeInfo;
 import org.geysermc.discordbot.storage.StorageType;
 import org.geysermc.discordbot.tags.TagsListener;
 import org.geysermc.discordbot.tags.TagsManager;
@@ -167,7 +169,6 @@ public class GeyserBot {
                     new FileHandler(),
                     new LevelHandler(),
                     new DumpHandler(),
-                    new SlowModeHandler(742759235364061198L, 60 * 60 * 24),
                     client.build(),
                     tagClient.build())
             .build();
@@ -177,6 +178,15 @@ public class GeyserBot {
 
         // Setup the update check scheduler
         UpdateManager.setup();
+
+        // Setup all slow mode handlers
+        generalThreadPool.schedule(() -> {
+            for (Guild guild : jda.getGuilds()) {
+                for (SlowModeInfo info : storageManager.getSlowModeChannels(guild)) {
+                    jda.addEventListener(new SlowModeHandler(info.getChannel(), info.getDelay()));
+                }
+            }
+        }, 5, TimeUnit.SECONDS);
 
         // Start the bStats tracking thread
         generalThreadPool.scheduleAtFixedRate(() -> {
