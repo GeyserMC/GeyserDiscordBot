@@ -122,7 +122,7 @@ public class BotHelpers {
     }
 
     /**
-     * Recursive implementation, invokes itself for each factor of a thousand, increasing the class on each invokation.
+     * Recursive implementation, invokes itself for each factor of a thousand, increasing the class on each invocation.
      *
      * https://stackoverflow.com/a/4753866/5299903
      *
@@ -131,7 +131,7 @@ public class BotHelpers {
      * @return a String representing the number n formatted in a cool looking way.
      */
     private static String coolFormat(double n, int iteration) {
-        double d = ((long) n / 100) / 10.0;
+        double d = ((long) n / 100L) / 10.0;
         boolean isRound = (d * 10) % 10 == 0;//true if the decimal part is equal to 0 (then it's trimmed anyway)
         return (d < 1000? //this determines the class, i.e. 'k', 'm' etc
                 ((d > 99.9 || isRound || (!isRound && d > 9.99)? //this decides whether to trim the decimals
@@ -176,7 +176,7 @@ public class BotHelpers {
             String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!")); //strip out only the JAR file
             JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
             Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
-            Set<String> result = new HashSet<String>(); //avoid duplicates in case it is a subdirectory
+            Set<String> result = new HashSet<>(); //avoid duplicates in case it is a subdirectory
             while(entries.hasMoreElements()) {
                 String name = entries.nextElement().getName();
                 if (name.startsWith(path)) { //filter according to the path

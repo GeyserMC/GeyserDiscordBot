@@ -52,8 +52,8 @@ public class SwearHandler extends ListenerAdapter {
     private static final Pattern NON_ASCII_PATTERN = Pattern.compile("([^\\p{ASCII}])");
     private static final Map<String,String> REPLACE_TOKENS = new HashMap<>();
 
-    public static List<Long> filteredMessages = new ArrayList<>();
-    public static List<Pattern> filterPatterns = new ArrayList<>();
+    public static final List<Long> filteredMessages = new ArrayList<>();
+    public static final List<Pattern> filterPatterns = new ArrayList<>();
     public static String[] nicknames;
 
     static {

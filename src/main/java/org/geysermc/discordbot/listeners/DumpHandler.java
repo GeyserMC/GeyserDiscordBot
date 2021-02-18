@@ -44,7 +44,6 @@ import org.reflections.Reflections;
 import org.slf4j.LoggerFactory;
 import pw.chew.chewbotcca.util.RestClient;
 
-import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
@@ -128,7 +127,7 @@ public class DumpHandler extends ListenerAdapter {
 
         // Check plugins and stuff for potential issues
         for (AbstractDumpIssueCheck issueCheck : ISSUE_CHECKS) {
-            if (issueCheck.compatablePlatform(platform)) {
+            if (issueCheck.compatiblePlatform(platform)) {
                 problems.addAll(issueCheck.checkIssues(dump));
             }
         }

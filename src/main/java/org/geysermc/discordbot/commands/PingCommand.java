@@ -34,7 +34,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockPong;
 import net.dv8tion.jda.api.EmbedBuilder;
-import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.util.BotHelpers;
 
 import java.awt.*;

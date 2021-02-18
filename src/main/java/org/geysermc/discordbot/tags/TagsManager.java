@@ -64,19 +64,19 @@ public class TagsManager {
                             String[] lines = new String(BotHelpers.bytesFromResource("tags/" + folderName + "/" + fileName)).split("\n");
                             Map<String, String> tagData = new HashMap<>();
                             StringBuilder content = new StringBuilder();
-                            boolean hitSeperator = false;
+                            boolean hitSeparator = false;
 
                             // Get all the tag data
                             for (String line : lines) {
                                 line = line.trim();
 
-                                if (hitSeperator) {
+                                if (hitSeparator) {
                                     content.append(line).append("\n");
                                     continue;
                                 }
 
                                 if (line.equals("---")) {
-                                    hitSeperator = true;
+                                    hitSeparator = true;
                                     continue;
                                 }
 

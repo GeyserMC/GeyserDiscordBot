@@ -28,7 +28,7 @@ package org.geysermc.discordbot.updates;
 public abstract class AbstractUpdateCheck {
 
     /**
-     * Populate the inital versions cache
+     * Populate the initial versions cache
      */
     public abstract void populate();
 

@@ -29,10 +29,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.geysermc.discordbot.GeyserBot;
-import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.util.PropertiesManager;
-
-import java.awt.Color;
 
 /**
  * Handle the help command

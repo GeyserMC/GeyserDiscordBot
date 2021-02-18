@@ -32,7 +32,7 @@ import java.util.List;
 
 public abstract class AbstractDumpIssueCheck {
 
-    public boolean compatablePlatform(String platform) {
+    public boolean compatiblePlatform(String platform) {
         return true;
     }
 

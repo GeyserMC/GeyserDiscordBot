@@ -28,7 +28,6 @@ package org.geysermc.discordbot.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.kohsuke.github.*;
 
@@ -37,7 +36,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class IssueCommand extends Command {
 

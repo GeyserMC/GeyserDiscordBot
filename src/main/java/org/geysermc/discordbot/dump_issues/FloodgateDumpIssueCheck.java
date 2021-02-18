@@ -35,7 +35,7 @@ import java.util.List;
 public class FloodgateDumpIssueCheck extends AbstractDumpIssueCheck {
 
     @Override
-    public boolean compatablePlatform(String platform) {
+    public boolean compatiblePlatform(String platform) {
         return !platform.equals("STANDALONE");
     }
 

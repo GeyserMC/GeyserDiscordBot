@@ -81,7 +81,6 @@ public class LevelHandler extends ListenerAdapter {
             event.getMessage().reply(new EmbedBuilder()
                     .setTitle("Level Up!")
                     .setDescription("You leveled up to level " + levelInfo.getLevel() + "!")
-                    .setTimestamp(Instant.now())
                     .setColor(PropertiesManager.getDefaultColor())
                     .build()).queue();
         }

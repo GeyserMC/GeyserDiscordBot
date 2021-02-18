@@ -103,7 +103,7 @@ public class LogHandler extends ListenerAdapter {
         ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
                 .setAuthor("Member Joined", null, event.getUser().getAvatarUrl())
                 .setDescription(event.getUser().getAsMention() + " " + event.getUser().getAsTag())
-                .addField("Account Age", t.format(t.calculatePreciseDuration(event.getUser().getTimeCreated().toInstant())).replace(" ago", ""), false)
+                .addField("Account Created", t.format(event.getUser().getTimeCreated().toInstant()), false)
                 .setThumbnail(event.getUser().getAvatarUrl())
                 .setFooter("ID: " + event.getUser().getId())
                 .setTimestamp(Instant.now())

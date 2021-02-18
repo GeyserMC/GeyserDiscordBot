@@ -38,8 +38,8 @@ public class JiraUpdateCheck extends AbstractUpdateCheck {
     private static final String CHECK_URL = "https://bugs.mojang.com/rest/api/latest/project/";
     private static final List<String> KNOWN_VERSIONS = new ArrayList<>();
 
-    private String project;
-    private String platform;
+    private final String project;
+    private final String platform;
 
     public JiraUpdateCheck(String project, String platform) {
         this.project = project;

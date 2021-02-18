@@ -28,7 +28,6 @@ package org.geysermc.discordbot.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.PropertiesManager;
 
