@@ -189,7 +189,7 @@ public class BotHelpers {
                     result.add(entry);
                 }
             }
-            return result.toArray(new String[result.size()]);
+            return result.toArray(new String[0]);
         }
 
         throw new UnsupportedOperationException("Cannot list files for URL "+dirURL);
@@ -222,5 +222,38 @@ public class BotHelpers {
      */
     public static String getBedrockVersionName(int protocolVersion) {
         return BEDROCK_VERSIONS.getOrDefault(protocolVersion, "Unknown");
+    }
+
+    /**
+     * Get a time in seconds from a time string
+     * EG: 1h2m
+     * https://stackoverflow.com/a/4015476/5299903
+     *
+     * @param input Time string to parse
+     * @return Time in seconds
+     */
+    public static long parseTimeString(String input) {
+        long result = 0;
+        String number = "";
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (Character.isDigit(c)) {
+                number += c;
+            } else if (Character.isLetter(c) && !number.isEmpty()) {
+                result += convert(Integer.parseInt(number), c);
+                number = "";
+            }
+        }
+        return result;
+    }
+
+    private static long convert(int value, char unit) {
+        switch(unit) {
+            case 'd' : return (long) value * 60 * 60 * 24;
+            case 'h' : return (long) value * 60 * 60;
+            case 'm' : return (long) value * 60;
+            case 's' : return value;
+        }
+        return 0;
     }
 }

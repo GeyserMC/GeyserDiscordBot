@@ -25,10 +25,7 @@
 
 package org.geysermc.discordbot.storage;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 
 import java.util.List;
 
@@ -130,4 +127,20 @@ public abstract class AbstractStorageManager {
      * @param levelInfo The data to set
      */
     public abstract void setLevel(Member user, LevelInfo levelInfo);
+
+    /**
+     * Get the slow mode channels for a {@link Guild}
+     *
+     * @param guild The Guild to get the channels for
+     * @return
+     */
+    public abstract List<SlowModeInfo> getSlowModeChannels(Guild guild);
+
+    /**
+     * Enable slow mode for a channel with the given delay
+     *
+     * @param channel The channel to set the delay on
+     * @param delay Delay between messages in seconds
+     */
+    public abstract void setSlowModeChannel(TextChannel channel, int delay);
 }

@@ -159,7 +159,7 @@ public class SwearHandler extends ListenerAdapter {
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
-        if (checkString(event.getMember().getUser().getName()) != null) {
+        if (checkString(event.getUser().getName()) != null) {
             event.getMember().modifyNickname(nicknames[new Random().nextInt(nicknames.length)]).queue();
         }
     }
@@ -168,7 +168,7 @@ public class SwearHandler extends ListenerAdapter {
     public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
         String name = event.getNewNickname();
         if (name == null) {
-            name = event.getMember().getUser().getName();
+            name = event.getUser().getName();
         }
 
         if (checkString(name) != null) {

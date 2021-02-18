@@ -27,13 +27,12 @@ package org.geysermc.discordbot;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.CommandListener;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
@@ -41,6 +40,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.geysermc.discordbot.listeners.*;
 import org.geysermc.discordbot.storage.AbstractStorageManager;
+import org.geysermc.discordbot.storage.SlowModeInfo;
 import org.geysermc.discordbot.storage.StorageType;
 import org.geysermc.discordbot.tags.TagsListener;
 import org.geysermc.discordbot.tags.TagsManager;
@@ -48,7 +48,6 @@ import org.geysermc.discordbot.updates.UpdateManager;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,8 +144,9 @@ public class GeyserBot {
         tagClient.useHelpBuilder(false);
         tagClient.addCommands(TagsManager.getTags().toArray(new Command[0]));
         tagClient.setListener(new TagsListener());
+        tagClient.setCommandPreProcessFunction(event -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
 
-        // Disable pings on replys
+        // Disable pings on replies
         MessageAction.setDefaultMentionRepliedUser(false);
 
         // Setup the thread pool
@@ -178,6 +178,15 @@ public class GeyserBot {
 
         // Setup the update check scheduler
         UpdateManager.setup();
+
+        // Setup all slow mode handlers
+        generalThreadPool.schedule(() -> {
+            for (Guild guild : jda.getGuilds()) {
+                for (SlowModeInfo info : storageManager.getSlowModeChannels(guild)) {
+                    jda.addEventListener(new SlowModeHandler(info.getChannel(), info.getDelay()));
+                }
+            }
+        }, 5, TimeUnit.SECONDS);
 
         // Start the bStats tracking thread
         generalThreadPool.scheduleAtFixedRate(() -> {
