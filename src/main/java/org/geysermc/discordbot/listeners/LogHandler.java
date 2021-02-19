@@ -35,6 +35,9 @@ import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
@@ -168,4 +171,38 @@ public class LogHandler extends ListenerAdapter {
 //                .setColor(PropertiesManager.getDefaultColor())
 //                .build()).queue();
 //    }
+
+
+    @Override
+    public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
+        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
+                .setDescription(event.getMember().getAsMention() + " **joined voice channel #" + event.getChannelJoined().getName() + "**")
+                .setFooter("ID: " + event.getMember().getId())
+                .setTimestamp(Instant.now())
+                .setColor(Color.green)
+                .build()).queue();
+    }
+
+    @Override
+    public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event) {
+        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
+                .setDescription(event.getMember().getAsMention() + " **switched voice channel `#" + event.getChannelLeft().getName() + "` -> `#" + event.getChannelJoined().getName() + "`**")
+                .setFooter("ID: " + event.getMember().getId())
+                .setTimestamp(Instant.now())
+                .setColor(Color.green)
+                .build()).queue();
+    }
+
+    @Override
+    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
+        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
+                .setDescription(event.getMember().getAsMention() + " **left voice channel #" + event.getChannelLeft().getName() + "**")
+                .setFooter("ID: " + event.getMember().getId())
+                .setTimestamp(Instant.now())
+                .setColor(Color.red)
+                .build()).queue();
+    }
 }
