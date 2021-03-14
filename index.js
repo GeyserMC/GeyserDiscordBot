@@ -31,6 +31,7 @@ client.on('ready', () => {
   initialiseModule('search_commands')
   initialiseModule('attachment_converter')
   initialiseModule('error_analyse')
+  initialiseModule('autopublish')
   initialiseModule('help_command')
 })
 
