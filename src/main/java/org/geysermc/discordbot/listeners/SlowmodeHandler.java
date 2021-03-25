@@ -3,6 +3,7 @@ package org.geysermc.discordbot.listeners;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -16,12 +17,12 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class SlowModeHandler extends ListenerAdapter {
+public class SlowmodeHandler extends ListenerAdapter {
     private final long channelId;
-    private final int seconds;
+    private int seconds;
     private final Cache<OffsetDateTime, User> messageCache;
 
-    public SlowModeHandler(long channelId, int seconds) {
+    public SlowmodeHandler(long channelId, int seconds) {
         this.channelId = channelId;
         this.seconds = seconds;
 
@@ -58,7 +59,7 @@ public class SlowModeHandler extends ListenerAdapter {
     }
 
     private boolean canBypassSlowMode(Member member) {
-        return false;
+        return member.getUser().isBot() || member.hasPermission(Permission.MESSAGE_MANAGE);
     }
 
     private OffsetDateTime getLastPosted(User user) {
@@ -68,5 +69,13 @@ public class SlowModeHandler extends ListenerAdapter {
             }
         }
         return null;
+    }
+
+    public long getChannelId() {
+        return channelId;
+    }
+
+    public void setSeconds(int seconds) {
+        this.seconds = seconds;
     }
 }

@@ -183,7 +183,7 @@ public class GeyserBot {
         generalThreadPool.schedule(() -> {
             for (Guild guild : jda.getGuilds()) {
                 for (SlowModeInfo info : storageManager.getSlowModeChannels(guild)) {
-                    jda.addEventListener(new SlowModeHandler(info.getChannel(), info.getDelay()));
+                    jda.addEventListener(new SlowmodeHandler(info.getChannel(), info.getDelay()));
                 }
             }
         }, 5, TimeUnit.SECONDS);

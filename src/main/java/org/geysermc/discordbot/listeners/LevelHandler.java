@@ -74,6 +74,9 @@ public class LevelHandler extends ListenerAdapter {
         // Increase the xp
         levelInfo.setXp(levelInfo.getXp() + xp);
 
+        // Increase message count
+        levelInfo.setMessages(levelInfo.getMessages() + 1);
+
         // Check if we should have gone up a level
         if (levelInfo.getXpToNextLevel() <= 0) {
             levelInfo.setLevel(levelInfo.getNextLevel());

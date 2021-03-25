@@ -28,10 +28,12 @@ package org.geysermc.discordbot.storage;
 public class LevelInfo {
     private int level;
     private int xp;
+    private int messages;
 
-    public LevelInfo(int level, int xp) {
+    public LevelInfo(int level, int xp, int messages) {
         this.level = level;
         this.xp = xp;
+        this.messages = messages;
     }
 
     public int getLevel() {
@@ -42,12 +44,20 @@ public class LevelInfo {
         return xp;
     }
 
+    public int getMessages() {
+        return messages;
+    }
+
     public void setLevel(int level) {
         this.level = level;
     }
 
     public void setXp(int xp) {
         this.xp = xp;
+    }
+
+    public void setMessages(int messages) {
+        this.messages = messages;
     }
 
     public int getNextLevel() {
