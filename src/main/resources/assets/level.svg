@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1024"
+   height="256"
+   viewBox="0 0 270.93333 67.733335"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="level.svg">
+  <defs
+     id="defs2">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath839">
+      <circle
+         r="24.341667"
+         cy="263.13333"
+         cx="33.866669"
+         id="circle841"
+         style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.36602071;stroke-opacity:1" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1"
+     inkscape:cx="566.57531"
+     inkscape:cy="174.62384"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:snap-path-clip="true"
+     inkscape:snap-path-mask="true" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-229.26665)">
+    <rect
+       style="opacity:1;fill:#4d4d4d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.28061667;stroke-opacity:1"
+       id="rect5620"
+       width="257.95273"
+       height="54.752716"
+       x="6.4903026"
+       y="235.75696"
+       ry="1.3229166" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="60.938915"
+       y="271.47079"
+       id="level"
+       inkscape:label="#text5626"><tspan
+         sodipodi:role="line"
+         id="tspan5624"
+         x="60.938915"
+         y="271.47079"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';stroke-width:0.26458332">00</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:'Segoe UI';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;-inkscape-font-specification:'Segoe UI';font-stretch:normal;font-variant:normal;"
+       x="60.427319"
+       y="245.64233"
+       id="name"
+       inkscape:label="#text5630"><tspan
+         sodipodi:role="line"
+         id="tspan5628"
+         x="60.427319"
+         y="245.64233"
+         style="stroke-width:0.26458332;-inkscape-font-specification:'Segoe UI';font-family:'Segoe UI';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">name</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:'Segoe UI';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;-inkscape-font-specification:'Segoe UI';font-stretch:normal;font-variant:normal;"
+       x="60.64436"
+       y="254.24982"
+       id="discriminator"
+       inkscape:label="#text5634"><tspan
+         sodipodi:role="line"
+         id="tspan5632"
+         x="60.64436"
+         y="254.24982"
+         style="font-size:7.76111126px;stroke-width:0.26458332;-inkscape-font-specification:'Segoe UI';font-family:'Segoe UI';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">#0000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;"
+       x="239.02243"
+       y="270.98203"
+       id="xpnext"
+       inkscape:label="#text5646"><tspan
+         sodipodi:role="line"
+         id="tspan5644"
+         x="239.02243"
+         y="270.98203"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';stroke-width:0.26458332;">0000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="234.88718"
+       y="270.37009"
+       id="text5642"><tspan
+         sodipodi:role="line"
+         id="tspan5640"
+         x="234.88718"
+         y="270.37009"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';stroke-width:0.26458332">/</tspan></text>
+    <image
+       y="238.79166"
+       x="9.5249996"
+       id="avatar"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAMAAABrrFhUAAACMVBMVEXwR0f+8fH+9vb//f3++fn7 y8vwSkr0e3v2jIzzamryYWH/+fnwTU3+9/fyX1/70tLzbW396enxVVX+9fX1f3/1hYX97OzxVFT6 vb383Nz2kZH6wMD6x8f5tbXxU1P0d3fyYGD4qKj81dX96+v1gYH83t70eHj96ur2k5P5u7v81tb7 1NT94uLwTEzxV1f6xcX+8vL4o6P84OD3mpr94+P5sLD7ysr0dHT7z8//+vr+9PT94eH4rq74rKzz aGj5srL82Nj5tLTyXl7zcXH2i4v2kJD1iIj0cnL70NDza2vxUVH6v7/++Pj7yMj0fn70dnb2kpLz bm7709P5trb2jY31h4f95eX6w8PyXFz4paX3nZ34qan82tr1gID3oqL1goL7zs7zaWn1ior6vLz5 s7P5ubn3o6P7ycn0eXnzbGz////+7+/yZGTyZWX4r6/4pKT/+/v5uLj0c3P2lZX6vr70fX3xT0/0 fHz70dH+7u7zb2/zcHD839/5urr4p6f3oKD2lpb//v7+8/PwS0vwSEj819f3nJz3mZn829v7zMzz ZmbxTk71hobyXV3xWVn1hIT3n5/1iYn//Pz82dn2jo74ra395+fxTU383d36xMT4qqr4pqbxUFDy Wlr5sbH6xsbwSUn95ub3np76wsL7zc395OT0dXX0enr2j4/+8PD3mJj+7e3xWFjzcnLyY2P5t7fx Vlb6wcHzZ2f3oaH3m5vyW1vxUlL4q6v1g4P96OjyYmK3D7xGAAAI2UlEQVR4AezBgQAAAACAoP2p F6kCAAAAAAAAAAAAAAAAAGBq7rqhkSztAviJ4O7Q7u7uPu7u9q4frNLe6TB0RaYJOjhMI2mlXWjb N59uF03CJkVV5pbk938Cqbq35DzPvWq1NF/oPNPohlaXG890XmhuQQprOX3FFajmJG8NtKnxctKl gOvK6X6knPPn6rq7GHHpBjR52scoXd29584jdbRdvSgxyu0/LvuhzcvnHsaSLt5vQyoY/q2J0a7/ Wouk1Pw+wDmafmuHtflagzKj3Btx+5G88dcPGEsOtvpgWe311Ywi3+rw4U8Kjd2UGKu6vh2WVHtW YpTqa22I71X40b97rtbXPWl4NjphsMFV9+uLux13Hg8hjoe//z9jSWdrYTlZW2VGqcrcjLmKszoa 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 "
+       preserveAspectRatio="none"
+       height="48.683334"
+       width="48.683334"
+       inkscape:label="#image5656"
+       mask="none"
+       clip-path="url(#clipPath839)" />
+    <rect
+       style="opacity:1;fill:#b3b3b3;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.30250981;stroke-opacity:1"
+       id="progressbg"
+       width="200.02499"
+       height="12.7"
+       x="61.383335"
+       y="274.77499"
+       inkscape:label="#rect840"
+       ry="1.3229166" />
+    <rect
+       style="opacity:1;fill:#0000d4;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.21390675;stroke-opacity:1"
+       id="progress"
+       width="100.0125"
+       height="12.7"
+       x="61.383335"
+       y="274.77499"
+       inkscape:label="#rect840-0"
+       ry="1.3229166" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="234.88791"
+       y="270.98264"
+       id="xp"
+       inkscape:label="#text1406"><tspan
+         sodipodi:role="line"
+         x="234.88791"
+         y="270.98264"
+         style="text-align:end;text-anchor:end;stroke-width:0.26458332"
+         id="tspan1408">0000</tspan></text>
+  </g>
+</svg>

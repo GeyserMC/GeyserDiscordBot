@@ -30,13 +30,22 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
+import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.apache.batik.util.XMLResourceDescriptor;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.LevelInfo;
 import org.geysermc.discordbot.util.BotHelpers;
-import org.geysermc.discordbot.util.PropertiesManager;
+import org.w3c.dom.Document;
 
 import java.awt.*;
-import java.time.Instant;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -75,41 +84,46 @@ public class LevelCommand extends Command {
 
         LevelInfo levelInfo = GeyserBot.storageManager.getLevel(member);
 
-        // Get the level progress
-        float progress = (float)levelInfo.getXp() / levelInfo.getXpForNextLevel();
-        int size = 20;
+        try {
+            String parser = XMLResourceDescriptor.getXMLParserClassName();
+            SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(parser);
 
-        // Generate the progress bar
-        StringBuilder progressText = new StringBuilder();
-        progressText.append("[");
-        for (int i = 0; i < Math.round(size * progress); i++) {
-            progressText.append("\u2550");
-        }
-        for (int i = 0; i < (size - Math.round(size * progress)); i++) {
-            progressText.append("\u2500");
-        }
-        progressText.append("]");
+            Document doc = f.createDocument(LevelCommand.class.getClassLoader().getResource("assets/level.svg").toString());
 
-        // Do some fancy stuff so we can add an easter egg
-        int progressRounded = Math.round(progress * 100);
-        String progressTitle = " (" + progressRounded + "%)";
-        if (progressRounded == 99) {
-            // Shh leave this easter egg here
-            progressTitle = "Pogress" + progressTitle;
-        } else {
-            progressTitle = "Progress" + progressTitle;
-        }
+            // Set the text for the svg fields
+            doc.getElementById("level").getFirstChild().setTextContent(String.valueOf(levelInfo.getLevel()));
+            doc.getElementById("name").getFirstChild().setTextContent(user.getName());
+            doc.getElementById("discriminator").getFirstChild().setTextContent("#" + user.getDiscriminator());
+            doc.getElementById("xp").getFirstChild().setTextContent(String.valueOf(levelInfo.getXp()));
+            doc.getElementById("xpnext").getFirstChild().setTextContent(String.valueOf(levelInfo.getXpForNextLevel()));
+            doc.getElementById("avatar").setAttributeNS("http://www.w3.org/1999/xlink", "href", user.getAvatarUrl());
 
-        event.getMessage().reply(new EmbedBuilder()
-                .setTitle("Level")
-                .setDescription(user.getAsMention())
-                .addField("Level", String.valueOf(levelInfo.getLevel()), true)
-                .addField("XP", levelInfo.getXp() + "/" + levelInfo.getXpForNextLevel(), true)
-                .addField(progressTitle, progressText.toString(), false)
-                .setThumbnail(user.getAvatarUrl())
-                .setFooter("ID: " + user.getId())
-                .setTimestamp(Instant.now())
-                .setColor(PropertiesManager.getDefaultColor())
-                .build()).queue();
+            // Progress bar
+            float progress = (float)levelInfo.getXp() / levelInfo.getXpForNextLevel();
+            float progressWidth = Float.parseFloat(doc.getElementById("progressbg").getAttribute("width"));
+            doc.getElementById("progress").setAttribute("width", String.valueOf(progressWidth * progress));
+
+            TranscoderInput transcoderInput = new TranscoderInput(doc);
+
+            // Set the output file
+            File tempLevelFile = File.createTempFile("GeyserBot-Level-", ".png");
+            OutputStream outputStream = new FileOutputStream(tempLevelFile);
+            TranscoderOutput transcoderOutput = new TranscoderOutput(outputStream);
+
+            // Convert the svg
+            PNGTranscoder pngTranscoder = new PNGTranscoder();
+            pngTranscoder.transcode(transcoderInput, transcoderOutput);
+
+            // Close the output stream
+            outputStream.flush();
+            outputStream.close();
+
+            // Send the message and delete the temp file
+            event.getMessage().reply(tempLevelFile).queue(message -> {
+                tempLevelFile.delete();
+            });
+        } catch (IOException | TranscoderException e) {
+            e.printStackTrace();
+        }
     }
 }
