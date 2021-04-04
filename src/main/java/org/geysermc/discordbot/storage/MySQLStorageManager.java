@@ -159,7 +159,7 @@ public class MySQLStorageManager extends AbstractStorageManager {
     public LevelInfo getLevel(Member user) {
         try {
             Statement getLevelValue = connection.createStatement();
-            ResultSet rs = getLevelValue.executeQuery("SELECT `level`, `xp` FROM `levels` WHERE `server`=" + user.getGuild().getId() + " AND `user`=" + user.getId() + ";");
+            ResultSet rs = getLevelValue.executeQuery("SELECT `level`, `xp`, `messages` FROM `levels` WHERE `server`=" + user.getGuild().getId() + " AND `user`=" + user.getId() + ";");
 
             if (rs.next()) {
                 return new LevelInfo(rs.getInt("level"), rs.getInt("xp"), rs.getInt("messages"));
