@@ -51,41 +51,52 @@ public class FileHandler extends ListenerAdapter {
             if (ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions").contains(attachment.getFileExtension())) {
                 EmbedBuilder embed = new EmbedBuilder();
 
-                if (attachment.getSize() > 400000) {
-                    embed.setColor(Color.red);
-                    embed.setTitle("Hastebin upload failed!");
-                    embed.setDescription("The `" + attachment.getFileName() + "` was larger than the max size hastebin allows");
-                } else {
-                    try {
-                        File attachmentFile = attachment.downloadToFile().get();
+//                // Handled by Discord's new display feature
+//                if (attachment.getSize() < 50000) {
+//                    continue;
+//                }
 
-                        RequestBody body = RequestBody.create(new String(Files.readAllBytes(attachmentFile.toPath())), MediaType.parse("text/plain"));
+                try {
+                    File attachmentFile = attachment.downloadToFile().get();
 
-                        Request request = new Request.Builder()
-                            .url("https://hastebin.com/documents")
-                            .post(body)
-                            .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org)") // GeyserMC - Replace with our bot user agent
-                            .build();
+                    RequestBody body = RequestBody.create("{" +
+                                "\"name\":" + JSONObject.quote(attachment.getFileName()) + "," +
+                                "\"expires\":\"" + event.getMessage().getTimeCreated().plusDays(1).toString() + "\"," +
+                                "\"files\": [" +
+                                    "{" +
+                                        "\"name\":" + JSONObject.quote(attachment.getFileName()) + "," +
+                                        "\"content\": {" +
+                                            "\"format\": \"text\"," +
+                                            "\"value\": " + JSONObject.quote(new String(Files.readAllBytes(attachmentFile.toPath()))) +
+                                        "}" +
+                                    "}" +
+                                "]" +
+                            "}", MediaType.parse("application/json"));
 
-                        JSONObject response = new JSONObject(RestClient.performRequest(request));
+                    Request request = new Request.Builder()
+                        .url("https://api.paste.gg/v1/pastes")
+                        .post(body)
+                        .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org)") // GeyserMC - Replace with our bot user agent
+                        .build();
 
-                        // Cleanup the file
-                        attachmentFile.delete();
+                    JSONObject response = new JSONObject(RestClient.performRequest(request));
 
-                        if (response.has("error")) {
-                            throw new AssertionError(response.get("error"));
-                        }
+                    // Cleanup the file
+                    attachmentFile.delete();
 
-                        String hastebinUrl = "https://hastebin.com/" + response.get("key");
-
-                        embed.setColor(PropertiesManager.getDefaultColor());
-                        embed.setTitle(hastebinUrl, hastebinUrl);
-                        embed.setDescription("Converted `" + attachment.getFileName() + "` to a hastebin link!");
-                    } catch (InterruptedException | ExecutionException | IOException | AssertionError e) {
-                        embed.setColor(Color.red);
-                        embed.setTitle("Hastebin upload failed!");
-                        embed.setDescription("An exception occurred during upload: " + e.getMessage());
+                    if (response.has("error")) {
+                        throw new AssertionError(response.get("error"));
                     }
+
+                    String pasteUrl = "https://paste.gg/" + response.getJSONObject("result").getString("id");
+
+                    embed.setColor(PropertiesManager.getDefaultColor());
+                    embed.setTitle(pasteUrl, pasteUrl);
+                    embed.setDescription("Converted `" + attachment.getFileName() + "` to a paste.gg link!");
+                } catch (InterruptedException | ExecutionException | IOException | AssertionError e) {
+                    embed.setColor(Color.red);
+                    embed.setTitle("paste.gg upload failed!");
+                    embed.setDescription("An exception occurred during upload: " + e.getMessage());
                 }
 
                 event.getMessage().reply(embed.build()).queue();
