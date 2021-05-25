@@ -1,9 +1,10 @@
 type: text
+aliases: gc
 
 ---
 
 There is an **Unofficial** public [GeyserConnect](https://github.com/GeyserMC/GeyserConnect) instance running. You can connect to it via
-Address: `geyserconnect.gq`
+Address: `geyserconnect.net`
 Port: `19132`
 
 Console users please review https://www.youtube.com/watch?v=IK-cx1PTfHY for details on setting this up on your console.
