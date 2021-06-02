@@ -1,5 +1,5 @@
 type: text
-aliases: packs, texturepacks, resourcepack
+aliases: packs, texturepacks, resourcepack, resourcepacks, rp, texturepack
 
 ---
 
