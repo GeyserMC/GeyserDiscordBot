@@ -3,4 +3,5 @@ aliases: floodgate, openthefloodgate
 
 ---
 
-https://github.com/GeyserMC/Geyser/wiki/Floodgate yeet
+Floodgate 2.0 is the currently supported Floodgate version. All information is now available here:
+https://github.com/GeyserMC/Floodgate/wiki/ yeet
