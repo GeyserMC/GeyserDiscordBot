@@ -1,5 +1,5 @@
 type: text
-aliases: oldversion, oldversions, olderversion
+aliases: oldversion, oldversions, olderversion, 1.8
 
 ---
 
