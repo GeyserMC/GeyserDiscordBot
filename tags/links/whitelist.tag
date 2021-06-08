@@ -3,5 +3,5 @@ aliases: whitelisting, howtowhitelist
 
 ---
 
-See here for information about creating a whitelist with Floodgate.
-https://github.com/GeyserMC/Geyser/wiki/FAQ#how-do-i-add-players-to-the-whitelist-when-using-floodgate
+See here for information about adding Bedrock players to whitelist.json
+https://github.com/GeyserMC/Floodgate/wiki/Features#Whitelist-Command
