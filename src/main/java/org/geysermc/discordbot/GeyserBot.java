@@ -169,6 +169,7 @@ public class GeyserBot {
                     new FileHandler(),
                     new LevelHandler(),
                     new DumpHandler(),
+                    new ErrorAnalyzer(),
                     client.build(),
                     tagClient.build())
             .build();
