@@ -27,6 +27,7 @@ package org.geysermc.discordbot;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -69,6 +70,7 @@ public class GeyserBot {
     // Instance Variables
     public static final Logger LOGGER = LoggerFactory.getLogger(GeyserBot.class);
     public static final List<Command> COMMANDS;
+    public static final List<SlashCommand> SLASH_COMMANDS;
 
     public static AbstractStorageManager storageManager;
 
@@ -79,22 +81,35 @@ public class GeyserBot {
     static {
         // Gathers all commands from "commands" package.
         List<Command> commands = new ArrayList<>();
+        List<SlashCommand> slashCommands = new ArrayList<>();
         try {
             Reflections reflections = new Reflections("org.geysermc.discordbot.commands");
             Set<Class<? extends Command>> subTypes = reflections.getSubTypesOf(Command.class);
-
             for (Class<? extends Command> theClass : subTypes) {
                 // Don't load SubCommands
                 if (theClass.getName().contains("SubCommand"))
                     continue;
-                commands.add(theClass.getDeclaredConstructor().newInstance());
-                LoggerFactory.getLogger(theClass).debug("Loaded Successfully!");
+                try {
+                    commands.add(theClass.getDeclaredConstructor().newInstance());
+                    LoggerFactory.getLogger(theClass).debug("Loaded Command Successfully!");
+                } catch (InstantiationException e) {
+                    // Safe to ignore, we probably tried to load a Slash Command
+                }
             }
 
+            Set<Class<? extends SlashCommand>> slashSubTypes = reflections.getSubTypesOf(SlashCommand.class);
+            for (Class<? extends SlashCommand> theClass : slashSubTypes) {
+                // Don't load SubCommands
+                if (theClass.getName().contains("SubCommand"))
+                    continue;
+                slashCommands.add(theClass.getDeclaredConstructor().newInstance());
+                LoggerFactory.getLogger(theClass).debug("Loaded SlashCommand Successfully!");
+            }
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             LOGGER.error("Unable to load commands", e);
         }
         COMMANDS = commands;
+        SLASH_COMMANDS = slashCommands;
     }
 
     public static void main(String[] args) throws IOException, LoginException {
@@ -131,8 +146,12 @@ public class GeyserBot {
         client.setPrefix(PropertiesManager.getPrefix());
         client.useHelpBuilder(false);
         client.addCommands(COMMANDS.toArray(new Command[0]));
+        client.addSlashCommands(SLASH_COMMANDS.toArray(new SlashCommand[0]));
         client.setListener(new CommandErrorHandler());
         client.setCommandPreProcessFunction(event -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
+
+        // TEMPORARY
+        client.forceGuildOnly("742759234906751017");
 
         // Setup the tag client
         CommandClientBuilder tagClient = new CommandClientBuilder();
