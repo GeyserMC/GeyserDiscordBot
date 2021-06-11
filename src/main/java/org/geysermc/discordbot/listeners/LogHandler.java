@@ -52,11 +52,15 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.awt.Color;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class LogHandler extends ListenerAdapter {
+
+    public static List<String> PURGED_MESSAGES = new ArrayList<>();
 
     private Map<Long, Cache<Long, Message>> messageCache = new HashMap<>();
 
@@ -217,7 +221,10 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
-        // TODO: Dont show purged messages
+        // Don't show purged messages
+        if (PURGED_MESSAGES.remove(event.getMessageId())) {
+            return;
+        }
 
         Message cachedMessage = getCacheMessage(event.getGuild(), event.getMessageIdLong());
 
