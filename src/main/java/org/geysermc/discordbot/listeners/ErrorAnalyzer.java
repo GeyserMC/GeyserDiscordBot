@@ -12,6 +12,7 @@ import pw.chew.chewbotcca.util.RestClient;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,8 +26,21 @@ public class ErrorAnalyzer extends ListenerAdapter {
         configExceptionFixes = new HashMap<>();
         configExceptionChecks = new HashMap<>();
 
-        // Seed
-        configExceptionChecks.put(Pattern.compile("gist\\.github\\.com\\/([0-9a-zA-Z]+\\/)([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://gist.githubusercontent.com/%1$s/%2$s/raw/");
+        // TODO: Move some of these to the database instead of hard-coding?
+
+        // Known exceptions
+        configExceptionFixes.put("java.net.BindException: Address already in use", "This means something (likely another instance of Geyser) is running on the port you have specified in the config. Please make sure you close all applications running on this port. If you don't recall opening anything, usually restarting your computer fixes this.");
+        configExceptionFixes.put("java.net.BindException: Cannot assign requested address: bind", "This means the IP your server is trying to use is unavailable or disallowed by the system or firewall.");
+        configExceptionFixes.put("java.lang.AssertionError: Expected AES to be available", "Update your Java at [AdoptOpenJDK.net](https://adoptopenjdk.net/).");
+        configExceptionFixes.put("AnnotatedConnectException: Connection timed out", "The Geyser instance cannot connect to your Java server.");
+
+        // Log url patterns
+        configExceptionChecks.put(Pattern.compile("hastebin\\.com/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hastebin.com/raw/%s  ");
+        configExceptionChecks.put(Pattern.compile("hasteb\\.in/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hasteb.in/raw/%s");
+        configExceptionChecks.put(Pattern.compile("mclo\\.gs/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://api.mclo.gs/1/raw/%s");
+        configExceptionChecks.put(Pattern.compile("pastebin\\.com/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.com/raw/%s");
+        configExceptionChecks.put(Pattern.compile("gist\\.github\\.com/([0-9a-zA-Z]+/)([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://gist.githubusercontent.com/%1$s/%2$s/raw/");
+        configExceptionChecks.put(Pattern.compile("paste\\.shockbyte\\.com/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://paste.shockbyte.com/raw/%s");
     }
 
     @Override
@@ -39,10 +53,16 @@ public class ErrorAnalyzer extends ListenerAdapter {
             Matcher matcher = regex.matcher(contents);
 
             if (!matcher.find()) {
-                return;
+                continue;
             }
 
-            url = String.format(configExceptionChecks.get(regex), matcher.group(1), matcher.group(2));
+            String[] groups = new String[matcher.groupCount()];
+            for (int i = 0; i < matcher.groupCount(); i++) {
+                groups[i] = matcher.group(i + 1);
+            }
+
+            url = String.format(configExceptionChecks.get(regex), groups);
+            break;
         }
 
         String pasteBody = RestClient.get(url);
@@ -76,7 +96,13 @@ public class ErrorAnalyzer extends ListenerAdapter {
             }
 
             String exceptionTitle = exception.getException() + ": " + exception.getDescription();
-            String exceptionDesc;
+
+            // Check if we have a known fix
+            Optional<Map.Entry<String, String>> foundFix = configExceptionFixes.entrySet().stream().filter(entry -> entry.getKey().startsWith(exceptionTitle) || exceptionTitle.startsWith(entry.getKey())).findFirst();
+            if (foundFix.isPresent() && embedBuilder.getFields().stream().noneMatch(field -> exceptionTitle.equals(field.getName()))) {
+                embedBuilder.addField(exceptionTitle, foundFix.get().getValue(), false);
+                continue;
+            }
 
             for (StackLine line : exception.getLines()) {
                 if (line.getStackPackage() != null && line.getStackPackage().startsWith("org.geysermc") && !line.getStackPackage().contains("shaded")) {
@@ -84,11 +110,10 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     String lineUrl = fileFinder.getFileUrl(line.getSource(), Integer.parseInt(line.getLine()));
 
                     // Build the description
-                    exceptionDesc = "Unknown fix!\nClass: `" + line.getJavaClass() + "`\nMethod: `" + line.getMethod() + "`\nLine: `" + line.getLine() + "`\nLink: " + (lineUrl != "" ? "[" + line.getSource() + "#L" + line.getLine() + "](" + lineUrl + ")" : "Unknown");
+                    String exceptionDesc = "Unknown fix!\nClass: `" + line.getJavaClass() + "`\nMethod: `" + line.getMethod() + "`\nLine: `" + line.getLine() + "`\nLink: " + (lineUrl != "" ? "[" + line.getSource() + "#L" + line.getLine() + "](" + lineUrl + ")" : "Unknown");
 
                     // Make sure we dont already have that field
-                    String finalExceptionDesc = exceptionDesc;
-                    if (embedBuilder.getFields().stream().noneMatch(field -> exceptionTitle.equals(field.getName()) && finalExceptionDesc.equals(field.getValue()))) {
+                    if (embedBuilder.getFields().stream().noneMatch(field -> exceptionTitle.equals(field.getName()) && exceptionDesc.equals(field.getValue()))) {
                         embedBuilder.addField(exceptionTitle, exceptionDesc, false);
                     }
 
