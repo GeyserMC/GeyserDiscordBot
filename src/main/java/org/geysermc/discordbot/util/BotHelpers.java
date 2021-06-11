@@ -69,6 +69,8 @@ public class BotHelpers {
         BEDROCK_VERSIONS.put(419, "1.16.100");
         BEDROCK_VERSIONS.put(422, "1.16.200 - 1.16.201");
         BEDROCK_VERSIONS.put(428, "1.16.210");
+        BEDROCK_VERSIONS.put(431, "1.16.220");
+        BEDROCK_VERSIONS.put(440, "1.17.0");
     }
 
     /**
@@ -121,7 +123,7 @@ public class BotHelpers {
     /**
      * Get a discord role from a given id string
      * Input examples:
-     *  <@!1234>
+     *  <@&1234>
      *  1234
      *  admin
      *
@@ -132,8 +134,8 @@ public class BotHelpers {
     @Nullable
     public static Role getRole(Guild guild, String roleTag) {
         try {
-            // Check for a mention (<@!1234>)
-            if (roleTag.startsWith("<@!") && roleTag.endsWith(">")) {
+            // Check for a mention (<@&1234>)
+            if (roleTag.startsWith("<@&") && roleTag.endsWith(">")) {
                 roleTag = roleTag.substring(3, roleTag.length() - 1);
             } else {
                 // Find the role by name
