@@ -31,10 +31,16 @@ import br.com.azalim.mcserverping.MCPingResponse;
 import br.com.azalim.mcserverping.MCPingUtil;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockPong;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotHelpers;
+import org.geysermc.discordbot.util.MessageHelper;
 
 import java.awt.*;
 import java.io.IOException;
@@ -42,17 +48,29 @@ import java.net.InetSocketAddress;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class PingCommand extends Command {
+public class PingCommand extends SlashCommand {
 
     public PingCommand() {
         this.name = "ping";
         this.aliases = new String[] {"status"};
         this.arguments = "<server>";
         this.help = "Ping a server to check if its accessible";
+
+        this.options = Collections.singletonList(
+            new OptionData(OptionType.STRING, "server", "The IP Address of the server you want to ping").setRequired(true)
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        String ip = event.getOption("server").getAsString();
+
+        event.replyEmbeds(handle(ip)).queue();
     }
 
     @Override
@@ -61,15 +79,15 @@ public class PingCommand extends Command {
 
         // Check they specified an ip
         if (args.get(0).isEmpty()) {
-            event.getMessage().reply(new EmbedBuilder()
-                    .setTitle("Missing IP")
-                    .setDescription("Please specify an IP to ping.")
-                    .setColor(Color.red)
-                    .build()).queue();
+            MessageHelper.errorResponse(event, "Missing IP", "Please specify an IP to ping.");
             return;
         }
 
-        String[] ipParts = args.get(0).split(":");
+        event.getMessage().reply(handle(args.get(0))).queue();
+    }
+
+    private MessageEmbed handle(String ip) {
+        String[] ipParts = ip.split(":");
 
         String hostname = ipParts[0];
         int jePort = 25565;
@@ -121,12 +139,12 @@ public class PingCommand extends Command {
             }
         }
 
-        event.getMessage().reply(new EmbedBuilder()
-                .setTitle("Pinging server: " + args.get(0))
+        return new EmbedBuilder()
+                .setTitle("Pinging server: " + ip)
                 .addField("Java", javaInfo, false)
                 .addField("Bedrock", bedrockInfo, false)
                 .setTimestamp(Instant.now())
                 .setColor(success ? Color.green : Color.red)
-                .build()).queue();
+                .build();
     }
 }

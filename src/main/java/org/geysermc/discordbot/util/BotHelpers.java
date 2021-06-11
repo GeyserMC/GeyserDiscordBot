@@ -29,6 +29,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.geysermc.discordbot.GeyserBot;
@@ -43,6 +44,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -67,6 +69,8 @@ public class BotHelpers {
         BEDROCK_VERSIONS.put(419, "1.16.100");
         BEDROCK_VERSIONS.put(422, "1.16.200 - 1.16.201");
         BEDROCK_VERSIONS.put(428, "1.16.210");
+        BEDROCK_VERSIONS.put(431, "1.16.220");
+        BEDROCK_VERSIONS.put(440, "1.17.0");
     }
 
     /**
@@ -111,6 +115,38 @@ public class BotHelpers {
 
             // Try to get the member by ID
             return GeyserBot.getJDA().retrieveUserById(userTag).complete();
+        } catch (NumberFormatException | ErrorResponseException ignored) {
+            return null;
+        }
+    }
+
+    /**
+     * Get a discord role from a given id string
+     * Input examples:
+     *  <@&1234>
+     *  1234
+     *  admin
+     *
+     * @param guild The guild to find the role in
+     * @param roleTag The tag to use to find the member
+     * @return The found User or null
+     */
+    @Nullable
+    public static Role getRole(Guild guild, String roleTag) {
+        try {
+            // Check for a mention (<@&1234>)
+            if (roleTag.startsWith("<@&") && roleTag.endsWith(">")) {
+                roleTag = roleTag.substring(3, roleTag.length() - 1);
+            } else {
+                // Find the role by name
+                List<Role> foundRole = guild.getRolesByName(roleTag, false);
+                if (!foundRole.isEmpty()) {
+                    return foundRole.get(0);
+                }
+            }
+
+            // Try to get the role by ID
+            return guild.getRoleById(roleTag);
         } catch (NumberFormatException | ErrorResponseException ignored) {
             return null;
         }

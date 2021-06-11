@@ -27,7 +27,13 @@ package org.geysermc.discordbot.commands.search;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -39,30 +45,46 @@ import java.awt.Color;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class WikiCommand extends Command {
+public class WikiCommand extends SlashCommand {
 
     public WikiCommand() {
         this.name = "wiki";
         this.arguments = "<search>";
         this.help = "Search the Geyser wiki";
         this.guildOnly = false;
+
+        // OptionData for Slash command
+        this.options = Collections.singletonList(
+            new OptionData(OptionType.STRING, "search", "The query to search.").setRequired(true)
+        );
     }
 
+    // /wiki
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        // Get arguments
+        String args = event.getOption("search").getAsString();
+        MessageEmbed response = handle(event, args);
+        if (response != null) event.replyEmbeds(response).queue();
+    }
+
+    // !wiki
     @Override
     protected void execute(CommandEvent event) {
-        EmbedBuilder embed = new EmbedBuilder();
+        MessageEmbed response = handle(event, event.getArgs());
+        if (response != null) event.getMessage().reply(response).queue();
+    }
 
-        String query = event.getArgs();
+    public MessageEmbed handle(Object event, String query) {
+        EmbedBuilder embed = new EmbedBuilder();
 
         // Check to make sure we have a search term
         if (query.isEmpty()) {
-            embed.setTitle("Invalid usage");
-            embed.setDescription("Missing search term. `" + PropertiesManager.getPrefix() + name + " <search>`");
-            embed.setColor(Color.red);
-            event.getMessage().reply(embed.build()).queue();
-            return;
+            MessageHelper.errorResponse(event, "Invalid usage", "Missing search term. `" + PropertiesManager.getPrefix() + name + " <search>`");
+            return null;
         }
 
         List<WikiResult> results;
@@ -70,7 +92,7 @@ public class WikiCommand extends Command {
             results = doSearch(query);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            return;
+            return null;
         }
 
         // Set the title and color for the embed
@@ -89,7 +111,7 @@ public class WikiCommand extends Command {
             for (WikiResult result : results) {
                 // Ignore pages starting with `_` which are usually meta pages
                 if (result.getTitle().startsWith("_")) {
-                    return;
+                    return null;
                 }
 
                 // Add the result as a field
@@ -101,7 +123,7 @@ public class WikiCommand extends Command {
             embed.setColor(Color.red);
         }
 
-        event.getMessage().reply(embed.build()).queue();
+        return embed.build();
     }
 
     /**

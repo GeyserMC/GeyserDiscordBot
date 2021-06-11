@@ -25,11 +25,14 @@
 
 package org.geysermc.discordbot.commands;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.EmbedBuilder;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -39,23 +42,42 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.LevelInfo;
 import org.geysermc.discordbot.util.BotHelpers;
+import org.geysermc.discordbot.util.MessageHelper;
 import org.w3c.dom.Document;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 
-public class LevelCommand extends Command {
+public class LevelCommand extends SlashCommand {
 
     public LevelCommand() {
         this.name = "level";
         this.arguments = "[member]";
         this.help = "Show the level for a member";
+
+        this.options = Collections.singletonList(
+                new OptionData(OptionType.USER, "member", "The member you want to get the level for")
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        Member member = event.getMember();
+        if (event.getOption("member") != null) {
+            member = event.getOption("member").getAsMember();
+        }
+
+        // Defer to wait for us to load a response and allows for files to be uploaded
+        InteractionHook interactionHook = event.deferReply().complete();
+
+        File levelFile = handle(member);
+        interactionHook.editOriginal(levelFile).queue(message -> {
+            levelFile.delete();
+        });
     }
 
     @Override
@@ -71,14 +93,17 @@ public class LevelCommand extends Command {
 
         // Check user is valid
         if (member == null) {
-            event.getMessage().reply(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(Color.red)
-                    .build()).queue();
+            MessageHelper.errorResponse(event, "Invalid user", "The user ID specified doesn't link with any valid user in this server.");
             return;
         }
 
+        File levelFile = handle(member);
+        event.getMessage().reply(levelFile).queue(message -> {
+            levelFile.delete();
+        });
+    }
+
+    protected File handle(Member member) {
         // Get the user from the member
         User user = member.getUser();
 
@@ -119,11 +144,11 @@ public class LevelCommand extends Command {
             outputStream.close();
 
             // Send the message and delete the temp file
-            event.getMessage().reply(tempLevelFile).queue(message -> {
-                tempLevelFile.delete();
-            });
+            return tempLevelFile;
         } catch (IOException | TranscoderException e) {
             e.printStackTrace();
         }
+
+        return null;
     }
 }

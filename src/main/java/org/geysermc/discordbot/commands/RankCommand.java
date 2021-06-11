@@ -25,72 +25,99 @@
 
 package org.geysermc.discordbot.commands;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.MessageHelper;
 
 import java.awt.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class RankCommand extends Command {
+public class RankCommand extends SlashCommand {
 
     public RankCommand() {
         this.name = "rank";
         this.aliases = new String[] {"role"};
         this.arguments = "<role>";
         this.help = "Give yourself a role";
+
+        this.options = Collections.singletonList(
+                new OptionData(OptionType.STRING, "role", "The role you want to get").setRequired(true)
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        String role = event.getOption("role").getAsString();
+
+        event.replyEmbeds(handle(event.getGuild(), event.getMember(), role)).queue();
     }
 
     @Override
     protected void execute(CommandEvent event) {
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
-        List<String> roles = ServerSettings.getList(event.getGuild().getIdLong(), "roles");
+        // Check they specified an role
+        if (args.get(0).isEmpty()) {
+            MessageHelper.errorResponse(event, "Missing role", "Please specify an role to get.");
+            return;
+        }
+
+        event.getMessage().reply(handle(event.getGuild(), event.getMember(), args.get(0))).queue();
+    }
+
+    protected MessageEmbed handle(Guild guild, Member member, String wantedRole) {
+        List<String> roles = ServerSettings.getList(guild.getIdLong(), "roles");
         for (String roleData : roles) {
             String[] data = roleData.split("\\|");
-            if (args.get(0).equalsIgnoreCase(data[0])) {
-                Role role = event.getGuild().getRoleById(data[1]);
+            if (wantedRole.equalsIgnoreCase(data[0])) {
+                Role role = guild.getRoleById(data[1]);
                 if (role == null) {
-                    event.getMessage().reply(new EmbedBuilder()
+                    return new EmbedBuilder()
                             .setTitle("Invalid role")
                             .setDescription("Invalid role specified in configuration")
                             .setTimestamp(Instant.now())
                             .setColor(Color.red)
-                            .build()).queue();
-                    return;
+                            .build();
                 }
 
-                if (event.getMember().getRoles().contains(role)) {
-                    event.getGuild().removeRoleFromMember(event.getMember(), role).queue();
-                    event.getMessage().reply(new EmbedBuilder()
+                if (member.getRoles().contains(role)) {
+                    guild.removeRoleFromMember(member, role).queue();
+                    return new EmbedBuilder()
                             .setTitle("Removed role")
-                            .setDescription("Removed " + role.getAsMention() + " from " + event.getMember().getAsMention())
+                            .setDescription("Removed " + role.getAsMention() + " from " + member.getAsMention())
                             .setTimestamp(Instant.now())
                             .setColor(Color.green)
-                            .build()).queue();
+                            .build();
                 } else {
-                    event.getGuild().addRoleToMember(event.getMember(), role).queue();
-                    event.getMessage().reply(new EmbedBuilder()
+                    guild.addRoleToMember(member, role).queue();
+                    return new EmbedBuilder()
                             .setTitle("Granted role")
-                            .setDescription("Given " + role.getAsMention() + " to " + event.getMember().getAsMention())
+                            .setDescription("Given " + role.getAsMention() + " to " + member.getAsMention())
                             .setTimestamp(Instant.now())
                             .setColor(Color.green)
-                            .build()).queue();
+                            .build();
                 }
-                return;
             }
         }
 
-        event.getMessage().reply(new EmbedBuilder()
+        return new EmbedBuilder()
                 .setTitle("Invalid role")
                 .setDescription("Role not found")
                 .setTimestamp(Instant.now())
                 .setColor(Color.red)
-                .build()).queue();
+                .build();
     }
 }

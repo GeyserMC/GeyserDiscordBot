@@ -25,95 +25,96 @@
 
 package org.geysermc.discordbot.commands.search;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.DicesCoefficient;
+import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.util.PropertiesManager;
 import pw.chew.chewbotcca.util.RestClient;
 
-import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ProviderCommand extends Command {
+public class ProviderCommand extends SlashCommand {
 
     public ProviderCommand() {
         this.name = "provider";
         this.arguments = "<provider>";
         this.help = "Search the Supported Providers page on the Geyser wiki to see if a provider is supported";
         this.guildOnly = false;
+
+        // TODO: Provide Choices of providers
+        this.options = Collections.singletonList(
+            new OptionData(OptionType.STRING, "provider", "The provider to look for.").setRequired(true)
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        event.replyEmbeds(handle(event.getOption("provider").getAsString())).queue();
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        EmbedBuilder embed = new EmbedBuilder();
-
         String query = event.getArgs();
 
         // Check to make sure we have a provider
         if (query.isEmpty()) {
-            embed.setTitle("Invalid usage");
-            embed.setDescription("Missing provider to check. `" + PropertiesManager.getPrefix() + name + " <provider>`");
-            embed.setColor(Color.red);
-            event.getMessage().reply(embed.build()).queue();
+            MessageHelper.errorResponse(event, "Invalid usage", "Missing provider to check. `" + event.getPrefix() + name + " <provider>`");
             return;
         }
 
+        event.getMessage().reply(handle(query)).queue();
+    }
+
+    public MessageEmbed handle(String query) {
         // Collect the providers
         List<Provider> providers = getProviders();
-        boolean foundProvider = false;
 
         // Search the providers by an exact starting match
         for (Provider provider : providers) {
             if (provider.getName().toLowerCase().startsWith(query.toLowerCase())) {
-                foundProvider = true;
-
-                sendProviderEmbed(event, provider);
+                return sendProviderEmbed(provider);
             }
         }
 
         // If we haven't found a provider yet use an
         // algorithm to check for the most similar provider
-        if (!foundProvider) {
-            Provider bestMatch = null;
-            double bestSimilarity = 0d;
+        Provider bestMatch = null;
+        double bestSimilarity = 0d;
 
-            // Find the best similarity
-            for (Provider provider : providers) {
-                double similar = DicesCoefficient.diceCoefficientOptimized(query.toLowerCase(), provider.getName().toLowerCase());
-                if (similar > bestSimilarity) {
-                    bestMatch = provider;
-                    bestSimilarity = similar;
-                }
+        // Find the best similarity
+        for (Provider provider : providers) {
+            double similar = DicesCoefficient.diceCoefficientOptimized(query.toLowerCase(), provider.getName().toLowerCase());
+            if (similar > bestSimilarity) {
+                bestMatch = provider;
+                bestSimilarity = similar;
             }
+        }
 
-            // Make sure the rating is over 20%
-            if (bestSimilarity >= 0.2d) {
-                foundProvider = true;
-
-                sendProviderEmbed(event, bestMatch);
-            }
+        // Make sure the rating is over 20%
+        if (bestSimilarity >= 0.2d) {
+            return sendProviderEmbed(bestMatch);
         }
 
         // Send a message if we dont know what provider
-        if (!foundProvider) {
-            embed.setTitle("Unknown provider");
-            embed.setDescription("That provider is not on our GitHub so it is untested!");
-            embed.setColor(Color.red);
-            event.getMessage().reply(embed.build()).queue();
-        }
+        return MessageHelper.errorResponse(null, "Unknown provider", "That provider is not on our GitHub so it is untested!");
     }
 
     /**
-     * Build an embed and send it based on the passed provider details
+     * Build an embed and return it based on the passed provider details
      *
-     * @param event The {@link CommandEvent} to respond to
      * @param provider The provider to use for the embed contents
      */
-    private void sendProviderEmbed(CommandEvent event, Provider provider) {
+    private MessageEmbed sendProviderEmbed(Provider provider) {
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setTitle(provider.getName(), provider.getUrl());
@@ -121,7 +122,7 @@ public class ProviderCommand extends Command {
         embed.addField("Category", provider.getCategory(), false);
         embed.addField("Instructions", provider.getInstructions(), false);
 
-        event.getMessage().reply(embed.build()).queue();
+        return embed.build();
     }
 
     /**

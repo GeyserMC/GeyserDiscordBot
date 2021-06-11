@@ -28,8 +28,13 @@
             <url>https://jitpack.io</url>
         </repository>
         <repository>
-            <id>chew-jenkins</id>
-            <url>https://jenkins.chew.pw/plugin/repository/everything/</url>
+            <id>dv8tion</id>
+            <name>m2-dv8tion</name>
+            <url>https://m2.dv8tion.net/releases</url>
+        </repository>
+        <repository>
+            <id>chew-m2-releases</id>
+            <url>https://m2.chew.pro/releases/</url>
         </repository>
         <repository>
             <id>opencollab-release-repo</id>
@@ -62,15 +67,21 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.2.0_225</version>
+            <version>4.2.1_270</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>club.minnced</groupId>
+                    <artifactId>opus-java</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- JDA Utils -->
         <dependency>
             <groupId>pw.chew</groupId>
             <artifactId>jda-chewtils</artifactId>
-            <version>1.19</version>
+            <version>1.20</version>
             <scope>compile</scope>
             <type>pom</type>
         </dependency>
