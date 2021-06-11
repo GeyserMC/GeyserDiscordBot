@@ -27,28 +27,58 @@ package org.geysermc.discordbot.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class TagsCommand extends Command {
+public class TagsCommand extends SlashCommand {
     public TagsCommand() {
         this.name = "tags";
         this.arguments = "[search]";
         this.help = "List all the known (non-alias) tags";
         this.guildOnly = false;
+
+        this.options = Collections.singletonList(
+                new OptionData(OptionType.STRING, "search", "The term you want to search for")
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        String search = "";
+        if (event.getOption("search") != null) {
+            search = event.getOption("search").getAsString();
+        }
+
+        event.replyEmbeds(handle(search)).queue();
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        EmbedBuilder embed = new EmbedBuilder();
+        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
-        String search = event.getArgs();
+        // Check they specified an ip
+        String search = "";
+        if (!args.get(0).isEmpty()) {
+            search = args.get(0);
+        }
+
+        event.getMessage().reply(handle(search)).queue();
+    }
+
+    protected MessageEmbed handle(String search) {
+        EmbedBuilder embed = new EmbedBuilder();
 
         // Get tag names based on search
         List<String> tagNames = new ArrayList<>();
@@ -73,6 +103,6 @@ public class TagsCommand extends Command {
             embed.setFooter("Use `" + PropertiesManager.getPrefix() + "tag <name>` to show a tag");
         }
 
-        event.getMessage().reply(embed.build()).queue();
+        return embed.build();
     }
 }

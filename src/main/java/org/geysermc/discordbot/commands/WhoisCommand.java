@@ -25,37 +25,56 @@
 
 package org.geysermc.discordbot.commands;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotHelpers;
+import org.geysermc.discordbot.util.MessageHelper;
 
-import java.awt.*;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class WhoisCommand extends Command {
+public class WhoisCommand extends SlashCommand {
 
     private static final List<Permission> PRIVILEGED_PERMISSIONS = Arrays.asList(Permission.ADMINISTRATOR, Permission.MANAGE_SERVER, Permission.MANAGE_ROLES, Permission.MANAGE_CHANNEL, Permission.MESSAGE_MANAGE, Permission.MANAGE_WEBHOOKS, Permission.NICKNAME_MANAGE, Permission.MANAGE_EMOTES, Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.MESSAGE_MENTION_EVERYONE);
 
     public WhoisCommand() {
         this.name = "whois";
-        this.hidden = true;
+        this.arguments = "[member]";
+        this.help = "Show some information for a member";
+
+        this.options = Collections.singletonList(
+                new OptionData(OptionType.USER, "member", "The member you want to get the information for")
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        Member member = event.getMember();
+        if (event.getOption("member") != null) {
+            member = event.getOption("member").getAsMember();
+        }
+
+        event.replyEmbeds(handle(member)).queue();
     }
 
     @Override
     protected void execute(CommandEvent event) {
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
-        // Fetch the user
         Member member;
         if (args.size() == 0 || args.get(0).isEmpty()) {
             member = event.getMember();
@@ -65,14 +84,14 @@ public class WhoisCommand extends Command {
 
         // Check user is valid
         if (member == null) {
-            event.getMessage().reply(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(Color.red)
-                    .build()).queue();
+            MessageHelper.errorResponse(event, "Invalid user", "The user ID specified doesn't link with any valid user in this server.");
             return;
         }
 
+        event.getMessage().reply(handle(member)).queue();
+    }
+
+    protected MessageEmbed handle(Member member) {
         // Get the user from the member
         User user = member.getUser();
 
@@ -82,7 +101,7 @@ public class WhoisCommand extends Command {
             roles = member.getRoles().stream().map(Role::getAsMention).collect(Collectors.joining(" "));
         }
 
-        event.getMessage().reply(new EmbedBuilder()
+        return new EmbedBuilder()
                 .setAuthor(user.getAsTag(), null, user.getAvatarUrl())
                 .setDescription(user.getAsMention())
                 .addField("Joined", member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
@@ -93,6 +112,6 @@ public class WhoisCommand extends Command {
                 .setFooter("ID: " + user.getId())
                 .setTimestamp(Instant.now())
                 .setColor(member.getColor())
-                .build()).queue();
+                .build();
     }
 }

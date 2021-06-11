@@ -25,9 +25,12 @@
 
 package org.geysermc.discordbot.commands;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.time.Instant;
@@ -35,7 +38,7 @@ import java.time.Instant;
 /**
  * TODO: Add role filter
  */
-public class MemberCountCommand extends Command {
+public class MemberCountCommand extends SlashCommand {
 
     public MemberCountCommand() {
         this.name = "membercount";
@@ -43,12 +46,22 @@ public class MemberCountCommand extends Command {
         this.help = "Show the current member count";
     }
 
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        event.replyEmbeds(handle(event.getGuild())).queue();
+    }
+
     @Override
     protected void execute(CommandEvent event) {
-        event.getMessage().reply(new EmbedBuilder()
-                .addField("Members", String.valueOf(event.getGuild().getMemberCount()), false)
+        event.getMessage().reply(handle(event.getGuild())).queue();
+    }
+
+    protected MessageEmbed handle(Guild guild) {
+        return new EmbedBuilder()
+                .addField("Members", String.valueOf(guild.getMemberCount()), false)
                 .setTimestamp(Instant.now())
                 .setColor(PropertiesManager.getDefaultColor())
-                .build()).queue();
+                .build();
     }
 }
