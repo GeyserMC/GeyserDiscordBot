@@ -51,6 +51,10 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>rtm516-releases</id>
+            <url>https://repo.rtm516.co.uk/releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -173,6 +177,14 @@
             <artifactId>batik-all</artifactId>
             <version>1.14</version>
             <type>pom</type>
+        </dependency>
+
+        <!-- https://github.com/rtm516/StackParser -->
+        <dependency>
+            <groupId>com.rtm516</groupId>
+            <artifactId>StackParser</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
