@@ -25,12 +25,14 @@
 
 package org.geysermc.discordbot.listeners;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Invite;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -50,9 +52,51 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 import java.awt.Color;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-// TODO: Add a message cache for before edit and deletion data
 public class LogHandler extends ListenerAdapter {
+
+    private Map<Long, Cache<Long, Message>> messageCache = new HashMap<>();
+
+    private Message getCacheMessage(Guild guild, Long messageId) {
+        Cache<Long, Message> cache = messageCache.get(guild.getIdLong());
+        // Insert the cache if there is none
+        if (cache == null) {
+            cache = CacheBuilder.newBuilder()
+                    .expireAfterWrite(24, TimeUnit.HOURS)
+                    .maximumSize(1000)
+                    .build();
+            messageCache.put(guild.getIdLong(), cache);
+
+            return null;
+        }
+
+        return cache.getIfPresent(messageId);
+    }
+
+    private void putCacheMessage(Guild guild, Message message) {
+        Cache<Long, Message> cache = messageCache.get(guild.getIdLong());
+        // Insert the cache if there is none
+        if (cache == null) {
+            cache = CacheBuilder.newBuilder()
+                    .expireAfterWrite(24, TimeUnit.HOURS)
+                    .build();
+            messageCache.put(guild.getIdLong(), cache);
+        }
+
+        cache.put(message.getIdLong(), message);
+    }
+
+    private void removeCacheMessage(Guild guild, Long messageId) {
+        Cache<Long, Message> cache = messageCache.get(guild.getIdLong());
+        if (cache == null) {
+            return;
+        }
+
+        cache.invalidate(messageId);
+    }
 
     @Override
     public void onGuildBan(@NotNull GuildBanEvent event) {
@@ -132,19 +176,27 @@ public class LogHandler extends ListenerAdapter {
             return;
         }
 
+        Message cachedMessage = getCacheMessage(event.getGuild(), event.getMessage().getIdLong());
+
         ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
                 .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
                 .setDescription("**Message edited in **" + event.getChannel().getAsMention() + " [Jump to Message](" + event.getMessage().getJumpUrl() + ")")
-                //.addField("Before", event.getMessage().getContentRaw(), false)
+                .addField("Before", cachedMessage != null ? cachedMessage.getContentRaw() : "*Old message not cached*", false)
                 .addField("After", event.getMessage().getContentRaw(), false)
                 .setFooter("User ID: " + event.getAuthor().getId())
                 .setTimestamp(Instant.now())
                 .setColor(PropertiesManager.getDefaultColor())
                 .build()).queue();
+
+        putCacheMessage(event.getGuild(), event.getMessage());
     }
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+        if (event.getAuthor().isBot()) {
+            return;
+        }
+
         for (String inviteCode : event.getMessage().getInvites()) {
             Invite invite = Invite.resolve(event.getJDA(), inviteCode, true).complete();
 
@@ -159,19 +211,40 @@ public class LogHandler extends ListenerAdapter {
                     .setColor(PropertiesManager.getDefaultColor())
                     .build()).queue();
         }
+
+        putCacheMessage(event.getGuild(), event.getMessage());
     }
 
-//    @Override
-//    public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
-//        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
-//                .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
-//                .setDescription("**Message sent by** " + "" + " **deleted in** " + event.getChannel().getAsMention() + "\n" + message)
-//                .setFooter("Author: " + event.getAuthor().getId() + " | Message ID: " + event.getMessageId())
-//                .setTimestamp(Instant.now())
-//                .setColor(PropertiesManager.getDefaultColor())
-//                .build()).queue();
-//    }
+    @Override
+    public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
+        // TODO: Dont show purged messages
 
+        Message cachedMessage = getCacheMessage(event.getGuild(), event.getMessageIdLong());
+
+        String authorTag = "Unknown";
+        String authorMention = "Unknown";
+        String authorAvatar = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Question_mark_%28black%29.svg/200px-Question_mark_%28black%29.svg.png";
+        String authorId = "000000000000000000";
+        String message = "*Old message not cached*";
+
+        if (cachedMessage != null) {
+            authorTag = cachedMessage.getAuthor().getAsTag();
+            authorMention = cachedMessage.getAuthor().getAsMention();
+            authorAvatar = cachedMessage.getAuthor().getAvatarUrl();
+            authorId = cachedMessage.getAuthor().getId();
+            message = cachedMessage.getContentRaw();
+        }
+
+        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                .setAuthor(authorTag, null, authorAvatar)
+                .setDescription("**Message sent by** " + authorMention + " **deleted in** " + event.getChannel().getAsMention() + "\n" + message)
+                .setFooter("Author: " + authorId + " | Message ID: " + event.getMessageId())
+                .setTimestamp(Instant.now())
+                .setColor(PropertiesManager.getDefaultColor())
+                .build()).queue();
+
+        removeCacheMessage(event.getGuild(), event.getMessageIdLong());
+    }
 
     @Override
     public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
