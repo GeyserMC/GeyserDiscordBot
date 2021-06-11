@@ -91,4 +91,11 @@ public class PropertiesManager {
     public static String getPass() {
         return properties.getProperty("db-pass");
     }
+
+    /**
+     * @return GitHub OAuth token
+     */
+    public static String getGithubToken() {
+        return properties.getProperty("github-token");
+    }
 }

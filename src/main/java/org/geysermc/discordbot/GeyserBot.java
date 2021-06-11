@@ -49,6 +49,8 @@ import org.geysermc.discordbot.updates.UpdateManager;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.json.JSONArray;
+import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +79,7 @@ public class GeyserBot {
     private static ScheduledExecutorService generalThreadPool;
 
     private static JDA jda;
+    private static GitHub github;
 
     static {
         // Gathers all commands from "commands" package.
@@ -117,6 +120,9 @@ public class GeyserBot {
         Properties prop = new Properties();
         prop.load(new FileInputStream("bot.properties"));
         PropertiesManager.loadProperties(prop);
+
+        // Connect to github
+        github = new GitHubBuilder().withOAuthToken(PropertiesManager.getGithubToken()).build();
 
         // Initialize the waiter
         EventWaiter waiter = new EventWaiter();
@@ -188,6 +194,7 @@ public class GeyserBot {
                     new FileHandler(),
                     new LevelHandler(),
                     new DumpHandler(),
+                    new ErrorAnalyzer(),
                     client.build(),
                     tagClient.build())
             .build();
@@ -221,7 +228,12 @@ public class GeyserBot {
         return jda;
     }
 
+    public static GitHub getGithub() {
+        return github;
+    }
+
     public static ScheduledExecutorService getGeneralThreadPool() {
         return generalThreadPool;
     }
+
 }

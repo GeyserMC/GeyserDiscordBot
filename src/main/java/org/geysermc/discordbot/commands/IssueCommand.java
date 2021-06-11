@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.MessageHelper;
+import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHIssueState;
@@ -96,14 +97,12 @@ public class IssueCommand extends SlashCommand {
         Instant timestamp;
 
         try {
-            GitHub github = GitHub.connect();
-
             GHRepository repo;
             Matcher matcherRepo = REPO_PATTERN.matcher(repoString);
 
             if (matcherRepo.find()) {
                 if (matcherRepo.group(2) == null) {
-                    PagedSearchIterable<GHRepository> results = github.searchRepositories().q(matcherRepo.group(3)).list();
+                    PagedSearchIterable<GHRepository> results = GeyserBot.getGithub().searchRepositories().q(matcherRepo.group(3)).list();
                     if (results.getTotalCount() == 0) {
                         // TODO: Handle error
                         return MessageHelper.errorResponse(null, "Error 404, mayday!",
@@ -111,10 +110,10 @@ public class IssueCommand extends SlashCommand {
                     }
                     repo = results.toArray()[0];
                 } else {
-                    repo = github.getRepository(matcherRepo.group(2) + matcherRepo.group(3));
+                    repo = GeyserBot.getGithub().getRepository(matcherRepo.group(2) + matcherRepo.group(3));
                 }
             } else {
-                repo = github.getRepository("GeyserMC/Geyser");
+                repo = GeyserBot.getGithub().getRepository("GeyserMC/Geyser");
             }
 
             issue = repo.getIssue(issueNumber);
