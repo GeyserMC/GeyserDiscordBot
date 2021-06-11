@@ -28,6 +28,7 @@ package org.geysermc.discordbot.commands;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.kohsuke.github.*;
 
@@ -63,24 +64,22 @@ public class IssueCommand extends Command {
         Instant timestamp;
 
         try {
-            GitHub github = GitHub.connect();
-
             GHRepository repo;
             Matcher matcherRepo = REPO_PATTERN.matcher(event.getArgs().replace(matcherIssue.group(0), ""));
 
             if (matcherRepo.find()) {
                 if (matcherRepo.group(2) == null) {
-                    PagedSearchIterable<GHRepository> results = github.searchRepositories().q(matcherRepo.group(3)).list();
+                    PagedSearchIterable<GHRepository> results = GeyserBot.getGithub().searchRepositories().q(matcherRepo.group(3)).list();
                     if (results.getTotalCount() == 0) {
                         // TODO: Handle error
                         return;
                     }
                     repo = results.toArray()[0];
                 } else {
-                    repo = github.getRepository(matcherRepo.group(2) + matcherRepo.group(3));
+                    repo = GeyserBot.getGithub().getRepository(matcherRepo.group(2) + matcherRepo.group(3));
                 }
             } else {
-                repo = github.getRepository("GeyserMC/Geyser");
+                repo = GeyserBot.getGithub().getRepository("GeyserMC/Geyser");
             }
 
             issue = repo.getIssue(Integer.parseInt(matcherIssue.group(2)));

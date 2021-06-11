@@ -25,19 +25,31 @@
 
 package org.geysermc.discordbot.util;
 
+import org.geysermc.discordbot.GeyserBot;
 import org.kohsuke.github.GHTree;
 import org.kohsuke.github.GHTreeEntry;
 import org.kohsuke.github.GitHub;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class GithubFileFinder {
+    private static final List<String> REPOS = new ArrayList<String>()  {
+        {
+            add("GeyserMC/Geyser");
+            add("GeyserMC/Floodgate");
+            add("GeyserMC/Geyser-Fabric");
+            add("GeyserMC/GeyserConnect");
+            add("GeyserMC/Cumulus");
+            add("GeyserMC/geyser-adapters");
+        }
+    };
+
     private final String branch;
 
-    private GitHub github;
-    private GHTree geyserTree;
-    private GHTree floodgateTree;
+    private List<GHTree> trees;
 
     public GithubFileFinder() {
         this.branch = "master";
@@ -50,17 +62,14 @@ public class GithubFileFinder {
     }
 
     private void setup() {
-        github = null;
-        geyserTree = null;
-        floodgateTree = null;
-        try {
-            github = GitHub.connect();
-            geyserTree = github.getRepository("GeyserMC/Geyser").getTreeRecursive(branch, 1);
-        } catch (IOException e) { }
+        trees = new ArrayList<>();
 
-        try {
-            floodgateTree = github.getRepository("GeyserMC/Floodgate").getTreeRecursive(branch, 1);
-        } catch (IOException e) { }
+        // Loop the repos and load in the trees for them
+        for (String repo : REPOS) {
+            try {
+                trees.add(GeyserBot.getGithub().getRepository(repo).getTreeRecursive(branch, 1));
+            } catch (IOException e) { }
+        }
     }
 
     public String getFileUrl(String file) {
@@ -70,16 +79,11 @@ public class GithubFileFinder {
     public String getFileUrl(String file, int line) {
         // Find the entry
         GHTreeEntry foundEntry = null;
-        if (geyserTree != null) {
-            Optional<GHTreeEntry> entry = geyserTree.getTree().stream().filter(ghTreeEntry -> ghTreeEntry.getPath().endsWith("/" + file) || ghTreeEntry.getPath().equals(file)).findFirst();
+        for (GHTree tree : trees) {
+            Optional<GHTreeEntry> entry = tree.getTree().stream().filter(ghTreeEntry -> ghTreeEntry.getPath().endsWith("/" + file) || ghTreeEntry.getPath().equals(file)).findFirst();
             if (entry.isPresent()) {
                 foundEntry = entry.get();
-            }
-        }
-        if (floodgateTree != null && foundEntry != null) {
-            Optional<GHTreeEntry> entry = floodgateTree.getTree().stream().filter(ghTreeEntry -> ghTreeEntry.getPath().endsWith("/" + file) || ghTreeEntry.getPath().equals(file)).findFirst();
-            if (entry.isPresent()) {
-                foundEntry = entry.get();
+                break;
             }
         }
 

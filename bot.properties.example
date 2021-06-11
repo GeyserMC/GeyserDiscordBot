@@ -5,3 +5,4 @@ db-host: 127.0.0.1
 db-database: bot
 db-user: root
 db-pass:
+github-token: github_oauth_token
