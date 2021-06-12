@@ -47,7 +47,7 @@ public class RestClient {
             .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org) DBots/739572267855511652") // GeyserMC - Replace with our bot user agent
             .build();
 
-        LoggerFactory.getLogger(RestClient.class).debug("Making call to GET " + url);
+        // LoggerFactory.getLogger(RestClient.class).debug("Making call to GET " + url);
         return performRequest(request);
     }
 
@@ -65,7 +65,7 @@ public class RestClient {
             .get()
             .build();
 
-        LoggerFactory.getLogger(RestClient.class).debug("Making call to GET " + url);
+        // LoggerFactory.getLogger(RestClient.class).debug("Making call to GET " + url);
         return performRequest(request);
     }
 
@@ -84,7 +84,7 @@ public class RestClient {
             .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org) DBots/739572267855511652") // GeyserMC - Replace with our bot user agent
             .build();
 
-        LoggerFactory.getLogger(RestClient.class).debug("Making call to POST " + url);
+        // LoggerFactory.getLogger(RestClient.class).debug("Making call to POST " + url);
         return performRequest(request);
     }
 
@@ -103,7 +103,7 @@ public class RestClient {
             .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org) DBots/739572267855511652") // GeyserMC - Replace with our bot user agent
             .build();
 
-        LoggerFactory.getLogger(RestClient.class).debug("Making call to POST " + url);
+        // LoggerFactory.getLogger(RestClient.class).debug("Making call to POST " + url);
         return performRequest(request);
     }
 
@@ -124,7 +124,7 @@ public class RestClient {
             .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org) DBots/739572267855511652") // GeyserMC - Replace with our bot user agent
             .build();
 
-        LoggerFactory.getLogger(RestClient.class).debug("Making call to POST " + url);
+        // LoggerFactory.getLogger(RestClient.class).debug("Making call to POST " + url);
         return performRequest(request);
     }
 
@@ -142,7 +142,7 @@ public class RestClient {
             .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org) DBots/739572267855511652") // GeyserMC - Replace with our bot user agent
             .build();
 
-        LoggerFactory.getLogger(RestClient.class).debug("Making call to DELETE " + url);
+        // LoggerFactory.getLogger(RestClient.class).debug("Making call to DELETE " + url);
         return performRequest(request);
     }
 
@@ -160,7 +160,7 @@ public class RestClient {
             } else {
                 body = responseBody.string();
             }
-            LoggerFactory.getLogger(RestClient.class).debug("Response is " + body);
+            // LoggerFactory.getLogger(RestClient.class).debug("Response is " + body);
             return body;
         } catch (SSLHandshakeException e) {
             LoggerFactory.getLogger(RestClient.class).warn("Call to " + request.url() + " failed with SSLHandshakeException!");
