@@ -2,8 +2,8 @@ type: text
 
 ---
 
-Spark is a spigot plugin that helps you monitor performance for you server.
-<https://www.spigotmc.org/resources/spark.57242/>
+Spark is a plugin that helps you monitor performance for you server.
+<https://spark.lucko.me/download>
 
 To record performance on your server use:
 `/spark profiler --thread * --timeout 60`. This will run for 60 seconds then it will automatically stop.
