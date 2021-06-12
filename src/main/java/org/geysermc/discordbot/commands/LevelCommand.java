@@ -42,6 +42,7 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.LevelInfo;
 import org.geysermc.discordbot.util.BotHelpers;
+import org.geysermc.discordbot.util.InkscapeCssParser;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.w3c.dom.Document;
 
@@ -110,6 +111,8 @@ public class LevelCommand extends SlashCommand {
         LevelInfo levelInfo = GeyserBot.storageManager.getLevel(member);
 
         try {
+            XMLResourceDescriptor.setCSSParserClassName(InkscapeCssParser.class.getName());
+
             String parser = XMLResourceDescriptor.getXMLParserClassName();
             SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(parser);
 
