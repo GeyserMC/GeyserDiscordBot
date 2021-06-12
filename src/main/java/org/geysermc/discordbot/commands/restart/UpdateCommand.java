@@ -95,7 +95,7 @@ public class UpdateCommand extends Command {
                 InputStream in = new URL("https://ci.opencollab.dev/job/GeyserMC/job/GeyserDiscordBot/job/" + URLEncoder.encode(gitProp.getProperty("git.branch"), StandardCharsets.UTF_8.toString()) + "/lastSuccessfulBuild/artifact/target/GeyserBot.jar").openStream();
                 Files.copy(in, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
                 logText.append("\n").append("Updated!").append("\n\n").append("Restarting...");
-                message.editMessage("```\n" + logText + "\n```").queue(ignored -> System.exit(0));
+                message.editMessage("```\n" + logText + "\n```").queue(ignored -> event.getJDA().shutdown());
             } catch (IOException e) {
                 logText.append("\n").append("Unable to download updated jar!").append("\n").append(e.toString());
                 message.editMessage("```\n" + logText + "\n```").queue();

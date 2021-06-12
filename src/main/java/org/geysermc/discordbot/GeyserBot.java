@@ -187,6 +187,7 @@ public class GeyserBot {
             .enableCache(CacheFlag.ROLE_TAGS)
             .setStatus(OnlineStatus.ONLINE)
             .setActivity(Activity.playing("Booting..."))
+            .setEnableShutdownHook(true)
             .addEventListeners(waiter,
                     new LogHandler(),
                     new SwearHandler(),
@@ -195,6 +196,7 @@ public class GeyserBot {
                     new LevelHandler(),
                     new DumpHandler(),
                     new ErrorAnalyzer(),
+                    new ShutdownHandler(),
                     client.build(),
                     tagClient.build())
             .build();

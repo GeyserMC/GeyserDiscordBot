@@ -26,6 +26,7 @@
 package org.geysermc.discordbot.tags;
 
 import com.jagrosh.jdautilities.command.Command;
+import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.BotHelpers;
 
 import java.io.IOException;
@@ -91,9 +92,11 @@ public class TagsManager {
                                         tagData.put("image", String.join(":", Arrays.copyOfRange(lineParts, 1, lineParts.length)).trim());
                                         break;
 
+                                    case "":
+                                        break;
+
                                     default:
-                                        // TODO: Add a decent error message
-                                        // Invalid tag option %s for tag %s
+                                        GeyserBot.LOGGER.warn("Invalid tag option '" + lineParts[0] + "' for tag '" + tagName + "'!");
                                         break;
                                 }
                             }
@@ -110,7 +113,7 @@ public class TagsManager {
                                     break;
 
                                 default:
-                                    // TODO: Add a decent error message saying type is invalid
+                                    GeyserBot.LOGGER.warn("Invalid tag type '" + tagData.get("type") + "' for tag '" + tagName + "'!");
                                     break;
                             }
 
@@ -120,13 +123,11 @@ public class TagsManager {
                         }
                     }
                 } catch (IOException | URISyntaxException e) {
-                    e.printStackTrace();
-                    // TODO: Handle error
+                    GeyserBot.LOGGER.error("Failed to load tag subfolders", e);
                 }
             }
         } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
-            // TODO: Handle error
+            GeyserBot.LOGGER.error("Failed to load tags folder", e);
         }
 
         tagsLoaded = true;

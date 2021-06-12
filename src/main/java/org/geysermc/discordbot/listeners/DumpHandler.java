@@ -36,10 +36,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.net.util.SubnetUtils;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.dump_issues.AbstractDumpIssueCheck;
+import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONObject;
+import org.kohsuke.github.GHCommit;
+import org.kohsuke.github.GHCompare;
+import org.kohsuke.github.GHRepository;
 import org.reflections.Reflections;
 import org.slf4j.LoggerFactory;
 import pw.chew.chewbotcca.util.RestClient;
@@ -135,16 +138,26 @@ public class DumpHandler extends ListenerAdapter {
         StringBuilder gitData = new StringBuilder();
         String gitUrl = gitInfo.getString("git.remote.origin.url").replaceAll("\\.git$", "");
 
-        // TODO: Migrate this over to the github-api lib we have
+        GHRepository repo = null;
+        try {
+            repo = GeyserBot.getGithub().getRepository("GeyserMC/Geyser");
+        } catch (IOException e) {
+            MessageHelper.errorResponse(event, "Failed to get Geyser repository", "There was an issue trying to get the Geyser repository!\n" + e.getMessage());
+        }
 
         // Get the commit hash
-        String latestCommit = new JSONArray(RestClient.get("https://api.github.com/repos/GeyserMC/Geyser/commits?per_page=1")).getJSONObject(0).getString("sha");
+        GHCommit latestCommit = repo.listCommits()._iterator(1).next();
 
         // Compare latest and current
-        JSONObject compare = new JSONObject(RestClient.get("https://api.github.com/repos/GeyserMC/Geyser/compare/" + latestCommit + "..." + gitInfo.getString("git.commit.id")));
+        GHCompare compare = null;
+        try {
+            compare = repo.getCompare(latestCommit, repo.getCommit(gitInfo.getString("git.commit.id")));
+        } catch (IOException e) {
+            MessageHelper.errorResponse(event, "Failed to get latest commit", "There was an issue trying to get the latest commit!\n" + e.getMessage());
+        }
 
         // Set the latest info based on the returned comparison
-        if (compare.getInt("behind_by") != 0 || compare.getInt("ahead_by") != 0) {
+        if (compare.getBehindBy() != 0 || compare.getAheadBy() != 0) {
             gitData.append("**Latest:** No\n");
             problems.add("- You aren't on the latest Geyser version! Please [download](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/) the latest version.");
         } else {
@@ -159,12 +172,12 @@ public class DumpHandler extends ListenerAdapter {
         gitData.append("**Commit:** [`").append(gitInfo.getString("git.commit.id.abbrev")).append("`](").append(gitUrl).append("/commit/").append(gitInfo.getString("git.commit.id")).append(")\n");
         gitData.append("**Branch:** [`").append(gitInfo.getString("git.branch")).append("`](").append(gitUrl).append("/tree/").append(gitInfo.getString("git.branch")).append(")\n");
 
-        if (compare.getInt("ahead_by") != 0) {
-            gitData.append("Ahead by ").append(compare.getInt("ahead_by")).append(" commit").append(compare.getInt("ahead_by") == 1 ? "" : "s").append("\n");
+        if (compare.getAheadBy() != 0) {
+            gitData.append("Ahead by ").append(compare.getAheadBy()).append(" commit").append(compare.getAheadBy() == 1 ? "" : "s").append("\n");
         }
 
-        if (compare.getInt("behind_by") != 0) {
-            gitData.append("Behind by ").append(compare.getInt("behind_by")).append(" commit").append(compare.getInt("behind_by") == 1 ? "" : "s").append("\n");
+        if (compare.getBehindBy() != 0) {
+            gitData.append("Behind by ").append(compare.getBehindBy()).append(" commit").append(compare.getBehindBy() == 1 ? "" : "s").append("\n");
         }
 
         String versionString = "Unknown";
@@ -247,9 +260,7 @@ public class DumpHandler extends ListenerAdapter {
                 MCPingResponse data = MCPing.getPing(options);
 
                 // Mark the server as pinged and add the status to the address field
-                addrText += " [(server online)](https://mcsrvstat.us/server/" + address + ":" + port + ")";
-
-                // TODO: Implement version from ping
+                addrText += " [(server online, " + data.getVersion().getName() + ")](https://mcsrvstat.us/server/" + address + ":" + port + ")";
             } catch (IOException ignored) {
                 addrText += " [(server offline)](https://mcsrvstat.us/server/" + address + ":" + port + ")";
             }

@@ -38,7 +38,6 @@ public abstract class AbstractStorageManager {
 
     /**
      * Close any connections or do clean-up
-     * TODO: Call this on shutdown
      */
     public abstract void closeStorage();
 

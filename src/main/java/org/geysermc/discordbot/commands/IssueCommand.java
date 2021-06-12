@@ -104,9 +104,7 @@ public class IssueCommand extends SlashCommand {
                 if (matcherRepo.group(2) == null) {
                     PagedSearchIterable<GHRepository> results = GeyserBot.getGithub().searchRepositories().q(matcherRepo.group(3)).list();
                     if (results.getTotalCount() == 0) {
-                        // TODO: Handle error
-                        return MessageHelper.errorResponse(null, "Error 404, mayday!",
-                            "Could not find a repo with specified arguments.");
+                        return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
                     }
                     repo = results.toArray()[0];
                 } else {
@@ -121,7 +119,6 @@ public class IssueCommand extends SlashCommand {
             userName = (user.getName() != null ? user.getName() : user.getLogin());
             timestamp = issue.getCreatedAt().toInstant();
         } catch (IOException ignored) {
-            // TODO: Handle error
             return MessageHelper.errorResponse(null, "Error occurred!", "Don't ask me what went wrong, I'm just letting you know, try again.");
         }
 

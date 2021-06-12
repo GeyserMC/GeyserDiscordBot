@@ -36,7 +36,7 @@ public class TagsListener implements CommandListener {
     @Override
     public void onNonCommandMessage(MessageReceivedEvent event) {
         if (event.getMessage().getContentRaw().startsWith("!!") || event.getMessage().getContentRaw().startsWith("!tag ")) {
-            event.getChannel().sendMessage(new EmbedBuilder()
+            event.getMessage().reply(new EmbedBuilder()
                     .setColor(Color.red)
                     .setTitle("Invalid tag")
                     .setDescription("Missing requested tag")

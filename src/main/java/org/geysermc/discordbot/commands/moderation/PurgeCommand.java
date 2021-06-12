@@ -96,6 +96,10 @@ public class PurgeCommand extends Command {
                     continue;
                 }
 
+                if (message.getIdLong() == event.getMessage().getIdLong()) {
+                    continue;
+                }
+
                 messagesToDelete.add(message);
                 totalMessages++;
 

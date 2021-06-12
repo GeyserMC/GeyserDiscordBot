@@ -23,23 +23,17 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.commands.restart;
+package org.geysermc.discordbot.listeners;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.ShutdownEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.geysermc.discordbot.GeyserBot;
+import org.jetbrains.annotations.NotNull;
 
-public class RestartCommand extends Command {
-
-    public RestartCommand() {
-        this.name = "restart";
-        this.hidden = true;
-        this.userMissingPermMessage = "";
-        this.userPermissions = new Permission[] { Permission.MANAGE_ROLES };
-    }
-
+public class ShutdownHandler extends ListenerAdapter {
     @Override
-    protected void execute(CommandEvent event) {
-        event.getJDA().shutdown();
+    public void onShutdown(@NotNull ShutdownEvent event) {
+        GeyserBot.storageManager.closeStorage();
+        GeyserBot.getGeneralThreadPool().shutdown();
     }
 }

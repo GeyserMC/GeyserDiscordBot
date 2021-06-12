@@ -65,6 +65,10 @@ public class ErrorAnalyzer extends ListenerAdapter {
             break;
         }
 
+        if (url == null) {
+            return;
+        }
+
         String pasteBody = RestClient.get(url);
 
         String branch = "master";

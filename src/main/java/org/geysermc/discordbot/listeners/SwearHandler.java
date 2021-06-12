@@ -83,8 +83,7 @@ public class SwearHandler extends ListenerAdapter {
                 }
             }
         } catch (IOException | URISyntaxException e) {
-            e.printStackTrace();
-            // TODO: Handle error
+            GeyserBot.LOGGER.error("Failed to load filters", e);
         }
 
         GeyserBot.LOGGER.info("Loaded " + filterPatterns.size() + " filter patterns from " + fileCount + " files");
