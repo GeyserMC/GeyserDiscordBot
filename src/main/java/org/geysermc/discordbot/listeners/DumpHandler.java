@@ -204,11 +204,11 @@ public class DumpHandler extends ListenerAdapter {
                 .setDescription(problems.size() != 0 ? "**Possible problems:**\n" + problems.stream().map(Object::toString).collect(Collectors.joining("\n")) : "")
                 .addField("Git info", gitData.toString(), false)
                 .addField("Platform", platformNamePretty, true)
-                .addField("Remote address", javaAddrText, true)
                 .addField("Listen address", bedrockAddrText, true)
+                .addField("Remote address", javaAddrText, true)
                 .addField("Auth type", configRemote.getString("auth-type"), true)
                 .addField("Server version", versionString, true)
-                .addField("Cache chunks?", (platform.equals("SPIGOT") || config.getBoolean("cache-chunks")) ? "Yes" : "No", true)
+                .addField("Autoconfigured remote?", (config.getBoolean("autoconfiguredRemote")) ? "Yes" : "No", true)
                 .setTimestamp(Instant.now())
                 .setColor(PropertiesManager.getDefaultColor())
                 .build()).queue();
