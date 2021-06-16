@@ -1,5 +1,5 @@
 type: text
-aliases: placeholder-api
+aliases: placeholder-api, papi
 
 ---
 
