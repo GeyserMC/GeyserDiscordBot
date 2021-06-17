@@ -196,7 +196,7 @@ public class DumpHandler extends ListenerAdapter {
                         gitData.append("Behind by ").append(buildNumDiff).append(" CI build").append(buildNumDiff == 1 ? "" : "s").append("\n");
                     }
                 }
-            } catch (IOException ignored) {
+            } catch (IOException | NumberFormatException ignored) {
             }
         }
 
