@@ -157,7 +157,7 @@ public class GeyserBot {
         client.setCommandPreProcessFunction(event -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
 
         // TEMPORARY
-        client.forceGuildOnly("742759234906751017");
+        // client.forceGuildOnly("742759234906751017");
 
         // Setup the tag client
         CommandClientBuilder tagClient = new CommandClientBuilder();
