@@ -1,5 +1,5 @@
 # GeyserBot
-[![forthebadge made-with-java](http://ForTheBadge.com/images/badges/made-with-java.svg)](https://java.com/)
+[![forthebadge made-with-java](https://ForTheBadge.com/images/badges/made-with-java.svg)](https://java.com/)
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Build Status](https://ci.opencollab.dev/job/GeyserMC/job/GeyserDiscordBot/job/jda/badge/icon)](https://ci.opencollab.dev/job/GeyserMC/job/GeyserDiscordBot/job/jda/)
@@ -10,4 +10,4 @@ A bot for the GeyserMC Discord server
 # How to run
 - Download the latest build from the CI ([here](https://ci.opencollab.dev/job/GeyserMC/job/GeyserDiscordBot/job/jda/lastSuccessfulBuild/artifact/target/GeyserBot.jar))
 - Configure a `bot.properties` file based on the example
-- Start the bot with `java -jar GeyserBot.jar`
+- Start the bot with `java -jar GeyserBot.jar` or put the systemd unit file into `/etc/systemd/system/` and `sudo systemctl daemon-reload && sudo systemctl enable --now geyserbot`
