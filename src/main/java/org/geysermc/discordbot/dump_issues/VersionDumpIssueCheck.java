@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -73,6 +72,6 @@ public class VersionDumpIssueCheck extends AbstractDumpIssueCheck {
             return Collections.singletonList("- Your server needs to be on Minecraft " + supportedMinecraft + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).");
         }
 
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }

@@ -50,6 +50,8 @@ import pw.chew.chewbotcca.util.RestClient;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -164,9 +166,11 @@ public class DumpHandler extends ListenerAdapter {
             gitData.append("**Latest:** Yes\n");
         }
 
+        boolean isFork = false;
         // Check if they are using a custom fork
         if (!gitUrl.startsWith("https://github.com/GeyserMC/Geyser")) {
             gitData.append("**Is fork:** Yes ([").append(gitUrl.replace("https://github.com/", "")).append("](").append(gitUrl).append("))\n");
+            isFork = true;
         }
 
         gitData.append("**Commit:** [`").append(gitInfo.getString("git.commit.id.abbrev")).append("`](").append(gitUrl).append("/commit/").append(gitInfo.getString("git.commit.id")).append(")\n");
@@ -176,8 +180,30 @@ public class DumpHandler extends ListenerAdapter {
             gitData.append("Ahead by ").append(compare.getAheadBy()).append(" commit").append(compare.getAheadBy() == 1 ? "" : "s").append("\n");
         }
 
-        if (compare.getBehindBy() != 0) {
-            gitData.append("Behind by ").append(compare.getBehindBy()).append(" commit").append(compare.getBehindBy() == 1 ? "" : "s").append("\n");
+        boolean compareByBuildNumber = false;
+        if (!isFork && gitInfo.has("git.build.number")) {
+            try {
+                // Attempt to see how far behind they are not based on commits but CI builds
+                String buildXML = RestClient.get("https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/" +
+                        URLEncoder.encode(gitInfo.getString("git.branch"), StandardCharsets.UTF_8.toString()) + "/lastSuccessfulBuild/api/xml?xpath=//buildNumber");
+                if (buildXML.startsWith("<buildNumber>")) {
+                    int latestBuildNum = Integer.parseInt(buildXML.replaceAll("<(\\\\)?(/)?buildNumber>", "").trim());
+                    int buildNum = Integer.parseInt(gitInfo.getString("git.build.number"));
+
+                    int buildNumDiff = latestBuildNum - buildNum;
+                    if (buildNumDiff > 0) {
+                        compareByBuildNumber = true;
+                        gitData.append("Behind by ").append(buildNumDiff).append(" CI build").append(buildNumDiff == 1 ? "" : "s").append("\n");
+                    }
+                }
+            } catch (IOException ignored) {
+            }
+        }
+
+        if (!compareByBuildNumber) {
+            if (compare.getBehindBy() != 0) {
+                gitData.append("Behind by ").append(compare.getBehindBy()).append(" commit").append(compare.getBehindBy() == 1 ? "" : "s").append("\n");
+            }
         }
 
         String versionString = "Unknown";
