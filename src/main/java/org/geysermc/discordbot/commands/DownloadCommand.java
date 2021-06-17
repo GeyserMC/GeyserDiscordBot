@@ -21,16 +21,19 @@ public class DownloadCommand extends SlashCommand {
         this.guildOnly = false;
 
         this.defaultDownloadOption = new GeyserDownloadOption("Geyser", "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/");
-        this.optionsToRepository = ImmutableMap.of(
-                "geyser", this.defaultDownloadOption,
-                "floodgate", new GeyserDownloadOption("Floodgate", "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/"),
-                "geyser-fabric", new FabricDownloadOption("Geyser-Fabric", "https://ci.opencollab.dev/job/GeyserMC/job/Geyser-Fabric/job/java-1.17/"),
-                "floodgate-fabric", new FabricDownloadOption("Floodgate-Fabric", "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate-Fabric/job/master/"),
-                "paper", new DownloadOption("Paper", "https://papermc.io/downloads", "https://avatars.githubusercontent.com/u/7608950"));
+        this.optionsToRepository = ImmutableMap.<String, DownloadOption>builder()
+                .put("geyser", this.defaultDownloadOption)
+                .put("floodgate", new GeyserDownloadOption("Floodgate", "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/"))
+                .put("geyseroptionalpack", new GeyserDownloadOption("GeyserOptionalPack", "https://ci.opencollab.dev/job/GeyserMC/job/GeyserOptionalPack/job/master/"))
+                .put("geyser-fabric", new FabricDownloadOption("Geyser-Fabric", "https://ci.opencollab.dev/job/GeyserMC/job/Geyser-Fabric/job/java-1.17/"))
+                .put("floodgate-fabric", new FabricDownloadOption("Floodgate-Fabric", "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate-Fabric/job/master/"))
+                .put("paper", new DownloadOption("Paper", "https://papermc.io/downloads", "https://avatars.githubusercontent.com/u/7608950"))
+                .put("viaversion", new DownloadOption("ViaVersion", "https://ci.viaversion.com/job/ViaVersion/", "https://avatars.githubusercontent.com/u/42077435"))
+                .build();
 
         List<Command.Choice> choices = new ArrayList<>();
-        for (String option : this.optionsToRepository.keySet()) {
-            choices.add(new Command.Choice(option, option));
+        for (Map.Entry<String, DownloadOption> entry: this.optionsToRepository.entrySet()) {
+            choices.add(new Command.Choice(entry.getValue().friendlyName, entry.getKey()));
         }
 
         this.options = Collections.singletonList( // Future thing: add branch??
