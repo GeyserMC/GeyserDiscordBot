@@ -101,6 +101,8 @@ public class BotHelpers {
      */
     @Nullable
     public static User getUser(String userTag) {
+        if (userTag.isEmpty()) return null;
+
         try {
             // Check for a mention (<@!1234>)
             if (userTag.startsWith("<@!") && userTag.endsWith(">")) {
@@ -133,6 +135,8 @@ public class BotHelpers {
      */
     @Nullable
     public static Role getRole(Guild guild, String roleTag) {
+        if (roleTag.isEmpty()) return null;
+
         try {
             // Check for a mention (<@&1234>)
             if (roleTag.startsWith("<@&") && roleTag.endsWith(">")) {
