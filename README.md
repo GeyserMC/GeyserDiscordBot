@@ -1,12 +1,13 @@
 # GeyserBot
+[![forthebadge made-with-java](https://ForTheBadge.com/images/badges/made-with-java.svg)](https://java.com/)
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Build Status](https://ci.opencollab.dev/job/GeyserMC/job/GeyserDiscordBot/job/jda/badge/icon)](https://ci.opencollab.dev/job/GeyserMC/job/GeyserDiscordBot/job/jda/)
+[![Discord](https://img.shields.io/discord/613163671870242838.svg?color=%237289da&label=discord)](http://discord.geysermc.org/)
+
 A bot for the GeyserMC Discord server
 
 # How to run
-- Clone the repo
-- Create a `.env` file formatted like this:
-```
-BOT_TOKEN=your bot token
-CONFIG_EDITING_USERS=["502575111346323456", "229380062909038594", "119922034812780547", "267678060914933770", "170429173003714560", "245958554899578880"]
-CONFIG_EDITING_GROUPS=[]
-```
-- `node index.js`
+- Download the latest build from the CI ([here](https://ci.opencollab.dev/job/GeyserMC/job/GeyserDiscordBot/job/jda/lastSuccessfulBuild/artifact/target/GeyserBot.jar))
+- Configure a `bot.properties` file based on the example
+- Start the bot with `java -jar GeyserBot.jar` or put the systemd unit file into `/etc/systemd/system/` and `sudo systemctl daemon-reload && sudo systemctl enable --now geyserbot`
