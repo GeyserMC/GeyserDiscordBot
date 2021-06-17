@@ -82,8 +82,7 @@ public class IssueCommand extends SlashCommand {
         Matcher matcherIssue = ISSUE_PATTERN.matcher(event.getArgs());
 
         if (!matcherIssue.find()) {
-            MessageHelper.errorResponse(event, "Invalid Issue Format",
-                "What the heck do you think you're doing? Give me a valid issue number or I will commit numerous warcrimes...");
+            MessageHelper.errorResponse(event, "Invalid Issue Format", "Please specify the issue you wish to locate.\nEG: `#100` or `100`");
             return;
         }
 

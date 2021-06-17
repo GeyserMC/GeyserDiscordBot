@@ -124,7 +124,7 @@ public class LevelCommand extends SlashCommand {
             doc.getElementById("discriminator").getFirstChild().setTextContent("#" + user.getDiscriminator());
             doc.getElementById("xp").getFirstChild().setTextContent(String.valueOf(levelInfo.getXp()));
             doc.getElementById("xpnext").getFirstChild().setTextContent(String.valueOf(levelInfo.getXpForNextLevel()));
-            doc.getElementById("avatar").setAttributeNS("http://www.w3.org/1999/xlink", "href", user.getAvatarUrl());
+            doc.getElementById("avatar").setAttributeNS("http://www.w3.org/1999/xlink", "href", user.getAvatarUrl().replace(".gif", ".png"));
 
             // Progress bar
             float progress = (float)levelInfo.getXp() / levelInfo.getXpForNextLevel();

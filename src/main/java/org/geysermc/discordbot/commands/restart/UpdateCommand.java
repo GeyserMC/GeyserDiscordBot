@@ -42,7 +42,6 @@ import java.util.Properties;
 
 public class UpdateCommand extends Command {
 
-    // TODO: Make this download from the ci and rename update-restart
     public UpdateCommand() {
         this.name = "update";
         this.hidden = true;
