@@ -92,7 +92,7 @@ public class UpdateManager {
      */
     public static void sendMessage(String message) {
         for (TextChannel updateChannel : UPDATE_CHANNELS) {
-            updateChannel.sendMessage(message).queue();
+            updateChannel.sendMessage(message).complete().crosspost().queue();
         }
     }
 }
