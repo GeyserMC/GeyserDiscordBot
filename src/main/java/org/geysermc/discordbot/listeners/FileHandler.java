@@ -33,6 +33,7 @@ import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -90,11 +91,11 @@ public class FileHandler extends ListenerAdapter {
 
                     String pasteUrl = "https://paste.gg/" + response.getJSONObject("result").getString("id");
 
-                    embed.setColor(PropertiesManager.getDefaultColor());
+                    embed.setColor(BotColors.SUCCESS.getColor());
                     embed.setTitle(pasteUrl, pasteUrl);
                     embed.setDescription("Converted `" + attachment.getFileName() + "` to a paste.gg link!");
                 } catch (InterruptedException | ExecutionException | IOException | AssertionError e) {
-                    embed.setColor(Color.red);
+                    embed.setColor(BotColors.FAILURE.getColor());
                     embed.setTitle("paste.gg upload failed!");
                     embed.setDescription("An exception occurred during upload: " + e.getMessage());
                 }

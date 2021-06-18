@@ -36,6 +36,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 
 import java.awt.*;
@@ -89,7 +90,7 @@ public class RankCommand extends SlashCommand {
                             .setTitle("Invalid role")
                             .setDescription("Invalid role specified in configuration")
                             .setTimestamp(Instant.now())
-                            .setColor(Color.red)
+                            .setColor(BotColors.FAILURE.getColor())
                             .build();
                 }
 
@@ -99,7 +100,7 @@ public class RankCommand extends SlashCommand {
                             .setTitle("Removed role")
                             .setDescription("Removed " + role.getAsMention() + " from " + member.getAsMention())
                             .setTimestamp(Instant.now())
-                            .setColor(Color.green)
+                            .setColor(BotColors.SUCCESS.getColor())
                             .build();
                 } else {
                     guild.addRoleToMember(member, role).queue();
@@ -107,7 +108,7 @@ public class RankCommand extends SlashCommand {
                             .setTitle("Granted role")
                             .setDescription("Given " + role.getAsMention() + " to " + member.getAsMention())
                             .setTimestamp(Instant.now())
-                            .setColor(Color.green)
+                            .setColor(BotColors.SUCCESS.getColor())
                             .build();
                 }
             }
@@ -117,7 +118,7 @@ public class RankCommand extends SlashCommand {
                 .setTitle("Invalid role")
                 .setDescription("Role not found")
                 .setTimestamp(Instant.now())
-                .setColor(Color.red)
+                .setColor(BotColors.FAILURE.getColor())
                 .build();
     }
 }

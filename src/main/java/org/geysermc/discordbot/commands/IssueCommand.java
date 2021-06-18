@@ -32,6 +32,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.PropertiesManager;
@@ -132,7 +133,7 @@ public class IssueCommand extends SlashCommand {
                 .setDescription(cleanBody.length() > 400 ? cleanBody.substring(0, 400) + "..." : cleanBody)
                 .setFooter("Created")
                 .setTimestamp(timestamp)
-                .setColor(PropertiesManager.getDefaultColor());
+                .setColor(BotColors.SUCCESS.getColor());
 
 //        // Add assignees
 //        if (issue.getAssignees().size() >= 1) {

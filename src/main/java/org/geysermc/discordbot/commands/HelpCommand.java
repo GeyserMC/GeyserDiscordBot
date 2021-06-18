@@ -29,6 +29,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
 
 /**
@@ -45,7 +46,7 @@ public class HelpCommand extends Command {
     @Override
     protected void execute(CommandEvent event) {
         EmbedBuilder helpEmbed = new EmbedBuilder()
-            .setColor(PropertiesManager.getDefaultColor())
+            .setColor(BotColors.SUCCESS.getColor())
             .setTitle("Geyser Bot Help");
 
         for (Command command : GeyserBot.COMMANDS) {

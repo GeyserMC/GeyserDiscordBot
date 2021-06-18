@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.jsoup.Jsoup;
@@ -97,7 +98,7 @@ public class WikiCommand extends SlashCommand {
 
         // Set the title and color for the embed
         embed.setTitle("Search for " + query, "https://github.com/GeyserMC/Geyser/search?q=" + query + "&type=Wikis");
-        embed.setColor(PropertiesManager.getDefaultColor());
+        embed.setColor(BotColors.SUCCESS.getColor());
 
         if (results.size() >= 1) {
             // Replace the results with the identical title match
@@ -120,7 +121,7 @@ public class WikiCommand extends SlashCommand {
         } else {
             // We found no results
             embed.setDescription("No results");
-            embed.setColor(Color.red);
+            embed.setColor(BotColors.FAILURE.getColor());
         }
 
         return embed.build();

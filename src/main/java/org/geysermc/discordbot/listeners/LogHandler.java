@@ -46,6 +46,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -121,7 +122,7 @@ public class LogHandler extends ListenerAdapter {
                     .addField("Staff member", banLog.getUser().getAsMention(), false)
                     .addField("Reason", ban.getReason(), false)
                     .setTimestamp(Instant.now())
-                    .setColor(PropertiesManager.getDefaultColor())
+                    .setColor(BotColors.FAILURE.getColor())
                     .build()).queue();
         }
     }
@@ -143,7 +144,7 @@ public class LogHandler extends ListenerAdapter {
                     .addField("Staff member", banLog.getUser().getAsMention(), false)
                     .addField("Reason", "", false)
                     .setTimestamp(Instant.now())
-                    .setColor(PropertiesManager.getDefaultColor())
+                    .setColor(BotColors.SUCCESS.getColor())
                     .build()).queue();
         }
     }
@@ -158,7 +159,7 @@ public class LogHandler extends ListenerAdapter {
                 .setThumbnail(event.getUser().getAvatarUrl())
                 .setFooter("ID: " + event.getUser().getId())
                 .setTimestamp(Instant.now())
-                .setColor(PropertiesManager.getDefaultColor())
+                .setColor(BotColors.SUCCESS.getColor())
                 .build()).queue();
     }
 
@@ -169,7 +170,7 @@ public class LogHandler extends ListenerAdapter {
                 .setDescription(event.getUser().getAsMention() + " " + event.getUser().getAsTag())
                 .setFooter("ID: " + event.getUser().getId())
                 .setTimestamp(Instant.now())
-                .setColor(PropertiesManager.getDefaultColor())
+                .setColor(BotColors.WARNING.getColor())
                 .build()).queue();
     }
 
@@ -189,7 +190,7 @@ public class LogHandler extends ListenerAdapter {
                 .addField("After", event.getMessage().getContentRaw(), false)
                 .setFooter("User ID: " + event.getAuthor().getId())
                 .setTimestamp(Instant.now())
-                .setColor(PropertiesManager.getDefaultColor())
+                .setColor(BotColors.NEUTRAL.getColor())
                 .build()).queue();
 
         putCacheMessage(event.getGuild(), event.getMessage());
@@ -212,7 +213,7 @@ public class LogHandler extends ListenerAdapter {
                     .addField("Members", invite.getGuild().getOnlineCount() + "/" + invite.getGuild().getMemberCount(), true)
                     .setFooter("ID: " + event.getAuthor().getId())
                     .setTimestamp(Instant.now())
-                    .setColor(PropertiesManager.getDefaultColor())
+                    .setColor(BotColors.NEUTRAL.getColor())
                     .build()).queue();
         }
 
@@ -247,7 +248,7 @@ public class LogHandler extends ListenerAdapter {
                 .setDescription("**Message sent by** " + authorMention + " **deleted in** " + event.getChannel().getAsMention() + "\n" + message)
                 .setFooter("Author: " + authorId + " | Message ID: " + event.getMessageId())
                 .setTimestamp(Instant.now())
-                .setColor(PropertiesManager.getDefaultColor())
+                .setColor(BotColors.WARNING.getColor())
                 .build()).queue();
 
         removeCacheMessage(event.getGuild(), event.getMessageIdLong());
@@ -260,7 +261,7 @@ public class LogHandler extends ListenerAdapter {
                 .setDescription(event.getMember().getAsMention() + " **joined voice channel #" + event.getChannelJoined().getName() + "**")
                 .setFooter("ID: " + event.getMember().getId())
                 .setTimestamp(Instant.now())
-                .setColor(Color.green)
+                .setColor(BotColors.SUCCESS.getColor())
                 .build()).queue();
     }
 
@@ -271,7 +272,7 @@ public class LogHandler extends ListenerAdapter {
                 .setDescription(event.getMember().getAsMention() + " **switched voice channel `#" + event.getChannelLeft().getName() + "` -> `#" + event.getChannelJoined().getName() + "`**")
                 .setFooter("ID: " + event.getMember().getId())
                 .setTimestamp(Instant.now())
-                .setColor(Color.green)
+                .setColor(BotColors.SUCCESS.getColor())
                 .build()).queue();
     }
 
@@ -282,7 +283,7 @@ public class LogHandler extends ListenerAdapter {
                 .setDescription(event.getMember().getAsMention() + " **left voice channel #" + event.getChannelLeft().getName() + "**")
                 .setFooter("ID: " + event.getMember().getId())
                 .setTimestamp(Instant.now())
-                .setColor(Color.red)
+                .setColor(BotColors.FAILURE.getColor())
                 .build()).queue();
     }
 }

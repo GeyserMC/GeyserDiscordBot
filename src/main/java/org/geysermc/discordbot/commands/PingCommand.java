@@ -39,6 +39,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
 
@@ -144,7 +145,7 @@ public class PingCommand extends SlashCommand {
                 .addField("Java", javaInfo, false)
                 .addField("Bedrock", bedrockInfo, false)
                 .setTimestamp(Instant.now())
-                .setColor(success ? Color.green : Color.red)
+                .setColor(success ? BotColors.SUCCESS.getColor() : BotColors.FAILURE.getColor())
                 .build();
     }
 }

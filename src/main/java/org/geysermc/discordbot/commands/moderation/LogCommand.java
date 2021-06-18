@@ -32,6 +32,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ModLog;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.PropertiesManager;
 
@@ -67,7 +68,7 @@ public class LogCommand extends Command {
             event.getMessage().reply(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user.")
-                    .setColor(Color.red)
+                    .setColor(BotColors.FAILURE.getColor())
                     .build()).queue();
             return;
         }
@@ -75,7 +76,7 @@ public class LogCommand extends Command {
         EmbedBuilder logEmbedBuilder = new EmbedBuilder()
                 .setTitle("Mod log for: " + user.getId())
                 .setTimestamp(Instant.now())
-                .setColor(PropertiesManager.getDefaultColor());
+                .setColor(BotColors.SUCCESS.getColor());
 
         List<ModLog> logs = GeyserBot.storageManager.getLog(event.getGuild(), user);
 

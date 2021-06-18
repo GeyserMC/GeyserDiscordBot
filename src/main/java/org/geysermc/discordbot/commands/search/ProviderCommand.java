@@ -32,6 +32,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.DicesCoefficient;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.util.PropertiesManager;
@@ -118,7 +119,7 @@ public class ProviderCommand extends SlashCommand {
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setTitle(provider.getName(), provider.getUrl());
-        embed.setColor(PropertiesManager.getDefaultColor());
+        embed.setColor(BotColors.SUCCESS.getColor());
         embed.addField("Category", provider.getCategory(), false);
         embed.addField("Instructions", provider.getInstructions(), false);
 

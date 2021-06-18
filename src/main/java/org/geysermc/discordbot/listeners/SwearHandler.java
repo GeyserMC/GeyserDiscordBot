@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.jetbrains.annotations.NotNull;
 
@@ -144,7 +145,7 @@ public class SwearHandler extends ListenerAdapter {
                                 "**Channel:** <#" + event.getChannel().getId() + ">\n" +
                                 "**Regex:** `" + filterPattern + "`\n" +
                                 "**Message:** " + event.getMessage().getContentRaw())
-                        .setColor(Color.red)
+                        .setColor(BotColors.FAILURE.getColor())
                         .build()).queue();
 
                 // Remove the message from filteredMessages after 5s

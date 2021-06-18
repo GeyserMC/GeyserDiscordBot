@@ -35,6 +35,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 
 import java.awt.Color;
@@ -63,7 +64,7 @@ public class UnmuteCommand extends Command {
             event.getMessage().reply(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(Color.red)
+                    .setColor(BotColors.FAILURE.getColor())
                     .build()).queue();
             return;
         }
@@ -86,7 +87,7 @@ public class UnmuteCommand extends Command {
                 event.getMessage().reply(new EmbedBuilder()
                         .setTitle("Invalid option")
                         .setDescription("The option `" + arg + "` is invalid")
-                        .setColor(Color.red)
+                        .setColor(BotColors.FAILURE.getColor())
                         .build()).queue();
             }
 
@@ -102,7 +103,7 @@ public class UnmuteCommand extends Command {
                             .setTitle("You have been unmuted from GeyserMC!")
                             .addField("Reason", reason, false)
                             .setTimestamp(Instant.now())
-                            .setColor(Color.red)
+                            .setColor(BotColors.FAILURE.getColor())
                             .build()).queue());
         }
 
@@ -122,7 +123,7 @@ public class UnmuteCommand extends Command {
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Reason", reason, false)
                 .setTimestamp(Instant.now())
-                .setColor(Color.green)
+                .setColor(BotColors.SUCCESS.getColor())
                 .build();
 
         // Send the embed as a reply and to the log

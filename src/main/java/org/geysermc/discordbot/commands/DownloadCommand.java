@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.util.*;
@@ -53,7 +54,7 @@ public class DownloadCommand extends SlashCommand {
                 .setTitle("Download " + downloadOption.friendlyName)
                 .setDescription("Download at " + downloadOption.downloadUrl)
                 .setThumbnail(downloadOption.imageUrl)
-                .setColor(PropertiesManager.getDefaultColor())
+                .setColor(BotColors.SUCCESS.getColor())
                 .build()).queue();
     }
 

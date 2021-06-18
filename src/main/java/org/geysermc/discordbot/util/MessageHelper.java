@@ -25,7 +25,7 @@ public class MessageHelper {
         MessageEmbed embed = new EmbedBuilder()
             .setTitle(title) // Set our title
             .setDescription(message) // Set the description
-            .setColor(Color.RED) // Set the color
+            .setColor(BotColors.FAILURE.getColor()) // Set the color
             .build(); // Finalize it
         if (event == null) {
             return embed;
