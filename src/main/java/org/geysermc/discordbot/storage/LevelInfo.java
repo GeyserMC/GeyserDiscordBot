@@ -65,10 +65,18 @@ public class LevelInfo {
     }
 
     public int getXpForNextLevel() {
-        return Math.round(5f / 6 * getNextLevel() * (2 * getNextLevel() * getNextLevel() + 27 * getNextLevel() + 91));
+        return getXpForLevel(getNextLevel());
+    }
+
+    private int getXpForLevel(int level) {
+        return Math.round(5f / 6 * level * (2 * level * level + 27 * level + 91));
     }
 
     public int getXpToNextLevel() {
         return getXpForNextLevel() - getXp();
+    }
+
+    public float getLevelProgress() {
+        return (float)(getXp() - getXpForLevel(getLevel())) / (getXpForNextLevel() - getXpForLevel(getLevel()));
     }
 }

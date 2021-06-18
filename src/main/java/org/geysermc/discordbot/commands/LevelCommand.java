@@ -122,14 +122,13 @@ public class LevelCommand extends SlashCommand {
             doc.getElementById("level").getFirstChild().setTextContent(String.valueOf(levelInfo.getLevel()));
             doc.getElementById("name").getFirstChild().setTextContent(user.getName());
             doc.getElementById("discriminator").getFirstChild().setTextContent("#" + user.getDiscriminator());
-            doc.getElementById("xp").getFirstChild().setTextContent(String.valueOf(levelInfo.getXp()));
-            doc.getElementById("xpnext").getFirstChild().setTextContent(String.valueOf(levelInfo.getXpForNextLevel()));
+            doc.getElementById("xp").getFirstChild().setTextContent(BotHelpers.coolFormat(levelInfo.getXp()));
+            doc.getElementById("xpnext").getFirstChild().setTextContent(BotHelpers.coolFormat(levelInfo.getXpForNextLevel()));
             doc.getElementById("avatar").setAttributeNS("http://www.w3.org/1999/xlink", "href", user.getAvatarUrl().replace(".gif", ".png"));
 
             // Progress bar
-            float progress = (float)levelInfo.getXp() / levelInfo.getXpForNextLevel();
             float progressWidth = Float.parseFloat(doc.getElementById("progressbg").getAttribute("width"));
-            doc.getElementById("progress").setAttribute("width", String.valueOf(progressWidth * progress));
+            doc.getElementById("progress").setAttribute("width", String.valueOf(progressWidth * levelInfo.getLevelProgress()));
 
             TranscoderInput transcoderInput = new TranscoderInput(doc);
 
