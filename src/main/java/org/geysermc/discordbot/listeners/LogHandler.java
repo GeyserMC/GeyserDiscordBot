@@ -178,6 +178,7 @@ public class LogHandler extends ListenerAdapter {
     public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event) {
         // Ignore bots
         if (event.getAuthor().isBot()) {
+            putCacheMessage(event.getGuild(), event.getMessage());
             return;
         }
 
@@ -198,10 +199,6 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        if (event.getAuthor().isBot()) {
-            return;
-        }
-
         for (String inviteCode : event.getMessage().getInvites()) {
             Invite invite = Invite.resolve(event.getJDA(), inviteCode, true).complete();
 
@@ -236,6 +233,12 @@ public class LogHandler extends ListenerAdapter {
         String message = "*Old message not cached*";
 
         if (cachedMessage != null) {
+            // Don't show delete messages if the author was a bot
+            if (cachedMessage.getAuthor().isBot()) {
+                removeCacheMessage(event.getGuild(), event.getMessageIdLong());
+                return;
+            }
+
             authorTag = cachedMessage.getAuthor().getAsTag();
             authorMention = cachedMessage.getAuthor().getAsMention();
             authorAvatar = cachedMessage.getAuthor().getAvatarUrl();
