@@ -96,8 +96,13 @@ public class WikiCommand extends SlashCommand {
             return null;
         }
 
+        String url = "";
+        try {
+            url = "https://github.com/GeyserMC/Geyser/search?q=" + URLEncoder.encode(query, "UTF-8") + "&type=Wikis";
+        } catch (UnsupportedEncodingException ignored) { }
+
         // Set the title and color for the embed
-        embed.setTitle("Search for " + query, "https://github.com/GeyserMC/Geyser/search?q=" + query + "&type=Wikis");
+        embed.setTitle("Search for " + query, url);
         embed.setColor(BotColors.SUCCESS.getColor());
 
         if (results.size() >= 1) {
