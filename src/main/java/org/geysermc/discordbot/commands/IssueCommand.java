@@ -61,6 +61,7 @@ public class IssueCommand extends SlashCommand {
         this.aliases = new String[] {"pr"};
         this.arguments = "<number> [repo]";
         this.help = "Get info about a given GitHub issue/pr.";
+        this.guildOnly = false;
 
         this.options = Arrays.asList(
             new OptionData(OptionType.INTEGER, "number", "The issue/pr number").setRequired(true),

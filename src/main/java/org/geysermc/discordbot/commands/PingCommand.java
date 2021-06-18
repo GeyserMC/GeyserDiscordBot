@@ -61,6 +61,7 @@ public class PingCommand extends SlashCommand {
         this.aliases = new String[] {"status"};
         this.arguments = "<server>";
         this.help = "Ping a server to check if its accessible";
+        this.guildOnly = false;
 
         this.options = Collections.singletonList(
             new OptionData(OptionType.STRING, "server", "The IP Address of the server you want to ping").setRequired(true)
