@@ -68,7 +68,7 @@ public class UpdateCommand extends Command {
                         message.editMessage("```\n" + logText + "\n```").queue();
                         return;
                     } else {
-                        logText.append("\n").append(latestBuildNum - buildNum).append(" versions behind, updating...");
+                        logText.append("\n").append(latestBuildNum - buildNum).append(" version(s) behind, updating...");
                         message.editMessage("```\n" + logText + "\n```").queue();
                     }
                 } else {
