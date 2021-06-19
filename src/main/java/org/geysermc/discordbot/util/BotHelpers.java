@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -253,6 +254,10 @@ public class BotHelpers {
         } catch (IOException e) {
             throw new RuntimeException("Error while trying to read input stream!");
         }
+    }
+
+    public static String stringFromResource(String resourcePath) {
+        return new String(bytesFromResource(resourcePath), StandardCharsets.UTF_8);
     }
 
     /**

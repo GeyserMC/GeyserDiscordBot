@@ -127,6 +127,12 @@ public abstract class AbstractStorageManager {
      */
     public abstract void setLevel(Member user, LevelInfo levelInfo);
 
+    public List<LevelInfo> getLevels(Guild guild) {
+        return getLevels(guild.getIdLong());
+    }
+
+    public abstract List<LevelInfo> getLevels(long guildId);
+
     /**
      * Get the slow mode channels for a {@link Guild}
      *

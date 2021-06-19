@@ -39,6 +39,7 @@ import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.geysermc.discordbot.http.Server;
 import org.geysermc.discordbot.listeners.*;
 import org.geysermc.discordbot.storage.AbstractStorageManager;
 import org.geysermc.discordbot.storage.SlowModeInfo;
@@ -80,6 +81,7 @@ public class GeyserBot {
 
     private static JDA jda;
     private static GitHub github;
+    private static Server httpServer;
 
     static {
         // Gathers all commands from "commands" package.
@@ -177,6 +179,15 @@ public class GeyserBot {
         // Setup the thread pool
         generalThreadPool = Executors.newScheduledThreadPool(5);
 
+        // Setup the http server
+        try {
+            httpServer = new Server();
+            httpServer.start();
+        } catch (Exception e) {
+            // TODO
+            e.printStackTrace();
+        }
+
         // Register JDA
         jda = JDABuilder.createDefault(PropertiesManager.getToken())
             .setChunkingFilter(ChunkingFilter.ALL)
@@ -238,4 +249,13 @@ public class GeyserBot {
         return generalThreadPool;
     }
 
+    public static Server getHttpServer() {
+        return httpServer;
+    }
+
+    public static void shutdown() {
+        storageManager.closeStorage();
+        generalThreadPool.shutdown();
+        httpServer.stop();
+    }
 }

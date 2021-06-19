@@ -25,15 +25,24 @@
 
 package org.geysermc.discordbot.storage;
 
+import net.dv8tion.jda.api.entities.User;
+import org.geysermc.discordbot.GeyserBot;
+
 public class LevelInfo {
+    private long userId;
     private int level;
     private int xp;
     private int messages;
 
-    public LevelInfo(int level, int xp, int messages) {
+    public LevelInfo(long userId, int level, int xp, int messages) {
+        this.userId = userId;
         this.level = level;
         this.xp = xp;
         this.messages = messages;
+    }
+
+    public User getUser() {
+        return GeyserBot.getJDA().getUserById(userId);
     }
 
     public int getLevel() {
