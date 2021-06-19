@@ -24,14 +24,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: bold;
+            flex: none;
         }
-        .place1 {
+        .place-1 {
             background-color: #da9e3b;
         }
-        .place2 {
+        .place-2 {
             background-color: #989898;
         }
-        .place3 {
+        .place-3 {
             background-color: #ae7441;
         }
         .user-section > * {
@@ -45,15 +47,15 @@
 
     <div class="row row-cols-1 g-2">
         <#list rows as row>
-            <div class='col'>
+            <div class='col' id="${row.user.id}">
                 <div class='p-3 border rounded bg-light'>
-                    <div class='row row-cols-2'>
+                    <div class='row'>
                         <div class='col d-flex flex-row user-section'>
-                            <div class='place place${row_index + 1}'>${row_index + 1}</div>
+                            <div class='place place-${row_index + 1}'>${row_index + 1}</div>
                             <img src='${row.user.avatarUrl}' class='avatar' />
-                            <span class='p-2'>${row.user.name}#${row.user.discriminator}</span>
+                            <span class='p-2 text-break'>${row.user.name}#${row.user.discriminator}</span>
                         </div>
-                        <div class='col text-center justify-content-end d-flex flex-row'>
+                        <div class='col-xl-4 text-center justify-content-center justify-content-xl-end d-flex flex-row'>
                             <div class='p-2'>
                                 <h6><small class='text-muted'>MESSAGES</small></h6>
                                 <h6>${row.messages}</h6>
