@@ -77,7 +77,19 @@ public class IndexHandler implements HttpHandler {
         if (guild.isPresent()) {
             Map<String, Object> input = new HashMap<>();
             input.put("guild", guild.get());
+            input.put("darkMode", false);
             input.put("rows", GeyserBot.storageManager.getLevels(serverId));
+
+            // Get the darkMode cookie and set the bool for theme based on that
+            try {
+                for (String cookie : t.getRequestHeaders().get("Cookie").get(0).split(";")) {
+                    String[] httpCookie = cookie.trim().split("=");
+                    if (httpCookie.length > 1 && httpCookie[0].equals("darkMode")) {
+                        input.put("darkMode", httpCookie[1].trim().equals("dark-mode"));
+                        break;
+                    }
+                }
+            } catch (IndexOutOfBoundsException ignored) { }
 
             try {
                 response = GeyserBot.getHttpServer().processTemplate("index.ftl", input);
