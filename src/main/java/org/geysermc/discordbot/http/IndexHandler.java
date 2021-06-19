@@ -28,12 +28,14 @@ package org.geysermc.discordbot.http;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import freemarker.template.TemplateException;
+import net.dv8tion.jda.api.entities.Guild;
 import org.geysermc.discordbot.GeyserBot;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class IndexHandler implements HttpHandler {
     @Override
@@ -50,8 +52,8 @@ public class IndexHandler implements HttpHandler {
         }
 
         Map<String, String> queryMap;
-        if (t.getRequestURI().getRawQuery() == null || (queryMap = Server.queryToMap(t.getRequestURI().getRawQuery())) == null || !queryMap.containsKey("guild")) {
-            response = "No guild number specified";
+        if (t.getRequestURI().getRawQuery() == null || (queryMap = Server.queryToMap(t.getRequestURI().getRawQuery())) == null || !queryMap.containsKey("server")) {
+            response = "No server id specified";
             code = 400;
 
             respond(t, response, code);
@@ -59,11 +61,11 @@ public class IndexHandler implements HttpHandler {
         }
 
         // Get the guild from the request
-        long guildId;
+        long serverId;
         try {
-            guildId = Long.parseLong(queryMap.get("guild"));
+            serverId = Long.parseLong(queryMap.get("server"));
         } catch (NumberFormatException e) {
-            response = "Invalid guild number specified";
+            response = "Invalid server id specified";
             code = 400;
 
             respond(t, response, code);
@@ -71,9 +73,11 @@ public class IndexHandler implements HttpHandler {
         }
 
         // Check we are in the specified guild
-        if (GeyserBot.getJDA().getGuilds().stream().anyMatch(guild -> guild.getIdLong() == guildId)) {
+        Optional<Guild> guild = GeyserBot.getJDA().getGuilds().stream().filter(filterGuild -> filterGuild.getIdLong() == serverId).findFirst();
+        if (guild.isPresent()) {
             Map<String, Object> input = new HashMap<>();
-            input.put("rows", GeyserBot.storageManager.getLevels(guildId));
+            input.put("guild", guild.get());
+            input.put("rows", GeyserBot.storageManager.getLevels(serverId));
 
             try {
                 response = GeyserBot.getHttpServer().processTemplate("index.ftl", input);
@@ -82,7 +86,7 @@ public class IndexHandler implements HttpHandler {
                 code = 500;
             }
         } else {
-            response = "Bot not in specified guild!";
+            response = "Bot not in specified server!";
             code = 404;
         }
 

@@ -36,21 +36,25 @@
         .place-3 {
             background-color: #ae7441;
         }
-        .user-section > * {
-            align-self: center;
-        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Levels: Top 100</h1>
+    <div class="d-flex flex-row align-items-center">
+        <img src='${guild.iconUrl}' alt='${guild.name}%27s Logo' class='rounded-circle p-2' />
+        <h1>
+            ${guild.name}<br>
+            <small class="text-muted">Levels: Top 100</small>
+        </h1>
+    </div>
+
 
     <div class="row row-cols-1 g-2">
         <#list rows as row>
             <div class='col' id="${row.user.id}">
                 <div class='p-3 border rounded bg-light'>
                     <div class='row'>
-                        <div class='col d-flex flex-row user-section'>
+                        <div class='col d-flex flex-row align-items-center'>
                             <div class='place place-${row_index + 1}'>${row_index + 1}</div>
                             <img src='${row.user.avatarUrl}' class='avatar' />
                             <span class='p-2 text-break'>${row.user.name}#${row.user.discriminator}</span>

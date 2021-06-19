@@ -13,7 +13,7 @@ public class LeaderboardCommand extends SlashCommand {
 
     public LeaderboardCommand() {
         this.name = "leaderboard";
-        this.help = "Sends a link to the leaderboard for the current guild";
+        this.help = "Sends a link to the leaderboard for the current server";
     }
 
     @Override
