@@ -117,7 +117,7 @@ public class WikiCommand extends SlashCommand {
             for (WikiResult result : results) {
                 // Ignore pages starting with `_` which are usually meta pages
                 if (result.getTitle().startsWith("_")) {
-                    return null;
+                    continue;
                 }
 
                 // Add the result as a field
