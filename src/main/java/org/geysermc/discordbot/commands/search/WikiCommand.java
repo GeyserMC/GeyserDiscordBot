@@ -177,7 +177,14 @@ public class WikiCommand extends SlashCommand {
             this.title = title;
             this.description = description;
             this.updated = updated;
-            this.url = url;
+
+            // Fix last character breaking urls
+            String lastChar = url.substring(url.length() - 1);
+            try {
+                lastChar = URLEncoder.encode(lastChar, "UTF-8");
+            } catch (UnsupportedEncodingException ignored) { }
+
+            this.url = url.substring(0, url.length() - 1) + lastChar;
         }
 
         public String getTitle() {
