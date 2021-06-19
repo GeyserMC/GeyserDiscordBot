@@ -27,6 +27,7 @@ package org.geysermc.discordbot.http;
 
 import com.sun.net.httpserver.HttpServer;
 import freemarker.template.*;
+import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -42,13 +43,13 @@ public class Server {
     private Configuration cfg;
 
     public Server() throws Exception {
-        server = HttpServer.create(new InetSocketAddress(8000), 0);
+        server = HttpServer.create(PropertiesManager.getWebAddress(), 0);
         server.createContext("/", new IndexHandler());
         server.setExecutor(null); // creates a default executor
 
         cfg = new Configuration(new Version(2, 3, 31));
 
-        cfg.setClassForTemplateLoading(Server.class, "/templates");
+        cfg.setClassForTemplateLoading(Server.class, "/web");
 
         cfg.setDefaultEncoding("UTF-8");
         cfg.setLocale(Locale.US);
@@ -87,5 +88,9 @@ public class Server {
             } catch (UnsupportedEncodingException ignored) { }
         }
         return result;
+    }
+
+    public static String getUrl(long idLong) {
+        return String.format("%s/?guild=%s", PropertiesManager.getPublicWebAddress(), idLong);
     }
 }

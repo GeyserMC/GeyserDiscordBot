@@ -179,15 +179,6 @@ public class GeyserBot {
         // Setup the thread pool
         generalThreadPool = Executors.newScheduledThreadPool(5);
 
-        // Setup the http server
-        try {
-            httpServer = new Server();
-            httpServer.start();
-        } catch (Exception e) {
-            // TODO
-            e.printStackTrace();
-        }
-
         // Register JDA
         jda = JDABuilder.createDefault(PropertiesManager.getToken())
             .setChunkingFilter(ChunkingFilter.ALL)
@@ -214,6 +205,15 @@ public class GeyserBot {
 
         // Register listeners
         jda.addEventListener();
+
+        // Setup the http server
+        try {
+            httpServer = new Server();
+            httpServer.start();
+        } catch (Exception e) {
+            // TODO
+            e.printStackTrace();
+        }
 
         // Setup the update check scheduler
         UpdateManager.setup();

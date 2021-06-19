@@ -4,4 +4,7 @@ db-host: 127.0.0.1
 db-database: bot
 db-user: root
 db-pass:
+web-public-address: https://bot.geysermc.org
+web-address: 127.0.0.1
+web-port: 8000
 github-token: github_oauth_token
