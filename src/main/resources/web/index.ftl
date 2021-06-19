@@ -82,7 +82,7 @@
     <button type="button" onclick="toggleDark()" class="btn btn-light dark-visible btn-toggle-mode"><i class="bi bi-sun-fill"></i></button>
     <button type="button" onclick="toggleDark()" class="btn btn-dark dark-hidden btn-toggle-mode"><i class="bi bi-sun"></i></button>
 
-    <div class="row row-cols-1 g-2">
+    <div class="row row-cols-1 g-2 pb-2">
         <#list rows as row>
             <div class='col' id="${row.user.id}">
                 <div class='p-3 border rounded bg-light'>
