@@ -27,12 +27,12 @@ package org.geysermc.discordbot.http;
 
 import com.sun.net.httpserver.HttpServer;
 import freemarker.template.*;
+import net.dv8tion.jda.api.entities.Guild;
 import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Locale;
@@ -64,6 +64,15 @@ public class Server {
         server.stop(0);
     }
 
+    /**
+     * Process the named template with the given input and return the built output
+     *
+     * @param name The name of the template file
+     * @param input The input data to fill in
+     * @return The built template string
+     * @throws IOException If the template file is inaccessible
+     * @throws TemplateException If the template is malformed
+     */
     public String processTemplate(String name, Map<String, Object> input) throws IOException, TemplateException {
         StringWriter stringWriter = new StringWriter();
         Template template = cfg.getTemplate(name);
@@ -71,6 +80,12 @@ public class Server {
         return stringWriter.toString();
     }
 
+    /**
+     * Take a raw query string and transforming it into a key value map
+     *
+     * @param query The raw query string
+     * @return The key value map of the query params
+     */
     public static Map<String, String> queryToMap(String query) {
         if(query == null) {
             return null;
@@ -90,6 +105,12 @@ public class Server {
         return result;
     }
 
+    /**
+     * Get the leaderboard url from the given guild id
+     *
+     * @param idLong {@link Guild} id
+     * @return The formatted url
+     */
     public static String getUrl(long idLong) {
         return String.format("%s/?guild=%s", PropertiesManager.getPublicWebAddress(), idLong);
     }

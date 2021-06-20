@@ -238,8 +238,10 @@ public class BotHelpers {
     }
 
     /**
-     * @param resourcePath the resource to read off of
-     * @return the byte array of an InputStream
+     * Get the bytes representing a resource file
+     *
+     * @param resourcePath The resource to read off of
+     * @return The byte array of an {@link InputStream}
      */
     public static byte[] bytesFromResource(String resourcePath) {
         InputStream stream = BotHelpers.class.getClassLoader().getResourceAsStream(resourcePath);
@@ -256,6 +258,12 @@ public class BotHelpers {
         }
     }
 
+    /**
+     * Gets a resource as a string
+     *
+     * @param resourcePath The resource to read
+     * @return The utf-8 contents of the requested resource
+     */
     public static String stringFromResource(String resourcePath) {
         return new String(bytesFromResource(resourcePath), StandardCharsets.UTF_8);
     }
