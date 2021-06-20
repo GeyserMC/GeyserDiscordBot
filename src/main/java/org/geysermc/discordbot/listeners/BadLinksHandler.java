@@ -25,13 +25,16 @@
 
 package org.geysermc.discordbot.listeners;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.DicesCoefficient;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,8 +58,21 @@ public class BadLinksHandler extends ListenerAdapter {
             for (String checkDomain : ServerSettings.getList(event.getGuild().getIdLong(), "check-domains")) {
                 // Is the domain not exact but still close
                 if (!domain.equals(checkDomain) && DicesCoefficient.diceCoefficientOptimized(domain, checkDomain) > 0.6f) {
-                    // Likely a phish so remove it
+                    ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                            .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
+                            .setDescription("**Link removed, sent by** " + event.getAuthor().getAsMention() + " **deleted in** " + event.getChannel().getAsMention() + "\n" + event.getMessage().getContentRaw())
+                            .addField("Link", link, false)
+                            .addField("Matched domain", checkDomain, false)
+                            .setFooter("Author: " + event.getAuthor().getId() + " | Message ID: " + event.getMessageId())
+                            .setTimestamp(Instant.now())
+                            .setColor(BotColors.FAILURE.getColor())
+                            .build()).queue();
+
+                    LogHandler.PURGED_MESSAGES.add(event.getMessageId());
+
                     event.getMessage().delete().queue();
+
+                    return;
                 }
             }
         }
