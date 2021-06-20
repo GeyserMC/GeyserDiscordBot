@@ -176,6 +176,11 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event) {
+        // Ignore non logged channels
+        if (ServerSettings.shouldNotLogChannel(event.getChannel())) {
+            return;
+        }
+
         // Ignore bots
         if (event.getAuthor().isBot()) {
             putCacheMessage(event.getGuild(), event.getMessage());
@@ -199,6 +204,11 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+        // Ignore non logged channels
+        if (ServerSettings.shouldNotLogChannel(event.getChannel())) {
+            return;
+        }
+
         for (String inviteCode : event.getMessage().getInvites()) {
             Invite invite = Invite.resolve(event.getJDA(), inviteCode, true).complete();
 
@@ -219,8 +229,8 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
-        // Don't show purged messages
-        if (PURGED_MESSAGES.remove(event.getMessageId())) {
+        // Don't show purged messages or non-logged channels
+        if (PURGED_MESSAGES.remove(event.getMessageId()) || ServerSettings.shouldNotLogChannel(event.getChannel())) {
             return;
         }
 

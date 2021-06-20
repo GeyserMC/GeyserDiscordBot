@@ -31,6 +31,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import org.geysermc.discordbot.GeyserBot;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,6 +49,11 @@ public class ServerSettings {
      */
     public static List<String> getList(long serverID, String key) {
         String listData = GeyserBot.storageManager.getServerPreference(serverID, key);
+
+        if (listData == null) {
+            return Collections.emptyList();
+        }
+
         return Arrays.asList(listData.split(",").clone());
     }
 
@@ -85,5 +91,16 @@ public class ServerSettings {
     public static Role getVoiceRole(Guild guild) throws IllegalArgumentException {
         String role = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "voice-role");
         return guild.getRoleById(role);
+    }
+
+    /**
+     * Check if the given channel should be excluded from logs
+     *
+     * @param channel The {@link TextChannel} to check
+     * @return If we should exclude the channel
+     */
+    public static boolean shouldNotLogChannel(TextChannel channel) {
+        List<String> dontLog = getList(channel.getGuild().getIdLong(), "dont-log");
+        return dontLog.contains(channel.getId());
     }
 }
