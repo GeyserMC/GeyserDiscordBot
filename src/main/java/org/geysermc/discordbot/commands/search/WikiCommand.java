@@ -68,24 +68,27 @@ public class WikiCommand extends SlashCommand {
     protected void execute(SlashCommandEvent event) {
         // Get arguments
         String args = event.getOption("search").getAsString();
-        MessageEmbed response = handle(event, args);
+        MessageEmbed response = handle(args);
         if (response != null) event.replyEmbeds(response).queue();
     }
 
     // !wiki
     @Override
     protected void execute(CommandEvent event) {
-        MessageEmbed response = handle(event, event.getArgs());
+        MessageEmbed response = handle(event.getArgs());
         if (response != null) event.getMessage().reply(response).queue();
     }
 
-    public MessageEmbed handle(Object event, String query) {
+    public MessageEmbed handle(String query) {
         EmbedBuilder embed = new EmbedBuilder();
 
         // Check to make sure we have a search term
         if (query.isEmpty()) {
-            MessageHelper.errorResponse(event, "Invalid usage", "Missing search term. `" + PropertiesManager.getPrefix() + name + " <search>`");
-            return null;
+            return MessageHelper.errorResponse(null, "Invalid usage", "Missing search term. `" + PropertiesManager.getPrefix() + name + " <search>`");
+        }
+
+        if (query.length() > 128) {
+            return MessageHelper.errorResponse(null, "Query too long", "Search query is over the max allowed character count of 128 (" + query.length() + ")");
         }
 
         List<WikiResult> results;

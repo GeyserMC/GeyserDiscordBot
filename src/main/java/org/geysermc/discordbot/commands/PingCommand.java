@@ -89,6 +89,10 @@ public class PingCommand extends SlashCommand {
     }
 
     private MessageEmbed handle(String ip) {
+        if (ip.length() > 128) {
+            return MessageHelper.errorResponse(null, "IP too long", "Search query is over the max allowed character count of 128 (" + ip.length() + ")");
+        }
+
         String[] ipParts = ip.split(":");
 
         String hostname = ipParts[0];
