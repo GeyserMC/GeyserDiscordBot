@@ -197,6 +197,7 @@ public class GeyserBot {
                     new DumpHandler(),
                     new ErrorAnalyzer(),
                     new ShutdownHandler(),
+                    new VoiceGroupHandler(),
                     client.build(),
                     tagClient.build())
             .build();

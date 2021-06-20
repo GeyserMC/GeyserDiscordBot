@@ -26,6 +26,7 @@
 package org.geysermc.discordbot.storage;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.geysermc.discordbot.GeyserBot;
 
@@ -72,5 +73,17 @@ public class ServerSettings {
     public static TextChannel getUpdateChannel(Guild guild) throws IllegalArgumentException {
         String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "update-channel");
         return guild.getTextChannelById(channel);
+    }
+
+    /**
+     * Get the voice role for the selected guild
+     *
+     * @param guild  ID of the guild to get the channel for
+     * @return The {@link Role} for users in the voice channel
+     * @throws IllegalArgumentException If the role is null or invalid
+     */
+    public static Role getVoiceRole(Guild guild) throws IllegalArgumentException {
+        String role = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "voice-role");
+        return guild.getRoleById(role);
     }
 }
