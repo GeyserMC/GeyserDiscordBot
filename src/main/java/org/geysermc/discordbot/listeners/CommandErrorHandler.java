@@ -50,7 +50,6 @@ public class CommandErrorHandler implements CommandListener {
             errorMessage.append(errorStack[i]).append("\n");
         }
 
-
         event.getMessage().reply(new EmbedBuilder()
                 .setTitle("Error handling command")
                 .setDescription("An error occurred while handling the command")
