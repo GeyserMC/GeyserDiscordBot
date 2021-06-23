@@ -44,7 +44,7 @@ public class BadLinksHandler extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         // Ignore users with the manage message perms
-        if (event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+        if (event.getMember() == null ||event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
             return;
         }
 
