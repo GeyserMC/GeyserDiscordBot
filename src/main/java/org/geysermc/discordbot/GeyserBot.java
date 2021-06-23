@@ -39,6 +39,7 @@ import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.geysermc.discordbot.health_checker.HealthCheckerManager;
 import org.geysermc.discordbot.listeners.*;
 import org.geysermc.discordbot.storage.AbstractStorageManager;
 import org.geysermc.discordbot.storage.SlowModeInfo;
@@ -205,6 +206,9 @@ public class GeyserBot {
 
         // Setup the update check scheduler
         UpdateManager.setup();
+
+        // Setup the health check scheduler
+        HealthCheckerManager.setup();
 
         // Setup all slow mode handlers
         generalThreadPool.schedule(() -> {

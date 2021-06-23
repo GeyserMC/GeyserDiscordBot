@@ -30,9 +30,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.geysermc.discordbot.GeyserBot;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class gives easy methods for accessing stored data about a server
@@ -45,7 +43,7 @@ public class ServerSettings {
      *
      * @param serverID ID of the guild to get the preference for
      * @param key The preference key to get
-     * @return The list of strings or null if they dont exist
+     * @return The list of strings or null if it doesn't exist
      */
     public static List<String> getList(long serverID, String key) {
         String listData = GeyserBot.storageManager.getServerPreference(serverID, key);
@@ -55,6 +53,27 @@ public class ServerSettings {
         }
 
         return Arrays.asList(listData.split(",").clone());
+    }
+
+    /**
+     * Get a preference as a map of strings delimited by `,` and separated by `|`
+     *
+     * @param serverID ID of the guild to get the preference for
+     * @param key The preference key to get
+     * @return The map of strings or empty if it doesn't exist
+     */
+    public static Map<String, String> getMap(long serverID, String key) {
+        String mapData = GeyserBot.storageManager.getServerPreference(serverID, key);
+        Map<String, String> map = new HashMap<>();
+
+        if (mapData != null) {
+            for (String entry : mapData.split(",")) {
+                String[] entryData = entry.split("\\|");
+                map.put(entryData[0], entryData[1]);
+            }
+        }
+
+        return map;
     }
 
     /**
