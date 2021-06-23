@@ -297,4 +297,23 @@ public class BotHelpers {
         }
         return 0;
     }
+
+    /**
+     * Check if a given text channel exists in a guild
+     *
+     * @param guild The guild to look in
+     * @param channelId The channel to find
+     * @return If the channel exists
+     */
+    public static boolean channelExists(Guild guild, String channelId) {
+        try {
+            if (guild.getTextChannelById(channelId) == null) {
+                return false;
+            }
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
+
+        return true;
+    }
 }
