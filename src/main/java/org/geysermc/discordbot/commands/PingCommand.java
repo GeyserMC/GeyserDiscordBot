@@ -43,7 +43,6 @@ import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.time.Instant;
@@ -126,7 +125,7 @@ public class PingCommand extends SlashCommand {
 
         BedrockClient client = null;
         try {
-            InetSocketAddress bindAddress = new InetSocketAddress("0.0.0.0", (int) (10000 + Math.round(Math.random() * 1000)));
+            InetSocketAddress bindAddress = new InetSocketAddress("0.0.0.0", 0);
             client = new BedrockClient(bindAddress);
 
             client.bind().join();

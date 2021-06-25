@@ -43,6 +43,7 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
@@ -210,18 +211,20 @@ public class LogHandler extends ListenerAdapter {
         }
 
         for (String inviteCode : event.getMessage().getInvites()) {
-            Invite invite = Invite.resolve(event.getJDA(), inviteCode, true).complete();
+            try {
+                Invite invite = Invite.resolve(event.getJDA(), inviteCode, true).complete();
 
-            ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
-                    .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
-                    .setDescription("**Invite posted for " + invite.getGuild().getName() + "** " + event.getChannel().getAsMention() + "\n" + invite.getUrl())
-                    .addField("Inviter", invite.getInviter().getAsTag(), true)
-                    .addField("Channel", invite.getChannel().getName(), true)
-                    .addField("Members", invite.getGuild().getOnlineCount() + "/" + invite.getGuild().getMemberCount(), true)
-                    .setFooter("ID: " + event.getAuthor().getId())
-                    .setTimestamp(Instant.now())
-                    .setColor(BotColors.NEUTRAL.getColor())
-                    .build()).queue();
+                ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                        .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
+                        .setDescription("**Invite posted for " + invite.getGuild().getName() + "** " + event.getChannel().getAsMention() + "\n" + invite.getUrl())
+                        .addField("Inviter", invite.getInviter().getAsTag(), true)
+                        .addField("Channel", invite.getChannel().getName(), true)
+                        .addField("Members", invite.getGuild().getOnlineCount() + "/" + invite.getGuild().getMemberCount(), true)
+                        .setFooter("ID: " + event.getAuthor().getId())
+                        .setTimestamp(Instant.now())
+                        .setColor(BotColors.NEUTRAL.getColor())
+                        .build()).queue();
+            } catch (ErrorResponseException ignored) { }
         }
 
         putCacheMessage(event.getGuild(), event.getMessage());
