@@ -48,6 +48,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
+import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -193,8 +194,8 @@ public class LogHandler extends ListenerAdapter {
         ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
                 .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
                 .setDescription("**Message edited in **" + event.getChannel().getAsMention() + " [Jump to Message](" + event.getMessage().getJumpUrl() + ")")
-                .addField("Before", cachedMessage != null ? cachedMessage.getContentRaw() : "*Old message not cached*", false)
-                .addField("After", event.getMessage().getContentRaw(), false)
+                .addField("Before", cachedMessage != null ? BotHelpers.trim(cachedMessage.getContentRaw(), 450) : "*Old message not cached*", false)
+                .addField("After", BotHelpers.trim(event.getMessage().getContentRaw(), 450), false)
                 .setFooter("User ID: " + event.getAuthor().getId())
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.NEUTRAL.getColor())
@@ -261,7 +262,7 @@ public class LogHandler extends ListenerAdapter {
 
         ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
                 .setAuthor(authorTag, null, authorAvatar)
-                .setDescription("**Message sent by** " + authorMention + " **deleted in** " + event.getChannel().getAsMention() + "\n" + message)
+                .setDescription("**Message sent by** " + authorMention + " **deleted in** " + event.getChannel().getAsMention() + "\n" + BotHelpers.trim(message, 900))
                 .setFooter("Author: " + authorId + " | Message ID: " + event.getMessageId())
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.WARNING.getColor())

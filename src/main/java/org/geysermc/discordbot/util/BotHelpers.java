@@ -316,4 +316,19 @@ public class BotHelpers {
 
         return true;
     }
+
+    /**
+     * Trim a string down to the given length and end with a ... if it was trimmed
+     *
+     * @param input Input string to trim
+     * @param length Max length
+     * @return Trimmed string
+     */
+    public static String trim(String input, int length) {
+        if (input.length() <= length) {
+            return input;
+        }
+
+        return input.substring(0, length - 3) + "...";
+    }
 }
