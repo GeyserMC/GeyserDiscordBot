@@ -98,6 +98,7 @@ public class SwearHandler extends ListenerAdapter {
     @Nullable
     private Pattern checkString(String input) {
         // TODO: Maybe only clean start and end? Then run through the same as normalInput?
+        input = input.toLowerCase();
         String cleanInput = CLEAN_PATTERN.matcher(input).replaceAll("");
         String cleanInputSpaces = CLEAN_PATTERN.matcher(input).replaceAll(" ");
         String normalInput = Normalizer.normalize(input, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
