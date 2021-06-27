@@ -36,13 +36,7 @@ import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.PropertiesManager;
-import org.kohsuke.github.GHIssue;
-import org.kohsuke.github.GHIssueState;
-import org.kohsuke.github.GHPullRequest;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GHUser;
-import org.kohsuke.github.GitHub;
-import org.kohsuke.github.PagedSearchIterable;
+import org.kohsuke.github.*;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -53,7 +47,7 @@ import java.util.regex.Pattern;
 
 public class IssueCommand extends SlashCommand {
 
-    private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w]+\\/)?([\\w]+)( |$)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w\\.\\-]+\\/)?([\\w\\.\\-]+)( |$)", Pattern.CASE_INSENSITIVE);
     private static final Pattern ISSUE_PATTERN = Pattern.compile("(^| )#?([0-9]+)( |$)", Pattern.CASE_INSENSITIVE);
 
     public IssueCommand() {
@@ -119,6 +113,8 @@ public class IssueCommand extends SlashCommand {
             user = issue.getUser();
             userName = (user.getName() != null ? user.getName() : user.getLogin());
             timestamp = issue.getCreatedAt().toInstant();
+        } catch (GHFileNotFoundException ignored) {
+            return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
         } catch (IOException ignored) {
             return MessageHelper.errorResponse(null, "Error occurred!", "Don't ask me what went wrong, I'm just letting you know, try again.");
         }
