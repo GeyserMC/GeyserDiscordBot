@@ -69,7 +69,7 @@ public class VersionDumpIssueCheck extends AbstractDumpIssueCheck {
         }
 
         if (isOldVersion) {
-            return Collections.singletonList("- Your server needs to be on Minecraft " + supportedMinecraft + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).");
+            return Collections.singletonList("- Your server is not on Minecraft " + supportedMinecraft + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).");
         }
 
         return Collections.emptyList();
