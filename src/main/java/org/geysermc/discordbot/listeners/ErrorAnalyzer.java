@@ -20,15 +20,13 @@ public class ErrorAnalyzer extends ListenerAdapter {
     private final Map<String, String> configExceptionFixes;
     private final Map<Pattern, String> configExceptionChecks;
 
-    private static Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[0-9a-zA-Z]+-([0-9a-zA-Z]{7})\\)");
+    private static final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[0-9a-zA-Z]+-([0-9a-zA-Z]{7})\\)");
 
-    public ErrorAnalyzer() {
-        configExceptionFixes = new HashMap<>();
+    public ErrorAnalyzer(Map<String, String> exceptionFixes) {
+        configExceptionFixes = new HashMap<>(exceptionFixes);
         configExceptionChecks = new HashMap<>();
 
-        // TODO: Move some of these to the database instead of hard-coding?
-
-        // Known exceptions
+        // todo: turn these into tags
         configExceptionFixes.put("java.net.BindException: Address already in use", "This means something (likely another instance of Geyser) is running on the port you have specified in the config. Please make sure you close all applications running on this port. If you don't recall opening anything, usually restarting your computer fixes this.");
         configExceptionFixes.put("java.net.BindException: Cannot assign requested address: bind", "This means the IP your server is trying to use is unavailable or disallowed by the system or firewall.");
         configExceptionFixes.put("java.lang.AssertionError: Expected AES to be available", "Update your Java at [AdoptOpenJDK.net](https://adoptopenjdk.net/).");
@@ -115,7 +113,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     String lineUrl = fileFinder.getFileUrl(line.getSource(), Integer.parseInt(line.getLine()));
 
                     // Build the description
-                    String exceptionDesc = "Unknown fix!\nClass: `" + line.getJavaClass() + "`\nMethod: `" + line.getMethod() + "`\nLine: `" + line.getLine() + "`\nLink: " + (lineUrl != "" ? "[" + line.getSource() + "#L" + line.getLine() + "](" + lineUrl + ")" : "Unknown");
+                    String exceptionDesc = "Unknown fix!\nClass: `" + line.getJavaClass() + "`\nMethod: `" + line.getMethod() + "`\nLine: `" + line.getLine() + "`\nLink: " + (!lineUrl.isEmpty() ? "[" + line.getSource() + "#L" + line.getLine() + "](" + lineUrl + ")" : "Unknown");
 
                     // Make sure we dont already have that field
                     if (embedBuilder.getFields().stream().noneMatch(field -> exceptionTitle.equals(field.getName()) && exceptionDesc.equals(field.getValue()))) {
