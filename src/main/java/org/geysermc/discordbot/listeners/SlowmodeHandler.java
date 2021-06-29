@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.geysermc.discordbot.util.BotColors;
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -49,7 +50,7 @@ public class SlowmodeHandler extends ListenerAdapter {
                                         .addField("Channel", event.getMessage().getTextChannel().getAsMention(), false)
                                         .addField("When you can post again", t.format(dateTime.plusSeconds(seconds).toInstant()), false)
                                         .setTimestamp(Instant.now())
-                                        .setColor(Color.red)
+                                        .setColor(BotColors.FAILURE.getColor())
                                         .build()).queue()));
             } else {
                 // Don't add to the cache if a message is deleted - that way the timer doesn't reset.

@@ -30,6 +30,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.util.BotColors;
 
 import java.awt.*;
 import java.time.Instant;
@@ -70,7 +71,7 @@ public class SettingsCommand extends Command {
                         .setTitle("Invalid action specified")
                         .setDescription("Unknown action `" + args.get(0) + "`, it can be one of: `get`, `set`")
                         .setTimestamp(Instant.now())
-                        .setColor(Color.red)
+                        .setColor(BotColors.FAILURE.getColor())
                         .build()).queue();
                 return;
         }
@@ -80,7 +81,7 @@ public class SettingsCommand extends Command {
                 .addField("Key", "`" + key + "`", false)
                 .addField("Value", "`" + value + "`", false)
                 .setTimestamp(Instant.now())
-                .setColor(Color.green)
+                .setColor(BotColors.SUCCESS.getColor())
                 .build()).queue();
     }
 }

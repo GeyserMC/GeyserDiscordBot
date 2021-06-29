@@ -23,25 +23,23 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.tags;
+package org.geysermc.discordbot.util;
 
-import com.jagrosh.jdautilities.command.CommandListener;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.geysermc.discordbot.util.BotColors;
+import java.awt.*;
 
-import java.awt.Color;
+public enum BotColors {
+    NEUTRAL("#2B5797"),
+    SUCCESS("#4CAF50"),
+    FAILURE("#FF0000"),
+    WARNING("#FF8C00");
 
-public class TagsListener implements CommandListener {
+    private final Color color;
 
-    @Override
-    public void onNonCommandMessage(MessageReceivedEvent event) {
-        if (event.getMessage().getContentRaw().startsWith("!!") || event.getMessage().getContentRaw().startsWith("!tag ")) {
-            event.getMessage().reply(new EmbedBuilder()
-                    .setColor(BotColors.FAILURE.getColor())
-                    .setTitle("Invalid tag")
-                    .setDescription("Missing requested tag")
-                    .build()).queue();
-        }
+    BotColors(String color) {
+        this.color = Color.decode(color);
+    }
+
+    public Color getColor() {
+        return color;
     }
 }

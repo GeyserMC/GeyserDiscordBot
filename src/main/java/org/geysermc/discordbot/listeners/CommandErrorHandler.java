@@ -29,6 +29,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.CommandListener;
 import net.dv8tion.jda.api.EmbedBuilder;
+import org.geysermc.discordbot.util.BotColors;
 
 import java.awt.*;
 import java.io.PrintWriter;
@@ -49,7 +50,6 @@ public class CommandErrorHandler implements CommandListener {
             errorMessage.append(errorStack[i]).append("\n");
         }
 
-
         event.getMessage().reply(new EmbedBuilder()
                 .setTitle("Error handling command")
                 .setDescription("An error occurred while handling the command")
@@ -57,7 +57,7 @@ public class CommandErrorHandler implements CommandListener {
                 .addField("Command help", command.getHelp(), false)
                 .addField("Error", errorMessage.toString(), false)
                 .setTimestamp(Instant.now())
-                .setColor(Color.red)
+                .setColor(BotColors.FAILURE.getColor())
                 .build()).queue();
     }
 }

@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.jsoup.Jsoup;
@@ -67,24 +68,27 @@ public class WikiCommand extends SlashCommand {
     protected void execute(SlashCommandEvent event) {
         // Get arguments
         String args = event.getOption("search").getAsString();
-        MessageEmbed response = handle(event, args);
+        MessageEmbed response = handle(args);
         if (response != null) event.replyEmbeds(response).queue();
     }
 
     // !wiki
     @Override
     protected void execute(CommandEvent event) {
-        MessageEmbed response = handle(event, event.getArgs());
+        MessageEmbed response = handle(event.getArgs());
         if (response != null) event.getMessage().reply(response).queue();
     }
 
-    public MessageEmbed handle(Object event, String query) {
+    public MessageEmbed handle(String query) {
         EmbedBuilder embed = new EmbedBuilder();
 
         // Check to make sure we have a search term
         if (query.isEmpty()) {
-            MessageHelper.errorResponse(event, "Invalid usage", "Missing search term. `" + PropertiesManager.getPrefix() + name + " <search>`");
-            return null;
+            return MessageHelper.errorResponse(null, "Invalid usage", "Missing search term. `" + PropertiesManager.getPrefix() + name + " <search>`");
+        }
+
+        if (query.length() > 128) {
+            return MessageHelper.errorResponse(null, "Query too long", "Search query is over the max allowed character count of 128 (" + query.length() + ")");
         }
 
         List<WikiResult> results;
@@ -95,9 +99,14 @@ public class WikiCommand extends SlashCommand {
             return null;
         }
 
+        String url = "";
+        try {
+            url = "https://github.com/GeyserMC/Geyser/search?q=" + URLEncoder.encode(query, "UTF-8") + "&type=Wikis";
+        } catch (UnsupportedEncodingException ignored) { }
+
         // Set the title and color for the embed
-        embed.setTitle("Search for " + query, "https://github.com/GeyserMC/Geyser/search?q=" + query + "&type=Wikis");
-        embed.setColor(PropertiesManager.getDefaultColor());
+        embed.setTitle("Search for " + query, url);
+        embed.setColor(BotColors.SUCCESS.getColor());
 
         if (results.size() >= 1) {
             // Replace the results with the identical title match
@@ -111,7 +120,7 @@ public class WikiCommand extends SlashCommand {
             for (WikiResult result : results) {
                 // Ignore pages starting with `_` which are usually meta pages
                 if (result.getTitle().startsWith("_")) {
-                    return null;
+                    continue;
                 }
 
                 // Add the result as a field
@@ -120,7 +129,7 @@ public class WikiCommand extends SlashCommand {
         } else {
             // We found no results
             embed.setDescription("No results");
-            embed.setColor(Color.red);
+            embed.setColor(BotColors.FAILURE.getColor());
         }
 
         return embed.build();
@@ -171,7 +180,14 @@ public class WikiCommand extends SlashCommand {
             this.title = title;
             this.description = description;
             this.updated = updated;
-            this.url = url;
+
+            // Fix last character breaking urls
+            String lastChar = url.substring(url.length() - 1);
+            try {
+                lastChar = URLEncoder.encode(lastChar, "UTF-8");
+            } catch (UnsupportedEncodingException ignored) { }
+
+            this.url = url.substring(0, url.length() - 1) + lastChar;
         }
 
         public String getTitle() {

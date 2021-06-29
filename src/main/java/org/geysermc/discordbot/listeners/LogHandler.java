@@ -43,9 +43,12 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotColors;
+import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -121,7 +124,7 @@ public class LogHandler extends ListenerAdapter {
                     .addField("Staff member", banLog.getUser().getAsMention(), false)
                     .addField("Reason", ban.getReason(), false)
                     .setTimestamp(Instant.now())
-                    .setColor(PropertiesManager.getDefaultColor())
+                    .setColor(BotColors.FAILURE.getColor())
                     .build()).queue();
         }
     }
@@ -143,7 +146,7 @@ public class LogHandler extends ListenerAdapter {
                     .addField("Staff member", banLog.getUser().getAsMention(), false)
                     .addField("Reason", "", false)
                     .setTimestamp(Instant.now())
-                    .setColor(PropertiesManager.getDefaultColor())
+                    .setColor(BotColors.SUCCESS.getColor())
                     .build()).queue();
         }
     }
@@ -158,7 +161,7 @@ public class LogHandler extends ListenerAdapter {
                 .setThumbnail(event.getUser().getAvatarUrl())
                 .setFooter("ID: " + event.getUser().getId())
                 .setTimestamp(Instant.now())
-                .setColor(PropertiesManager.getDefaultColor())
+                .setColor(BotColors.SUCCESS.getColor())
                 .build()).queue();
     }
 
@@ -169,14 +172,20 @@ public class LogHandler extends ListenerAdapter {
                 .setDescription(event.getUser().getAsMention() + " " + event.getUser().getAsTag())
                 .setFooter("ID: " + event.getUser().getId())
                 .setTimestamp(Instant.now())
-                .setColor(PropertiesManager.getDefaultColor())
+                .setColor(BotColors.WARNING.getColor())
                 .build()).queue();
     }
 
     @Override
     public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event) {
+        // Ignore non logged channels
+        if (ServerSettings.shouldNotLogChannel(event.getChannel())) {
+            return;
+        }
+
         // Ignore bots
         if (event.getAuthor().isBot()) {
+            putCacheMessage(event.getGuild(), event.getMessage());
             return;
         }
 
@@ -185,11 +194,11 @@ public class LogHandler extends ListenerAdapter {
         ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
                 .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
                 .setDescription("**Message edited in **" + event.getChannel().getAsMention() + " [Jump to Message](" + event.getMessage().getJumpUrl() + ")")
-                .addField("Before", cachedMessage != null ? cachedMessage.getContentRaw() : "*Old message not cached*", false)
-                .addField("After", event.getMessage().getContentRaw(), false)
+                .addField("Before", cachedMessage != null ? BotHelpers.trim(cachedMessage.getContentRaw(), 450) : "*Old message not cached*", false)
+                .addField("After", BotHelpers.trim(event.getMessage().getContentRaw(), 450), false)
                 .setFooter("User ID: " + event.getAuthor().getId())
                 .setTimestamp(Instant.now())
-                .setColor(PropertiesManager.getDefaultColor())
+                .setColor(BotColors.NEUTRAL.getColor())
                 .build()).queue();
 
         putCacheMessage(event.getGuild(), event.getMessage());
@@ -197,23 +206,26 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        if (event.getAuthor().isBot()) {
+        // Ignore non logged channels
+        if (ServerSettings.shouldNotLogChannel(event.getChannel())) {
             return;
         }
 
         for (String inviteCode : event.getMessage().getInvites()) {
-            Invite invite = Invite.resolve(event.getJDA(), inviteCode, true).complete();
+            try {
+                Invite invite = Invite.resolve(event.getJDA(), inviteCode, true).complete();
 
-            ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
-                    .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
-                    .setDescription("**Invite posted for " + invite.getGuild().getName() + "** " + event.getChannel().getAsMention() + "\n" + invite.getUrl())
-                    .addField("Inviter", invite.getInviter().getAsTag(), true)
-                    .addField("Channel", invite.getChannel().getName(), true)
-                    .addField("Members", invite.getGuild().getOnlineCount() + "/" + invite.getGuild().getMemberCount(), true)
-                    .setFooter("ID: " + event.getAuthor().getId())
-                    .setTimestamp(Instant.now())
-                    .setColor(PropertiesManager.getDefaultColor())
-                    .build()).queue();
+                ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                        .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
+                        .setDescription("**Invite posted for " + invite.getGuild().getName() + "** " + event.getChannel().getAsMention() + "\n" + invite.getUrl())
+                        .addField("Inviter", invite.getInviter().getAsTag(), true)
+                        .addField("Channel", invite.getChannel().getName(), true)
+                        .addField("Members", invite.getGuild().getOnlineCount() + "/" + invite.getGuild().getMemberCount(), true)
+                        .setFooter("ID: " + event.getAuthor().getId())
+                        .setTimestamp(Instant.now())
+                        .setColor(BotColors.NEUTRAL.getColor())
+                        .build()).queue();
+            } catch (ErrorResponseException ignored) { }
         }
 
         putCacheMessage(event.getGuild(), event.getMessage());
@@ -221,8 +233,8 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
-        // Don't show purged messages
-        if (PURGED_MESSAGES.remove(event.getMessageId())) {
+        // Don't show purged messages or non-logged channels
+        if (PURGED_MESSAGES.remove(event.getMessageId()) || ServerSettings.shouldNotLogChannel(event.getChannel())) {
             return;
         }
 
@@ -235,6 +247,12 @@ public class LogHandler extends ListenerAdapter {
         String message = "*Old message not cached*";
 
         if (cachedMessage != null) {
+            // Don't show delete messages if the author was a bot
+            if (cachedMessage.getAuthor().isBot()) {
+                removeCacheMessage(event.getGuild(), event.getMessageIdLong());
+                return;
+            }
+
             authorTag = cachedMessage.getAuthor().getAsTag();
             authorMention = cachedMessage.getAuthor().getAsMention();
             authorAvatar = cachedMessage.getAuthor().getAvatarUrl();
@@ -244,10 +262,10 @@ public class LogHandler extends ListenerAdapter {
 
         ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
                 .setAuthor(authorTag, null, authorAvatar)
-                .setDescription("**Message sent by** " + authorMention + " **deleted in** " + event.getChannel().getAsMention() + "\n" + message)
+                .setDescription("**Message sent by** " + authorMention + " **deleted in** " + event.getChannel().getAsMention() + "\n" + BotHelpers.trim(message, 900))
                 .setFooter("Author: " + authorId + " | Message ID: " + event.getMessageId())
                 .setTimestamp(Instant.now())
-                .setColor(PropertiesManager.getDefaultColor())
+                .setColor(BotColors.WARNING.getColor())
                 .build()).queue();
 
         removeCacheMessage(event.getGuild(), event.getMessageIdLong());
@@ -260,7 +278,7 @@ public class LogHandler extends ListenerAdapter {
                 .setDescription(event.getMember().getAsMention() + " **joined voice channel #" + event.getChannelJoined().getName() + "**")
                 .setFooter("ID: " + event.getMember().getId())
                 .setTimestamp(Instant.now())
-                .setColor(Color.green)
+                .setColor(BotColors.SUCCESS.getColor())
                 .build()).queue();
     }
 
@@ -271,7 +289,7 @@ public class LogHandler extends ListenerAdapter {
                 .setDescription(event.getMember().getAsMention() + " **switched voice channel `#" + event.getChannelLeft().getName() + "` -> `#" + event.getChannelJoined().getName() + "`**")
                 .setFooter("ID: " + event.getMember().getId())
                 .setTimestamp(Instant.now())
-                .setColor(Color.green)
+                .setColor(BotColors.SUCCESS.getColor())
                 .build()).queue();
     }
 
@@ -282,7 +300,7 @@ public class LogHandler extends ListenerAdapter {
                 .setDescription(event.getMember().getAsMention() + " **left voice channel #" + event.getChannelLeft().getName() + "**")
                 .setFooter("ID: " + event.getMember().getId())
                 .setTimestamp(Instant.now())
-                .setColor(Color.red)
+                .setColor(BotColors.FAILURE.getColor())
                 .build()).queue();
     }
 }

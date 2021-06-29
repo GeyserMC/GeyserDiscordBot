@@ -146,11 +146,11 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- For pinging Java servers -->
+        <!-- For pinging Java servers, using rtm516's for temporarily to fix a bug -->
         <dependency>
-            <groupId>com.github.lucaazalim</groupId>
+            <groupId>com.github.rtm516</groupId>
             <artifactId>minecraft-server-ping</artifactId>
-            <version>842faa084a</version>
+            <version>c61c496104</version>
         </dependency>
 
         <!-- For pinging Bedrock servers -->

@@ -32,16 +32,11 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.PropertiesManager;
-import org.kohsuke.github.GHIssue;
-import org.kohsuke.github.GHIssueState;
-import org.kohsuke.github.GHPullRequest;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GHUser;
-import org.kohsuke.github.GitHub;
-import org.kohsuke.github.PagedSearchIterable;
+import org.kohsuke.github.*;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -52,7 +47,7 @@ import java.util.regex.Pattern;
 
 public class IssueCommand extends SlashCommand {
 
-    private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w]+\\/)?([\\w]+)( |$)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w\\.\\-]+\\/)?([\\w\\.\\-]+)( |$)", Pattern.CASE_INSENSITIVE);
     private static final Pattern ISSUE_PATTERN = Pattern.compile("(^| )#?([0-9]+)( |$)", Pattern.CASE_INSENSITIVE);
 
     public IssueCommand() {
@@ -60,6 +55,7 @@ public class IssueCommand extends SlashCommand {
         this.aliases = new String[] {"pr"};
         this.arguments = "<number> [repo]";
         this.help = "Get info about a given GitHub issue/pr.";
+        this.guildOnly = false;
 
         this.options = Arrays.asList(
             new OptionData(OptionType.INTEGER, "number", "The issue/pr number").setRequired(true),
@@ -117,6 +113,8 @@ public class IssueCommand extends SlashCommand {
             user = issue.getUser();
             userName = (user.getName() != null ? user.getName() : user.getLogin());
             timestamp = issue.getCreatedAt().toInstant();
+        } catch (GHFileNotFoundException ignored) {
+            return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
         } catch (IOException ignored) {
             return MessageHelper.errorResponse(null, "Error occurred!", "Don't ask me what went wrong, I'm just letting you know, try again.");
         }
@@ -132,7 +130,7 @@ public class IssueCommand extends SlashCommand {
                 .setDescription(cleanBody.length() > 400 ? cleanBody.substring(0, 400) + "..." : cleanBody)
                 .setFooter("Created")
                 .setTimestamp(timestamp)
-                .setColor(PropertiesManager.getDefaultColor());
+                .setColor(BotColors.SUCCESS.getColor());
 
 //        // Add assignees
 //        if (issue.getAssignees().size() >= 1) {

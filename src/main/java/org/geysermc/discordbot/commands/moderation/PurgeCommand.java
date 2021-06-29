@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.entities.*;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.listeners.LogHandler;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
 
@@ -47,6 +48,7 @@ public class PurgeCommand extends Command {
 
     public PurgeCommand() {
         this.name = "purge";
+        this.aliases = new String[] {"prune"};
         this.hidden = true;
         this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
     }
@@ -129,7 +131,7 @@ public class PurgeCommand extends Command {
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Count", totalMessages + "/" + count, false)
                 .setTimestamp(Instant.now())
-                .setColor(Color.red)
+                .setColor(BotColors.FAILURE.getColor())
                 .build();
 
         // Send the embed as a reply and to the log

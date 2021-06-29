@@ -26,7 +26,9 @@
 package org.geysermc.discordbot.updates;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.json.JSONException;
@@ -80,7 +82,7 @@ public class UpdateManager {
             try {
                 updateCheck.check();
             } catch (JSONException e) {
-                GeyserBot.LOGGER.error("Unable to load update checker '" + updateCheck.getClass().getName() + "': ", e);
+                GeyserBot.LOGGER.error("Unable to load update checker '" + updateCheck.getClass().getName() + "': " + e.getMessage());
             }
         }
     }
@@ -92,7 +94,11 @@ public class UpdateManager {
      */
     public static void sendMessage(String message) {
         for (TextChannel updateChannel : UPDATE_CHANNELS) {
-            updateChannel.sendMessage(message).queue();
+            Message msg = updateChannel.sendMessage(message).complete();
+            // Crosspost or silently fail
+            try {
+                msg.crosspost().queue();
+            } catch (UnsupportedOperationException | IllegalStateException | InsufficientPermissionException ignored) {}
         }
     }
 }

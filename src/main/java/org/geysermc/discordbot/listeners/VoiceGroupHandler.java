@@ -23,41 +23,26 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.commands;
+package org.geysermc.discordbot.listeners;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.EmbedBuilder;
-import org.geysermc.discordbot.GeyserBot;
-import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.PropertiesManager;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.geysermc.discordbot.storage.ServerSettings;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * Handle the help command
- */
-public class HelpCommand extends Command {
-
-    public HelpCommand() {
-        this.name = "help";
-        this.help = "I think you already know what this does";
-        this.guildOnly = false;
+public class VoiceGroupHandler extends ListenerAdapter {
+    @Override
+    public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
+        try {
+            event.getGuild().addRoleToMember(event.getMember(), ServerSettings.getVoiceRole(event.getGuild())).queue();
+        } catch (IllegalArgumentException ignored) { }
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        EmbedBuilder helpEmbed = new EmbedBuilder()
-            .setColor(BotColors.SUCCESS.getColor())
-            .setTitle("Geyser Bot Help");
-
-        for (Command command : GeyserBot.COMMANDS) {
-            if (!command.isHidden()) {
-                helpEmbed.addField("`" + PropertiesManager.getPrefix() + command.getName() + (command.getArguments() != null ? " " + command.getArguments() : "") + "`", command.getHelp(), true);
-            }
-        }
-
-        helpEmbed.addField("`!tag <name>`", "Display a tag for the given name", true);
-
-
-        event.getMessage().reply(helpEmbed.build()).queue();
+    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
+        try {
+            event.getGuild().removeRoleFromMember(event.getMember(), ServerSettings.getVoiceRole(event.getGuild())).queue();
+        } catch (IllegalArgumentException ignored) { }
     }
 }

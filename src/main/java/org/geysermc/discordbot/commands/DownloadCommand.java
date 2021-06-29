@@ -1,13 +1,14 @@
 package org.geysermc.discordbot.commands;
 
 import com.google.common.collect.ImmutableMap;
+import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.geysermc.discordbot.util.PropertiesManager;
+import org.geysermc.discordbot.util.BotColors;
 
 import java.util.*;
 
@@ -17,6 +18,7 @@ public class DownloadCommand extends SlashCommand {
 
     public DownloadCommand() {
         this.name = "download";
+        this.arguments = "[program]";
         this.help = "Sends a link to download the latest version of Geyser or another program";
         this.guildOnly = false;
 
@@ -27,8 +29,8 @@ public class DownloadCommand extends SlashCommand {
                 .put("geyseroptionalpack", new GeyserDownloadOption("GeyserOptionalPack", "https://ci.opencollab.dev/job/GeyserMC/job/GeyserOptionalPack/job/master/"))
                 .put("geyser-fabric", new FabricDownloadOption("Geyser-Fabric", "https://ci.opencollab.dev/job/GeyserMC/job/Geyser-Fabric/job/java-1.17/"))
                 .put("floodgate-fabric", new FabricDownloadOption("Floodgate-Fabric", "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate-Fabric/job/master/"))
-                .put("paper", new DownloadOption("Paper", "https://papermc.io/downloads", "https://avatars.githubusercontent.com/u/7608950"))
-                .put("viaversion", new DownloadOption("ViaVersion", "https://ci.viaversion.com/job/ViaVersion/", "https://avatars.githubusercontent.com/u/42077435"))
+                .put("paper", new DownloadOption("Paper", "https://papermc.io/downloads", "https://github.com/PaperMC.png"))
+                .put("viaversion", new DownloadOption("ViaVersion", "https://ci.viaversion.com/job/ViaVersion/", "https://github.com/ViaVersion.png"))
                 .build();
 
         List<Command.Choice> choices = new ArrayList<>();
@@ -44,6 +46,25 @@ public class DownloadCommand extends SlashCommand {
     }
 
     @Override
+    protected void execute(CommandEvent event) {
+        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
+
+        String program = "geyser";
+        if (!args.get(0).isEmpty()) {
+            program = args.get(0);
+        }
+
+        DownloadOption downloadOption = optionsToRepository.getOrDefault(program.toLowerCase(Locale.ROOT), this.defaultDownloadOption);
+
+        event.getMessage().reply(new EmbedBuilder()
+                .setTitle("Download " + downloadOption.friendlyName)
+                .setDescription("Download at " + downloadOption.downloadUrl)
+                .setThumbnail(downloadOption.imageUrl)
+                .setColor(BotColors.SUCCESS.getColor())
+                .build()).queue();
+    }
+
+    @Override
     protected void execute(SlashCommandEvent event) {
         String program = event.getOptions().size() > 0 ? event.getOptions().get(0).getAsString() : "geyser";
 
@@ -53,7 +74,7 @@ public class DownloadCommand extends SlashCommand {
                 .setTitle("Download " + downloadOption.friendlyName)
                 .setDescription("Download at " + downloadOption.downloadUrl)
                 .setThumbnail(downloadOption.imageUrl)
-                .setColor(PropertiesManager.getDefaultColor())
+                .setColor(BotColors.SUCCESS.getColor())
                 .build()).queue();
     }
 
@@ -71,13 +92,13 @@ public class DownloadCommand extends SlashCommand {
 
     private static class GeyserDownloadOption extends DownloadOption {
         public GeyserDownloadOption(String friendlyName, String downloadUrl) {
-            super(friendlyName, downloadUrl, "https://avatars.githubusercontent.com/u/52673035");
+            super(friendlyName, downloadUrl, "https://github.com/GeyserMC.png");
         }
     }
 
     private static class FabricDownloadOption extends DownloadOption {
         public FabricDownloadOption(String friendlyName, String downloadUrl) {
-            super(friendlyName, downloadUrl, "https://avatars.githubusercontent.com/u/21025855");
+            super(friendlyName, downloadUrl, "https://github.com/FabricMC.png");
         }
     }
 }

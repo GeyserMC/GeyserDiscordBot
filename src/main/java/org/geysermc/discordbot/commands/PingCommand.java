@@ -39,10 +39,10 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.time.Instant;
@@ -60,6 +60,7 @@ public class PingCommand extends SlashCommand {
         this.aliases = new String[] {"status"};
         this.arguments = "<server>";
         this.help = "Ping a server to check if its accessible";
+        this.guildOnly = false;
 
         this.options = Collections.singletonList(
             new OptionData(OptionType.STRING, "server", "The IP Address of the server you want to ping").setRequired(true)
@@ -87,6 +88,10 @@ public class PingCommand extends SlashCommand {
     }
 
     private MessageEmbed handle(String ip) {
+        if (ip.length() > 128) {
+            return MessageHelper.errorResponse(null, "IP too long", "Search query is over the max allowed character count of 128 (" + ip.length() + ")");
+        }
+
         String[] ipParts = ip.split(":");
 
         String hostname = ipParts[0];
@@ -120,7 +125,7 @@ public class PingCommand extends SlashCommand {
 
         BedrockClient client = null;
         try {
-            InetSocketAddress bindAddress = new InetSocketAddress("0.0.0.0", (int) (10000 + Math.round(Math.random() * 1000)));
+            InetSocketAddress bindAddress = new InetSocketAddress("0.0.0.0", 0);
             client = new BedrockClient(bindAddress);
 
             client.bind().join();
@@ -144,7 +149,7 @@ public class PingCommand extends SlashCommand {
                 .addField("Java", javaInfo, false)
                 .addField("Bedrock", bedrockInfo, false)
                 .setTimestamp(Instant.now())
-                .setColor(success ? Color.green : Color.red)
+                .setColor(success ? BotColors.SUCCESS.getColor() : BotColors.FAILURE.getColor())
                 .build();
     }
 }

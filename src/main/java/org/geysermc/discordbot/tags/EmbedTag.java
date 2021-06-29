@@ -29,6 +29,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.geysermc.discordbot.listeners.SwearHandler;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public class EmbedTag extends Command {
 
         EmbedBuilder embed = new EmbedBuilder();
 
-        embed.setColor(PropertiesManager.getDefaultColor());
+        embed.setColor(BotColors.SUCCESS.getColor());
         embed.setDescription(description);
 
         if (image != null && !image.isEmpty()) {

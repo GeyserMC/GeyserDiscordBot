@@ -44,13 +44,6 @@ public class PropertiesManager {
     }
 
     /**
-     * @return Default embed color
-     */
-    public static Color getDefaultColor() {
-        return Color.decode(properties.getProperty("default-color"));
-    }
-
-    /**
      * @return Bot prefix
      */
     public static String getPrefix() {

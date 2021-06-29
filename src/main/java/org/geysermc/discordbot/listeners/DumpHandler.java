@@ -36,6 +36,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.net.util.SubnetUtils;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.dump_issues.AbstractDumpIssueCheck;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
@@ -236,7 +237,7 @@ public class DumpHandler extends ListenerAdapter {
                 .addField("Server version", versionString, true)
                 .addField("Autoconfigured remote?", (config.getBoolean("autoconfiguredRemote")) ? "Yes" : "No", true)
                 .setTimestamp(Instant.now())
-                .setColor(PropertiesManager.getDefaultColor())
+                .setColor(BotColors.SUCCESS.getColor())
                 .build()).queue();
     }
 

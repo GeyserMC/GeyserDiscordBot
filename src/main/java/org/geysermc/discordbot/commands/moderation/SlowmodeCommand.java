@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.listeners.SlowmodeHandler;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 
 import java.awt.*;
@@ -59,7 +60,7 @@ public class SlowmodeCommand extends Command {
             event.getMessage().reply(new EmbedBuilder()
                     .setTitle("Invalid usage")
                     .setDescription("Please specify a time in the correct format `1h2m3s`.")
-                    .setColor(Color.red)
+                    .setColor(BotColors.FAILURE.getColor())
                     .build()).queue();
             return;
         }
@@ -82,7 +83,7 @@ public class SlowmodeCommand extends Command {
                     .setTitle("Slowmode")
                     .setDescription("Slowmode disabled for " + event.getTextChannel().getAsMention() + " by " + event.getAuthor().getAsMention())
                     .setTimestamp(Instant.now())
-                    .setColor(Color.green)
+                    .setColor(BotColors.SUCCESS.getColor())
                     .build();
         } else {
             // Get the time
@@ -93,7 +94,7 @@ public class SlowmodeCommand extends Command {
                 event.getMessage().reply(new EmbedBuilder()
                         .setTitle("Invalid usage")
                         .setDescription("Please specify a time in the correct format `1h2m3s`.")
-                        .setColor(Color.red)
+                        .setColor(BotColors.FAILURE.getColor())
                         .build()).queue();
                 return;
             }
@@ -102,7 +103,7 @@ public class SlowmodeCommand extends Command {
                     .setTitle("Slowmode")
                     .setDescription("Slowmode updated for " + event.getTextChannel().getAsMention() + " set to `" + args.get(0) + "` (" + delay + "s) by " + event.getAuthor().getAsMention())
                     .setTimestamp(Instant.now())
-                    .setColor(Color.green)
+                    .setColor(BotColors.SUCCESS.getColor())
                     .build();
 
             boolean found = false;

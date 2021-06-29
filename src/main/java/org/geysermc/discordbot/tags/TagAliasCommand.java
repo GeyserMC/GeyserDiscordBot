@@ -29,6 +29,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.geysermc.discordbot.listeners.SwearHandler;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.awt.Color;
@@ -56,7 +57,7 @@ public class TagAliasCommand extends Command {
         if (args.length == 0) {
             embed.setTitle("Invalid usage");
             embed.setDescription("Missing tag name. `" + PropertiesManager .getPrefix() + "tag alias <name>`");
-            embed.setColor(Color.red);
+            embed.setColor(BotColors.FAILURE.getColor());
 
             event.getMessage().reply(embed.build()).queue();
             return;
@@ -73,7 +74,7 @@ public class TagAliasCommand extends Command {
         if (foundTag == null) {
             embed.setTitle("Missing tag");
             embed.setDescription("No tag with the name `" + args[0] + "`, do `" + PropertiesManager.getPrefix() + "tags` for the full list.");
-            embed.setColor(Color.red);
+            embed.setColor(BotColors.FAILURE.getColor());
             event.getMessage().reply(embed.build()).queue();
             return;
         }
@@ -82,11 +83,11 @@ public class TagAliasCommand extends Command {
             embed.setTitle("Aliases for " + foundTag.getName() + " (" + foundTag.getAliases().length + ")");
             embed.setDescription("`" + String.join("`, `", foundTag.getAliases()) + "`");
             embed.setFooter("Use `" + PropertiesManager.getPrefix() + "tag <name>` to show a tag");
-            embed.setColor(PropertiesManager.getDefaultColor());
+            embed.setColor(BotColors.SUCCESS.getColor());
         } else {
             embed.setTitle("No aliases for " + foundTag.getName());
             embed.setDescription("No aliases where found for the tag with the name `" + foundTag.getName() + "`.");
-            embed.setColor(Color.red);
+            embed.setColor(BotColors.FAILURE.getColor());
         }
 
         event.getMessage().reply(embed.build()).queue();

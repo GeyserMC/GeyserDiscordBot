@@ -33,22 +33,24 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 
-import java.awt.Color;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
-public class UnbanCommand extends Command {
+public class RenameCommand extends Command {
 
-    public UnbanCommand() {
-        this.name = "unban";
+    public RenameCommand() {
+        this.name = "rename";
+        this.aliases = new String[] {"nick", "nickname"};
         this.hidden = true;
-        this.userPermissions = new Permission[] { Permission.BAN_MEMBERS };
+        this.userPermissions = new Permission[] { Permission.NICKNAME_MANAGE };
     }
 
     @Override
@@ -68,62 +70,26 @@ public class UnbanCommand extends Command {
             return;
         }
 
-        // Get the user from the member
-        User user = member.getUser();
-        boolean silent = false;
+        String oldNick = member.getEffectiveName();
 
-        // Handle all the option args
-        // We clone the args here to prevent a CME
-        for (String arg : args.toArray(new String[0])) {
-            if (!arg.startsWith("-") || arg.length() < 2) {
-                break;
-            }
+        // Rename user
+        member.modifyNickname(SwearHandler.getRandomNick()).queue(unused -> {
+            // Log the change
+            GeyserBot.storageManager.addLog(event.getMember(), "rename", member.getUser(), "");
 
-            if (arg.toCharArray()[1] == ('s')) {
-                silent = true;
-            } else {
+            MessageEmbed renameEmbed = new EmbedBuilder()
+                    .setTitle("Renamed user")
+                    .addField("User", member.getAsMention(), false)
+                    .addField("Staff member", event.getAuthor().getAsMention(), false)
+                    .addField("Old name", oldNick, false)
+                    .addField("New name", member.getEffectiveName(), false)
+                    .setTimestamp(Instant.now())
+                    .setColor(BotColors.SUCCESS.getColor())
+                    .build();
 
-
-                event.getMessage().reply(new EmbedBuilder()
-                        .setTitle("Invalid option")
-                        .setDescription("The option `" + arg + "` is invalid")
-                        .setColor(BotColors.FAILURE.getColor())
-                        .build()).queue();
-            }
-
-            args.remove(0);
-        }
-
-        String reason = String.join(" ", args);
-
-        // Let the user know they're unbanned if we are not being silent
-        if (!silent) {
-            user.openPrivateChannel().queue((channel) ->
-                    channel.sendMessage(new EmbedBuilder()
-                            .setTitle("You have been unbanned from GeyserMC!")
-                            .addField("Reason", reason, false)
-                            .setTimestamp(Instant.now())
-                            .setColor(BotColors.SUCCESS.getColor())
-                            .build()).queue());
-        }
-
-        // Unban user
-        member.getGuild().unban(user).queue();
-
-        // Log the change
-        GeyserBot.storageManager.addLog(event.getMember(), "unban", user, reason);
-
-        MessageEmbed unbannedEmbed = new EmbedBuilder()
-                .setTitle("Unbanned user")
-                .addField("User", user.getAsMention(), false)
-                .addField("Staff member", event.getAuthor().getAsMention(), false)
-                .addField("Reason", reason, false)
-                .setTimestamp(Instant.now())
-                .setColor(BotColors.SUCCESS.getColor())
-                .build();
-
-        // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(unbannedEmbed).queue();
-        event.getMessage().reply(unbannedEmbed).queue();
+            // Send the embed as a reply and to the log
+            ServerSettings.getLogChannel(event.getGuild()).sendMessage(renameEmbed).queue();
+            event.getMessage().reply(renameEmbed).queue();
+        });
     }
 }

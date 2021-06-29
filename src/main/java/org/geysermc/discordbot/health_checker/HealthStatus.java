@@ -23,25 +23,27 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.tags;
+package org.geysermc.discordbot.health_checker;
 
-import com.jagrosh.jdautilities.command.CommandListener;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.geysermc.discordbot.util.BotColors;
+import net.dv8tion.jda.api.entities.Message;
+import okhttp3.Response;
 
-import java.awt.Color;
+import java.io.IOException;
 
-public class TagsListener implements CommandListener {
+public class HealthStatus {
+    private Message message;
+    private int statusCode;
 
-    @Override
-    public void onNonCommandMessage(MessageReceivedEvent event) {
-        if (event.getMessage().getContentRaw().startsWith("!!") || event.getMessage().getContentRaw().startsWith("!tag ")) {
-            event.getMessage().reply(new EmbedBuilder()
-                    .setColor(BotColors.FAILURE.getColor())
-                    .setTitle("Invalid tag")
-                    .setDescription("Missing requested tag")
-                    .build()).queue();
-        }
+    public HealthStatus(Message message, int statusCode) {
+        this.message = message;
+        this.statusCode = statusCode;
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public boolean wasSuccess() {
+        return statusCode == 200;
     }
 }

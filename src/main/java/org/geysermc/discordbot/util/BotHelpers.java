@@ -297,4 +297,38 @@ public class BotHelpers {
         }
         return 0;
     }
+
+    /**
+     * Check if a given text channel exists in a guild
+     *
+     * @param guild The guild to look in
+     * @param channelId The channel to find
+     * @return If the channel exists
+     */
+    public static boolean channelExists(Guild guild, String channelId) {
+        try {
+            if (guild.getTextChannelById(channelId) == null) {
+                return false;
+            }
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Trim a string down to the given length and end with a ... if it was trimmed
+     *
+     * @param input Input string to trim
+     * @param length Max length
+     * @return Trimmed string
+     */
+    public static String trim(String input, int length) {
+        if (input.length() <= length) {
+            return input;
+        }
+
+        return input.substring(0, length - 3) + "...";
+    }
 }

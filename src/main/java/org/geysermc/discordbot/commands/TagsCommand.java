@@ -34,6 +34,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.tags.TagsManager;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.awt.Color;
@@ -92,12 +93,12 @@ public class TagsCommand extends SlashCommand {
         Collections.sort(tagNames);
 
         if (tagNames.isEmpty()) {
-            embed.setColor(Color.red);
+            embed.setColor(BotColors.FAILURE.getColor());
             embed.setTitle("No tags found");
             embed.setDescription("No tags were found for your search.");
             embed.setFooter("Use `" + PropertiesManager.getPrefix() + "tag aliases <name>` to see all the aliases for a certain tag");
         } else {
-            embed.setColor(PropertiesManager.getDefaultColor());
+            embed.setColor(BotColors.SUCCESS.getColor());
             embed.setTitle("Tags (" + tagNames.size() + ")");
             embed.setDescription("`" + String.join("`, `", tagNames) + "`");
             embed.setFooter("Use `" + PropertiesManager.getPrefix() + "tag <name>` to show a tag");

@@ -36,14 +36,11 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 
-import java.awt.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class RankCommand extends SlashCommand {
 
@@ -79,17 +76,16 @@ public class RankCommand extends SlashCommand {
     }
 
     protected MessageEmbed handle(Guild guild, Member member, String wantedRole) {
-        List<String> roles = ServerSettings.getList(guild.getIdLong(), "roles");
-        for (String roleData : roles) {
-            String[] data = roleData.split("\\|");
-            if (wantedRole.equalsIgnoreCase(data[0])) {
-                Role role = guild.getRoleById(data[1]);
+        Map<String, String> roles = ServerSettings.getMap(guild.getIdLong(), "roles");
+        for (Map.Entry<String, String> roleData : roles.entrySet()) {
+            if (wantedRole.equalsIgnoreCase(roleData.getKey())) {
+                Role role = guild.getRoleById(roleData.getValue());
                 if (role == null) {
                     return new EmbedBuilder()
                             .setTitle("Invalid role")
                             .setDescription("Invalid role specified in configuration")
                             .setTimestamp(Instant.now())
-                            .setColor(Color.red)
+                            .setColor(BotColors.FAILURE.getColor())
                             .build();
                 }
 
@@ -99,7 +95,7 @@ public class RankCommand extends SlashCommand {
                             .setTitle("Removed role")
                             .setDescription("Removed " + role.getAsMention() + " from " + member.getAsMention())
                             .setTimestamp(Instant.now())
-                            .setColor(Color.green)
+                            .setColor(BotColors.SUCCESS.getColor())
                             .build();
                 } else {
                     guild.addRoleToMember(member, role).queue();
@@ -107,7 +103,7 @@ public class RankCommand extends SlashCommand {
                             .setTitle("Granted role")
                             .setDescription("Given " + role.getAsMention() + " to " + member.getAsMention())
                             .setTimestamp(Instant.now())
-                            .setColor(Color.green)
+                            .setColor(BotColors.SUCCESS.getColor())
                             .build();
                 }
             }
@@ -117,7 +113,7 @@ public class RankCommand extends SlashCommand {
                 .setTitle("Invalid role")
                 .setDescription("Role not found")
                 .setTimestamp(Instant.now())
-                .setColor(Color.red)
+                .setColor(BotColors.FAILURE.getColor())
                 .build();
     }
 }

@@ -1,6 +1,5 @@
 prefix: !
 token: discord_bot_token
-default-color: #2b5797
 db-host: 127.0.0.1
 db-database: bot
 db-user: root
