@@ -66,6 +66,7 @@ public class TagsManager {
                         continue;
                     }
 
+                    tagIterator:
                     for (String fileName : files) {
                         if (fileName.endsWith(".tag")) {
                             String tagName = fileName.replace(".tag", "");
@@ -93,7 +94,7 @@ public class TagsManager {
 
                                 String[] lineParts = line.trim().split(":", 2);
                                 if (lineParts.length < 2 || lineParts[0].isEmpty() || lineParts[1].isEmpty()) {
-                                    GeyserBot.LOGGER.warn("Invalid tag option for tag '" + tagName + "'!");
+                                    GeyserBot.LOGGER.warn("Invalid tag option '" + lineParts[0] + "' for tag '" + tagName + "'!");
                                     continue;
                                 }
                                 switch (lineParts[0]) {
@@ -138,11 +139,14 @@ public class TagsManager {
                                     if (tagData.containsKey("image")) {
                                         GeyserBot.LOGGER.warn("Tag '" + tagName + "' has image listed but is of type 'issue-only'. Ignoring image.");
                                     }
-                                    break;
+                                    if (issueTriggers == null) {
+                                        GeyserBot.LOGGER.warn("Tag '" + tagName + "' has no issues listed but is of type 'issue-only'. Ignoring tag.");
+                                        continue tagIterator;
+                                    }
 
                                 default:
                                     GeyserBot.LOGGER.warn("Invalid tag type '" + tagData.get("type") + "' for tag '" + tagName + "'!");
-                                    break;
+                                    continue tagIterator;
                             }
 
                             if (issueTriggers != null) {

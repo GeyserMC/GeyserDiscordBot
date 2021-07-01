@@ -26,12 +26,6 @@ public class ErrorAnalyzer extends ListenerAdapter {
         configExceptionFixes = new HashMap<>(exceptionFixes);
         configExceptionChecks = new HashMap<>();
 
-        // todo: turn these into tags
-        configExceptionFixes.put("java.net.BindException: Address already in use", "This means something (likely another instance of Geyser) is running on the port you have specified in the config. Please make sure you close all applications running on this port. If you don't recall opening anything, usually restarting your computer fixes this.");
-        configExceptionFixes.put("java.net.BindException: Cannot assign requested address: bind", "This means the IP your server is trying to use is unavailable or disallowed by the system or firewall.");
-        configExceptionFixes.put("java.lang.AssertionError: Expected AES to be available", "Update your Java at [AdoptOpenJDK.net](https://adoptopenjdk.net/).");
-        configExceptionFixes.put("AnnotatedConnectException: Connection timed out", "The Geyser instance cannot connect to your Java server.");
-
         // Log url patterns
         configExceptionChecks.put(Pattern.compile("hastebin\\.com/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hastebin.com/raw/%s  ");
         configExceptionChecks.put(Pattern.compile("hasteb\\.in/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hasteb.in/raw/%s");
