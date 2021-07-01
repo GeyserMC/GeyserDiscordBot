@@ -20,9 +20,7 @@ public class ProxyProtocolDumpIssueCheck extends AbstractDumpIssueCheck {
             warnings.add("- `enable-proxy-protocol` should ONLY be enabled if you run a reverse UDP proxy in front of Geyser.");
         }
         if (configRemote.getBoolean("use-proxy-protocol")) {
-            warnings.add("- `use-proxy-protocol` should ONLY be enabled if either of these apply:");
-            warnings.add("      1. Your server supports PROXY protocol (this has nothing to do with if you're using BungeeCord or Velocity).");
-            warnings.add("      2. You have the exact same option enabled in your BungeeCord/Velocity config (it is off by default).");
+            warnings.add("- `use-proxy-protocol` should ONLY be enabled if either of these apply:\n      1. Your server supports PROXY protocol (this has nothing to do with if you're using BungeeCord or Velocity).\n      2. You have the exact same option enabled in your BungeeCord/Velocity config (it is off by default).");
         }
 
         return warnings;
