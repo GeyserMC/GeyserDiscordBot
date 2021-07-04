@@ -57,7 +57,7 @@ public class BadLinksHandler extends ListenerAdapter {
 
             for (String checkDomain : ServerSettings.getList(event.getGuild().getIdLong(), "check-domains")) {
                 // Is the domain not exact but still close
-                if (!domain.equals(checkDomain) && DicesCoefficient.diceCoefficientOptimized(domain, checkDomain) > 0.6f) {
+                if (!domain.equals(checkDomain) && compareDomain(domain, checkDomain)) {
                     ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
                             .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
                             .setDescription("**Link removed, sent by** " + event.getAuthor().getAsMention() + " **deleted in** " + event.getChannel().getAsMention() + "\n" + event.getMessage().getContentRaw())
@@ -78,5 +78,20 @@ public class BadLinksHandler extends ListenerAdapter {
         }
 
         // http://streamcommunnlty.ru/tradeoffer/new/?partner=1201662247&token=MtT3lJcb
+    }
+
+    /**
+     * Compare 2 domains using {@link DicesCoefficient#diceCoefficientOptimized(String, String)} but be more strict with .ru domains
+     *
+     * @param domain Domain to compare
+     * @param checkDomain Target domain
+     * @return If they are similar
+     */
+    private boolean compareDomain(String domain, String checkDomain) {
+        if (domain.endsWith(".ru")) { // Most phishing sites are ru so be more strict with them
+            return (Math.round(DicesCoefficient.diceCoefficientOptimized(domain, checkDomain) * 10.0) / 10.0) >= 0.5f;
+        } else {
+            return DicesCoefficient.diceCoefficientOptimized(domain, checkDomain) >= 0.6f;
+        }
     }
 }
