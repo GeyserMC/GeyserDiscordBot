@@ -94,7 +94,7 @@ public class TagsManager {
 
                                 String[] lineParts = line.trim().split(":", 2);
                                 if (lineParts.length < 2 || lineParts[0].isEmpty() || lineParts[1].isEmpty()) {
-                                    GeyserBot.LOGGER.warn("Invalid tag option '" + lineParts[0] + "' for tag '" + tagName + "'!");
+                                    GeyserBot.LOGGER.warn("Invalid tag option line '" + line.trim() + "' for tag '" + tagName + "'!");
                                     continue;
                                 }
                                 switch (lineParts[0]) {
@@ -112,7 +112,7 @@ public class TagsManager {
                                         break;
 
                                     default:
-                                        GeyserBot.LOGGER.warn("Invalid tag option '" + lineParts[0] + "' for tag '" + tagName + "'!");
+                                        GeyserBot.LOGGER.warn("Invalid tag option key '" + lineParts[0] + "' for tag '" + tagName + "'!");
                                         break;
                                 }
                             }
