@@ -67,7 +67,6 @@ public class TagsManager {
                         continue;
                     }
 
-                    tagIterator:
                     for (String fileName : files) {
                         if (fileName.endsWith(".tag")) {
                             String tagName = fileName.replace(".tag", "");
@@ -142,12 +141,12 @@ public class TagsManager {
                                     }
                                     if (issueTriggers == null) {
                                         GeyserBot.LOGGER.warn("Tag '" + tagName + "' has no issues listed but is of type 'issue-only'. Ignoring tag.");
-                                        continue tagIterator;
+                                        continue;
                                     }
 
                                 default:
                                     GeyserBot.LOGGER.warn("Invalid tag type '" + tagData.get("type") + "' for tag '" + tagName + "'!");
-                                    continue tagIterator;
+                                    continue;
                             }
 
                             if (issueTriggers != null) {

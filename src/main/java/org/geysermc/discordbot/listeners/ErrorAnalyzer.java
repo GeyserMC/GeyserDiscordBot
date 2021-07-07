@@ -6,6 +6,7 @@ import com.rtm516.stackparser.StackLine;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.GithubFileFinder;
 import pw.chew.chewbotcca.util.RestClient;
 
@@ -22,8 +23,8 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
     private static final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[0-9a-zA-Z]+-([0-9a-zA-Z]{7})\\)");
 
-    public ErrorAnalyzer(Map<String, String> exceptionFixes) {
-        configExceptionFixes = new HashMap<>(exceptionFixes);
+    public ErrorAnalyzer() {
+        configExceptionFixes = TagsManager.getIssueResponses();
         configExceptionChecks = new HashMap<>();
 
         // Log url patterns

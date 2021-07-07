@@ -193,7 +193,7 @@ public class GeyserBot {
                     new FileHandler(),
                     new LevelHandler(),
                     new DumpHandler(),
-                    new ErrorAnalyzer(TagsManager.getIssueResponses()),
+                    new ErrorAnalyzer(),
                     new ShutdownHandler(),
                     new VoiceGroupHandler(),
                     new BadLinksHandler(),
