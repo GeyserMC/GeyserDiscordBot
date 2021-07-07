@@ -46,6 +46,7 @@ public class TagsManager {
 
         return TAGS;
     }
+
     public static Map<String, String> getIssueResponses() {
         if (!tagsLoaded) {
             loadTags();
