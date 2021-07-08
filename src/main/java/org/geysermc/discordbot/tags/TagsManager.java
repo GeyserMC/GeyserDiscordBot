@@ -97,6 +97,7 @@ public class TagsManager {
                                     GeyserBot.LOGGER.warn("Invalid tag option line '" + line.trim() + "' for tag '" + tagName + "'!");
                                     continue;
                                 }
+
                                 switch (lineParts[0]) {
                                     case "type": // intentional fallthrough
                                     case "aliases":
@@ -136,23 +137,24 @@ public class TagsManager {
                                     if (tagData.containsKey("aliases")) {
                                         GeyserBot.LOGGER.warn("Tag '" + tagName + "' has aliases listed but is of type 'issue-only'. Ignoring aliases.");
                                     }
+
                                     if (tagData.containsKey("image")) {
                                         GeyserBot.LOGGER.warn("Tag '" + tagName + "' has image listed but is of type 'issue-only'. Ignoring image.");
                                     }
+
                                     if (issueTriggers == null) {
                                         GeyserBot.LOGGER.warn("Tag '" + tagName + "' has no issues listed but is of type 'issue-only'. Ignoring tag.");
-                                        continue;
+                                        break;
                                     }
+
+                                    for (String issue : issueTriggers) {
+                                        ISSUE_RESPONSES.put(issue, content.toString());
+                                    }
+                                    break;
 
                                 default:
                                     GeyserBot.LOGGER.warn("Invalid tag type '" + tagData.get("type") + "' for tag '" + tagName + "'!");
-                                    continue;
-                            }
-
-                            if (issueTriggers != null) {
-                                for (String issue : issueTriggers) {
-                                    ISSUE_RESPONSES.put(issue, content.toString());
-                                }
+                                    break;
                             }
                         }
                     }

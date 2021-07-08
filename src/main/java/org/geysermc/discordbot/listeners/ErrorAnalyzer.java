@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.tags.TagsManager;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.GithubFileFinder;
 import pw.chew.chewbotcca.util.RestClient;
 
@@ -17,13 +18,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ErrorAnalyzer extends ListenerAdapter {
-    private final Map<String, String> issueResponses;
     private final Map<Pattern, String> logUrlPatterns;
 
     private static final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[0-9a-zA-Z]+-([0-9a-zA-Z]{7})\\)");
 
     public ErrorAnalyzer() {
-        issueResponses = TagsManager.getIssueResponses();
         logUrlPatterns = new HashMap<>();
 
         // Log url patterns
@@ -64,15 +63,24 @@ public class ErrorAnalyzer extends ListenerAdapter {
             pasteBody = contents;
         }
 
-
         // Create the embed and format it
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Found errors in the log!");
         embedBuilder.setDescription("See below for details and possible fixes");
-        embedBuilder.setColor(0xFF0000);
-
+        embedBuilder.setColor(BotColors.FAILURE.getColor());
 
         List<StackException> exceptions = Parser.parse(pasteBody);
+
+        // Add any errors that aren't from stack traces first
+        for (String issue : TagsManager.getIssueResponses().keySet()) {
+            if (pasteBody.contains(issue)) {
+                addFixIfPresent(issue, embedBuilder);
+            }
+        }
+
+        // Setup 6k limit bounds
+        int limitSize = embedBuilder.getFields().size() / 2;
+        int limitCount = embedBuilder.getFields().size();
 
         if (exceptions.size() != 0) {
             // Get the github trees for fetching the file paths
@@ -85,7 +93,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
             for (StackException exception : exceptions) {
                 // Can't have more than 12 embed fields as its longer than the 6k characters on average
-                if (embedBuilder.getFields().size() >= 12) {
+                if ((embedBuilder.getFields().size() - limitCount) + limitSize >= 12) {
                     break;
                 }
 
@@ -113,20 +121,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     }
                 }
             }
-
         }
-
-        // Add any errors that aren't from stack traces
-        for (String issue : issueResponses.keySet()) {
-            if (pasteBody.contains(issue)) {
-                addFixIfPresent(issue, embedBuilder);
-            }
-        }
-
-
-
-
-
 
         // If we have no fields set the description accordingly
         if (embedBuilder.getFields().isEmpty()) {
@@ -137,23 +132,26 @@ public class ErrorAnalyzer extends ListenerAdapter {
     }
 
     /**
-     * Add an issue and its fix to an EmbedBuilder if the fix exists, and the issue hasn't already been added
+     * Add an issue and its fix to an {@link EmbedBuilder} if the fix exists, and the issue hasn't already been added
+     *
      * @param issue The issue to find the fix for
      * @param embedBuilder The embed builder to add to
-     * @return true if a fix was added to the EmbedBuilder
+     * @return true if a fix was added to the {@link EmbedBuilder}
      */
     private boolean addFixIfPresent(String issue, EmbedBuilder embedBuilder) {
         String fix = null;
-        for (String key : issueResponses.keySet()) {
+        for (String key : TagsManager.getIssueResponses().keySet()) {
             if (key.contains(issue) || issue.contains(key)) {
-                fix = issueResponses.get(key);
+                fix = TagsManager.getIssueResponses().get(key);
                 break;
             }
         }
+
         if (fix != null && embedBuilder.getFields().stream().noneMatch(field -> issue.equals(field.getName()))) {
             embedBuilder.addField(issue, fix, false);
             return true;
         }
+
         return false;
     }
 }
