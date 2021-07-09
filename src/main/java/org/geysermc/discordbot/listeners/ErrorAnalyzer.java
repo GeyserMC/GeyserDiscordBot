@@ -23,7 +23,6 @@ public class ErrorAnalyzer extends ListenerAdapter {
     private final Map<Pattern, String> logUrlPatterns;
 
     private static final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[0-9a-zA-Z]+-([0-9a-zA-Z]{7})\\)");
-    private static final int MAX_EMBED_LENGTH = 6000;
 
     public ErrorAnalyzer() {
         logUrlPatterns = new HashMap<>();
@@ -79,7 +78,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         // Add any errors that aren't from stack traces first
         for (String issue : TagsManager.getIssueResponses().keySet()) {
             if (pasteBody.contains(issue)) {
-                if (embedLength >= MAX_EMBED_LENGTH) {
+                if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT) {
                     break;
                 }
                 int exitCode = addFixIfPresent(issue, embedBuilder);
@@ -101,7 +100,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
             GithubFileFinder fileFinder = new GithubFileFinder(branch);
 
             for (StackException exception : exceptions) {
-                if (embedLength >= MAX_EMBED_LENGTH) {
+                if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT) {
                     break;
                 }
 
