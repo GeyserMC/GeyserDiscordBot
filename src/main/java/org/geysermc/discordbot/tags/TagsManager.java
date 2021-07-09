@@ -143,18 +143,20 @@ public class TagsManager {
                                     }
 
                                     if (issueTriggers == null) {
-                                        GeyserBot.LOGGER.warn("Tag '" + tagName + "' has no issues listed but is of type 'issue-only'. Ignoring tag.");
-                                        break;
-                                    }
-
-                                    for (String issue : issueTriggers) {
-                                        ISSUE_RESPONSES.put(issue, content.toString());
+                                        GeyserBot.LOGGER.warn("Tag '" + tagName + "' has no issues listed but is of type 'issue-only'.");
                                     }
                                     break;
 
                                 default:
-                                    GeyserBot.LOGGER.warn("Invalid tag type '" + tagData.get("type") + "' for tag '" + tagName + "'!");
-                                    break;
+                                    GeyserBot.LOGGER.warn("Invalid tag type '" + tagData.get("type") + "' for tag '" + tagName + "'! Ignoring tag.");
+                                    continue;
+                            }
+
+                            if (issueTriggers != null) {
+                                // allow any tag with issues listed to be an issue response
+                                for (String issue : issueTriggers) {
+                                    ISSUE_RESPONSES.put(issue, content.toString());
+                                }
                             }
                         }
                     }
