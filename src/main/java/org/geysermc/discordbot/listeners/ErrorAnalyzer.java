@@ -4,6 +4,7 @@ import com.rtm516.stackparser.Parser;
 import com.rtm516.stackparser.StackException;
 import com.rtm516.stackparser.StackLine;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.tags.TagsManager;
@@ -104,6 +105,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     continue;
                 }
 
+                // If no fix exists then add some info about the error
                 for (StackLine line : exception.getLines()) {
                     if (line.getStackPackage() != null && line.getStackPackage().startsWith("org.geysermc") && !line.getStackPackage().contains("shaded")) {
                         // Get the file url
@@ -112,10 +114,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                         // Build the description
                         String exceptionDesc = "Unknown fix!\nClass: `" + line.getJavaClass() + "`\nMethod: `" + line.getMethod() + "`\nLine: `" + line.getLine() + "`\nLink: " + (!lineUrl.isEmpty() ? "[" + line.getSource() + "#L" + line.getLine() + "](" + lineUrl + ")" : "Unknown");
 
-                        // Make sure we don't already have that field
-                        if (embedBuilder.getFields().stream().noneMatch(field -> exceptionTitle.equals(field.getName()) && exceptionDesc.equals(field.getValue()))) {
-                            embedBuilder.addField(exceptionTitle, exceptionDesc, false);
-                        }
+                        embedBuilder.addField(exceptionTitle, exceptionDesc, false);
 
                         break;
                     }
@@ -123,12 +122,11 @@ public class ErrorAnalyzer extends ListenerAdapter {
             }
         }
 
-        // If we have no fields set the description accordingly
-        if (embedBuilder.getFields().isEmpty()) {
-            embedBuilder.setDescription("We don't currently have automated responses for the detected errors!");
-        }
+        // If we have any info then send the message
+        if (!embedBuilder.getFields().isEmpty()) {
+            event.getMessage().reply(embedBuilder.build()).queue();
 
-        event.getMessage().reply(embedBuilder.build()).queue();
+        }
     }
 
     /**
@@ -136,9 +134,13 @@ public class ErrorAnalyzer extends ListenerAdapter {
      *
      * @param issue The issue to find the fix for
      * @param embedBuilder The embed builder to add to
-     * @return true if a fix was added to the {@link EmbedBuilder}
+     * @return True if the issue and its fix was added to the {@link EmbedBuilder} or if the issue is already listed. False if no fix exists for the given issue
      */
     private boolean addFixIfPresent(String issue, EmbedBuilder embedBuilder) {
+        if (similarFieldExists(embedBuilder.getFields(), issue)) {
+            return true;
+        }
+
         String fix = null;
         for (String key : TagsManager.getIssueResponses().keySet()) {
             if (key.contains(issue) || issue.contains(key)) {
@@ -147,11 +149,30 @@ public class ErrorAnalyzer extends ListenerAdapter {
             }
         }
 
-        if (fix != null && embedBuilder.getFields().stream().noneMatch(field -> issue.equals(field.getName()))) {
+        if (fix != null) {
             embedBuilder.addField(issue, fix, false);
             return true;
         }
 
+        return false;
+    }
+
+    /**
+     * Checks if a List of {@link MessageEmbed.Field}s has a Field whose name is similar to a given String
+     * @param fields The List of {@link MessageEmbed.Field}s to check
+     * @param string The string to check
+     * @return True if the List has a {@link MessageEmbed.Field} whose name contains the given String, or the given string contains the field's name
+     */
+    private static boolean similarFieldExists(List<MessageEmbed.Field> fields, String string) {
+        for (MessageEmbed.Field field : fields) {
+            String fieldName = field.getName();
+            if (fieldName == null) {
+                continue;
+            }
+            if (fieldName.contains(string) || string.contains(fieldName)) {
+                return true;
+            }
+        }
         return false;
     }
 }
