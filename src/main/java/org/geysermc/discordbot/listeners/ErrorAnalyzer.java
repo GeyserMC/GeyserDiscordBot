@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.GithubFileFinder;
+import org.geysermc.discordbot.util.MessageHelper;
 import pw.chew.chewbotcca.util.RestClient;
 
 import java.util.HashMap;
@@ -72,17 +73,23 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
         List<StackException> exceptions = Parser.parse(pasteBody);
 
+        int embedLength = embedBuilder.length();
+
         // Add any errors that aren't from stack traces first
         for (String issue : TagsManager.getIssueResponses().keySet()) {
             if (pasteBody.contains(issue)) {
-                addFixIfPresent(issue, embedBuilder);
+                if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT) {
+                    break;
+                }
+                int exitCode = addFixIfPresent(issue, embedBuilder);
+                if (exitCode > 0) {
+                    // Increase our length tally if the Embed was added to
+                    embedLength += exitCode;
+                }
             }
         }
 
-        // Setup 6k limit bounds
-        int limitSize = embedBuilder.getFields().size() / 2;
-        int limitCount = embedBuilder.getFields().size();
-
+        // Add any errors from stacktraces
         if (exceptions.size() != 0) {
             // Get the github trees for fetching the file paths
             String branch = "master";
@@ -93,16 +100,19 @@ public class ErrorAnalyzer extends ListenerAdapter {
             GithubFileFinder fileFinder = new GithubFileFinder(branch);
 
             for (StackException exception : exceptions) {
-                // Can't have more than 12 embed fields as its longer than the 6k characters on average
-                if ((embedBuilder.getFields().size() - limitCount) + limitSize >= 12) {
+                if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT) {
                     break;
                 }
 
                 String exceptionTitle = exception.getException() + ": " + exception.getDescription();
 
                 // If there is a fix for the exception, add it.
-                if (addFixIfPresent(exceptionTitle, embedBuilder)) {
-                    continue;
+                int exitCode = addFixIfPresent(exceptionTitle, embedBuilder);
+                if (exitCode > 0) {
+                    embedLength += exitCode;
+                } else if (exitCode != -1) {
+                    // Only continue if no response exists
+                    return;
                 }
 
                 // If no fix exists then add some info about the error
@@ -115,6 +125,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                         String exceptionDesc = "Unknown fix!\nClass: `" + line.getJavaClass() + "`\nMethod: `" + line.getMethod() + "`\nLine: `" + line.getLine() + "`\nLink: " + (!lineUrl.isEmpty() ? "[" + line.getSource() + "#L" + line.getLine() + "](" + lineUrl + ")" : "Unknown");
 
                         embedBuilder.addField(exceptionTitle, exceptionDesc, false);
+                        embedLength += exceptionTitle.length() + exceptionDesc.length();
 
                         break;
                     }
@@ -124,8 +135,9 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
         // If we have any info then send the message
         if (!embedBuilder.getFields().isEmpty()) {
-            event.getMessage().reply(embedBuilder.build()).queue();
 
+            MessageHelper.truncateToValidLength(embedBuilder);
+            event.getMessage().reply(embedBuilder.build()).queue();
         }
     }
 
@@ -134,11 +146,12 @@ public class ErrorAnalyzer extends ListenerAdapter {
      *
      * @param issue The issue to find the fix for
      * @param embedBuilder The embed builder to add to
-     * @return True if the issue and its fix was added to the {@link EmbedBuilder} or if the issue is already listed. False if no fix exists for the given issue
+     * @return A positive integer equal to the size of the {@link MessageEmbed.Field} added to the {@link EmbedBuilder} if the issue wasn't already listed and a fix exists.
+     * Will return -2 if the issue was already listed. Will return -1 if no fix was found.
      */
-    private boolean addFixIfPresent(String issue, EmbedBuilder embedBuilder) {
-        if (similarFieldExists(embedBuilder.getFields(), issue)) {
-            return true;
+    private int addFixIfPresent(String issue, EmbedBuilder embedBuilder) {
+        if (MessageHelper.similarFieldExists(embedBuilder.getFields(), issue)) {
+            return -2;
         }
 
         String fix = null;
@@ -150,29 +163,10 @@ public class ErrorAnalyzer extends ListenerAdapter {
         }
 
         if (fix != null) {
-            embedBuilder.addField(issue, fix, false);
-            return true;
+            embedBuilder.addField(issue, fix.trim(), false);
+            return fix.length();
         }
 
-        return false;
-    }
-
-    /**
-     * Checks if a List of {@link MessageEmbed.Field}s has a Field whose name is similar to a given String
-     * @param fields The List of {@link MessageEmbed.Field}s to check
-     * @param string The string to check
-     * @return True if the List has a {@link MessageEmbed.Field} whose name contains the given String, or the given string contains the field's name
-     */
-    private static boolean similarFieldExists(List<MessageEmbed.Field> fields, String string) {
-        for (MessageEmbed.Field field : fields) {
-            String fieldName = field.getName();
-            if (fieldName == null) {
-                continue;
-            }
-            if (fieldName.contains(string) || string.contains(fieldName)) {
-                return true;
-            }
-        }
-        return false;
+        return -1;
     }
 }
