@@ -4,8 +4,9 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import org.geysermc.discordbot.GeyserBot;
 
-import java.awt.Color;
+import java.util.List;
 
 /**
  * This class helps us with error messages when handling commands of varying types
@@ -44,5 +45,44 @@ public class MessageHelper {
             throw new IllegalArgumentException("Event must be one of CommandEvent, SlashCommandEvent");
         }
         return null;
+    }
+
+    /**
+     * Checks if a List of {@link MessageEmbed.Field}s has a Field whose name is similar to a given String
+     * @param fields The List of {@link MessageEmbed.Field}s to check
+     * @param string The string to check
+     * @return True if the List has a {@link MessageEmbed.Field} whose name contains the given String, or the given string contains the field's name
+     */
+    public static boolean similarFieldExists(List<MessageEmbed.Field> fields, String string) {
+        for (MessageEmbed.Field field : fields) {
+            String fieldName = field.getName();
+            if (fieldName == null) {
+                continue;
+            }
+            if (fieldName.contains(string) || string.contains(fieldName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Attempts to make an {@link EmbedBuilder} have a valid length by removing {@link MessageEmbed.Field}s
+     * from the end of the Field List until the EmbedBuilder has a valid length.
+     * May fail if Embed exceeds the valid length for other reasons, e.g. the title or description.
+     * @param embedBuilder The {@link EmbedBuilder} to truncate if necessary.
+     */
+    public static void truncateToValidLength(EmbedBuilder embedBuilder) {
+        if (embedBuilder.isValidLength()) {
+            return;
+        }
+
+        // todo: remove this once we figure out ErrorAnalyzer
+        GeyserBot.LOGGER.debug("EmbedBuilder with description: " + embedBuilder.getDescriptionBuilder() + " is being truncated to valid length.");
+
+        // remove entries from the bottom of the list until the length is valid, or we completely empty the list
+        for (int i = embedBuilder.getFields().size() - 1; i > 0 && !embedBuilder.isValidLength(); i--) {
+            embedBuilder.getFields().remove(i);
+        }
     }
 }
