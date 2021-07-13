@@ -4,10 +4,12 @@ import com.rtm516.stackparser.Parser;
 import com.rtm516.stackparser.StackException;
 import com.rtm516.stackparser.StackLine;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.GithubFileFinder;
@@ -41,6 +43,14 @@ public class ErrorAnalyzer extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
 
+        // Check attachments
+        for (Message.Attachment attachment : event.getMessage().getAttachments()) {
+            if (ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions").contains(attachment.getFileExtension())) {
+                handleLog(event, RestClient.get(attachment.getUrl()));
+            }
+        }
+
+        // Check the message for urls
         String contents = event.getMessage().getContentRaw();
         String url = null;
         for (Pattern regex : logUrlPatterns.keySet()) {
@@ -63,22 +73,33 @@ public class ErrorAnalyzer extends ListenerAdapter {
         if (url != null) {
             pasteBody = RestClient.get(url);
         } else {
+            // We didn't find a url so use the message contents
             pasteBody = contents;
         }
 
+        handleLog(event, pasteBody);
+    }
+
+    /**
+     * Handle the log content and output any errors
+     *
+     * @param event Message to respond to
+     * @param logContent The log to check
+     */
+    private void handleLog(MessageReceivedEvent event, String logContent) {
         // Create the embed and format it
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Found errors in the log!");
         embedBuilder.setDescription("See below for details and possible fixes");
         embedBuilder.setColor(BotColors.FAILURE.getColor());
 
-        List<StackException> exceptions = Parser.parse(pasteBody);
+        List<StackException> exceptions = Parser.parse(logContent);
 
         int embedLength = embedBuilder.length();
 
         // Add any errors that aren't from stack traces first
         for (String issue : TagsManager.getIssueResponses().keySet()) {
-            if (pasteBody.contains(issue)) {
+            if (logContent.contains(issue)) {
                 if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT || embedBuilder.getFields().size() >= 25) {
                     // cannot have more than 25 embed fields
                     break;
@@ -95,7 +116,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         if (exceptions.size() != 0) {
             // Get the github trees for fetching the file paths
             String branch = "master";
-            Matcher branchMatcher = BRANCH_PATTERN.matcher(pasteBody);
+            Matcher branchMatcher = BRANCH_PATTERN.matcher(logContent);
             if (branchMatcher.find()) {
                 branch = branchMatcher.group(1);
             }
@@ -137,7 +158,6 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
         // If we have any info then send the message
         if (!embedBuilder.getFields().isEmpty()) {
-
             MessageHelper.truncateFields(embedBuilder);
             event.getMessage().reply(embedBuilder.build()).queue();
         }
