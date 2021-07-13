@@ -51,10 +51,10 @@ public class ErrorAnalyzer extends ListenerAdapter {
         }
 
         // Check the message for urls
-        String contents = event.getMessage().getContentRaw();
+        String rawContent = event.getMessage().getContentRaw();
         String url = null;
         for (Pattern regex : logUrlPatterns.keySet()) {
-            Matcher matcher = regex.matcher(contents);
+            Matcher matcher = regex.matcher(rawContent);
 
             if (!matcher.find()) {
                 continue;
@@ -69,15 +69,15 @@ public class ErrorAnalyzer extends ListenerAdapter {
             break;
         }
 
-        String pasteBody;
-        if (url != null) {
-            pasteBody = RestClient.get(url);
+        String content;
+        if (url == null) {
+            content = rawContent;
         } else {
-            // We didn't find a url so use the message contents
-            pasteBody = contents;
+            // We didn't find a url so use the message content
+            content = RestClient.get(url);
         }
 
-        handleLog(event, pasteBody);
+        handleLog(event, content);
     }
 
     /**
@@ -145,10 +145,10 @@ public class ErrorAnalyzer extends ListenerAdapter {
                         String lineUrl = fileFinder.getFileUrl(line.getSource(), Integer.parseInt(line.getLine()));
 
                         // Build the description
-                        String exceptionDesc = "Unknown fix!\nClass: `" + line.getJavaClass() + "`\nMethod: `" + line.getMethod() + "`\nLine: `" + line.getLine() + "`\nLink: " + (!lineUrl.isEmpty() ? "[" + line.getSource() + "#L" + line.getLine() + "](" + lineUrl + ")" : "Unknown");
+                        String details = "Unknown fix!\nClass: `" + line.getJavaClass() + "`\nMethod: `" + line.getMethod() + "`\nLine: `" + line.getLine() + "`\nLink: " + (!lineUrl.isEmpty() ? "[" + line.getSource() + "#L" + line.getLine() + "](" + lineUrl + ")" : "Unknown");
 
-                        embedBuilder.addField(exceptionTitle, exceptionDesc, false);
-                        embedLength += exceptionTitle.length() + exceptionDesc.length();
+                        embedBuilder.addField(exceptionTitle, details, false);
+                        embedLength += exceptionTitle.length() + details.length();
 
                         break;
                     }
@@ -156,11 +156,14 @@ public class ErrorAnalyzer extends ListenerAdapter {
             }
         }
 
-        // If we have any info then send the message
-        if (!embedBuilder.getFields().isEmpty()) {
+        // Set the description accordingly if nothing Geyser related was found
+        if (embedBuilder.getFields().isEmpty()) {
+            embedBuilder.setDescription("We don't currently have automated responses for the detected errors!");
+        } else {
             MessageHelper.truncateFields(embedBuilder);
-            event.getMessage().reply(embedBuilder.build()).queue();
         }
+
+        event.getMessage().reply(embedBuilder.build()).queue();
     }
 
     /**
@@ -176,9 +179,11 @@ public class ErrorAnalyzer extends ListenerAdapter {
             return -2;
         }
 
+        String lowerCaseIssue = issue.toLowerCase();
         String fix = null;
         for (String key : TagsManager.getIssueResponses().keySet()) {
-            if (key.contains(issue) || issue.contains(key)) {
+            String lowerCaseKey = key.toLowerCase();
+            if (lowerCaseKey.contains(lowerCaseIssue) || lowerCaseIssue.contains(lowerCaseKey)) {
                 fix = TagsManager.getIssueResponses().get(key);
                 break;
             }
