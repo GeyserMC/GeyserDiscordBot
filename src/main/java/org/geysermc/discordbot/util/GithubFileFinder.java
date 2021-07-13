@@ -26,9 +26,7 @@
 package org.geysermc.discordbot.util;
 
 import org.geysermc.discordbot.GeyserBot;
-import org.kohsuke.github.GHTree;
-import org.kohsuke.github.GHTreeEntry;
-import org.kohsuke.github.GitHub;
+import org.kohsuke.github.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,8 +65,17 @@ public class GithubFileFinder {
         // Loop the repos and load in the trees for them
         for (String repo : REPOS) {
             try {
-                trees.add(GeyserBot.getGithub().getRepository(repo).getTreeRecursive(branch, 1));
-            } catch (IOException e) { }
+                GHRepository ghRepo = GeyserBot.getGithub().getRepository(repo);
+
+                try {
+                    trees.add(ghRepo.getTreeRecursive(branch, 1));
+                } catch (GHFileNotFoundException e) {
+                    // Fallback to default branch
+                    try {
+                        trees.add(ghRepo.getTreeRecursive(ghRepo.getDefaultBranch(), 1));
+                    } catch (IOException ignored) { }
+                }
+            } catch (IOException ignored) { }
         }
     }
 
