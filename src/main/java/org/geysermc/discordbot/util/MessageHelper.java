@@ -51,6 +51,7 @@ public class MessageHelper {
      * Checks if a List of {@link MessageEmbed.Field}s has a Field whose name is similar to a given String
      * @param fields The List of {@link MessageEmbed.Field}s to check
      * @param string The string to check
+     *
      * @return True if the List has a {@link MessageEmbed.Field} whose name contains the given String, or the given string contains the field's name
      */
     public static boolean similarFieldExists(List<MessageEmbed.Field> fields, String string) {
@@ -67,12 +68,13 @@ public class MessageHelper {
     }
 
     /**
-     * Attempts to make an {@link EmbedBuilder} have a valid length by removing {@link MessageEmbed.Field}s
-     * from the end of the Field List until the EmbedBuilder has a valid length.
-     * May fail if Embed exceeds the valid length for other reasons, e.g. the title or description.
+     * Removes {@link MessageEmbed.Field}s from the end of a given {@link EmbedBuilder} until there are no more fields, or the following returns true: {@link EmbedBuilder#isValidLength()} <br/>
+     * May fail to make the EmbedBuilder have a valid length if it exceeds the valid length for other reasons.
+     * @see <a href="https://discord.com/developers/docs/resources/channel#embed-limits">https://discord.com/developers/docs/resources/channel#embed-limits</a>
+     *
      * @param embedBuilder The {@link EmbedBuilder} to truncate if necessary.
      */
-    public static void truncateToValidLength(EmbedBuilder embedBuilder) {
+    public static void truncateFields(EmbedBuilder embedBuilder) {
         if (embedBuilder.isValidLength()) {
             return;
         }

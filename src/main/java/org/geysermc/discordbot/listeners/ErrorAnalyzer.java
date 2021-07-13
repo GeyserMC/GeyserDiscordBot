@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.GithubFileFinder;
@@ -74,17 +75,20 @@ public class ErrorAnalyzer extends ListenerAdapter {
         List<StackException> exceptions = Parser.parse(pasteBody);
 
         int embedLength = embedBuilder.length();
+        int fieldCount = 0;
 
         // Add any errors that aren't from stack traces first
         for (String issue : TagsManager.getIssueResponses().keySet()) {
             if (pasteBody.contains(issue)) {
-                if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT) {
+                if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT || fieldCount >= 25) {
+                    // cannot have more than 25 embed fields
                     break;
                 }
                 int exitCode = addFixIfPresent(issue, embedBuilder);
                 if (exitCode > 0) {
                     // Increase our length tally if the Embed was added to
                     embedLength += exitCode;
+                    fieldCount++;
                 }
             }
         }
@@ -100,7 +104,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
             GithubFileFinder fileFinder = new GithubFileFinder(branch);
 
             for (StackException exception : exceptions) {
-                if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT) {
+                if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT || fieldCount >= 25) {
                     break;
                 }
 
@@ -110,6 +114,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 int exitCode = addFixIfPresent(exceptionTitle, embedBuilder);
                 if (exitCode > 0) {
                     embedLength += exitCode;
+                    fieldCount++;
                 } else if (exitCode != -1) {
                     // Only continue if no response exists
                     return;
@@ -126,6 +131,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
                         embedBuilder.addField(exceptionTitle, exceptionDesc, false);
                         embedLength += exceptionTitle.length() + exceptionDesc.length();
+                        fieldCount++;
 
                         break;
                     }
@@ -136,7 +142,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         // If we have any info then send the message
         if (!embedBuilder.getFields().isEmpty()) {
 
-            MessageHelper.truncateToValidLength(embedBuilder);
+            MessageHelper.truncateFields(embedBuilder);
             event.getMessage().reply(embedBuilder.build()).queue();
         }
     }
@@ -162,11 +168,23 @@ public class ErrorAnalyzer extends ListenerAdapter {
             }
         }
 
-        if (fix != null) {
-            embedBuilder.addField(issue, fix.trim(), false);
+        if (fix == null) {
+            return -1;
+        } else {
+            String title = issue.trim();
+            if (title.length() > MessageEmbed.TITLE_MAX_LENGTH) {
+                GeyserBot.LOGGER.warn("Issue response with Field name: '" + title + "' has a Field name greater than " + MessageEmbed.TITLE_MAX_LENGTH + " characters! Truncating field name.");
+                title = title.substring(0, MessageEmbed.TITLE_MAX_LENGTH);
+            }
+
+            String response = fix.trim();
+            if (response.length() > MessageEmbed.VALUE_MAX_LENGTH) {
+                GeyserBot.LOGGER.warn("Issue response with Field name: '" + title + "' has a Field value greater than " + MessageEmbed.VALUE_MAX_LENGTH + " characters! Truncating Field value.");
+                response = response.substring(0, MessageEmbed.VALUE_MAX_LENGTH);
+            }
+
+            embedBuilder.addField(title, response, false);
             return fix.length();
         }
-
-        return -1;
     }
 }
