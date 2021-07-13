@@ -155,7 +155,7 @@ public class TagsManager {
                             if (issueTriggers != null) {
                                 // allow any tag with issues listed to be an issue response
                                 for (String issue : issueTriggers) {
-                                    ISSUE_RESPONSES.put(issue, content.toString());
+                                    ISSUE_RESPONSES.put(issue.trim(), content.toString());
                                 }
                             }
                         }
