@@ -75,12 +75,11 @@ public class ErrorAnalyzer extends ListenerAdapter {
         List<StackException> exceptions = Parser.parse(pasteBody);
 
         int embedLength = embedBuilder.length();
-        int fieldCount = 0;
 
         // Add any errors that aren't from stack traces first
         for (String issue : TagsManager.getIssueResponses().keySet()) {
             if (pasteBody.contains(issue)) {
-                if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT || fieldCount >= 25) {
+                if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT || embedBuilder.getFields().size() >= 25) {
                     // cannot have more than 25 embed fields
                     break;
                 }
@@ -88,7 +87,6 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 if (exitCode > 0) {
                     // Increase our length tally if the Embed was added to
                     embedLength += exitCode;
-                    fieldCount++;
                 }
             }
         }
@@ -104,7 +102,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
             GithubFileFinder fileFinder = new GithubFileFinder(branch);
 
             for (StackException exception : exceptions) {
-                if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT || fieldCount >= 25) {
+                if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT || embedBuilder.getFields().size() >= 25) {
                     break;
                 }
 
@@ -114,7 +112,6 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 int exitCode = addFixIfPresent(exceptionTitle, embedBuilder);
                 if (exitCode > 0) {
                     embedLength += exitCode;
-                    fieldCount++;
                 } else if (exitCode != -1) {
                     // Only continue if no response exists
                     return;
@@ -131,7 +128,6 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
                         embedBuilder.addField(exceptionTitle, exceptionDesc, false);
                         embedLength += exceptionTitle.length() + exceptionDesc.length();
-                        fieldCount++;
 
                         break;
                     }
