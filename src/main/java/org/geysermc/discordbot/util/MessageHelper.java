@@ -28,9 +28,11 @@ public class MessageHelper {
             .setDescription(message) // Set the description
             .setColor(BotColors.FAILURE.getColor()) // Set the color
             .build(); // Finalize it
+
         if (event == null) {
             return embed;
         }
+
         if (event instanceof CommandEvent) { // If this is a normal !command
             ((CommandEvent) event)
                 .getMessage()
@@ -44,6 +46,7 @@ public class MessageHelper {
         } else {
             throw new IllegalArgumentException("Event must be one of CommandEvent, SlashCommandEvent");
         }
+
         return null;
     }
 
@@ -56,14 +59,13 @@ public class MessageHelper {
      */
     public static boolean similarFieldExists(List<MessageEmbed.Field> fields, String string) {
         String lowerCaseString = string.toLowerCase();
-
         for (MessageEmbed.Field field : fields) {
             String fieldName = field.getName();
             if (fieldName == null) {
                 continue;
             }
-            String lowerCaseFieldName = fieldName.toLowerCase();
 
+            String lowerCaseFieldName = fieldName.toLowerCase();
             if (lowerCaseFieldName.contains(lowerCaseString) || lowerCaseString.contains(lowerCaseFieldName)) {
                 return true;
             }

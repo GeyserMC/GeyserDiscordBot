@@ -120,8 +120,8 @@ public class ErrorAnalyzer extends ListenerAdapter {
             if (branchMatcher.find()) {
                 branch = branchMatcher.group(1);
             }
-            GithubFileFinder fileFinder = new GithubFileFinder(branch);
 
+            GithubFileFinder fileFinder = new GithubFileFinder(branch);
             for (StackException exception : exceptions) {
                 if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT || embedBuilder.getFields().size() >= 25) {
                     break;
