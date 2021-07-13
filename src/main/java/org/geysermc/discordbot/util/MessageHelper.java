@@ -55,12 +55,16 @@ public class MessageHelper {
      * @return True if the List has a {@link MessageEmbed.Field} whose name contains the given String, or the given string contains the field's name
      */
     public static boolean similarFieldExists(List<MessageEmbed.Field> fields, String string) {
+        String lowerCaseString = string.toLowerCase();
+
         for (MessageEmbed.Field field : fields) {
             String fieldName = field.getName();
             if (fieldName == null) {
                 continue;
             }
-            if (fieldName.contains(string) || string.contains(fieldName)) {
+            String lowerCaseFieldName = fieldName.toLowerCase();
+
+            if (lowerCaseFieldName.contains(lowerCaseString) || lowerCaseString.contains(lowerCaseFieldName)) {
                 return true;
             }
         }
