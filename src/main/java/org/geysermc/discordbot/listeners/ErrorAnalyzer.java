@@ -65,6 +65,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
             String[] groups = new String[matcher.groupCount()];
             for (int i = 0; i < matcher.groupCount(); i++) {
                 groups[i] = matcher.group(i + 1);
+                groups[i] = groups[i] == null ? "" : groups[i]; // Replace nulls with empty strings
             }
 
             url = String.format(logUrlPatterns.get(regex), groups);
@@ -137,7 +138,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     embedLength += exitCode;
                 } else if (exitCode != -1) {
                     // Only continue if no response exists
-                    return;
+                    break;
                 }
 
                 // If no fix exists then add some info about the error
@@ -158,14 +159,16 @@ public class ErrorAnalyzer extends ListenerAdapter {
             }
         }
 
-        // Set the description accordingly if nothing Geyser related was found
-        if (embedBuilder.getFields().isEmpty()) {
-            embedBuilder.setDescription("We don't currently have automated responses for the detected errors!");
-        } else {
-            MessageHelper.truncateFields(embedBuilder);
-        }
+        if (exceptions.size() > 0 || embedBuilder.getFields().size() > 0) {
+            // Set the description accordingly if nothing Geyser related was found
+            if (exceptions.size() > 0) {
+                embedBuilder.setDescription("We don't currently have automated responses for the detected errors!");
+            } else {
+                MessageHelper.truncateFields(embedBuilder);
+            }
 
-        event.getMessage().reply(embedBuilder.build()).queue();
+            event.getMessage().reply(embedBuilder.build()).queue();
+        }
     }
 
     /**
