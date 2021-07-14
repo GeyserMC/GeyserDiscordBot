@@ -91,4 +91,11 @@ public class PropertiesManager {
     public static String getGithubToken() {
         return properties.getProperty("github-token");
     }
+
+    /**
+     * @return Sentry URL
+     */
+    public static String getSentryURL() {
+        return properties.getProperty("sentry-url");
+    }
 }

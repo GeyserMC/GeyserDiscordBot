@@ -197,6 +197,13 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- For error logging -->
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry</artifactId>
+            <version>5.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>

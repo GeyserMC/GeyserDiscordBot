@@ -29,6 +29,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import io.sentry.Sentry;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -121,6 +122,13 @@ public class GeyserBot {
         Properties prop = new Properties();
         prop.load(new FileInputStream("bot.properties"));
         PropertiesManager.loadProperties(prop);
+
+        // Setup sentry.io
+        if (PropertiesManager.getSentryURL() != null) {
+            Sentry.init(options -> {
+                options.setDsn(PropertiesManager.getSentryURL());
+            });
+        }
 
         // Connect to github
         github = new GitHubBuilder().withOAuthToken(PropertiesManager.getGithubToken()).build();
