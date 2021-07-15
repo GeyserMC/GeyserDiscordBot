@@ -93,9 +93,16 @@ public class PropertiesManager {
     }
 
     /**
-     * @return Sentry URL
+     * @return Sentry DSN
      */
-    public static String getSentryURL() {
-        return properties.getProperty("sentry-url");
+    public static String getSentryDsn() {
+        return properties.getProperty("sentry-dsn");
+    }
+
+    /**
+     * @return Sentry environment
+     */
+    public static String getSentryEnv() {
+        return properties.getProperty("sentry-env");
     }
 }

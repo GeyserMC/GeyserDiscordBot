@@ -124,9 +124,12 @@ public class GeyserBot {
         PropertiesManager.loadProperties(prop);
 
         // Setup sentry.io
-        if (PropertiesManager.getSentryURL() != null) {
+        if (PropertiesManager.getSentryDsn() != null) {
+            LOGGER.info("Loading sentry.io...");
             Sentry.init(options -> {
-                options.setDsn(PropertiesManager.getSentryURL());
+                options.setDsn(PropertiesManager.getSentryDsn());
+                options.setEnvironment(PropertiesManager.getSentryEnv());
+                LOGGER.info("Sentry.io loaded");
             });
         }
 

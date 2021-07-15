@@ -40,8 +40,6 @@ import java.time.Instant;
 public class CommandErrorHandler extends BotCommandListener implements CommandListener {
     @Override
     public void onCommandException(CommandEvent event, Command command, Throwable throwable) {
-        super.onCommandException(event, command, throwable);
-
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         throwable.printStackTrace(pw);
@@ -62,5 +60,7 @@ public class CommandErrorHandler extends BotCommandListener implements CommandLi
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.FAILURE.getColor())
                 .build()).queue();
+
+        super.onCommandException(event, command, throwable);
     }
 }

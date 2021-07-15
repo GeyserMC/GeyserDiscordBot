@@ -6,4 +6,5 @@ db-database: bot
 db-user: root
 db-pass:
 github-token: github_oauth_token
-sentry-url: https://xxx@xxx.ingest.sentry.io/xxx
+sentry-dsn: https://xxx@xxx.ingest.sentry.io/xxx
+sentry-env: production
