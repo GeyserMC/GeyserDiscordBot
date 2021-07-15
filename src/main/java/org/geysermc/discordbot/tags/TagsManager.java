@@ -48,9 +48,9 @@ public class TagsManager {
     }
 
     /**
-     * An issue -> response Map. All keys and values have no leading or trailing whitespace.
+     * An issue to response Map. All keys and values have no leading or trailing whitespace.
      *
-     * @return The issue -> response Map.
+     * @return The issue to response Map.
      */
     public static Map<String, String> getIssueResponses() {
         if (!tagsLoaded) {
