@@ -95,6 +95,11 @@ public class PingCommand extends SlashCommand {
             return MessageHelper.errorResponse(null, "IP too long", "Search query is over the max allowed character count of 128 (" + ip.length() + ")");
         }
 
+        // If the ip is in url form remove that
+        if (ip.startsWith("http")) {
+            ip = ip.replaceAll("https?://", "").split("/")[0];
+        }
+
         String[] ipParts = ip.split(":");
 
         String hostname = ipParts[0];
@@ -102,8 +107,12 @@ public class PingCommand extends SlashCommand {
         int bePort = 19132;
 
         if (ipParts.length > 1) {
-            jePort = Integer.parseInt(ipParts[1]);
-            bePort = jePort;
+            try {
+                jePort = Integer.parseInt(ipParts[1]);
+                bePort = jePort;
+            } catch (NumberFormatException ignored) {
+                return MessageHelper.errorResponse(null, "Invalid port", "The port you specified is not a valid number.");
+            }
         }
 
         String javaInfo = "Unable to find Java server at the requested address";
