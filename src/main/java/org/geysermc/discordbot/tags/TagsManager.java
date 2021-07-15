@@ -47,6 +47,10 @@ public class TagsManager {
         return TAGS;
     }
 
+    /**
+     * An issue -> response Map. All keys and values have no leading or trailing whitespace.
+     * @return The issue -> response Map.
+     */
     public static Map<String, String> getIssueResponses() {
         if (!tagsLoaded) {
             loadTags();
@@ -155,7 +159,7 @@ public class TagsManager {
                             if (issueTriggers != null) {
                                 // allow any tag with issues listed to be an issue response
                                 for (String issue : issueTriggers) {
-                                    ISSUE_RESPONSES.put(issue.trim(), content.toString());
+                                    ISSUE_RESPONSES.put(issue.trim(), content.toString().trim());
                                 }
                             }
                         }

@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
@@ -131,31 +130,29 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     break;
                 }
 
-                String exceptionTitle = exception.getException() + ": " + exception.getDescription();
+                String exceptionTitle = (exception.getException() + ": " + exception.getDescription()).trim();
 
                 // If there is a fix for the exception, add it.
                 int exitCode = addFixIfPresent(exceptionTitle, embedBuilder);
                 if (exitCode > 0) {
                     embedLength += exitCode;
-                } else if (exitCode != -1) {
-                    // Only continue if no response exists
-                    break;
-                }
+                } else if (exitCode == -1) {
+                    // The error was not already listed and no fix was found. Add some info about the error
 
-                // If no fix exists then add some info about the error
-                for (StackLine line : exception.getLines()) {
-                    if (line.getStackPackage() != null && line.getStackPackage().startsWith("org.geysermc") && !line.getStackPackage().contains("shaded")) {
-                        // Get the file url
-                        String lineUrl = fileFinder.getFileUrl(line.getSource(), Integer.parseInt(line.getLine()));
+                    for (StackLine line : exception.getLines()) {
+                        if (line.getStackPackage() != null && line.getStackPackage().startsWith("org.geysermc") && !line.getStackPackage().contains("shaded")) {
+                            // Get the file url
+                            String lineUrl = fileFinder.getFileUrl(line.getSource(), Integer.parseInt(line.getLine()));
 
-                        // Build the description
-                        String details = "Unknown fix!\nClass: `" + line.getJavaClass() + "`\nMethod: `" + line.getMethod() + "`\nLine: `" + line.getLine() + "`\nLink: " + (!lineUrl.isEmpty() ? "[" + line.getSource() + "#L" + line.getLine() + "](" + lineUrl + ")" : "Unknown");
+                            // Build the description
+                            String details = "Unknown fix!\nClass: `" + line.getJavaClass() + "`\nMethod: `" + line.getMethod() + "`\nLine: `" + line.getLine() + "`\nLink: " + (!lineUrl.isEmpty() ? "[" + line.getSource() + "#L" + line.getLine() + "](" + lineUrl + ")" : "Unknown");
 
-                        String trimmedTitle = BotHelpers.trim(exceptionTitle, MessageEmbed.TITLE_MAX_LENGTH);
-                        embedBuilder.addField(trimmedTitle, details, false);
-                        embedLength += trimmedTitle.length() + details.length();
+                            String trimmedTitle = BotHelpers.trim(exceptionTitle, MessageEmbed.TITLE_MAX_LENGTH);
+                            embedBuilder.addField(trimmedTitle, details, false);
+                            embedLength += trimmedTitle.length() + details.length();
 
-                        break;
+                            break;
+                        }
                     }
                 }
             }
@@ -179,10 +176,13 @@ public class ErrorAnalyzer extends ListenerAdapter {
      * @param issue The issue to find the fix for
      * @param embedBuilder The embed builder to add to
      * @return A positive integer equal to the size of the {@link MessageEmbed.Field} added to the {@link EmbedBuilder} if the issue wasn't already listed and a fix exists.
-     * Will return -2 if the issue was already listed. Will return -1 if no fix was found.
+     * Will return -2 if the issue was already listed. Will return -1 if the issue was not already listed and no fix was found.
      */
     private int addFixIfPresent(String issue, EmbedBuilder embedBuilder) {
-        if (MessageHelper.similarFieldExists(embedBuilder.getFields(), issue)) {
+        // Cut down the issue so that comparisons to existing fields work
+        String fieldTitle = BotHelpers.trim(issue, MessageEmbed.TITLE_MAX_LENGTH);
+
+        if (MessageHelper.similarFieldExists(embedBuilder.getFields(), fieldTitle)) {
             return -2;
         }
 
@@ -199,20 +199,10 @@ public class ErrorAnalyzer extends ListenerAdapter {
         if (fix == null) {
             return -1;
         } else {
-            String title = issue.trim();
-            if (title.length() > MessageEmbed.TITLE_MAX_LENGTH) {
-                GeyserBot.LOGGER.warn("Issue response with Field name: '" + title + "' has a Field name greater than " + MessageEmbed.TITLE_MAX_LENGTH + " characters! Truncating field name.");
-                title = title.substring(0, MessageEmbed.TITLE_MAX_LENGTH);
-            }
+            String response = BotHelpers.trim(fix, MessageEmbed.VALUE_MAX_LENGTH);
 
-            String response = fix.trim();
-            if (response.length() > MessageEmbed.VALUE_MAX_LENGTH) {
-                GeyserBot.LOGGER.warn("Issue response with Field name: '" + title + "' has a Field value greater than " + MessageEmbed.VALUE_MAX_LENGTH + " characters! Truncating Field value.");
-                response = response.substring(0, MessageEmbed.VALUE_MAX_LENGTH);
-            }
-
-            embedBuilder.addField(title, response, false);
-            return fix.length();
+            embedBuilder.addField(fieldTitle, response, false);
+            return fieldTitle.length() + response.length();
         }
     }
 }
