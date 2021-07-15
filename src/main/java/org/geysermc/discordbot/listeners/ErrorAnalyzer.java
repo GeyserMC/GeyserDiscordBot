@@ -12,6 +12,7 @@ import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
+import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.GithubFileFinder;
 import org.geysermc.discordbot.util.MessageHelper;
 import pw.chew.chewbotcca.util.RestClient;
@@ -150,8 +151,9 @@ public class ErrorAnalyzer extends ListenerAdapter {
                         // Build the description
                         String details = "Unknown fix!\nClass: `" + line.getJavaClass() + "`\nMethod: `" + line.getMethod() + "`\nLine: `" + line.getLine() + "`\nLink: " + (!lineUrl.isEmpty() ? "[" + line.getSource() + "#L" + line.getLine() + "](" + lineUrl + ")" : "Unknown");
 
-                        embedBuilder.addField(exceptionTitle, details, false);
-                        embedLength += exceptionTitle.length() + details.length();
+                        String trimmedTitle = BotHelpers.trim(exceptionTitle, MessageEmbed.TITLE_MAX_LENGTH);
+                        embedBuilder.addField(trimmedTitle, details, false);
+                        embedLength += trimmedTitle.length() + details.length();
 
                         break;
                     }
