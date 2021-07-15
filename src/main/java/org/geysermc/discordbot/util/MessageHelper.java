@@ -52,9 +52,9 @@ public class MessageHelper {
 
     /**
      * Checks if a List of {@link MessageEmbed.Field}s has a Field whose name is similar to a given String
+     *
      * @param fields The List of {@link MessageEmbed.Field}s to check
      * @param string The string to check
-     *
      * @return True if the List has a {@link MessageEmbed.Field} whose name contains the given String, or the given string contains the field's name
      */
     public static boolean similarFieldExists(List<MessageEmbed.Field> fields, String string) {
