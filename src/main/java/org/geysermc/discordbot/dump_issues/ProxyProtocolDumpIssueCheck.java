@@ -23,25 +23,31 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.commands.restart;
+package org.geysermc.discordbot.dump_issues;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.Permission;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
-public class RestartCommand extends Command {
+import java.util.ArrayList;
+import java.util.List;
 
-    public RestartCommand() {
-        this.name = "restart";
-        this.hidden = true;
-        this.userMissingPermMessage = "";
-        this.userPermissions = new Permission[] { Permission.MANAGE_ROLES };
-    }
+public class ProxyProtocolDumpIssueCheck extends AbstractDumpIssueCheck {
 
+    @NotNull
     @Override
-    protected void execute(CommandEvent event) {
-        event.getMessage().reply("```\nRestarting...\n```").queue(message -> {
-            event.getJDA().shutdown();
-        });
+    public List<String> checkIssues(JSONObject dump) {
+        JSONObject configRemote = dump.getJSONObject("config").getJSONObject("remote");
+        JSONObject configBedrock = dump.getJSONObject("config").getJSONObject("bedrock");
+
+        List<String> warnings = new ArrayList<>();
+
+        if (configBedrock.getBoolean("enable-proxy-protocol")) {
+            warnings.add("- `enable-proxy-protocol` should ONLY be enabled if you run a reverse UDP proxy in front of Geyser.");
+        }
+        if (configRemote.getBoolean("use-proxy-protocol")) {
+            warnings.add("- `use-proxy-protocol` should ONLY be enabled if either of these apply:\n\u00A0\u00A0\u00A0\u00A01. Your server supports PROXY protocol (this has nothing to do with if you're using BungeeCord or Velocity).\n\u00A0\u00A0\u00A0\u00A02. You have the exact same option enabled in your BungeeCord/Velocity config (it is off by default).");
+        }
+
+        return warnings;
     }
 }

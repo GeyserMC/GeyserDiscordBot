@@ -105,63 +105,67 @@ public class HealthCheckerManager {
     private static void doChecks() {
         for (Guild guild : GeyserBot.getJDA().getGuilds()) {
             for (Map.Entry<String, String> check : ServerSettings.getMap(guild.getIdLong(), "health-checks").entrySet()) {
-                // If we can't get the channel skip the check
-                if (!BotHelpers.channelExists(guild, check.getKey())) continue;
+                try {
+                    // If we can't get the channel skip the check
+                    if (!BotHelpers.channelExists(guild, check.getKey())) continue;
 
-                // Build the request check
-                Request request = new Request.Builder()
-                        .url(check.getValue())
-                        .get()
-                        .build();
+                    // Build the request check
+                    Request request = new Request.Builder()
+                            .url(check.getValue())
+                            .get()
+                            .build();
 
-                boolean success;
-                int responseCode;
-                long responseTime;
-                long responseBodyLength;
-                String responseBody;
+                    boolean success;
+                    int responseCode;
+                    long responseTime;
+                    long responseBodyLength;
+                    String responseBody;
 
-                // Make the request and store the info for the embed
-                try (Response response = HTTP_CLIENT.newCall(request).execute()) {
-                    success = response.code() == 200;
-                    responseCode = response.code();
-                    responseTime = response.receivedResponseAtMillis() - response.sentRequestAtMillis();
-                    responseBodyLength = response.body().contentLength();
-                    responseBody = (response.body() != null ? response.body().string() : "None");
-                } catch (IOException e) {
-                    success = false;
-                    responseCode = 0;
-                    responseTime = 0;
-                    responseBodyLength = 0;
-                    responseBody = e.toString();
+                    // Make the request and store the info for the embed
+                    try (Response response = HTTP_CLIENT.newCall(request).execute()) {
+                        success = response.code() == 200;
+                        responseCode = response.code();
+                        responseTime = response.receivedResponseAtMillis() - response.sentRequestAtMillis();
+                        responseBodyLength = response.body().contentLength();
+                        responseBody = (response.body() != null ? response.body().string() : "None");
+                    } catch (IOException e) {
+                        success = false;
+                        responseCode = 0;
+                        responseTime = 0;
+                        responseBodyLength = 0;
+                        responseBody = e.toString();
+                    }
+
+                    // Get the existing message if it's the same status
+                    Message message = null;
+                    HealthStatus healthStatus = HEALTH_STATUS.get(check.getKey());
+                    if (healthStatus != null && healthStatus.wasSuccess() == success) {
+                        message = healthStatus.getMessage();
+                    }
+
+                    // Build the updated embed
+                    MessageEmbed embed = new EmbedBuilder()
+                            .setTitle("Health check: " + check.getValue(), check.getValue())
+                            .addField("Status code", String.valueOf(responseCode), false)
+                            .addField("Response time", responseTime + "ms", false)
+                            .addField("Response (" + responseBodyLength + ")", "```\n" + responseBody + "```", false)
+                            .setTimestamp(Instant.now())
+                            .setColor(success ? BotColors.SUCCESS.getColor() : BotColors.FAILURE.getColor())
+                            .build();
+
+                    // Update or send the embed
+                    if (message != null) {
+                        message = message.editMessage(embed).complete();
+                    } else {
+                        message = guild.getTextChannelById(check.getKey()).sendMessage(embed).complete();
+                    }
+
+                    // Update our cache
+                    healthStatus = new HealthStatus(message, responseCode);
+                    HEALTH_STATUS.put(check.getKey(), healthStatus);
+                } catch (Exception e) {
+                    GeyserBot.LOGGER.error("Error checking health on: " + check.getValue(), e);
                 }
-
-                // Get the existing message if it's the same status
-                Message message = null;
-                HealthStatus healthStatus = HEALTH_STATUS.get(check.getKey());
-                if (healthStatus != null && healthStatus.wasSuccess() == success) {
-                    message = healthStatus.getMessage();
-                }
-
-                // Build the updated embed
-                MessageEmbed embed = new EmbedBuilder()
-                        .setTitle("Health check: " + check.getValue(), check.getValue())
-                        .addField("Status code", String.valueOf(responseCode), false)
-                        .addField("Response time", responseTime + "ms", false)
-                        .addField("Response (" + responseBodyLength + ")", "```\n" + responseBody + "```", false)
-                        .setTimestamp(Instant.now())
-                        .setColor(success ? BotColors.SUCCESS.getColor() : BotColors.FAILURE.getColor())
-                        .build();
-
-                // Update or send the embed
-                if (message != null) {
-                    message = message.editMessage(embed).complete();
-                } else {
-                    message = guild.getTextChannelById(check.getKey()).sendMessage(embed).complete();
-                }
-
-                // Update our cache
-                healthStatus = new HealthStatus(message, responseCode);
-                HEALTH_STATUS.put(check.getKey(), healthStatus);
             }
         }
     }
