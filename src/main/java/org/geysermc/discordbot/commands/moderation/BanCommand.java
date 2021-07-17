@@ -118,7 +118,7 @@ public class BanCommand extends Command {
                             .addField("Reason", reason, false)
                             .setTimestamp(Instant.now())
                             .setColor(BotColors.FAILURE.getColor())
-                            .build()).queue());
+                            .build()).queue(message -> {}, throwable -> {}), throwable -> {});
         }
 
         // Ban user
