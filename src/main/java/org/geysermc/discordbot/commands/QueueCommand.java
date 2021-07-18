@@ -31,6 +31,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.json.JSONException;
@@ -80,10 +81,8 @@ public class QueueCommand extends SlashCommand {
 
         // Calculate the queue time and generate a nice string for it
         Instant now = Instant.now();
-        PrettyTime t = new PrettyTime(now);
         Instant queueTime = now.plusMillis((long) (stats.getJSONObject("upload_queue").getFloat("estimated_duration") * 1000));
-        String queueTimeText = t.format(t.calculatePreciseDuration(queueTime));
-        queueTimeText = queueTimeText.replace(" from now", "");
+        String queueTimeText = TimeFormat.RELATIVE.format(queueTime);
 
         return new EmbedBuilder()
                 .setTitle("Current global api skin queue")
