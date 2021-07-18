@@ -32,6 +32,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.LevelInfo;
+import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,6 +55,11 @@ public class LevelHandler extends ListenerAdapter {
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         // Ignore bots
         if (event.getAuthor().isBot()) {
+            return;
+        }
+
+        // Ignore certain channels
+        if (ServerSettings.shouldDisableLevels(event.getChannel())) {
             return;
         }
 
