@@ -45,6 +45,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -153,11 +154,10 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
-        PrettyTime t = new PrettyTime(Instant.now());
         ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
                 .setAuthor("Member Joined", null, event.getUser().getAvatarUrl())
                 .setDescription(event.getUser().getAsMention() + " " + event.getUser().getAsTag())
-                .addField("Account Created", t.format(event.getUser().getTimeCreated().toInstant()), false)
+                .addField("Account Created", TimeFormat.RELATIVE.format(event.getUser().getTimeCreated().toInstant()), false)
                 .setThumbnail(event.getUser().getAvatarUrl())
                 .setFooter("ID: " + event.getUser().getId())
                 .setTimestamp(Instant.now())

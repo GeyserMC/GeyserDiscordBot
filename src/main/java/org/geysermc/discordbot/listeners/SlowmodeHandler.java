@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.util.BotColors;
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -41,14 +42,13 @@ public class SlowmodeHandler extends ListenerAdapter {
 
             OffsetDateTime dateTime = getLastPosted(event.getAuthor());
             if (dateTime != null) {
-                PrettyTime t = new PrettyTime(event.getMessage().getTimeCreated().toInstant());
                 event.getMessage().delete().queue(unused ->
                         event.getAuthor().openPrivateChannel().queue(channel ->
                                 channel.sendMessage(new EmbedBuilder()
                                         .setTitle("Message deleted")
                                         .appendDescription("Your message has been removed because there is still a delay before you can type!")
                                         .addField("Channel", event.getMessage().getTextChannel().getAsMention(), false)
-                                        .addField("When you can post again", t.format(dateTime.plusSeconds(seconds).toInstant()), false)
+                                        .addField("When you can post again", TimeFormat.RELATIVE.format(dateTime.plusSeconds(seconds).toInstant()), false)
                                         .setTimestamp(Instant.now())
                                         .setColor(BotColors.FAILURE.getColor())
                                         .build()).queue()));

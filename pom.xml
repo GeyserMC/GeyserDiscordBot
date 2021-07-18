@@ -67,7 +67,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.2.1_270</version>
+            <version>4.3.0_297</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -81,7 +81,7 @@
         <dependency>
             <groupId>pw.chew</groupId>
             <artifactId>jda-chewtils</artifactId>
-            <version>1.20</version>
+            <version>1.20.4</version>
             <scope>compile</scope>
             <type>pom</type>
         </dependency>
