@@ -30,6 +30,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ModLog;
 import org.geysermc.discordbot.util.BotColors;
@@ -83,7 +84,7 @@ public class LogCommand extends Command {
         } else {
             for (ModLog log : logs) {
                 String title = log.getAction().substring(0, 1).toUpperCase() + log.getAction().substring(1);
-                logEmbedBuilder = logEmbedBuilder.addField(title, "**Time:** " + OffsetDateTime.ofInstant(log.getTime(), ZoneOffset.UTC).format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\n**By:** " + log.getUser().getAsMention() + "\n**Reason:** " + log.getReason(), false);
+                logEmbedBuilder = logEmbedBuilder.addField(title, "**Time:** " + TimeFormat.DATE_TIME_LONG.format(OffsetDateTime.ofInstant(log.getTime(), ZoneOffset.UTC)) + "\n**By:** " + log.getUser().getAsMention() + "\n**Reason:** " + log.getReason(), false);
             }
         }
 

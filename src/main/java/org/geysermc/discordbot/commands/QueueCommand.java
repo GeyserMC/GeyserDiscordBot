@@ -81,7 +81,7 @@ public class QueueCommand extends SlashCommand {
         // Calculate the queue time and generate a nice string for it
         Instant now = Instant.now();
         PrettyTime t = new PrettyTime(now);
-        Instant queueTime = now.plusMillis((long) (stats.getJSONObject("upload_queue").getFloat("estimated_duration") * 1000));
+        Instant queueTime = now.plusSeconds((long) stats.getJSONObject("upload_queue").getFloat("estimated_duration"));
         String queueTimeText = t.format(t.calculatePreciseDuration(queueTime));
         queueTimeText = queueTimeText.replace(" from now", "");
 
