@@ -28,6 +28,7 @@ package org.geysermc.discordbot.updates;
 import org.geysermc.discordbot.GeyserBot;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
 
 import java.util.ArrayList;
@@ -72,7 +73,12 @@ public class JiraUpdateCheck extends AbstractUpdateCheck {
                 }
             }
         } catch (JSONException e) {
-            throw new JSONException(e.getMessage() + "\n" + versionsText);
+            try {
+                JSONObject obj = new JSONObject(versionsText);
+                GeyserBot.LOGGER.warn("Error while checking Jira versions for '" + project + "': " + obj.getString("error"));
+            } catch (JSONException e2) {
+                throw new JSONException(e.getMessage() + "\n" + versionsText);
+            }
         }
 
     }
