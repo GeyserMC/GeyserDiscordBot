@@ -67,7 +67,7 @@ public class MemberCountCommand extends SlashCommand {
 
     @Override
     protected void execute(CommandEvent event) {
-        event.getMessage().replyEmbeds(handle(event.getGuild(), BotHelpers.getRole(event.getGuild(), event.getArgs()))).queue();
+        event.getMessage().reply(handle(event.getGuild(), BotHelpers.getRole(event.getGuild(), event.getArgs()))).queue();
     }
 
     protected MessageEmbed handle(Guild guild, Role role) {
