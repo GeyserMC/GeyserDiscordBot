@@ -34,9 +34,7 @@ import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ModLog;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
-import org.geysermc.discordbot.util.PropertiesManager;
 
-import java.awt.*;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -65,7 +63,7 @@ public class LogCommand extends Command {
 
         // Check user is valid
         if (user == null) {
-            event.getMessage().reply(new EmbedBuilder()
+            event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user.")
                     .setColor(BotColors.FAILURE.getColor())
@@ -90,6 +88,6 @@ public class LogCommand extends Command {
         }
 
         // Send the embed as a reply
-        event.getMessage().reply(logEmbedBuilder.build()).queue();
+        event.getMessage().replyEmbeds(logEmbedBuilder.build()).queue();
     }
 }

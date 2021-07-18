@@ -32,7 +32,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import org.geysermc.discordbot.util.BotColors;
 import pw.chew.chewbotcca.listeners.BotCommandListener;
 
-import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Instant;
@@ -51,7 +50,7 @@ public class CommandErrorHandler extends BotCommandListener implements CommandLi
             errorMessage.append(errorStack[i]).append("\n");
         }
 
-        event.getMessage().reply(new EmbedBuilder()
+        event.getMessage().replyEmbeds(new EmbedBuilder()
                 .setTitle("Error handling command")
                 .setDescription("An error occurred while handling the command")
                 .addField("Command usage", event.getPrefix() + command.getName() + (command.getArguments() != null ? " " + command.getArguments() : ""), false)

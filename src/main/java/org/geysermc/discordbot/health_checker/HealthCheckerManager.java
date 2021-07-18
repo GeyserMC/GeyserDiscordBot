@@ -26,8 +26,10 @@
 package org.geysermc.discordbot.health_checker;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -155,9 +157,9 @@ public class HealthCheckerManager {
 
                     // Update or send the embed
                     if (message != null) {
-                        message = message.editMessage(embed).complete();
+                        message = message.editMessageEmbeds(embed).complete();
                     } else {
-                        message = guild.getTextChannelById(check.getKey()).sendMessage(embed).complete();
+                        message = guild.getTextChannelById(check.getKey()).sendMessageEmbeds(embed).complete();
                     }
 
                     // Update our cache

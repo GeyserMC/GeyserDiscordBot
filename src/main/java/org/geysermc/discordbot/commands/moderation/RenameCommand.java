@@ -31,7 +31,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.storage.ServerSettings;
@@ -42,7 +41,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class RenameCommand extends Command {
 
@@ -62,7 +60,7 @@ public class RenameCommand extends Command {
 
         // Check user is valid
         if (member == null) {
-            event.getMessage().reply(new EmbedBuilder()
+            event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
                     .setColor(BotColors.FAILURE.getColor())
@@ -88,8 +86,8 @@ public class RenameCommand extends Command {
                     .build();
 
             // Send the embed as a reply and to the log
-            ServerSettings.getLogChannel(event.getGuild()).sendMessage(renameEmbed).queue();
-            event.getMessage().reply(renameEmbed).queue();
+            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(renameEmbed).queue();
+            event.getMessage().replyEmbeds(renameEmbed).queue();
         });
     }
 }

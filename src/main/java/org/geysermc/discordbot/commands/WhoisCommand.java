@@ -88,7 +88,7 @@ public class WhoisCommand extends SlashCommand {
             return;
         }
 
-        event.getMessage().reply(handle(member)).queue();
+        event.getMessage().replyEmbeds(handle(member)).queue();
     }
 
     protected MessageEmbed handle(Member member) {

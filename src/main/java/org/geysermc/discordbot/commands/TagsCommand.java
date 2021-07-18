@@ -37,7 +37,6 @@ import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -75,7 +74,7 @@ public class TagsCommand extends SlashCommand {
             search = args.get(0);
         }
 
-        event.getMessage().reply(handle(search)).queue();
+        event.getMessage().replyEmbeds(handle(search)).queue();
     }
 
     protected MessageEmbed handle(String search) {

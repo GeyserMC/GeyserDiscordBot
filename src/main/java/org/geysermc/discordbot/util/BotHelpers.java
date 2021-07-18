@@ -193,8 +193,8 @@ public class BotHelpers {
      * @param clazz Any java class that lives in the same place as the resources you want.
      * @param path Should end with "/", but not start with one.
      * @return Just the name of each member item, not the full paths.
-     * @throws URISyntaxException
-     * @throws IOException
+     * @throws URISyntaxException when the uri syntax isn't having it today
+     * @throws IOException when the input or output isn't having a good day
      */
     public static String[] getResourceListing(Class clazz, String path) throws URISyntaxException, IOException {
         URL dirURL = clazz.getClassLoader().getResource(path);

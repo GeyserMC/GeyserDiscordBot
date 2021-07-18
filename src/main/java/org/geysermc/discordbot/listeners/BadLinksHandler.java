@@ -39,7 +39,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BadLinksHandler extends ListenerAdapter {
-    private static Pattern HTTP_PATTERN = Pattern.compile("https?:\\/\\/[^\\s<]+[^<.,:;\"')\\]\\s]", Pattern.CASE_INSENSITIVE);
+    private static final Pattern HTTP_PATTERN = Pattern.compile("https?:\\/\\/[^\\s<]+[^<.,:;\"')\\]\\s]", Pattern.CASE_INSENSITIVE);
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
@@ -58,7 +58,7 @@ public class BadLinksHandler extends ListenerAdapter {
             for (String checkDomain : ServerSettings.getList(event.getGuild().getIdLong(), "check-domains")) {
                 // Is the domain not exact but still close
                 if (!domain.equals(checkDomain) && compareDomain(domain, checkDomain)) {
-                    ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                    ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                             .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
                             .setDescription("**Link removed, sent by** " + event.getAuthor().getAsMention() + " **deleted in** " + event.getChannel().getAsMention() + "\n" + event.getMessage().getContentRaw())
                             .addField("Link", link, false)

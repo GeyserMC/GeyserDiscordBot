@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.util;
 
-import java.awt.*;
 import java.util.Properties;
 
 // config.json and .env manager
