@@ -11,9 +11,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.util.BotColors;
 import org.jetbrains.annotations.NotNull;
-import org.ocpsoft.prettytime.PrettyTime;
 
-import java.awt.*;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Map;
