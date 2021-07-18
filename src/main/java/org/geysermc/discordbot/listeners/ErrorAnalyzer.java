@@ -190,7 +190,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         String fix = null;
         for (String key : TagsManager.getIssueResponses().keySet()) {
             String lowerCaseKey = key.toLowerCase();
-            if (lowerCaseKey.contains(lowerCaseIssue) || lowerCaseIssue.contains(lowerCaseKey)) {
+            if (lowerCaseKey.contains(lowerCaseIssue)) {
                 fix = TagsManager.getIssueResponses().get(key);
                 break;
             }
