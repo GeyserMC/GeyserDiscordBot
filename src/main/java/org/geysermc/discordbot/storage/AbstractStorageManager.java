@@ -131,7 +131,7 @@ public abstract class AbstractStorageManager {
      * Get the slow mode channels for a {@link Guild}
      *
      * @param guild The Guild to get the channels for
-     * @return the slow mode channels
+     * @return The slow mode channels
      */
     public abstract List<SlowModeInfo> getSlowModeChannels(Guild guild);
 
