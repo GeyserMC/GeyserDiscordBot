@@ -32,6 +32,9 @@ import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
 
+import java.util.Comparator;
+import java.util.stream.Collectors;
+
 /**
  * Handle the help command
  */
@@ -49,14 +52,13 @@ public class HelpCommand extends Command {
             .setColor(BotColors.SUCCESS.getColor())
             .setTitle("Geyser Bot Help");
 
-        for (Command command : GeyserBot.COMMANDS) {
+        for (Command command : GeyserBot.COMMANDS.stream().sorted(Comparator.comparing(Command::getName)).collect(Collectors.toList())) {
             if (!command.isHidden()) {
                 helpEmbed.addField("`" + PropertiesManager.getPrefix() + command.getName() + (command.getArguments() != null ? " " + command.getArguments() : "") + "`", command.getHelp(), true);
             }
         }
 
         helpEmbed.addField("`!tag <name>`", "Display a tag for the given name", true);
-
 
         event.getMessage().reply(helpEmbed.build()).queue();
     }

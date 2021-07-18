@@ -6,6 +6,7 @@ import com.rtm516.stackparser.StackLine;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.GithubFileFinder;
 import pw.chew.chewbotcca.util.RestClient;
 
@@ -119,7 +120,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
                     // Make sure we dont already have that field
                     if (embedBuilder.getFields().stream().noneMatch(field -> exceptionTitle.equals(field.getName()) && exceptionDesc.equals(field.getValue()))) {
-                        embedBuilder.addField(exceptionTitle, exceptionDesc, false);
+                        embedBuilder.addField(BotHelpers.trim(exceptionTitle, 256), exceptionDesc, false);
                     }
 
                     break;

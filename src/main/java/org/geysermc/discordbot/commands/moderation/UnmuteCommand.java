@@ -104,7 +104,7 @@ public class UnmuteCommand extends Command {
                             .addField("Reason", reason, false)
                             .setTimestamp(Instant.now())
                             .setColor(BotColors.FAILURE.getColor())
-                            .build()).queue());
+                            .build()).queue(message -> {}, throwable -> {}), throwable -> {});
         }
 
         // Find and remove the 'muted' role

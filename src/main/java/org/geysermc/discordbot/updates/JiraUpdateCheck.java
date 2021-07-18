@@ -59,14 +59,21 @@ public class JiraUpdateCheck extends AbstractUpdateCheck {
 
     @Override
     public void check() {
-        JSONArray versions = new JSONArray(RestClient.get(CHECK_URL + project + "/versions"));
+        String versionsText = RestClient.get(CHECK_URL + project + "/versions");
 
-        for (int i = 0; i < versions.length(); i++) {
-            String name = versions.getJSONObject(i).getString("name");
-            if (!KNOWN_VERSIONS.contains(name)) {
-                KNOWN_VERSIONS.add(name);
-                UpdateManager.sendMessage("A new " + platform + " version (" + name + ") has been added to the Minecraft issue tracker!");
+        try {
+            JSONArray versions = new JSONArray(versionsText);
+
+            for (int i = 0; i < versions.length(); i++) {
+                String name = versions.getJSONObject(i).getString("name");
+                if (!KNOWN_VERSIONS.contains(name)) {
+                    KNOWN_VERSIONS.add(name);
+                    UpdateManager.sendMessage("A new " + platform + " version (" + name + ") has been added to the Minecraft issue tracker!");
+                }
             }
+        } catch (JSONException e) {
+            throw new JSONException(e.getMessage() + "\n" + versionsText);
         }
+
     }
 }

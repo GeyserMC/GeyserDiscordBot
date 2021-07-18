@@ -106,7 +106,7 @@ public class MuteCommand extends Command {
                             .addField("Reason", String.join(" ", args), false)
                             .setTimestamp(Instant.now())
                             .setColor(BotColors.FAILURE.getColor())
-                            .build()).queue());
+                            .build()).queue(message -> {}, throwable -> {}), throwable -> {});
         }
 
         // Find and add the 'muted' role

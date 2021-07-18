@@ -4,6 +4,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.Color;
 
@@ -35,6 +36,11 @@ public class MessageHelper {
                 .getMessage()
                 .reply(embed)
                 .queue();
+        } else if (event instanceof MessageReceivedEvent) { // If this is a /command
+            ((MessageReceivedEvent) event)
+                    .getMessage()
+                    .reply(embed)
+                    .queue();
         } else if (event instanceof SlashCommandEvent) { // If this is a /command
             ((SlashCommandEvent) event)
                 .replyEmbeds(embed) // Have to do this nonsense...
