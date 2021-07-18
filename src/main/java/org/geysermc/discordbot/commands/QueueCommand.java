@@ -57,7 +57,7 @@ public class QueueCommand extends SlashCommand {
 
     @Override
     protected void execute(CommandEvent event) {
-        event.getMessage().reply(handle()).queue();
+        event.getMessage().replyEmbeds(handle()).queue();
     }
 
     protected MessageEmbed handle() {

@@ -28,7 +28,6 @@ package org.geysermc.discordbot.util;
 import org.geysermc.discordbot.GeyserBot;
 import org.kohsuke.github.GHTree;
 import org.kohsuke.github.GHTreeEntry;
-import org.kohsuke.github.GitHub;
 
 import java.io.IOException;
 import java.util.ArrayList;

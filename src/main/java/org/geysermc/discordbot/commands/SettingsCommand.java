@@ -32,7 +32,6 @@ import net.dv8tion.jda.api.Permission;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.BotColors;
 
-import java.awt.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,7 +66,7 @@ public class SettingsCommand extends Command {
                 break;
 
             default:
-                event.getChannel().sendMessage(new EmbedBuilder()
+                event.getChannel().sendMessageEmbeds(new EmbedBuilder()
                         .setTitle("Invalid action specified")
                         .setDescription("Unknown action `" + args.get(0) + "`, it can be one of: `get`, `set`")
                         .setTimestamp(Instant.now())
@@ -76,7 +75,7 @@ public class SettingsCommand extends Command {
                 return;
         }
 
-        event.getChannel().sendMessage(new EmbedBuilder()
+        event.getChannel().sendMessageEmbeds(new EmbedBuilder()
                 .setTitle(title)
                 .addField("Key", "`" + key + "`", false)
                 .addField("Value", "`" + value + "`", false)

@@ -60,6 +60,6 @@ public class HelpCommand extends Command {
 
         helpEmbed.addField("`!tag <name>`", "Display a tag for the given name", true);
 
-        event.getMessage().reply(helpEmbed.build()).queue();
+        event.getMessage().replyEmbeds(helpEmbed.build()).queue();
     }
 }

@@ -34,12 +34,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -100,7 +98,7 @@ public class FileHandler extends ListenerAdapter {
                     embed.setDescription("An exception occurred during upload: " + e.getMessage());
                 }
 
-                event.getMessage().reply(embed.build()).queue();
+                event.getMessage().replyEmbeds(embed.build()).queue();
             }
         }
     }

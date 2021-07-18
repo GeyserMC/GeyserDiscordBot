@@ -33,7 +33,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.LevelInfo;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
@@ -82,7 +81,7 @@ public class LevelHandler extends ListenerAdapter {
         if (levelInfo.getXpToNextLevel() <= 0) {
             levelInfo.setLevel(levelInfo.getNextLevel());
 
-            event.getMessage().reply(new EmbedBuilder()
+            event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Level Up!")
                     .setDescription("You leveled up to level " + levelInfo.getLevel() + "!")
                     .setColor(BotColors.SUCCESS.getColor())
