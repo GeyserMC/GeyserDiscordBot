@@ -85,7 +85,10 @@ exports.init = (client) => {
       let isOldVersion = false
       if (!(response.bootstrapInfo.platform === 'BUNGEECORD' || response.bootstrapInfo.platform === 'VELOCITY' || response.bootstrapInfo.platform === 'ANDROID') &&
           !response.bootstrapInfo.platformVersion.includes(supportedMinecraft)) {
-        isOldVersion = true
+        if (!(supportedMinecraft === '1.16.4' && response.bootstrapInfo.platformVersion.includes('1.16.5'))) {
+          // They're compatible, trust me.
+          isOldVersion = true
+        }
       }
 
       // Check plugins
