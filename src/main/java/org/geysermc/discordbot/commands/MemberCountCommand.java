@@ -71,7 +71,7 @@ public class MemberCountCommand extends SlashCommand {
 
     protected MessageEmbed handle(Guild guild, Role role) {
         return new EmbedBuilder()
-                .addField("Members" + (role != null ? " in " + role.getName() : ""), String.valueOf(role != null ? guild.getMembersWithRoles(role).size() : guild.getMemberCount()), false)
+                .addField("Members" + (role != null ? " in " + role.getName() : ""), String.format("%,d", role != null ? guild.getMembersWithRoles(role).size() : guild.getMemberCount()), false)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor())
                 .build();
