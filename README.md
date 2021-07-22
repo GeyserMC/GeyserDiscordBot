@@ -27,3 +27,4 @@ Most of these are lists which values are seperated by `,` and a few are seperate
 | `check-domains`      | Domains to check against to filter phishing and malware domains                      | `steamcommunity.com`                                        |
 | `health-checks`      | Channel IDs to log web health checks to along with the url to check                  | `808759445827223572\|https://api.geysermc.org/health`       |
 | `dont-level`         | Channel IDs to ignore messages for the level system, set to 0 to disable server wide | `754458074818805811`                                        |
+| `punishment-message` | A message to add to the end of a punishment DM                                       | `If you wish to appeal your punishment, contact an admin.`  |

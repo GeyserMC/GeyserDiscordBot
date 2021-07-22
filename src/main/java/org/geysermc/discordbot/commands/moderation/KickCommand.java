@@ -96,17 +96,31 @@ public class KickCommand extends Command {
             args.remove(0);
         }
 
-        String reason = String.join(" ", args);
+        // Get the reason or use None
+        String reasonParts = String.join(" ", args);
+        String reason;
+        if (reasonParts.trim().isEmpty()) {
+            reason = "*None*";
+        } else {
+            reason = reasonParts;
+        }
 
         // Let the user know they're banned if we are not being silent
         if (!silent) {
-            user.openPrivateChannel().queue((channel) ->
-                    channel.sendMessageEmbeds(new EmbedBuilder()
-                            .setTitle("You have been kicked from GeyserMC!")
-                            .addField("Reason", reason, false)
-                            .setTimestamp(Instant.now())
-                            .setColor(BotColors.FAILURE.getColor())
-                            .build()).queue(message -> {}, throwable -> {}), throwable -> {});
+            user.openPrivateChannel().queue((channel) -> {
+                EmbedBuilder embedBuilder = new EmbedBuilder()
+                        .setTitle("You have been kicked from GeyserMC!")
+                        .addField("Reason", reason, false)
+                        .setTimestamp(Instant.now())
+                        .setColor(BotColors.FAILURE.getColor());
+
+                String punishmentMessage = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), "punishment-message");
+                if (!punishmentMessage.isEmpty()) {
+                    embedBuilder.addField("Additional Info", punishmentMessage, false);
+                }
+
+                channel.sendMessageEmbeds(embedBuilder.build()).queue(message -> {}, throwable -> {});
+            }, throwable -> {});
         }
 
         // Kick user

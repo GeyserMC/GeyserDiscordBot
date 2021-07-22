@@ -23,7 +23,7 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.commands;
+package org.geysermc.discordbot.commands.administration;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -50,10 +50,11 @@ public class SettingsCommand extends Command {
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
         String title;
-        String key = args.get(1);
+        String key = args.remove(1);
         String value;
 
-        switch (args.get(0)) {
+        String action = args.remove(0);
+        switch (action) {
             case "get":
                 title = "Setting value";
                 value = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), key);
@@ -61,7 +62,7 @@ public class SettingsCommand extends Command {
 
             case "set":
                 title = "Updated setting";
-                value = args.get(2);
+                value = String.join(" ", args);
                 GeyserBot.storageManager.setServerPreference(event.getGuild().getIdLong(), key, value);
                 break;
 
