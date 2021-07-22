@@ -183,12 +183,13 @@ public class ErrorAnalyzer extends ListenerAdapter {
             }
         }
 
-        if (exceptions.size() > 0 || embedBuilder.getFields().size() > 0) {
+        boolean hasResponses = embedBuilder.getFields().size() > 0;
+        if (exceptions.size() > 0 || hasResponses) {
             // Set the description accordingly if nothing Geyser related was found
-            if (exceptions.size() > 0) {
-                embedBuilder.setDescription("We don't currently have automated responses for the detected errors!");
-            } else {
+            if (hasResponses) {
                 MessageHelper.truncateFields(embedBuilder);
+            } else {
+                embedBuilder.setDescription("We don't currently have automated responses for the detected errors!");
             }
 
             event.getMessage().replyEmbeds(embedBuilder.build()).queue();
