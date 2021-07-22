@@ -87,7 +87,7 @@ public class PingCommand extends SlashCommand {
             return;
         }
 
-        event.getMessage().reply(handle(args.get(0))).queue();
+        event.getMessage().replyEmbeds(handle(args.get(0))).queue();
     }
 
     private MessageEmbed handle(String ip) {

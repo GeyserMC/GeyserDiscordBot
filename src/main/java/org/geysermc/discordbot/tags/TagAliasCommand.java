@@ -32,7 +32,6 @@ import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
 
-import java.awt.Color;
 import java.util.Arrays;
 
 public class TagAliasCommand extends Command {
@@ -59,7 +58,7 @@ public class TagAliasCommand extends Command {
             embed.setDescription("Missing tag name. `" + PropertiesManager .getPrefix() + "tag alias <name>`");
             embed.setColor(BotColors.FAILURE.getColor());
 
-            event.getMessage().reply(embed.build()).queue();
+            event.getMessage().replyEmbeds(embed.build()).queue();
             return;
         }
 
@@ -75,7 +74,7 @@ public class TagAliasCommand extends Command {
             embed.setTitle("Missing tag");
             embed.setDescription("No tag with the name `" + args[0] + "`, do `" + PropertiesManager.getPrefix() + "tags` for the full list.");
             embed.setColor(BotColors.FAILURE.getColor());
-            event.getMessage().reply(embed.build()).queue();
+            event.getMessage().replyEmbeds(embed.build()).queue();
             return;
         }
 
@@ -90,6 +89,6 @@ public class TagAliasCommand extends Command {
             embed.setColor(BotColors.FAILURE.getColor());
         }
 
-        event.getMessage().reply(embed.build()).queue();
+        event.getMessage().replyEmbeds(embed.build()).queue();
     }
 }

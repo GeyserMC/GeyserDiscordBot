@@ -37,7 +37,6 @@ import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 
-import java.awt.Color;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +59,7 @@ public class UnbanCommand extends Command {
 
         // Check user is valid
         if (member == null) {
-            event.getMessage().reply(new EmbedBuilder()
+            event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
                     .setColor(BotColors.FAILURE.getColor())
@@ -84,7 +83,7 @@ public class UnbanCommand extends Command {
             } else {
 
 
-                event.getMessage().reply(new EmbedBuilder()
+                event.getMessage().replyEmbeds(new EmbedBuilder()
                         .setTitle("Invalid option")
                         .setDescription("The option `" + arg + "` is invalid")
                         .setColor(BotColors.FAILURE.getColor())
@@ -99,12 +98,12 @@ public class UnbanCommand extends Command {
         // Let the user know they're unbanned if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) ->
-                    channel.sendMessage(new EmbedBuilder()
+                    channel.sendMessageEmbeds(new EmbedBuilder()
                             .setTitle("You have been unbanned from GeyserMC!")
                             .addField("Reason", reason, false)
                             .setTimestamp(Instant.now())
                             .setColor(BotColors.SUCCESS.getColor())
-                            .build()).queue());
+                            .build()).queue(message -> {}, throwable -> {}), throwable -> {});
         }
 
         // Unban user
@@ -123,7 +122,7 @@ public class UnbanCommand extends Command {
                 .build();
 
         // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(unbannedEmbed).queue();
-        event.getMessage().reply(unbannedEmbed).queue();
+        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(unbannedEmbed).queue();
+        event.getMessage().replyEmbeds(unbannedEmbed).queue();
     }
 }

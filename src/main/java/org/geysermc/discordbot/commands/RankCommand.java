@@ -72,7 +72,7 @@ public class RankCommand extends SlashCommand {
             return;
         }
 
-        event.getMessage().reply(handle(event.getGuild(), event.getMember(), args.get(0))).queue();
+        event.getMessage().replyEmbeds(handle(event.getGuild(), event.getMember(), args.get(0))).queue();
     }
 
     protected MessageEmbed handle(Guild guild, Member member, String wantedRole) {

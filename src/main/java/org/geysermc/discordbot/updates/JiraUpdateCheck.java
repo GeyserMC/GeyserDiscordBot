@@ -28,6 +28,7 @@ package org.geysermc.discordbot.updates;
 import org.geysermc.discordbot.GeyserBot;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
 
 import java.util.ArrayList;
@@ -59,14 +60,26 @@ public class JiraUpdateCheck extends AbstractUpdateCheck {
 
     @Override
     public void check() {
-        JSONArray versions = new JSONArray(RestClient.get(CHECK_URL + project + "/versions"));
+        String versionsText = RestClient.get(CHECK_URL + project + "/versions");
 
-        for (int i = 0; i < versions.length(); i++) {
-            String name = versions.getJSONObject(i).getString("name");
-            if (!KNOWN_VERSIONS.contains(name)) {
-                KNOWN_VERSIONS.add(name);
-                UpdateManager.sendMessage("A new " + platform + " version (" + name + ") has been added to the Minecraft issue tracker!");
+        try {
+            JSONArray versions = new JSONArray(versionsText);
+
+            for (int i = 0; i < versions.length(); i++) {
+                String name = versions.getJSONObject(i).getString("name");
+                if (!KNOWN_VERSIONS.contains(name)) {
+                    KNOWN_VERSIONS.add(name);
+                    UpdateManager.sendMessage("A new " + platform + " version (" + name + ") has been added to the Minecraft issue tracker!");
+                }
+            }
+        } catch (JSONException e) {
+            try {
+                JSONObject obj = new JSONObject(versionsText);
+                GeyserBot.LOGGER.warn("Error while checking Jira versions for '" + project + "': " + obj.getString("error"));
+            } catch (JSONException e2) {
+                throw new JSONException(e.getMessage() + "\n" + versionsText);
             }
         }
+
     }
 }

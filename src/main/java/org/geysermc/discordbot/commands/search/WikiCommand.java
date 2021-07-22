@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands.search;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -42,7 +41,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pw.chew.chewbotcca.util.RestClient;
 
-import java.awt.Color;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -76,7 +74,7 @@ public class WikiCommand extends SlashCommand {
     @Override
     protected void execute(CommandEvent event) {
         MessageEmbed response = handle(event.getArgs());
-        if (response != null) event.getMessage().reply(response).queue();
+        if (response != null) event.getMessage().replyEmbeds(response).queue();
     }
 
     public MessageEmbed handle(String query) {

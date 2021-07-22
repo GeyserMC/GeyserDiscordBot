@@ -32,11 +32,16 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
-import org.geysermc.discordbot.GeyserBot;
-import org.geysermc.discordbot.util.PropertiesManager;
-import org.kohsuke.github.*;
+import org.kohsuke.github.GHFileNotFoundException;
+import org.kohsuke.github.GHIssue;
+import org.kohsuke.github.GHIssueState;
+import org.kohsuke.github.GHPullRequest;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHUser;
+import org.kohsuke.github.PagedSearchIterable;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -82,7 +87,7 @@ public class IssueCommand extends SlashCommand {
             return;
         }
 
-        event.getMessage().reply(handle(Integer.parseInt(matcherIssue.group(2)), event.getArgs().replace(matcherIssue.group(0), ""))).queue();
+        event.getMessage().replyEmbeds(handle(Integer.parseInt(matcherIssue.group(2)), event.getArgs().replace(matcherIssue.group(0), ""))).queue();
     }
 
     private MessageEmbed handle(int issueNumber, String repoString) {

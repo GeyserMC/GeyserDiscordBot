@@ -122,4 +122,16 @@ public class ServerSettings {
         List<String> dontLog = getList(channel.getGuild().getIdLong(), "dont-log");
         return dontLog.contains(channel.getId());
     }
+
+    /**
+     * Check if the given channel should be excluded from the level system
+     * if value is 0 then disables all channels
+     *
+     * @param channel The {@link TextChannel} to check
+     * @return If we should exclude the channel
+     */
+    public static boolean shouldDisableLevels(TextChannel channel) {
+        List<String> dontLevel = getList(channel.getGuild().getIdLong(), "dont-level");
+        return dontLevel.size() > 0 && dontLevel.get(0).equals("0") || dontLevel.contains(channel.getId());
+    }
 }

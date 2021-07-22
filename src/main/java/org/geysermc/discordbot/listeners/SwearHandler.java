@@ -31,7 +31,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
@@ -43,7 +42,11 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.Normalizer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -158,7 +161,7 @@ public class SwearHandler extends ListenerAdapter {
                 }
 
                 // Send a log to the admin channel
-                ServerSettings.getLogChannel(message.getGuild()).sendMessage(new EmbedBuilder()
+                ServerSettings.getLogChannel(message.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                         .setTitle("Profanity removed")
                         .setDescription("**Sender:** " + message.getAuthor().getAsMention() + "\n" +
                                 "**Channel:** <#" + message.getChannel().getId() + ">\n" +

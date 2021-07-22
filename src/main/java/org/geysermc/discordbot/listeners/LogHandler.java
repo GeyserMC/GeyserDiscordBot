@@ -45,15 +45,13 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
-import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
-import org.ocpsoft.prettytime.PrettyTime;
 
-import java.awt.Color;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,9 +61,9 @@ import java.util.concurrent.TimeUnit;
 
 public class LogHandler extends ListenerAdapter {
 
-    public static List<String> PURGED_MESSAGES = new ArrayList<>();
+    public static final List<String> PURGED_MESSAGES = new ArrayList<>();
 
-    private Map<Long, Cache<Long, Message>> messageCache = new HashMap<>();
+    private final Map<Long, Cache<Long, Message>> messageCache = new HashMap<>();
 
     private Message getCacheMessage(Guild guild, Long messageId) {
         Cache<Long, Message> cache = messageCache.get(guild.getIdLong());
@@ -118,7 +116,7 @@ public class LogHandler extends ListenerAdapter {
             GeyserBot.storageManager.addLog(event.getGuild().getMember(banLog.getUser()), "ban", event.getUser(), ban.getReason());
 
             // Send the embed as a reply and to the log
-            ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                     .setTitle("Banned user")
                     .addField("User", event.getUser().getAsMention(), false)
                     .addField("Staff member", banLog.getUser().getAsMention(), false)
@@ -140,7 +138,7 @@ public class LogHandler extends ListenerAdapter {
             GeyserBot.storageManager.addLog(event.getGuild().getMember(banLog.getUser()), "unban", event.getUser(), "");
 
             // Send the embed as a reply and to the log
-            ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                     .setTitle("Unbanned user")
                     .addField("User", event.getUser().getAsMention(), false)
                     .addField("Staff member", banLog.getUser().getAsMention(), false)
@@ -153,11 +151,10 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
-        PrettyTime t = new PrettyTime(Instant.now());
         ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
                 .setAuthor("Member Joined", null, event.getUser().getAvatarUrl())
                 .setDescription(event.getUser().getAsMention() + " " + event.getUser().getAsTag())
-                .addField("Account Created", t.format(event.getUser().getTimeCreated().toInstant()), false)
+                .addField("Account Created", TimeFormat.RELATIVE.format(event.getUser().getTimeCreated().toInstant()), false)
                 .setThumbnail(event.getUser().getAvatarUrl())
                 .setFooter("ID: " + event.getUser().getId())
                 .setTimestamp(Instant.now())
@@ -167,7 +164,7 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                 .setAuthor("Member Left", null, event.getUser().getAvatarUrl())
                 .setDescription(event.getUser().getAsMention() + " " + event.getUser().getAsTag())
                 .setFooter("ID: " + event.getUser().getId())
@@ -191,7 +188,7 @@ public class LogHandler extends ListenerAdapter {
 
         Message cachedMessage = getCacheMessage(event.getGuild(), event.getMessage().getIdLong());
 
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                 .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
                 .setDescription("**Message edited in **" + event.getChannel().getAsMention() + " [Jump to Message](" + event.getMessage().getJumpUrl() + ")")
                 .addField("Before", cachedMessage != null ? BotHelpers.trim(cachedMessage.getContentRaw(), 450) : "*Old message not cached*", false)
@@ -215,7 +212,7 @@ public class LogHandler extends ListenerAdapter {
             try {
                 Invite invite = Invite.resolve(event.getJDA(), inviteCode, true).complete();
 
-                ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                         .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
                         .setDescription("**Invite posted for " + invite.getGuild().getName() + "** " + event.getChannel().getAsMention() + "\n" + invite.getUrl())
                         .addField("Inviter", invite.getInviter() != null ? invite.getInviter().getAsTag() : "Unknown", true)
@@ -260,7 +257,7 @@ public class LogHandler extends ListenerAdapter {
             message = cachedMessage.getContentRaw();
         }
 
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                 .setAuthor(authorTag, null, authorAvatar)
                 .setDescription("**Message sent by** " + authorMention + " **deleted in** " + event.getChannel().getAsMention() + "\n" + BotHelpers.trim(message, 900))
                 .setFooter("Author: " + authorId + " | Message ID: " + event.getMessageId())
@@ -273,7 +270,7 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                 .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
                 .setDescription(event.getMember().getAsMention() + " **joined voice channel #" + event.getChannelJoined().getName() + "**")
                 .setFooter("ID: " + event.getMember().getId())
@@ -284,7 +281,7 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event) {
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                 .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
                 .setDescription(event.getMember().getAsMention() + " **switched voice channel `#" + event.getChannelLeft().getName() + "` -> `#" + event.getChannelJoined().getName() + "`**")
                 .setFooter("ID: " + event.getMember().getId())
@@ -295,7 +292,7 @@ public class LogHandler extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                 .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
                 .setDescription(event.getMember().getAsMention() + " **left voice channel #" + event.getChannelLeft().getName() + "**")
                 .setFooter("ID: " + event.getMember().getId())

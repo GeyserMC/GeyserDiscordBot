@@ -26,7 +26,10 @@
 package org.geysermc.discordbot.util;
 
 import org.geysermc.discordbot.GeyserBot;
-import org.kohsuke.github.*;
+import org.kohsuke.github.GHFileNotFoundException;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHTree;
+import org.kohsuke.github.GHTreeEntry;
 
 import java.io.IOException;
 import java.util.ArrayList;

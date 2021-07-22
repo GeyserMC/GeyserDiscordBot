@@ -29,15 +29,17 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.*;
-import org.geysermc.discordbot.GeyserBot;
+import net.dv8tion.jda.api.entities.ISnowflake;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.MessageHistory;
+import net.dv8tion.jda.api.entities.User;
 import org.geysermc.discordbot.listeners.LogHandler;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
 
-import java.awt.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -111,7 +113,7 @@ public class PurgeCommand extends Command {
             }
 
             // Remove the message(s)
-            List<String> messagesToDeleteIds = messagesToDelete.stream().map(message -> message.getId()).collect(Collectors.toList());
+            List<String> messagesToDeleteIds = messagesToDelete.stream().map(ISnowflake::getId).collect(Collectors.toList());
             LogHandler.PURGED_MESSAGES.addAll(messagesToDeleteIds);
             if (messagesToDelete.size() > 1) {
                 event.getTextChannel().deleteMessagesByIds(messagesToDeleteIds).queue();
@@ -135,6 +137,6 @@ public class PurgeCommand extends Command {
                 .build();
 
         // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(bannedEmbed).queue();
+        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(bannedEmbed).queue();
     }
 }

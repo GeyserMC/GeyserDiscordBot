@@ -26,13 +26,10 @@
 package org.geysermc.discordbot.health_checker;
 
 import net.dv8tion.jda.api.entities.Message;
-import okhttp3.Response;
-
-import java.io.IOException;
 
 public class HealthStatus {
-    private Message message;
-    private int statusCode;
+    private final Message message;
+    private final int statusCode;
 
     public HealthStatus(Message message, int statusCode) {
         this.message = message;
