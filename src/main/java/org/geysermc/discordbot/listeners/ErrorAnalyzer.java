@@ -127,16 +127,21 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
         // Add any errors that aren't from stack traces first
         for (String issue : TagsManager.getIssueResponses().keySet()) {
+            if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT || embedBuilder.getFields().size() >= 25) {
+                // cannot have more than 25 embed fields
+                break;
+            }
+
             if (logContent.contains(issue)) {
-                if (embedLength >= MessageEmbed.EMBED_MAX_LENGTH_BOT || embedBuilder.getFields().size() >= 25) {
-                    // cannot have more than 25 embed fields
-                    break;
+                String title = BotHelpers.trim(issue, MessageEmbed.TITLE_MAX_LENGTH);
+
+                if (MessageHelper.similarFieldExists(embedBuilder.getFields(), title)) {
+                    continue;
                 }
-                int exitCode = addFixIfPresent(issue, embedBuilder);
-                if (exitCode > 0) {
-                    // Increase our length tally if the Embed was added to
-                    embedLength += exitCode;
-                }
+
+                String fix = BotHelpers.trim(TagsManager.getIssueResponses().get(issue), MessageEmbed.VALUE_MAX_LENGTH);
+                embedBuilder.addField(title, fix, false);
+                embedLength += title.length() + fix.length();
             }
         }
 
@@ -216,7 +221,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         String fix = null;
         for (String key : TagsManager.getIssueResponses().keySet()) {
             String lowerCaseKey = key.toLowerCase();
-            if (lowerCaseKey.contains(lowerCaseIssue)) {
+            if (lowerCaseIssue.contains(lowerCaseKey)) {
                 fix = TagsManager.getIssueResponses().get(key);
                 break;
             }

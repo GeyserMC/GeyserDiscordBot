@@ -1,5 +1,5 @@
 type: issue-only
-issues: java.net.BindException: Cannot assign requested address: bind
+issues: java.net.BindException: Cannot assign requested address
 
 ---
 
