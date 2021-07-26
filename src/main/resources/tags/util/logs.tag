@@ -3,5 +3,5 @@ aliases: log, mclogs
 
 ---
 
-If you want to share your logs while keeping your IP addresses private, use https://mclo.gs/ and give us the link after you saved it. 
-For BungeeCord there is a `proxy.log.0` file in the root and for everything else it is `latest.log` in `logs` folder.
+Please share your *full* logs by uploading to https://mclo.gs/ and sharing the link after you have saved it. All IP addresses will be hidden.
+For BungeeCord there is a proxy.log.0 file in the root folder and for everything else it is latest.log in logs folder.
