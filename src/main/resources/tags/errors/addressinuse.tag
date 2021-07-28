@@ -1,5 +1,6 @@
 type: text
+issues: java.net.BindException: Address already in use
 
 ---
 
-You're already running something on the port Geyser is using, probably another instance of Geyser. That means you probably double-clicked Geyser and it opened in the background. Go to Task Manager and kill all Java processes (be careful, this could close other things on your PC), or if all else fails restart your PC.
+This means something (likely another instance of Geyser) is running on the port you have specified in the config. Please make sure you close all applications running on this port. If you don't recall opening anything, usually restarting your computer fixes this.
