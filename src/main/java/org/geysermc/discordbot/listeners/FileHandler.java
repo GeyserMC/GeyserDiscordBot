@@ -41,13 +41,28 @@ import pw.chew.chewbotcca.util.RestClient;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class FileHandler extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         for (Message.Attachment attachment : event.getMessage().getAttachments()) {
-            if (ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions").contains(attachment.getFileExtension())) {
+            List<String> extensions;
+
+            // Get the guild extensions and if not in a guild just use some defaults
+            if (event.isFromGuild()) {
+                extensions = ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions");
+            } else {
+                extensions = new ArrayList<>();
+                extensions.add("txt");
+                extensions.add("log");
+                extensions.add("yml");
+                extensions.add("0");
+            }
+
+            if (extensions.contains(attachment.getFileExtension())) {
                 EmbedBuilder embed = new EmbedBuilder();
 
 //                // Handled by Discord's new display feature
