@@ -41,6 +41,7 @@ import org.geysermc.discordbot.util.GithubFileFinder;
 import org.geysermc.discordbot.util.MessageHelper;
 import pw.chew.chewbotcca.util.RestClient;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +73,20 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
         // Check attachments
         for (Message.Attachment attachment : event.getMessage().getAttachments()) {
-            if (ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions").contains(attachment.getFileExtension())) {
+            List<String> extensions;
+
+            // Get the guild extensions and if not in a guild just use some defaults
+            if (event.isFromGuild()) {
+                extensions = ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions");
+            } else {
+                extensions = new ArrayList<>();
+                extensions.add("txt");
+                extensions.add("log");
+                extensions.add("yml");
+                extensions.add("0");
+            }
+
+            if (extensions.contains(attachment.getFileExtension())) {
                 handleLog(event, RestClient.get(attachment.getUrl()));
             }
         }
