@@ -152,7 +152,9 @@ public class DumpHandler extends ListenerAdapter {
         // Check plugins and stuff for potential issues
         for (AbstractDumpIssueCheck issueCheck : ISSUE_CHECKS) {
             if (issueCheck.compatiblePlatform(platform)) {
-                problems.addAll(issueCheck.checkIssues(dump));
+                try {
+                    problems.addAll(issueCheck.checkIssues(dump));
+                } catch (JSONException ignored) { }
             }
         }
 

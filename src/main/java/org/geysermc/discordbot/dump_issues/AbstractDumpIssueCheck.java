@@ -25,6 +25,7 @@
 
 package org.geysermc.discordbot.dump_issues;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
@@ -37,5 +38,5 @@ public abstract class AbstractDumpIssueCheck {
     }
 
     @Nonnull
-    public abstract List<String> checkIssues(JSONObject dump);
+    public abstract List<String> checkIssues(JSONObject dump) throws JSONException;
 }

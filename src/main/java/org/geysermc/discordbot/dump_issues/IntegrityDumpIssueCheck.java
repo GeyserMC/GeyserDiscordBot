@@ -26,7 +26,6 @@
 package org.geysermc.discordbot.dump_issues;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
 
@@ -42,20 +41,18 @@ public class IntegrityDumpIssueCheck extends AbstractDumpIssueCheck {
     public List<String> checkIssues(JSONObject dump) {
         List<String> issues = new ArrayList<>();
 
-        try {
-            // Make sure this is an official build
-            if (!dump.getJSONObject("gitInfo").getString("git.build.host").equals("nukkitx.com")) {
-                return issues;
-            }
+        // Make sure this is an official build
+        if (!dump.getJSONObject("gitInfo").getString("git.build.host").equals("nukkitx.com")) {
+            return issues;
+        }
 
-            String md5Hash = dump.getJSONObject("hashInfo").getString("md5Hash");
-            String response = RestClient.get("https://ci.opencollab.dev/fingerprint/" + md5Hash + "/api/json");
+        String md5Hash = dump.getJSONObject("hashInfo").getString("md5Hash");
+        String response = RestClient.get("https://ci.opencollab.dev/fingerprint/" + md5Hash + "/api/json");
 
-            // Check if 404
-            if (response.startsWith("<html>")) {
-                issues.add("- Your Geyser jar is corrupt or has been tampered with. Please redownload it [from the CI](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/).");
-            }
-        } catch (JSONException ignored) { } // We don't have a hashInfo or gitInfo
+        // Check if 404
+        if (response.startsWith("<html>")) {
+            issues.add("- Your Geyser jar is corrupt or has been tampered with. Please redownload it [from the CI](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/).");
+        }
 
         return issues;
     }
