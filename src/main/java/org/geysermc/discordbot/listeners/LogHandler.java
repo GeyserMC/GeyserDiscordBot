@@ -110,21 +110,35 @@ public class LogHandler extends ListenerAdapter {
         // Get the ban from the audit log to get the user that created it
         AuditLogEntry banLog = event.getGuild().retrieveAuditLogs().type(ActionType.BAN).stream().filter(auditLogEntry -> auditLogEntry.getTargetIdLong() == ban.getUser().getIdLong()).findFirst().orElse(null);
 
-        // Don't log bans by the bot (they are handled separately)
-        if (banLog.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong()) {
-            // Log the change
-            GeyserBot.storageManager.addLog(event.getGuild().getMember(banLog.getUser()), "ban", event.getUser(), ban.getReason());
+        GeyserBot.getGeneralThreadPool().schedule(() -> {
+            AuditLogEntry newBanLog;
+            if (banLog == null) {
+                newBanLog = event.getGuild().retrieveAuditLogs().type(ActionType.BAN).stream().filter(auditLogEntry -> auditLogEntry.getTargetIdLong() == ban.getUser().getIdLong()).findFirst().orElse(null);
 
-            // Send the embed as a reply and to the log
-            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                    .setTitle("Banned user")
-                    .addField("User", event.getUser().getAsMention(), false)
-                    .addField("Staff member", banLog.getUser().getAsMention(), false)
-                    .addField("Reason", ban.getReason(), false)
-                    .setTimestamp(Instant.now())
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-        }
+                // Still null, shouldn't happen but just quietly fail
+                if (newBanLog == null) {
+                    return;
+                }
+            } else {
+                newBanLog = banLog;
+            }
+
+            // Don't log bans by the bot (they are handled separately)
+            if (newBanLog.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong()) {
+                // Log the change
+                GeyserBot.storageManager.addLog(event.getGuild().getMember(newBanLog.getUser()), "ban", event.getUser(), ban.getReason());
+
+                // Send the embed as a reply and to the log
+                ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                        .setTitle("Banned user")
+                        .addField("User", event.getUser().getAsMention(), false)
+                        .addField("Staff member", newBanLog.getUser().getAsMention(), false)
+                        .addField("Reason", ban.getReason(), false)
+                        .setTimestamp(Instant.now())
+                        .setColor(BotColors.FAILURE.getColor())
+                        .build()).queue();
+            }
+        }, banLog == null ? 5 : 0, TimeUnit.SECONDS);
     }
 
     @Override
