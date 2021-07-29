@@ -4,8 +4,10 @@ aliases: gc
 ---
 
 There is an **Unofficial** public [GeyserConnect](https://github.com/GeyserMC/GeyserConnect) instance running. You can connect to it via
-Address: `geyserconnect.net`
-Port: `19132`
+*Addresses:* 
+Americas: `us.geyserconnect.net`
+Europe: `eu.geyserconnect.net`
+Port: `19132` for both addresses.
 
 More information is available on their [website](https://www.geyserconnect.net)
 [Xbox/Switch users](https://www.geyserconnect.net/xbox-switch.htm)
