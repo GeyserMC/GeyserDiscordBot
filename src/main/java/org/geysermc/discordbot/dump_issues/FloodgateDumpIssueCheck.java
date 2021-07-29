@@ -49,7 +49,7 @@ public class FloodgateDumpIssueCheck extends AbstractDumpIssueCheck {
 
         // Check plugins
         if (bootstrapInfo.has("plugins")) {
-            boolean needsFloodgate = configRemote.getString("auth-type").equals("floodgate");
+            boolean needsFloodgate = configRemote.getString("auth-type").equalsIgnoreCase("floodgate");
             boolean needsFloodgateAuthType = false;
 
             JSONArray plugins = bootstrapInfo.getJSONArray("plugins");
@@ -75,7 +75,7 @@ public class FloodgateDumpIssueCheck extends AbstractDumpIssueCheck {
             // Add any problem messages relates to floodgate
             if (needsFloodgate) {
                 problems.add("- `auth-type` is set to `floodgate`, but you don't have Floodgate installed! Download it [here](https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/).");
-            } else if (needsFloodgateAuthType && !configRemote.getString("auth-type").equals("floodgate")) {
+            } else if (needsFloodgateAuthType && !configRemote.getString("auth-type").equalsIgnoreCase("floodgate")) {
                 problems.add("- You have Floodgate installed, but `auth-type` is set to `" + configRemote.getString("auth-type") + "`! Set it to `floodgate` if you want to use Floodgate.");
             }
         }
