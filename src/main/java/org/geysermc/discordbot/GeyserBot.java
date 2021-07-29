@@ -50,6 +50,7 @@ import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.updates.UpdateManager;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.PropertiesManager;
+import org.geysermc.discordbot.util.SentryEventManager;
 import org.json.JSONArray;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
@@ -188,16 +189,17 @@ public class GeyserBot {
 
         // Register JDA
         jda = JDABuilder.createDefault(PropertiesManager.getToken())
-            .setChunkingFilter(ChunkingFilter.ALL)
-            .setMemberCachePolicy(MemberCachePolicy.ALL)
-            .enableIntents(GatewayIntent.GUILD_MEMBERS)
-            .enableIntents(GatewayIntent.GUILD_PRESENCES)
-            .enableCache(CacheFlag.ACTIVITY)
-            .enableCache(CacheFlag.ROLE_TAGS)
-            .setStatus(OnlineStatus.ONLINE)
-            .setActivity(Activity.playing("Booting..."))
-            .setEnableShutdownHook(true)
-            .addEventListeners(waiter,
+                .setChunkingFilter(ChunkingFilter.ALL)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
+                .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                .enableIntents(GatewayIntent.GUILD_PRESENCES)
+                .enableCache(CacheFlag.ACTIVITY)
+                .enableCache(CacheFlag.ROLE_TAGS)
+                .setStatus(OnlineStatus.ONLINE)
+                .setActivity(Activity.playing("Booting..."))
+                .setEnableShutdownHook(true)
+                .setEventManager(new SentryEventManager())
+                .addEventListeners(waiter,
                     new LogHandler(),
                     new SwearHandler(),
                     new PersistentRoleHandler(),
@@ -210,7 +212,7 @@ public class GeyserBot {
                     new BadLinksHandler(),
                     client.build(),
                     tagClient.build())
-            .build();
+                .build();
 
         // Register listeners
         jda.addEventListener();
