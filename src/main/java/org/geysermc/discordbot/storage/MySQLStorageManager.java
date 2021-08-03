@@ -29,6 +29,7 @@ package org.geysermc.discordbot.storage;
 import net.dv8tion.jda.api.entities.*;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.PropertiesManager;
+import org.geysermc.discordbot.util.UserById;
 
 import java.sql.*;
 import java.time.Instant;
@@ -177,6 +178,11 @@ public class MySQLStorageManager extends AbstractStorageManager {
                 Instant time = Instant.ofEpochSecond(rs.getLong("time"));
                 Member user = guild.getMemberById(rs.getLong("user"));
                 User target = guild.getJDA().getUserById(rs.getLong("target"));
+
+                // Construct a user from the id
+                if (target == null) {
+                    target = new UserById(rs.getLong("target"));
+                }
 
                 return new ModLog(rs.getInt("id"), time, user, rs.getString("action"), target, rs.getString("reason"));
             }
