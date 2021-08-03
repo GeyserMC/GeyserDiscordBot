@@ -124,13 +124,14 @@ public class UnbanCommand extends Command {
         member.getGuild().unban(user).queue();
 
         // Log the change
-        GeyserBot.storageManager.addLog(event.getMember(), "unban", user, reason);
+        int id = GeyserBot.storageManager.addLog(event.getMember(), "unban", user, reason);
 
         MessageEmbed unbannedEmbed = new EmbedBuilder()
                 .setTitle("Unbanned user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Reason", reason, false)
+                .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor())
                 .build();

@@ -128,13 +128,14 @@ public class UnmuteCommand extends Command {
         GeyserBot.storageManager.removePersistentRole(event.getMember(), muteRole);
 
         // Log the change
-        GeyserBot.storageManager.addLog(event.getMember(), "unmute", user, reason);
+        int id = GeyserBot.storageManager.addLog(event.getMember(), "unmute", user, reason);
 
         MessageEmbed mutedEmbed = new EmbedBuilder()
                 .setTitle("Unmuted user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Reason", reason, false)
+                .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor())
                 .build();

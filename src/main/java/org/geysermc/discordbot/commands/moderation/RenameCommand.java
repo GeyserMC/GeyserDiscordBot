@@ -73,7 +73,7 @@ public class RenameCommand extends Command {
         // Rename user
         member.modifyNickname(SwearHandler.getRandomNick()).queue(unused -> {
             // Log the change
-            GeyserBot.storageManager.addLog(event.getMember(), "rename", member.getUser(), "");
+            int id = GeyserBot.storageManager.addLog(event.getMember(), "rename", member.getUser(), "");
 
             MessageEmbed renameEmbed = new EmbedBuilder()
                     .setTitle("Renamed user")
@@ -81,6 +81,7 @@ public class RenameCommand extends Command {
                     .addField("Staff member", event.getAuthor().getAsMention(), false)
                     .addField("Old name", oldNick, false)
                     .addField("New name", member.getEffectiveName(), false)
+                    .setFooter("ID: " + id)
                     .setTimestamp(Instant.now())
                     .setColor(BotColors.SUCCESS.getColor())
                     .build();

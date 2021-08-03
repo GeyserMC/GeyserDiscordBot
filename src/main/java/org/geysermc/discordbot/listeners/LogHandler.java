@@ -126,7 +126,7 @@ public class LogHandler extends ListenerAdapter {
             // Don't log bans by the bot (they are handled separately)
             if (newBanLog.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong()) {
                 // Log the change
-                GeyserBot.storageManager.addLog(event.getGuild().getMember(newBanLog.getUser()), "ban", event.getUser(), ban.getReason());
+                int id = GeyserBot.storageManager.addLog(event.getGuild().getMember(newBanLog.getUser()), "ban", event.getUser(), ban.getReason());
 
                 // Send the embed as a reply and to the log
                 ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
@@ -134,6 +134,7 @@ public class LogHandler extends ListenerAdapter {
                         .addField("User", event.getUser().getAsMention(), false)
                         .addField("Staff member", newBanLog.getUser().getAsMention(), false)
                         .addField("Reason", ban.getReason(), false)
+                        .setFooter("ID: " + id)
                         .setTimestamp(Instant.now())
                         .setColor(BotColors.FAILURE.getColor())
                         .build()).queue();
@@ -149,7 +150,7 @@ public class LogHandler extends ListenerAdapter {
         // Don't log bans by the bot (they are handled separately)
         if (banLog.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong()) {
             // Log the change
-            GeyserBot.storageManager.addLog(event.getGuild().getMember(banLog.getUser()), "unban", event.getUser(), "");
+            int id = GeyserBot.storageManager.addLog(event.getGuild().getMember(banLog.getUser()), "unban", event.getUser(), "");
 
             // Send the embed as a reply and to the log
             ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
@@ -157,6 +158,7 @@ public class LogHandler extends ListenerAdapter {
                     .addField("User", event.getUser().getAsMention(), false)
                     .addField("Staff member", banLog.getUser().getAsMention(), false)
                     .addField("Reason", "", false)
+                    .setFooter("ID: " + id)
                     .setTimestamp(Instant.now())
                     .setColor(BotColors.SUCCESS.getColor())
                     .build()).queue();

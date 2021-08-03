@@ -127,13 +127,14 @@ public class KickCommand extends Command {
         member.kick(String.join(" ", args)).queue();
 
         // Log the change
-        GeyserBot.storageManager.addLog(event.getMember(), "kick", user, reason);
+        int id = GeyserBot.storageManager.addLog(event.getMember(), "kick", user, reason);
 
         MessageEmbed kickEmbed = new EmbedBuilder()
                 .setTitle("Kicked user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Reason", reason, false)
+                .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor())
                 .build();

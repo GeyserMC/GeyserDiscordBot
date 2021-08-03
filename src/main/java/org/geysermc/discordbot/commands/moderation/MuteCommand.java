@@ -132,13 +132,14 @@ public class MuteCommand extends Command {
         GeyserBot.storageManager.addPersistentRole(event.getMember(), muteRole);
 
         // Log the change
-        GeyserBot.storageManager.addLog(event.getMember(), "mute", user, reason);
+        int id = GeyserBot.storageManager.addLog(event.getMember(), "mute", user, reason);
 
         MessageEmbed mutedEmbed = new EmbedBuilder()
                 .setTitle("Muted user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Reason", reason, false)
+                .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor())
                 .build();

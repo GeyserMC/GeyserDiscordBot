@@ -138,13 +138,14 @@ public class BanCommand extends Command {
         member.ban(delDays, String.join(" ", args)).queue();
 
         // Log the change
-        GeyserBot.storageManager.addLog(event.getMember(), "ban", user, reason);
+        int id = GeyserBot.storageManager.addLog(event.getMember(), "ban", user, reason);
 
         MessageEmbed bannedEmbed = new EmbedBuilder()
                 .setTitle("Banned user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Reason", reason, false)
+                .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor())
                 .build();

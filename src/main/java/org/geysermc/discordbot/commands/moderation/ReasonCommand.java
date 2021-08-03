@@ -29,12 +29,10 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ModLog;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.BotHelpers;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -43,13 +41,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * TODO: Add pagination
- */
-public class LogCommand extends Command {
+public class ReasonCommand extends Command {
 
-    public LogCommand() {
-        this.name = "modlog";
+    public ReasonCommand() {
+        this.name = "reason";
         this.hidden = true;
         this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
     }
@@ -58,33 +53,40 @@ public class LogCommand extends Command {
     protected void execute(CommandEvent event) {
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
-        // Fetch the user
-        User user = BotHelpers.getUser(args.remove(0));
+        // Fetch the entry
+        int logId = Integer.parseInt(args.remove(0));
+        ModLog log = GeyserBot.storageManager.getLog(event.getGuild(), logId);
 
         // Check user is valid
-        if (user == null) {
+        if (log == null) {
             event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user.")
+                    .setTitle("Invalid moderation log")
+                    .setDescription("The moderation log ID specified doesn't exist in the database for this guild.")
                     .setColor(BotColors.FAILURE.getColor())
                     .build()).queue();
             return;
         }
 
         EmbedBuilder logEmbedBuilder = new EmbedBuilder()
-                .setTitle("Mod log for: " + user.getId())
+                .setTitle("Mod log: " + logId)
                 .setTimestamp(Instant.now())
-                .setColor(BotColors.SUCCESS.getColor());
+                .setColor(BotColors.SUCCESS.getColor())
+                .addField("Action", log.getAction().substring(0, 1).toUpperCase() + log.getAction().substring(1), true)
+                .addField("Target", log.getTarget().getAsTag(), true)
+                .addField("By", log.getUser().getAsMention(), true)
+                .addField("Time", TimeFormat.DATE_TIME_LONG.format(OffsetDateTime.ofInstant(log.getTime(), ZoneOffset.UTC)), false);
 
-        List<ModLog> logs = GeyserBot.storageManager.getLogs(event.getGuild(), user);
+        String newReason = String.join(" ", args);
 
-        if (logs.isEmpty()) {
-            logEmbedBuilder.setDescription("No logs for the selected user");
+        if (!newReason.trim().isEmpty()) {
+            logEmbedBuilder
+                    .setTitle("Updated mod log: " + logId)
+                    .addField("Old Reason", log.getReason(), false)
+                    .addField("New Reason", newReason, false);
+
+            GeyserBot.storageManager.updateLog(event.getGuild(), logId, newReason);
         } else {
-            for (ModLog log : logs) {
-                String title = log.getAction().substring(0, 1).toUpperCase() + log.getAction().substring(1) + " (" + log.getId() + ")";
-                logEmbedBuilder.addField(title, "**Time:** " + TimeFormat.DATE_TIME_LONG.format(OffsetDateTime.ofInstant(log.getTime(), ZoneOffset.UTC)) + "\n**By:** " + log.getUser().getAsMention() + "\n**Reason:** " + log.getReason(), false);
-            }
+            logEmbedBuilder.addField("Reason", log.getReason(), false);
         }
 
         // Send the embed as a reply

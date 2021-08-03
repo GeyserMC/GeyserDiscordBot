@@ -90,8 +90,9 @@ public abstract class AbstractStorageManager {
      * @param action The action that was done
      * @param target The {@link User} that was targeted
      * @param reason The reason for this if specified
+     * @return The ID of the inserted moderation log
      */
-    public abstract void addLog(Member user, String action, User target, String reason);
+    public abstract int addLog(Member user, String action, User target, String reason);
 
     /**
      * Get the moderation log for a user
@@ -101,16 +102,34 @@ public abstract class AbstractStorageManager {
      * @param limit The limit of results to get
      * @return List of {@link ModLog} returned
      */
-    public abstract List<ModLog> getLog(Guild guild, User target, int limit);
+    public abstract List<ModLog> getLogs(Guild guild, User target, int limit);
 
     /**
-     * Calls {@link AbstractStorageManager#getLog(Guild, User, int)} with the default limit of 5
+     * Calls {@link AbstractStorageManager#getLogs(Guild, User, int)} with the default limit of 5
      *
-     * @see AbstractStorageManager#getLog(Guild, User, int)
+     * @see AbstractStorageManager#getLogs(Guild, User, int)
      */
-    public List<ModLog> getLog(Guild guild, User target) {
-        return getLog(guild, target, 5);
+    public List<ModLog> getLogs(Guild guild, User target) {
+        return getLogs(guild, target, 5);
     }
+
+    /**
+     * Get a moderation log by id
+     *
+     * @param guild Guild to get the log for
+     * @param id The id of the wanted log
+     * @return A {@link ModLog}
+     */
+    public abstract ModLog getLog(Guild guild, int id);
+
+    /**
+     * Update the reason for a moderation log
+     *
+     * @param guild Guild to update the log of
+     * @param id The id of the log to update
+     * @param reason The new reason for the log
+     */
+    public abstract void updateLog(Guild guild, int id, String reason);
 
     /**
      * Get the level info for a given Guild Member
