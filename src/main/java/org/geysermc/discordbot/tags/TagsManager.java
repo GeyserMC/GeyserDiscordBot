@@ -124,7 +124,7 @@ public class TagsManager {
                             }
 
                             if (content.toString().isEmpty()) {
-                                GeyserBot.LOGGER.warn("Tag '" + tagName + "' has empty content! Skipping tag.");
+                                GeyserBot.LOGGER.debug("Tag '" + tagName + "' has empty content!");
                                 continue;
                             }
 
