@@ -125,7 +125,6 @@ public class TagsManager {
 
                             if (content.toString().isEmpty()) {
                                 GeyserBot.LOGGER.debug("Tag '" + tagName + "' has empty content!");
-                                continue;
                             }
 
                             // Create the tag from the stored data
