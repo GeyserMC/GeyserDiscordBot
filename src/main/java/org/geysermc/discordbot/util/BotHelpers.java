@@ -103,10 +103,16 @@ public class BotHelpers {
     public static User getUser(String userTag) {
         if (userTag.isEmpty()) return null;
 
+        // If it's a mention of a non-user then ignore
+        if (userTag.startsWith("<") && !userTag.startsWith("<@")) {
+            return null;
+        }
+
         try {
             // Check for a mention (<@!1234>)
-            if (userTag.startsWith("<@!") && userTag.endsWith(">")) {
-                userTag = userTag.substring(3, userTag.length() - 1);
+            if (userTag.startsWith("<@") && userTag.endsWith(">")) {
+                userTag = userTag.replace("!", "");
+                userTag = userTag.substring(2, userTag.length() - 1);
             } else {
                 // Check for a user tag (example#1234)
                 Matcher m = User.USER_TAG.matcher(userTag);
