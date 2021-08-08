@@ -104,20 +104,13 @@ public class UnbanCommand extends Command {
 
         // Let the user know they're unbanned if we are not being silent
         if (!silent) {
-            user.openPrivateChannel().queue((channel) -> {
-                EmbedBuilder embedBuilder = new EmbedBuilder()
-                        .setTitle("You have been unbanned from GeyserMC!")
-                        .addField("Reason", reason, false)
-                        .setTimestamp(Instant.now())
-                        .setColor(BotColors.SUCCESS.getColor());
-
-                String punishmentMessage = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), "punishment-message");
-                if (!punishmentMessage.isEmpty()) {
-                    embedBuilder.addField("Additional Info", punishmentMessage, false);
-                }
-
-                channel.sendMessageEmbeds(embedBuilder.build()).queue(message -> {}, throwable -> {});
-            }, throwable -> {});
+            user.openPrivateChannel().queue((channel) ->
+                    channel.sendMessageEmbeds(new EmbedBuilder()
+                            .setTitle("You have been unbanned from GeyserMC!")
+                            .addField("Reason", reason, false)
+                            .setTimestamp(Instant.now())
+                            .setColor(BotColors.SUCCESS.getColor())
+                            .build()).queue(message -> {}, throwable -> {}), throwable -> {});
         }
 
         // Unban user
