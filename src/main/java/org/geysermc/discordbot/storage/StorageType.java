@@ -26,7 +26,7 @@
 package org.geysermc.discordbot.storage;
 
 public enum StorageType {
-    //    SQLITE("sqlite", SQLiteStorageManager.class), // This maybe added in the future for local development
+    SQLITE("sqlite", SqliteStorageManager.class),
     MYSQL("mysql", MySQLStorageManager.class),
     UNKNOWN("unknown", AbstractStorageManager.class);
 

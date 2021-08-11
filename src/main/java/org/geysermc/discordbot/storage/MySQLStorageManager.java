@@ -38,7 +38,7 @@ import java.util.List;
 
 public class MySQLStorageManager extends AbstractStorageManager {
 
-    private Connection connection;
+    protected Connection connection;
 
     @Override
     public void setupStorage() {
