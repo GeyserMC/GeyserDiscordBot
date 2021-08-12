@@ -252,7 +252,6 @@ public class DumpHandler extends ListenerAdapter {
         }
         // TODO: Change the emote to not be hardcoded
         // Not sure how to do that the best as searching for it everytime seems pointless and expensive
-
         event.getMessage().replyEmbeds(new EmbedBuilder()
                 .setTitle("<:geyser:723981877773598771> Geyser " + platformNamePretty, cleanURL)
                 .setDescription(problems.size() != 0 ? "**Possible problems:**\n" + problems.stream().map(Object::toString).collect(Collectors.joining("\n")) : "")
