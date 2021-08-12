@@ -124,6 +124,7 @@ public class DumpHandler extends ListenerAdapter {
         JSONObject configRemote;
         JSONObject gitInfo;
         JSONObject bootstrapInfo;
+        JSONObject logsUrl;
 
         try {
             // Get json data from dump
@@ -141,6 +142,7 @@ public class DumpHandler extends ListenerAdapter {
             configRemote = config.getJSONObject("remote");
             gitInfo = dump.getJSONObject("gitInfo");
             bootstrapInfo = dump.getJSONObject("bootstrapInfo");
+            logsUrl = dump.getJSONObject("logsInfo");
         } catch (JSONException ignored) {
             MessageHelper.errorResponse(event, "Invalid dump", "The dump you linked was invalid. Please make a new one.");
             return;
@@ -244,8 +246,10 @@ public class DumpHandler extends ListenerAdapter {
         String platformNamePretty = platform.substring(0, 1).toUpperCase() +
                 platform.substring(1).toLowerCase();
 
+        String getLogs = logsUrl.getString("link");
         // TODO: Change the emote to not be hardcoded
         // Not sure how to do that the best as searching for it everytime seems pointless and expensive
+
         event.getMessage().replyEmbeds(new EmbedBuilder()
                 .setTitle("<:geyser:723981877773598771> Geyser " + platformNamePretty, cleanURL)
                 .setDescription(problems.size() != 0 ? "**Possible problems:**\n" + problems.stream().map(Object::toString).collect(Collectors.joining("\n")) : "")
@@ -256,6 +260,7 @@ public class DumpHandler extends ListenerAdapter {
                 .addField("Auth type", configRemote.getString("auth-type"), true)
                 .addField("Server version", versionString, true)
                 .addField("Autoconfigured remote?", (config.getBoolean("autoconfiguredRemote")) ? "Yes" : "No", true)
+                .addField("Logs Url",getLogs,true)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor())
                 .build()).queue();
