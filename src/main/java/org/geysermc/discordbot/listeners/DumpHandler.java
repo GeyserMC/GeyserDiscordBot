@@ -244,8 +244,10 @@ public class DumpHandler extends ListenerAdapter {
         String platformNamePretty = platform.substring(0, 1).toUpperCase() +
                 platform.substring(1).toLowerCase();
 
+        // TODO: Change the emote to not be hardcoded
+        // Not sure how to do that the best as searching for it everytime seems pointless and expensive
         EmbedBuilder buildEmbed = new EmbedBuilder()
-				.setTitle("<:geyser:723981877773598771> Geyser " + platformNamePretty, cleanURL)
+                .setTitle("<:geyser:723981877773598771> Geyser " + platformNamePretty, cleanURL)
                 .setDescription(problems.size() != 0 ? "**Possible problems:**\n" + problems.stream().map(Object::toString).collect(Collectors.joining("\n")) : "")
                 .addField("Git info", gitData.toString(), false)
                 .addField("Platform", platformNamePretty, true)
@@ -263,8 +265,7 @@ public class DumpHandler extends ListenerAdapter {
                 buildEmbed.addField("Logs", logs, true);
             } catch (JSONException ignored) { }
         }
-        // TODO: Change the emote to not be hardcoded
-        // Not sure how to do that the best as searching for it everytime seems pointless and expensive
+
         event.getMessage().replyEmbeds(buildEmbed.build()).queue();
     }
 
