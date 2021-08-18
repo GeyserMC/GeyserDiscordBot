@@ -55,10 +55,10 @@ public class UnbanCommand extends Command {
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
         // Fetch the user
-        Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
+        User user = BotHelpers.getUser(args.remove(0));
 
         // Check user is valid
-        if (member == null) {
+        if (user == null) {
             event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
@@ -67,8 +67,6 @@ public class UnbanCommand extends Command {
             return;
         }
 
-        // Get the user from the member
-        User user = member.getUser();
         boolean silent = false;
 
         // Handle all the option args
@@ -114,7 +112,7 @@ public class UnbanCommand extends Command {
         }
 
         // Unban user
-        member.getGuild().unban(user).queue();
+        event.getGuild().unban(user).queue();
 
         // Log the change
         int id = GeyserBot.storageManager.addLog(event.getMember(), "unban", user, reason);
