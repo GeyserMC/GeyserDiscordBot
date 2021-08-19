@@ -259,7 +259,7 @@ public class DumpHandler extends ListenerAdapter {
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor())
 
-        if (dump.has("logsInfo") && !dump.isNull("logsInfo")) {
+        if (!dump.isNull("logsInfo")) {
             try {
                  String logs = dump.getJSONObject("logsInfo").getString("link");
                 buildEmbed.addField("Logs", logs, true);
