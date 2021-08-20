@@ -76,11 +76,10 @@ public class UnbanCommand extends Command {
                 break;
             }
 
-            if (arg.toCharArray()[1] == ('s')) {
+            if (arg.toCharArray()[1] == 's') {
+                // Check for silent flag
                 silent = true;
             } else {
-
-
                 event.getMessage().replyEmbeds(new EmbedBuilder()
                         .setTitle("Invalid option")
                         .setDescription("The option `" + arg + "` is invalid")
