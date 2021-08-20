@@ -32,6 +32,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -62,6 +63,18 @@ public class UnbanCommand extends Command {
             event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build()).queue();
+            return;
+        }
+
+        // Check if the user is banned
+        try {
+            event.getGuild().retrieveBan(user).complete();
+        } catch (ErrorResponseException ignored) {
+            event.getMessage().replyEmbeds(new EmbedBuilder()
+                    .setTitle("User not banned")
+                    .setDescription("The user ID specified doesn't have a ban on this server.")
                     .setColor(BotColors.FAILURE.getColor())
                     .build()).queue();
             return;
