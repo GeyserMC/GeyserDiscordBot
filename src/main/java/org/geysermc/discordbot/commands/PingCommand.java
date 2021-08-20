@@ -91,6 +91,12 @@ public class PingCommand extends SlashCommand {
     }
 
     private MessageEmbed handle(String ip) {
+        // Check we were given a valid IP/domain
+        if (!ip.matches("[\\w.-]+")) {
+            return MessageHelper.errorResponse(null, "IP invalid", "The given IP appears to be invalid so won't be queried. If you believe this is incorrect please contact an admin.");
+        }
+
+        // Make sure the IP is not longer than 128 characters
         if (ip.length() > 128) {
             return MessageHelper.errorResponse(null, "IP too long", "Search query is over the max allowed character count of 128 (" + ip.length() + ")");
         }
