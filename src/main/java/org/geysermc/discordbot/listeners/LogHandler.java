@@ -129,15 +129,17 @@ public class LogHandler extends ListenerAdapter {
                 int id = GeyserBot.storageManager.addLog(event.getGuild().getMember(newBanLog.getUser()), "ban", event.getUser(), ban.getReason());
 
                 // Send the embed as a reply and to the log
-                ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                        .setTitle("Banned user")
-                        .addField("User", event.getUser().getAsMention(), false)
-                        .addField("Staff member", newBanLog.getUser().getAsMention(), false)
-                        .addField("Reason", ban.getReason(), false)
-                        .setFooter("ID: " + id)
-                        .setTimestamp(Instant.now())
-                        .setColor(BotColors.FAILURE.getColor())
-                        .build()).queue();
+                try {
+                    ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                            .setTitle("Banned user")
+                            .addField("User", event.getUser().getAsMention(), false)
+                            .addField("Staff member", newBanLog.getUser().getAsMention(), false)
+                            .addField("Reason", ban.getReason(), false)
+                            .setFooter("ID: " + id)
+                            .setTimestamp(Instant.now())
+                            .setColor(BotColors.FAILURE.getColor())
+                            .build()).queue();
+                } catch (IllegalArgumentException ignored) { }
             }
         }, banLog == null ? 5 : 0, TimeUnit.SECONDS);
     }
@@ -153,40 +155,46 @@ public class LogHandler extends ListenerAdapter {
             int id = GeyserBot.storageManager.addLog(event.getGuild().getMember(banLog.getUser()), "unban", event.getUser(), "");
 
             // Send the embed as a reply and to the log
-            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                    .setTitle("Unbanned user")
-                    .addField("User", event.getUser().getAsMention(), false)
-                    .addField("Staff member", banLog.getUser().getAsMention(), false)
-                    .addField("Reason", "", false)
-                    .setFooter("ID: " + id)
-                    .setTimestamp(Instant.now())
-                    .setColor(BotColors.SUCCESS.getColor())
-                    .build()).queue();
+            try {
+                ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                        .setTitle("Unbanned user")
+                        .addField("User", event.getUser().getAsMention(), false)
+                        .addField("Staff member", banLog.getUser().getAsMention(), false)
+                        .addField("Reason", "", false)
+                        .setFooter("ID: " + id)
+                        .setTimestamp(Instant.now())
+                        .setColor(BotColors.SUCCESS.getColor())
+                        .build()).queue();
+            } catch (IllegalArgumentException ignored) { }
         }
     }
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
-                .setAuthor("Member Joined", null, event.getUser().getAvatarUrl())
-                .setDescription(event.getUser().getAsMention() + " " + event.getUser().getAsTag())
-                .addField("Account Created", TimeFormat.RELATIVE.format(event.getUser().getTimeCreated().toInstant()), false)
-                .setThumbnail(event.getUser().getAvatarUrl())
-                .setFooter("ID: " + event.getUser().getId())
-                .setTimestamp(Instant.now())
-                .setColor(BotColors.SUCCESS.getColor())
-                .build()).queue();
+        try {
+            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                    .setAuthor("Member Joined", null, event.getUser().getAvatarUrl())
+                    .setDescription(event.getUser().getAsMention() + " " + event.getUser().getAsTag())
+                    .addField("Account Created", TimeFormat.RELATIVE.format(event.getUser().getTimeCreated().toInstant()), false)
+                    .setThumbnail(event.getUser().getAvatarUrl())
+                    .setFooter("ID: " + event.getUser().getId())
+                    .setTimestamp(Instant.now())
+                    .setColor(BotColors.SUCCESS.getColor())
+                    .build()).queue();
+        } catch (IllegalArgumentException ignored) { }
     }
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
-        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                .setAuthor("Member Left", null, event.getUser().getAvatarUrl())
-                .setDescription(event.getUser().getAsMention() + " " + event.getUser().getAsTag())
-                .setFooter("ID: " + event.getUser().getId())
-                .setTimestamp(Instant.now())
-                .setColor(BotColors.WARNING.getColor())
-                .build()).queue();
+        try {
+            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                    .setAuthor("Member Left", null, event.getUser().getAvatarUrl())
+                    .setDescription(event.getUser().getAsMention() + " " + event.getUser().getAsTag())
+                    .setFooter("ID: " + event.getUser().getId())
+                    .setTimestamp(Instant.now())
+                    .setColor(BotColors.WARNING.getColor())
+                    .build()).queue();
+        } catch (IllegalArgumentException ignored) { }
     }
 
     @Override
@@ -204,15 +212,17 @@ public class LogHandler extends ListenerAdapter {
 
         Message cachedMessage = getCacheMessage(event.getGuild(), event.getMessage().getIdLong());
 
-        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
-                .setDescription("**Message edited in **" + event.getChannel().getAsMention() + " [Jump to Message](" + event.getMessage().getJumpUrl() + ")")
-                .addField("Before", cachedMessage != null ? BotHelpers.trim(cachedMessage.getContentRaw(), 450) : "*Old message not cached*", false)
-                .addField("After", BotHelpers.trim(event.getMessage().getContentRaw(), 450), false)
-                .setFooter("User ID: " + event.getAuthor().getId())
-                .setTimestamp(Instant.now())
-                .setColor(BotColors.NEUTRAL.getColor())
-                .build()).queue();
+        try {
+            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                    .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
+                    .setDescription("**Message edited in **" + event.getChannel().getAsMention() + " [Jump to Message](" + event.getMessage().getJumpUrl() + ")")
+                    .addField("Before", cachedMessage != null ? BotHelpers.trim(cachedMessage.getContentRaw(), 450) : "*Old message not cached*", false)
+                    .addField("After", BotHelpers.trim(event.getMessage().getContentRaw(), 450), false)
+                    .setFooter("User ID: " + event.getAuthor().getId())
+                    .setTimestamp(Instant.now())
+                    .setColor(BotColors.NEUTRAL.getColor())
+                    .build()).queue();
+        } catch (IllegalArgumentException ignored) { }
 
         putCacheMessage(event.getGuild(), event.getMessage());
     }
@@ -228,16 +238,18 @@ public class LogHandler extends ListenerAdapter {
             try {
                 Invite invite = Invite.resolve(event.getJDA(), inviteCode, true).complete();
 
-                ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                        .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
-                        .setDescription("**Invite posted for " + invite.getGuild().getName() + "** " + event.getChannel().getAsMention() + "\n" + invite.getUrl())
-                        .addField("Inviter", invite.getInviter() != null ? invite.getInviter().getAsTag() : "Unknown", true)
-                        .addField("Channel", invite.getChannel() != null ? invite.getChannel().getName() : "Group", true)
-                        .addField("Members", invite.getGuild().getOnlineCount() + "/" + invite.getGuild().getMemberCount(), true)
-                        .setFooter("ID: " + event.getAuthor().getId())
-                        .setTimestamp(Instant.now())
-                        .setColor(BotColors.NEUTRAL.getColor())
-                        .build()).queue();
+                try {
+                    ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                            .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
+                            .setDescription("**Invite posted for " + invite.getGuild().getName() + "** " + event.getChannel().getAsMention() + "\n" + invite.getUrl())
+                            .addField("Inviter", invite.getInviter() != null ? invite.getInviter().getAsTag() : "Unknown", true)
+                            .addField("Channel", invite.getChannel() != null ? invite.getChannel().getName() : "Group", true)
+                            .addField("Members", invite.getGuild().getOnlineCount() + "/" + invite.getGuild().getMemberCount(), true)
+                            .setFooter("ID: " + event.getAuthor().getId())
+                            .setTimestamp(Instant.now())
+                            .setColor(BotColors.NEUTRAL.getColor())
+                            .build()).queue();
+                } catch (IllegalArgumentException ignored) { }
             } catch (ErrorResponseException ignored) { }
         }
 
@@ -273,47 +285,55 @@ public class LogHandler extends ListenerAdapter {
             message = cachedMessage.getContentRaw();
         }
 
-        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                .setAuthor(authorTag, null, authorAvatar)
-                .setDescription("**Message sent by** " + authorMention + " **deleted in** " + event.getChannel().getAsMention() + "\n" + BotHelpers.trim(message, 900))
-                .setFooter("Author: " + authorId + " | Message ID: " + event.getMessageId())
-                .setTimestamp(Instant.now())
-                .setColor(BotColors.WARNING.getColor())
-                .build()).queue();
+        try {
+            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                    .setAuthor(authorTag, null, authorAvatar)
+                    .setDescription("**Message sent by** " + authorMention + " **deleted in** " + event.getChannel().getAsMention() + "\n" + BotHelpers.trim(message, 900))
+                    .setFooter("Author: " + authorId + " | Message ID: " + event.getMessageId())
+                    .setTimestamp(Instant.now())
+                    .setColor(BotColors.WARNING.getColor())
+                    .build()).queue();
+        } catch (IllegalArgumentException ignored) { }
 
         removeCacheMessage(event.getGuild(), event.getMessageIdLong());
     }
 
     @Override
     public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
-        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
-                .setDescription(event.getMember().getAsMention() + " **joined voice channel #" + event.getChannelJoined().getName() + "**")
-                .setFooter("ID: " + event.getMember().getId())
-                .setTimestamp(Instant.now())
-                .setColor(BotColors.SUCCESS.getColor())
-                .build()).queue();
+        try {
+            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                    .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
+                    .setDescription(event.getMember().getAsMention() + " **joined voice channel #" + event.getChannelJoined().getName() + "**")
+                    .setFooter("ID: " + event.getMember().getId())
+                    .setTimestamp(Instant.now())
+                    .setColor(BotColors.SUCCESS.getColor())
+                    .build()).queue();
+        } catch (IllegalArgumentException ignored) { }
     }
 
     @Override
     public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event) {
-        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
-                .setDescription(event.getMember().getAsMention() + " **switched voice channel `#" + event.getChannelLeft().getName() + "` -> `#" + event.getChannelJoined().getName() + "`**")
-                .setFooter("ID: " + event.getMember().getId())
-                .setTimestamp(Instant.now())
-                .setColor(BotColors.SUCCESS.getColor())
-                .build()).queue();
+        try {
+            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                    .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
+                    .setDescription(event.getMember().getAsMention() + " **switched voice channel `#" + event.getChannelLeft().getName() + "` -> `#" + event.getChannelJoined().getName() + "`**")
+                    .setFooter("ID: " + event.getMember().getId())
+                    .setTimestamp(Instant.now())
+                    .setColor(BotColors.SUCCESS.getColor())
+                    .build()).queue();
+        } catch (IllegalArgumentException ignored) { }
     }
 
     @Override
     public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
-                .setDescription(event.getMember().getAsMention() + " **left voice channel #" + event.getChannelLeft().getName() + "**")
-                .setFooter("ID: " + event.getMember().getId())
-                .setTimestamp(Instant.now())
-                .setColor(BotColors.FAILURE.getColor())
-                .build()).queue();
+        try {
+            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                    .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
+                    .setDescription(event.getMember().getAsMention() + " **left voice channel #" + event.getChannelLeft().getName() + "**")
+                    .setFooter("ID: " + event.getMember().getId())
+                    .setTimestamp(Instant.now())
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build()).queue();
+        } catch (IllegalArgumentException ignored) { }
     }
 }
