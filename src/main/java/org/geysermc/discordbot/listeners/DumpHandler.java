@@ -257,7 +257,7 @@ public class DumpHandler extends ListenerAdapter {
                 .addField("Server version", versionString, true)
                 .addField("Autoconfigured remote?", (config.getBoolean("autoconfiguredRemote")) ? "Yes" : "No", true)
                 .setTimestamp(Instant.now())
-                .setColor(BotColors.SUCCESS.getColor())
+                .setColor(BotColors.SUCCESS.getColor());
 
         if (!dump.isNull("logsInfo")) {
             try {
