@@ -68,6 +68,16 @@ public class UnmuteCommand extends Command {
             return;
         }
 
+        // Check we can target the user
+        if (!event.getSelfMember().canInteract(member) || !event.getMember().canInteract(member)) {
+            event.getMessage().replyEmbeds(new EmbedBuilder()
+                    .setTitle("Higher role")
+                    .setDescription("Either the bot or you cannot target that user.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build()).queue();
+            return;
+        }
+
         // Get the user from the member
         User user = member.getUser();
         boolean silent = false;

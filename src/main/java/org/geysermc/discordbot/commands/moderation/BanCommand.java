@@ -67,6 +67,16 @@ public class BanCommand extends Command {
             return;
         }
 
+        // Check we can target the user
+        if (!event.getSelfMember().canInteract(member) || !event.getMember().canInteract(member)) {
+            event.getMessage().replyEmbeds(new EmbedBuilder()
+                    .setTitle("Higher role")
+                    .setDescription("Either the bot or you cannot target that user.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build()).queue();
+            return;
+        }
+
         // Maybe worth getting rid of this depends on how many times its used
         User user = member.getUser();
         int delDays = 0;
@@ -88,7 +98,7 @@ public class BanCommand extends Command {
                 // Check the delete days flag
                 case 'd':
                     try {
-                        delDays = Integer.parseInt(arg.replace("d", ""));
+                        delDays = Integer.parseInt(arg.replace("-d", ""));
                     } catch (NumberFormatException ignored) {
                         event.getMessage().reply("Please specify an integer for days to delete messages!").queue();
                         return;
