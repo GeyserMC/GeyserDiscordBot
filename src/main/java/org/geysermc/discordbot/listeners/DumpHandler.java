@@ -261,7 +261,7 @@ public class DumpHandler extends ListenerAdapter {
 
         if (!dump.isNull("logsInfo")) {
             try {
-                 String logs = dump.getJSONObject("logsInfo").getString("link");
+                String logs = dump.getJSONObject("logsInfo").getString("link");
                 buildEmbed.addField("Logs", logs, true);
             } catch (JSONException ignored) { }
         }
