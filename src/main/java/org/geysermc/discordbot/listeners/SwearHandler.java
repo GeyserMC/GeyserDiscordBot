@@ -142,7 +142,12 @@ public class SwearHandler extends ListenerAdapter {
 //    }
 
     private void handleMessageEvent(Message message, boolean notifyUser) {
-        if (message.getAuthor().isBot()) {
+        if (message.getAuthor().isBot() || !message.isFromGuild()) {
+            return;
+        }
+
+        String disableFilter = GeyserBot.storageManager.getServerPreference(message.getGuild().getIdLong(), "disable-filter");
+        if (disableFilter != null && !disableFilter.isEmpty()) {
             return;
         }
 
