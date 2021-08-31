@@ -71,6 +71,7 @@ public class BotHelpers {
         BEDROCK_VERSIONS.put(428, "1.16.210");
         BEDROCK_VERSIONS.put(431, "1.16.220");
         BEDROCK_VERSIONS.put(440, "1.17.0");
+        BEDROCK_VERSIONS.put(448, "1.17.10 - 1.17.11");
     }
 
     /**
