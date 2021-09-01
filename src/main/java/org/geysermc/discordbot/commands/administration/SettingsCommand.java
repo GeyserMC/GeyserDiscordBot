@@ -23,7 +23,7 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.commands;
+package org.geysermc.discordbot.commands.administration;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -32,7 +32,6 @@ import net.dv8tion.jda.api.Permission;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.BotColors;
 
-import java.awt.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,10 +50,11 @@ public class SettingsCommand extends Command {
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
         String title;
-        String key = args.get(1);
+        String key = args.remove(1);
         String value;
 
-        switch (args.get(0)) {
+        String action = args.remove(0);
+        switch (action) {
             case "get":
                 title = "Setting value";
                 value = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), key);
@@ -62,12 +62,12 @@ public class SettingsCommand extends Command {
 
             case "set":
                 title = "Updated setting";
-                value = args.get(2);
+                value = String.join(" ", args);
                 GeyserBot.storageManager.setServerPreference(event.getGuild().getIdLong(), key, value);
                 break;
 
             default:
-                event.getChannel().sendMessage(new EmbedBuilder()
+                event.getChannel().sendMessageEmbeds(new EmbedBuilder()
                         .setTitle("Invalid action specified")
                         .setDescription("Unknown action `" + args.get(0) + "`, it can be one of: `get`, `set`")
                         .setTimestamp(Instant.now())
@@ -76,7 +76,7 @@ public class SettingsCommand extends Command {
                 return;
         }
 
-        event.getChannel().sendMessage(new EmbedBuilder()
+        event.getChannel().sendMessageEmbeds(new EmbedBuilder()
                 .setTitle(title)
                 .addField("Key", "`" + key + "`", false)
                 .addField("Value", "`" + value + "`", false)

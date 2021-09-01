@@ -30,7 +30,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.util.Arrays;
 
@@ -64,6 +63,6 @@ public class EmbedTag extends Command {
             embed.setImage(image);
         }
 
-        event.getMessage().reply(embed.build()).queue();
+        event.getMessage().replyEmbeds(embed.build()).queue();
     }
 }

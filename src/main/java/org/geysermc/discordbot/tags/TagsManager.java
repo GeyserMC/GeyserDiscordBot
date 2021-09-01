@@ -36,6 +36,7 @@ import java.util.*;
 public class TagsManager {
 
     private static final List<Command> TAGS = new ArrayList<>();
+    private static final Map<String, String> ISSUE_RESPONSES = new HashMap<>();
     private static boolean tagsLoaded = false;
 
     public static List<Command> getTags() {
@@ -44,6 +45,19 @@ public class TagsManager {
         }
 
         return TAGS;
+    }
+
+    /**
+     * An issue to response Map. All keys and values have no leading or trailing whitespace.
+     *
+     * @return The issue to response Map.
+     */
+    public static Map<String, String> getIssueResponses() {
+        if (!tagsLoaded) {
+            loadTags();
+        }
+
+        return ISSUE_RESPONSES;
     }
 
     private static void loadTags() {
@@ -64,7 +78,9 @@ public class TagsManager {
 
                             String[] lines = new String(BotHelpers.bytesFromResource("tags/" + folderName + "/" + fileName)).split("\n");
                             Map<String, String> tagData = new HashMap<>();
+                            String[] issueTriggers = null;
                             StringBuilder content = new StringBuilder();
+
                             boolean hitSeparator = false;
 
                             // Get all the tag data
@@ -74,51 +90,78 @@ public class TagsManager {
                                 if (hitSeparator) {
                                     content.append(line).append("\n");
                                     continue;
-                                }
-
-                                if (line.equals("---")) {
+                                } else if (line.equals("---")) {
                                     hitSeparator = true;
+                                    continue;
+                                } else if (!line.contains(":")) {
                                     continue;
                                 }
 
-                                String[] lineParts = line.trim().split(":");
+                                String[] lineParts = line.trim().split(":", 2);
+                                if (lineParts.length < 2 || lineParts[0].isEmpty() || lineParts[1].isEmpty()) {
+                                    GeyserBot.LOGGER.warn("Invalid tag option line '" + line.trim() + "' for tag '" + tagName + "'!");
+                                    continue;
+                                }
+
                                 switch (lineParts[0]) {
-                                    case "type":
+                                    case "type": // intentional fallthrough
                                     case "aliases":
                                         tagData.put(lineParts[0], lineParts[1].trim().toLowerCase());
                                         break;
 
                                     case "image":
-                                        tagData.put("image", String.join(":", Arrays.copyOfRange(lineParts, 1, lineParts.length)).trim());
+                                        tagData.put(lineParts[0], lineParts[1].trim());
                                         break;
 
-                                    case "":
+                                    case "issues":
+                                        issueTriggers = lineParts[1].split("\\|\\|");
                                         break;
 
                                     default:
-                                        GeyserBot.LOGGER.warn("Invalid tag option '" + lineParts[0] + "' for tag '" + tagName + "'!");
+                                        GeyserBot.LOGGER.warn("Invalid tag option key '" + lineParts[0] + "' for tag '" + tagName + "'!");
                                         break;
                                 }
                             }
 
+                            if (content.toString().isEmpty()) {
+                                GeyserBot.LOGGER.warn("Tag '" + tagName + "' has empty content! Skipping tag.");
+                                continue;
+                            }
+
                             // Create the tag from the stored data
-                            Command tag = null;
                             switch (tagData.get("type")) {
                                 case "text":
-                                    tag = new EmbedTag(tagName, content.toString(), tagData.get("image"), tagData.get("aliases"));
+                                    TAGS.add(new EmbedTag(tagName, content.toString(), tagData.get("image"), tagData.get("aliases")));
                                     break;
 
                                 case "text-raw":
-                                    tag = new RawTag(tagName, content.toString(), tagData.get("aliases"));
+                                    TAGS.add(new RawTag(tagName, content.toString(), tagData.get("aliases")));
+                                    break;
+
+                                case "issue-only":
+                                    if (tagData.containsKey("aliases")) {
+                                        GeyserBot.LOGGER.warn("Tag '" + tagName + "' has aliases listed but is of type 'issue-only'. Ignoring aliases.");
+                                    }
+
+                                    if (tagData.containsKey("image")) {
+                                        GeyserBot.LOGGER.warn("Tag '" + tagName + "' has image listed but is of type 'issue-only'. Ignoring image.");
+                                    }
+
+                                    if (issueTriggers == null) {
+                                        GeyserBot.LOGGER.warn("Tag '" + tagName + "' has no issues listed but is of type 'issue-only'.");
+                                    }
                                     break;
 
                                 default:
-                                    GeyserBot.LOGGER.warn("Invalid tag type '" + tagData.get("type") + "' for tag '" + tagName + "'!");
-                                    break;
+                                    GeyserBot.LOGGER.warn("Invalid tag type '" + tagData.get("type") + "' for tag '" + tagName + "'! Ignoring tag.");
+                                    continue;
                             }
 
-                            if (tag != null) {
-                                TAGS.add(tag);
+                            if (issueTriggers != null) {
+                                // allow any tag with issues listed to be an issue response
+                                for (String issue : issueTriggers) {
+                                    ISSUE_RESPONSES.put(issue.trim(), content.toString().trim());
+                                }
                             }
                         }
                     }

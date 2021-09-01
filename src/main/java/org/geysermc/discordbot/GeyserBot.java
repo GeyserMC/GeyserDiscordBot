@@ -29,6 +29,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import io.sentry.Sentry;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -40,6 +41,7 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.geysermc.discordbot.http.Server;
+import org.geysermc.discordbot.health_checker.HealthCheckerManager;
 import org.geysermc.discordbot.listeners.*;
 import org.geysermc.discordbot.storage.AbstractStorageManager;
 import org.geysermc.discordbot.storage.SlowModeInfo;
@@ -49,6 +51,7 @@ import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.updates.UpdateManager;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.PropertiesManager;
+import org.geysermc.discordbot.util.SentryEventManager;
 import org.json.JSONArray;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
@@ -123,6 +126,16 @@ public class GeyserBot {
         prop.load(new FileInputStream("bot.properties"));
         PropertiesManager.loadProperties(prop);
 
+        // Setup sentry.io
+        if (PropertiesManager.getSentryDsn() != null) {
+            LOGGER.info("Loading sentry.io...");
+            Sentry.init(options -> {
+                options.setDsn(PropertiesManager.getSentryDsn());
+                options.setEnvironment(PropertiesManager.getSentryEnv());
+                LOGGER.info("Sentry.io loaded");
+            });
+        }
+
         // Connect to github
         github = new GitHubBuilder().withOAuthToken(PropertiesManager.getGithubToken()).build();
 
@@ -158,9 +171,6 @@ public class GeyserBot {
         client.setListener(new CommandErrorHandler());
         client.setCommandPreProcessFunction(event -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
 
-        // TEMPORARY
-        // client.forceGuildOnly("742759234906751017");
-
         // Setup the tag client
         CommandClientBuilder tagClient = new CommandClientBuilder();
         tagClient.setActivity(null);
@@ -181,16 +191,17 @@ public class GeyserBot {
 
         // Register JDA
         jda = JDABuilder.createDefault(PropertiesManager.getToken())
-            .setChunkingFilter(ChunkingFilter.ALL)
-            .setMemberCachePolicy(MemberCachePolicy.ALL)
-            .enableIntents(GatewayIntent.GUILD_MEMBERS)
-            .enableIntents(GatewayIntent.GUILD_PRESENCES)
-            .enableCache(CacheFlag.ACTIVITY)
-            .enableCache(CacheFlag.ROLE_TAGS)
-            .setStatus(OnlineStatus.ONLINE)
-            .setActivity(Activity.playing("Booting..."))
-            .setEnableShutdownHook(true)
-            .addEventListeners(waiter,
+                .setChunkingFilter(ChunkingFilter.ALL)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
+                .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                .enableIntents(GatewayIntent.GUILD_PRESENCES)
+                .enableCache(CacheFlag.ACTIVITY)
+                .enableCache(CacheFlag.ROLE_TAGS)
+                .setStatus(OnlineStatus.ONLINE)
+                .setActivity(Activity.playing("Booting..."))
+                .setEnableShutdownHook(true)
+                .setEventManager(new SentryEventManager())
+                .addEventListeners(waiter,
                     new LogHandler(),
                     new SwearHandler(),
                     new PersistentRoleHandler(),
@@ -199,9 +210,11 @@ public class GeyserBot {
                     new DumpHandler(),
                     new ErrorAnalyzer(),
                     new ShutdownHandler(),
+                    new VoiceGroupHandler(),
+                    new BadLinksHandler(),
                     client.build(),
                     tagClient.build())
-            .build();
+                .build();
 
         // Register listeners
         jda.addEventListener();
@@ -217,6 +230,9 @@ public class GeyserBot {
 
         // Setup the update check scheduler
         UpdateManager.setup();
+
+        // Setup the health check scheduler
+        HealthCheckerManager.setup();
 
         // Setup all slow mode handlers
         generalThreadPool.schedule(() -> {

@@ -36,7 +36,6 @@ import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 
-import java.awt.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +56,7 @@ public class SlowmodeCommand extends Command {
 
         // Check if a time string was specified
         if (args.size() >= 1 && args.get(0).trim().isEmpty()) {
-            event.getMessage().reply(new EmbedBuilder()
+            event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid usage")
                     .setDescription("Please specify a time in the correct format `1h2m3s`.")
                     .setColor(BotColors.FAILURE.getColor())
@@ -91,7 +90,7 @@ public class SlowmodeCommand extends Command {
 
             // Check if time is valid
             if (delay == 0) {
-                event.getMessage().reply(new EmbedBuilder()
+                event.getMessage().replyEmbeds(new EmbedBuilder()
                         .setTitle("Invalid usage")
                         .setDescription("Please specify a time in the correct format `1h2m3s`.")
                         .setColor(BotColors.FAILURE.getColor())
@@ -126,7 +125,7 @@ public class SlowmodeCommand extends Command {
         }
 
         // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(slowmodeEmbed).queue();
-        event.getMessage().reply(slowmodeEmbed).queue();
+        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(slowmodeEmbed).queue();
+        event.getMessage().replyEmbeds(slowmodeEmbed).queue();
     }
 }

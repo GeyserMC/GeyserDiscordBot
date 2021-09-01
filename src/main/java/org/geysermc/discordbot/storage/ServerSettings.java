@@ -26,11 +26,11 @@
 package org.geysermc.discordbot.storage;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.geysermc.discordbot.GeyserBot;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class gives easy methods for accessing stored data about a server
@@ -43,11 +43,37 @@ public class ServerSettings {
      *
      * @param serverID ID of the guild to get the preference for
      * @param key The preference key to get
-     * @return The list of strings or null if they dont exist
+     * @return The list of strings or null if it doesn't exist
      */
     public static List<String> getList(long serverID, String key) {
         String listData = GeyserBot.storageManager.getServerPreference(serverID, key);
+
+        if (listData == null) {
+            return Collections.emptyList();
+        }
+
         return Arrays.asList(listData.split(",").clone());
+    }
+
+    /**
+     * Get a preference as a map of strings delimited by `,` and separated by `|`
+     *
+     * @param serverID ID of the guild to get the preference for
+     * @param key The preference key to get
+     * @return The map of strings or empty if it doesn't exist
+     */
+    public static Map<String, String> getMap(long serverID, String key) {
+        String mapData = GeyserBot.storageManager.getServerPreference(serverID, key);
+        Map<String, String> map = new HashMap<>();
+
+        if (mapData != null) {
+            for (String entry : mapData.split(",")) {
+                String[] entryData = entry.split("\\|");
+                map.put(entryData[0], entryData[1]);
+            }
+        }
+
+        return map;
     }
 
     /**
@@ -72,5 +98,40 @@ public class ServerSettings {
     public static TextChannel getUpdateChannel(Guild guild) throws IllegalArgumentException {
         String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "update-channel");
         return guild.getTextChannelById(channel);
+    }
+
+    /**
+     * Get the voice role for the selected guild
+     *
+     * @param guild  ID of the guild to get the channel for
+     * @return The {@link Role} for users in the voice channel
+     * @throws IllegalArgumentException If the role is null or invalid
+     */
+    public static Role getVoiceRole(Guild guild) throws IllegalArgumentException {
+        String role = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "voice-role");
+        return guild.getRoleById(role);
+    }
+
+    /**
+     * Check if the given channel should be excluded from logs
+     *
+     * @param channel The {@link TextChannel} to check
+     * @return If we should exclude the channel
+     */
+    public static boolean shouldNotLogChannel(TextChannel channel) {
+        List<String> dontLog = getList(channel.getGuild().getIdLong(), "dont-log");
+        return dontLog.contains(channel.getId());
+    }
+
+    /**
+     * Check if the given channel should be excluded from the level system
+     * if value is 0 then disables all channels
+     *
+     * @param channel The {@link TextChannel} to check
+     * @return If we should exclude the channel
+     */
+    public static boolean shouldDisableLevels(TextChannel channel) {
+        List<String> dontLevel = getList(channel.getGuild().getIdLong(), "dont-level");
+        return dontLevel.size() > 0 && dontLevel.get(0).equals("0") || dontLevel.contains(channel.getId());
     }
 }

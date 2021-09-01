@@ -36,6 +36,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
 
@@ -88,7 +89,7 @@ public class WhoisCommand extends SlashCommand {
             return;
         }
 
-        event.getMessage().reply(handle(member)).queue();
+        event.getMessage().replyEmbeds(handle(member)).queue();
     }
 
     protected MessageEmbed handle(Member member) {
@@ -104,8 +105,8 @@ public class WhoisCommand extends SlashCommand {
         return new EmbedBuilder()
                 .setAuthor(user.getAsTag(), null, user.getAvatarUrl())
                 .setDescription(user.getAsMention())
-                .addField("Joined", member.getTimeJoined().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Registered", member.getTimeCreated().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                .addField("Joined", TimeFormat.DATE_TIME_LONG.format(member.getTimeJoined()), true)
+                .addField("Registered", TimeFormat.DATE_TIME_LONG.format(member.getTimeCreated()), true)
                 .addField("Roles [" + member.getRoles().size() + "]", roles, false)
                 .addField("Key Permissions", member.getPermissions().stream().filter(PRIVILEGED_PERMISSIONS::contains).map(Permission::getName).collect(Collectors.joining(", ")), false)
                 .setThumbnail(user.getAvatarUrl())

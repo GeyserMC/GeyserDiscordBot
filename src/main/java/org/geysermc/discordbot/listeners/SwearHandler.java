@@ -27,9 +27,10 @@ package org.geysermc.discordbot.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
@@ -38,11 +39,14 @@ import org.geysermc.discordbot.util.BotHelpers;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.awt.Color;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.Normalizer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -97,7 +101,9 @@ public class SwearHandler extends ListenerAdapter {
     @Nullable
     private Pattern checkString(String input) {
         // TODO: Maybe only clean start and end? Then run through the same as normalInput?
+        input = input.toLowerCase();
         String cleanInput = CLEAN_PATTERN.matcher(input).replaceAll("");
+        String cleanInputSpaces = CLEAN_PATTERN.matcher(input).replaceAll(" ");
         String normalInput = Normalizer.normalize(input, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
         // Find all non ascii chars and normalise them based on REPLACE_TOKENS
@@ -112,7 +118,7 @@ public class SwearHandler extends ListenerAdapter {
         normalInput = sb.toString();
 
         for (Pattern filterPattern : filterPatterns) {
-            if (filterPattern.matcher(cleanInput).find() || filterPattern.matcher(normalInput).find()) {
+            if (filterPattern.matcher(cleanInput).find() || filterPattern.matcher(cleanInputSpaces).find() || filterPattern.matcher(normalInput).find()) {
                 return filterPattern;
             }
         }
@@ -120,38 +126,59 @@ public class SwearHandler extends ListenerAdapter {
         return null;
     }
 
+    public static String getRandomNick() {
+        return nicknames[new Random().nextInt(nicknames.length)];
+    }
+
     @Override
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getAuthor().isBot()) {
+    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+        handleMessageEvent(event.getMessage(), true);
+    }
+
+//    Disabled for now
+//    @Override
+//    public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event) {
+//        handleMessageEvent(event.getMessage(), false);
+//    }
+
+    private void handleMessageEvent(Message message, boolean notifyUser) {
+        if (message.getAuthor().isBot() || !message.isFromGuild()) {
+            return;
+        }
+
+        String disableFilter = GeyserBot.storageManager.getServerPreference(message.getGuild().getIdLong(), "disable-filter");
+        if (disableFilter != null && !disableFilter.isEmpty()) {
             return;
         }
 
         Pattern filterPattern;
-        if ((filterPattern = checkString(event.getMessage().getContentRaw())) != null) {
-            filteredMessages.add(event.getMessageIdLong());
+        if ((filterPattern = checkString(message.getContentRaw())) != null) {
+            filteredMessages.add(message.getIdLong());
 
             // Delete message
-            event.getMessage().delete().queue(unused -> {
-                // Alert the user message
-                event.getChannel().sendMessage(new MessageBuilder()
-                        .append(event.getAuthor().getAsMention())
-                        .append(" your message has been removed because it contains profanity! Please read our rules for more information.")
-                        .build()).queue();
+            message.delete().queue(unused -> {
+                if (notifyUser) {
+                    // Alert the user message
+                    message.getChannel().sendMessage(new MessageBuilder()
+                            .append(message.getAuthor().getAsMention())
+                            .append(" your message has been removed because it contains profanity! Please read our rules for more information.")
+                            .build()).queue();
+                }
 
                 // Send a log to the admin channel
-                ServerSettings.getLogChannel(event.getGuild()).sendMessage(new EmbedBuilder()
+                ServerSettings.getLogChannel(message.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                         .setTitle("Profanity removed")
-                        .setDescription("**Sender:** " + event.getAuthor().getAsMention() + "\n" +
-                                "**Channel:** <#" + event.getChannel().getId() + ">\n" +
+                        .setDescription("**Sender:** " + message.getAuthor().getAsMention() + "\n" +
+                                "**Channel:** <#" + message.getChannel().getId() + ">\n" +
                                 "**Regex:** `" + filterPattern + "`\n" +
-                                "**Message:** " + event.getMessage().getContentRaw())
+                                "**Message:** " + message.getContentRaw())
                         .setColor(BotColors.FAILURE.getColor())
                         .build()).queue();
 
                 // Remove the message from filteredMessages after 5s
                 // this should be enough time for the rest of the events to fire
                 GeyserBot.getGeneralThreadPool().schedule(() -> {
-                    filteredMessages.remove(event.getMessageIdLong());
+                    filteredMessages.remove(message.getIdLong());
                 }, 5, TimeUnit.SECONDS);
             });
         }
@@ -160,7 +187,7 @@ public class SwearHandler extends ListenerAdapter {
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
         if (checkString(event.getUser().getName()) != null) {
-            event.getMember().modifyNickname(nicknames[new Random().nextInt(nicknames.length)]).queue();
+            event.getMember().modifyNickname(getRandomNick()).queue();
         }
     }
 
@@ -172,7 +199,7 @@ public class SwearHandler extends ListenerAdapter {
         }
 
         if (checkString(name) != null) {
-            event.getMember().modifyNickname(nicknames[new Random().nextInt(nicknames.length)]).queue();
+            event.getMember().modifyNickname(getRandomNick()).queue();
         }
     }
 }

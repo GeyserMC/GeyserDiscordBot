@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands.search;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -42,7 +41,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pw.chew.chewbotcca.util.RestClient;
 
-import java.awt.Color;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -68,24 +66,27 @@ public class WikiCommand extends SlashCommand {
     protected void execute(SlashCommandEvent event) {
         // Get arguments
         String args = event.getOption("search").getAsString();
-        MessageEmbed response = handle(event, args);
+        MessageEmbed response = handle(args);
         if (response != null) event.replyEmbeds(response).queue();
     }
 
     // !wiki
     @Override
     protected void execute(CommandEvent event) {
-        MessageEmbed response = handle(event, event.getArgs());
-        if (response != null) event.getMessage().reply(response).queue();
+        MessageEmbed response = handle(event.getArgs());
+        if (response != null) event.getMessage().replyEmbeds(response).queue();
     }
 
-    public MessageEmbed handle(Object event, String query) {
+    public MessageEmbed handle(String query) {
         EmbedBuilder embed = new EmbedBuilder();
 
         // Check to make sure we have a search term
         if (query.isEmpty()) {
-            MessageHelper.errorResponse(event, "Invalid usage", "Missing search term. `" + PropertiesManager.getPrefix() + name + " <search>`");
-            return null;
+            return MessageHelper.errorResponse(null, "Invalid usage", "Missing search term. `" + PropertiesManager.getPrefix() + name + " <search>`");
+        }
+
+        if (query.length() > 128) {
+            return MessageHelper.errorResponse(null, "Query too long", "Search query is over the max allowed character count of 128 (" + query.length() + ")");
         }
 
         List<WikiResult> results;
@@ -117,7 +118,7 @@ public class WikiCommand extends SlashCommand {
             for (WikiResult result : results) {
                 // Ignore pages starting with `_` which are usually meta pages
                 if (result.getTitle().startsWith("_")) {
-                    return null;
+                    continue;
                 }
 
                 // Add the result as a field
@@ -177,7 +178,14 @@ public class WikiCommand extends SlashCommand {
             this.title = title;
             this.description = description;
             this.updated = updated;
-            this.url = url;
+
+            // Fix last character breaking urls
+            String lastChar = url.substring(url.length() - 1);
+            try {
+                lastChar = URLEncoder.encode(lastChar, "UTF-8");
+            } catch (UnsupportedEncodingException ignored) { }
+
+            this.url = url.substring(0, url.length() - 1) + lastChar;
         }
 
         public String getTitle() {

@@ -38,7 +38,6 @@ import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 
-import java.awt.Color;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,9 +60,19 @@ public class MuteCommand extends Command {
 
         // Check user is valid
         if (member == null) {
-            event.getMessage().reply(new EmbedBuilder()
+            event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build()).queue();
+            return;
+        }
+
+        // Check we can target the user
+        if (!event.getSelfMember().canInteract(member) || !event.getMember().canInteract(member)) {
+            event.getMessage().replyEmbeds(new EmbedBuilder()
+                    .setTitle("Higher role")
+                    .setDescription("Either the bot or you cannot target that user.")
                     .setColor(BotColors.FAILURE.getColor())
                     .build()).queue();
             return;
@@ -87,7 +96,7 @@ public class MuteCommand extends Command {
                     break;
 
                 default:
-                    event.getMessage().reply(new EmbedBuilder()
+                    event.getMessage().replyEmbeds(new EmbedBuilder()
                             .setTitle("Invalid option")
                             .setDescription("The option `" + arg + "` is invalid")
                             .setColor(BotColors.FAILURE.getColor())
@@ -98,15 +107,31 @@ public class MuteCommand extends Command {
             args.remove(0);
         }
 
+        // Get the reason or use None
+        String reasonParts = String.join(" ", args);
+        String reason;
+        if (reasonParts.trim().isEmpty()) {
+            reason = "*None*";
+        } else {
+            reason = reasonParts;
+        }
+
         // Let the user know they're muted if we are not being silent
         if (!silent) {
-            user.openPrivateChannel().queue((channel) ->
-                    channel.sendMessage(new EmbedBuilder()
-                            .setTitle("You have been muted from GeyserMC!")
-                            .addField("Reason", String.join(" ", args), false)
-                            .setTimestamp(Instant.now())
-                            .setColor(BotColors.FAILURE.getColor())
-                            .build()).queue());
+            user.openPrivateChannel().queue((channel) -> {
+                EmbedBuilder embedBuilder = new EmbedBuilder()
+                        .setTitle("You have been muted from GeyserMC!")
+                        .addField("Reason", reason, false)
+                        .setTimestamp(Instant.now())
+                        .setColor(BotColors.FAILURE.getColor());
+
+                String punishmentMessage = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), "punishment-message");
+                if (!punishmentMessage.isEmpty()) {
+                    embedBuilder.addField("Additional Info", punishmentMessage, false);
+                }
+
+                channel.sendMessageEmbeds(embedBuilder.build()).queue(message -> {}, throwable -> {});
+            }, throwable -> {});
         }
 
         // Find and add the 'muted' role
@@ -116,22 +141,21 @@ public class MuteCommand extends Command {
         // Persist the role
         GeyserBot.storageManager.addPersistentRole(event.getMember(), muteRole);
 
-        String reason = String.join(" ", args);
-
         // Log the change
-        GeyserBot.storageManager.addLog(event.getMember(), "mute", user, reason);
+        int id = GeyserBot.storageManager.addLog(event.getMember(), "mute", user, reason);
 
         MessageEmbed mutedEmbed = new EmbedBuilder()
                 .setTitle("Muted user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Reason", reason, false)
+                .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor())
                 .build();
 
         // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(mutedEmbed).queue();
-        event.getMessage().reply(mutedEmbed).queue();
+        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(mutedEmbed).queue();
+        event.getMessage().replyEmbeds(mutedEmbed).queue();
     }
 }

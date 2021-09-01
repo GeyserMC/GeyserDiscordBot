@@ -82,7 +82,7 @@ public class UpdateManager {
             try {
                 updateCheck.check();
             } catch (JSONException e) {
-                GeyserBot.LOGGER.error("Unable to load update checker '" + updateCheck.getClass().getName() + "': ", e);
+                GeyserBot.LOGGER.error("Unable to run update checker '" + updateCheck.getClass().getName() + "': " + e.getMessage());
             }
         }
     }

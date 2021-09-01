@@ -35,7 +35,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.DicesCoefficient;
 import org.geysermc.discordbot.util.MessageHelper;
-import org.geysermc.discordbot.util.PropertiesManager;
 import pw.chew.chewbotcca.util.RestClient;
 
 import java.util.ArrayList;
@@ -73,7 +72,7 @@ public class ProviderCommand extends SlashCommand {
             return;
         }
 
-        event.getMessage().reply(handle(query)).queue();
+        event.getMessage().replyEmbeds(handle(query)).queue();
     }
 
     public MessageEmbed handle(String query) {

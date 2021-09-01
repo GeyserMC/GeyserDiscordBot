@@ -30,13 +30,13 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.CommandListener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.geysermc.discordbot.util.BotColors;
+import pw.chew.chewbotcca.listeners.BotCommandListener;
 
-import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Instant;
 
-public class CommandErrorHandler implements CommandListener {
+public class CommandErrorHandler extends BotCommandListener implements CommandListener {
     @Override
     public void onCommandException(CommandEvent event, Command command, Throwable throwable) {
         StringWriter sw = new StringWriter();
@@ -50,8 +50,7 @@ public class CommandErrorHandler implements CommandListener {
             errorMessage.append(errorStack[i]).append("\n");
         }
 
-
-        event.getMessage().reply(new EmbedBuilder()
+        event.getMessage().replyEmbeds(new EmbedBuilder()
                 .setTitle("Error handling command")
                 .setDescription("An error occurred while handling the command")
                 .addField("Command usage", event.getPrefix() + command.getName() + (command.getArguments() != null ? " " + command.getArguments() : ""), false)
@@ -60,5 +59,7 @@ public class CommandErrorHandler implements CommandListener {
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.FAILURE.getColor())
                 .build()).queue();
+
+        super.onCommandException(event, command, throwable);
     }
 }

@@ -72,6 +72,7 @@ public class BotHelpers {
         BEDROCK_VERSIONS.put(428, "1.16.210");
         BEDROCK_VERSIONS.put(431, "1.16.220");
         BEDROCK_VERSIONS.put(440, "1.17.0");
+        BEDROCK_VERSIONS.put(448, "1.17.10 - 1.17.11");
     }
 
     /**
@@ -104,10 +105,16 @@ public class BotHelpers {
     public static User getUser(String userTag) {
         if (userTag.isEmpty()) return null;
 
+        // If it's a mention of a non-user then ignore
+        if (userTag.startsWith("<") && !userTag.startsWith("<@")) {
+            return null;
+        }
+
         try {
             // Check for a mention (<@!1234>)
-            if (userTag.startsWith("<@!") && userTag.endsWith(">")) {
-                userTag = userTag.substring(3, userTag.length() - 1);
+            if (userTag.startsWith("<@") && userTag.endsWith(">")) {
+                userTag = userTag.replace("!", "");
+                userTag = userTag.substring(2, userTag.length() - 1);
             } else {
                 // Check for a user tag (example#1234)
                 Matcher m = User.USER_TAG.matcher(userTag);
@@ -194,8 +201,8 @@ public class BotHelpers {
      * @param clazz Any java class that lives in the same place as the resources you want.
      * @param path Should end with "/", but not start with one.
      * @return Just the name of each member item, not the full paths.
-     * @throws URISyntaxException
-     * @throws IOException
+     * @throws URISyntaxException When the uri syntax isn't having it today
+     * @throws IOException When the input or output isn't having a good day
      */
     public static String[] getResourceListing(Class clazz, String path) throws URISyntaxException, IOException {
         URL dirURL = clazz.getClassLoader().getResource(path);
@@ -309,5 +316,39 @@ public class BotHelpers {
             case 's' : return value;
         }
         return 0;
+    }
+
+    /**
+     * Check if a given text channel exists in a guild
+     *
+     * @param guild The guild to look in
+     * @param channelId The channel to find
+     * @return If the channel exists
+     */
+    public static boolean channelExists(Guild guild, String channelId) {
+        try {
+            if (guild.getTextChannelById(channelId) == null) {
+                return false;
+            }
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Trim a string down to the given length and end with a ... if it was trimmed
+     *
+     * @param input Input string to trim
+     * @param length Max length
+     * @return Trimmed string
+     */
+    public static String trim(String input, int length) {
+        if (input.length() <= length) {
+            return input;
+        }
+
+        return input.substring(0, length - 3) + "...";
     }
 }

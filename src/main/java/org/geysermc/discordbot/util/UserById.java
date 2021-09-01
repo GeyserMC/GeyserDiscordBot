@@ -23,23 +23,19 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.commands.restart;
+package org.geysermc.discordbot.util;
 
-import com.jagrosh.jdautilities.command.Command;
-import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.Permission;
+import org.jetbrains.annotations.NotNull;
 
-public class RestartCommand extends Command {
+public class UserById extends net.dv8tion.jda.internal.entities.UserById {
 
-    public RestartCommand() {
-        this.name = "restart";
-        this.hidden = true;
-        this.userMissingPermMessage = "";
-        this.userPermissions = new Permission[] { Permission.MANAGE_ROLES };
+    public UserById(long id) {
+        super(id);
     }
 
+    @NotNull
     @Override
-    protected void execute(CommandEvent event) {
-        event.getJDA().shutdown();
+    public String getAsTag() {
+        return super.getId();
     }
 }

@@ -50,7 +50,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class LevelCommand extends SlashCommand {
@@ -76,9 +78,7 @@ public class LevelCommand extends SlashCommand {
         InteractionHook interactionHook = event.deferReply().complete();
 
         File levelFile = handle(member);
-        interactionHook.editOriginal(levelFile).queue(message -> {
-            levelFile.delete();
-        });
+        interactionHook.editOriginal(levelFile).queue(message -> levelFile.delete());
     }
 
     @Override
@@ -99,9 +99,7 @@ public class LevelCommand extends SlashCommand {
         }
 
         File levelFile = handle(member);
-        event.getMessage().reply(levelFile).queue(message -> {
-            levelFile.delete();
-        });
+        event.getMessage().reply(levelFile).queue(message -> levelFile.delete());
     }
 
     protected File handle(Member member) {

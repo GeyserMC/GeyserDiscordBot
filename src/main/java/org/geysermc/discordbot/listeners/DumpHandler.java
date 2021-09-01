@@ -38,8 +38,8 @@ import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.dump_issues.AbstractDumpIssueCheck;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
-import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.kohsuke.github.GHCommit;
 import org.kohsuke.github.GHCompare;
@@ -65,7 +65,7 @@ import java.util.stream.Collectors;
 
 public class DumpHandler extends ListenerAdapter {
 
-    private static final Pattern DUMP_URL = Pattern.compile("dump\\.geysermc\\.org/([0-9a-z]{32})", Pattern.CASE_INSENSITIVE);
+    private static final Pattern DUMP_URL = Pattern.compile("dump\\.geysermc\\.org/(raw/)?([0-9a-z]{32})", Pattern.CASE_INSENSITIVE);
     private static final SubnetUtils.SubnetInfo[] INTERNAL_IP_RANGES;
     public static final List<AbstractDumpIssueCheck> ISSUE_CHECKS;
 
@@ -115,18 +115,36 @@ public class DumpHandler extends ListenerAdapter {
             return;
         }
 
-        String cleanURL = "https://dump.geysermc.org/" + matcher.group(1);
-        String rawURL = "https://dump.geysermc.org/raw/" + matcher.group(1);
+        String cleanURL = "https://dump.geysermc.org/" + matcher.group(2);
+        String rawURL = "https://dump.geysermc.org/raw/" + matcher.group(2);
 
-        // Get json data from dump
-        JSONObject dump = new JSONObject(RestClient.get(rawURL));
+        JSONObject dump;
+        JSONObject config;
+        JSONObject configBedrock;
+        JSONObject configRemote;
+        JSONObject gitInfo;
+        JSONObject bootstrapInfo;
 
-        // Setup some helper vars for quicker access
-        JSONObject config = dump.getJSONObject("config");
-        JSONObject configBedrock = config.getJSONObject("bedrock");
-        JSONObject configRemote = config.getJSONObject("remote");
-        JSONObject gitInfo = dump.getJSONObject("gitInfo");
-        JSONObject bootstrapInfo = dump.getJSONObject("bootstrapInfo");
+        try {
+            // Get json data from dump
+            dump = new JSONObject(RestClient.get(rawURL));
+
+            // Check the dump isn't empty or an error message
+            if (dump.isEmpty() || (dump.length() == 1 && dump.has("message"))) {
+                MessageHelper.errorResponse(event, "Empty dump", "The dump you linked was empty, its either an invalid link or has expired. Please make a new one." + (!dump.isEmpty() ? " (" + dump.getString("message").trim() + ")" : ""));
+                return;
+            }
+
+            // Setup some helper vars for quicker access
+            config = dump.getJSONObject("config");
+            configBedrock = config.getJSONObject("bedrock");
+            configRemote = config.getJSONObject("remote");
+            gitInfo = dump.getJSONObject("gitInfo");
+            bootstrapInfo = dump.getJSONObject("bootstrapInfo");
+        } catch (JSONException ignored) {
+            MessageHelper.errorResponse(event, "Invalid dump", "The dump you linked was invalid. Please make a new one.");
+            return;
+        }
 
         String platform = bootstrapInfo.getString("platform");
         List<String> problems = new ArrayList<>();
@@ -134,7 +152,9 @@ public class DumpHandler extends ListenerAdapter {
         // Check plugins and stuff for potential issues
         for (AbstractDumpIssueCheck issueCheck : ISSUE_CHECKS) {
             if (issueCheck.compatiblePlatform(platform)) {
-                problems.addAll(issueCheck.checkIssues(dump));
+                try {
+                    problems.addAll(issueCheck.checkIssues(dump));
+                } catch (JSONException ignored) { }
             }
         }
 
@@ -226,7 +246,7 @@ public class DumpHandler extends ListenerAdapter {
 
         // TODO: Change the emote to not be hardcoded
         // Not sure how to do that the best as searching for it everytime seems pointless and expensive
-        event.getMessage().reply(new EmbedBuilder()
+        EmbedBuilder buildEmbed = new EmbedBuilder()
                 .setTitle("<:geyser:723981877773598771> Geyser " + platformNamePretty, cleanURL)
                 .setDescription(problems.size() != 0 ? "**Possible problems:**\n" + problems.stream().map(Object::toString).collect(Collectors.joining("\n")) : "")
                 .addField("Git info", gitData.toString(), false)
@@ -237,8 +257,16 @@ public class DumpHandler extends ListenerAdapter {
                 .addField("Server version", versionString, true)
                 .addField("Autoconfigured remote?", (config.getBoolean("autoconfiguredRemote")) ? "Yes" : "No", true)
                 .setTimestamp(Instant.now())
-                .setColor(BotColors.SUCCESS.getColor())
-                .build()).queue();
+                .setColor(BotColors.SUCCESS.getColor());
+
+        if (!dump.isNull("logsInfo")) {
+            try {
+                String logs = dump.getJSONObject("logsInfo").getString("link");
+                buildEmbed.addField("Logs", logs, true);
+            } catch (JSONException ignored) { }
+        }
+
+        event.getMessage().replyEmbeds(buildEmbed.build()).queue();
     }
 
     /**

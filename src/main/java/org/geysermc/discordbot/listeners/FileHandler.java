@@ -34,22 +34,35 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.PropertiesManager;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class FileHandler extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         for (Message.Attachment attachment : event.getMessage().getAttachments()) {
-            if (ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions").contains(attachment.getFileExtension())) {
+            List<String> extensions;
+
+            // Get the guild extensions and if not in a guild just use some defaults
+            if (event.isFromGuild()) {
+                extensions = ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions");
+            } else {
+                extensions = new ArrayList<>();
+                extensions.add("txt");
+                extensions.add("log");
+                extensions.add("yml");
+                extensions.add("0");
+            }
+
+            if (extensions.contains(attachment.getFileExtension())) {
                 EmbedBuilder embed = new EmbedBuilder();
 
 //                // Handled by Discord's new display feature
@@ -100,7 +113,7 @@ public class FileHandler extends ListenerAdapter {
                     embed.setDescription("An exception occurred during upload: " + e.getMessage());
                 }
 
-                event.getMessage().reply(embed.build()).queue();
+                event.getMessage().replyEmbeds(embed.build()).queue();
             }
         }
     }

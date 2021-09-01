@@ -39,12 +39,8 @@ import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 
-import java.awt.*;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class RankCommand extends SlashCommand {
 
@@ -76,15 +72,14 @@ public class RankCommand extends SlashCommand {
             return;
         }
 
-        event.getMessage().reply(handle(event.getGuild(), event.getMember(), args.get(0))).queue();
+        event.getMessage().replyEmbeds(handle(event.getGuild(), event.getMember(), args.get(0))).queue();
     }
 
     protected MessageEmbed handle(Guild guild, Member member, String wantedRole) {
-        List<String> roles = ServerSettings.getList(guild.getIdLong(), "roles");
-        for (String roleData : roles) {
-            String[] data = roleData.split("\\|");
-            if (wantedRole.equalsIgnoreCase(data[0])) {
-                Role role = guild.getRoleById(data[1]);
+        Map<String, String> roles = ServerSettings.getMap(guild.getIdLong(), "roles");
+        for (Map.Entry<String, String> roleData : roles.entrySet()) {
+            if (wantedRole.equalsIgnoreCase(roleData.getKey())) {
+                Role role = guild.getRoleById(roleData.getValue());
                 if (role == null) {
                     return new EmbedBuilder()
                             .setTitle("Invalid role")

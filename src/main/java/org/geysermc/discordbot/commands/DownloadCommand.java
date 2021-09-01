@@ -1,3 +1,28 @@
+/*
+ * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @author GeyserMC
+ * @link https://github.com/GeyserMC/GeyserDiscordBot
+ */
+
 package org.geysermc.discordbot.commands;
 
 import com.google.common.collect.ImmutableMap;
@@ -29,8 +54,8 @@ public class DownloadCommand extends SlashCommand {
                 .put("geyseroptionalpack", new GeyserDownloadOption("GeyserOptionalPack", "https://ci.opencollab.dev/job/GeyserMC/job/GeyserOptionalPack/job/master/"))
                 .put("geyser-fabric", new FabricDownloadOption("Geyser-Fabric", "https://ci.opencollab.dev/job/GeyserMC/job/Geyser-Fabric/job/java-1.17/"))
                 .put("floodgate-fabric", new FabricDownloadOption("Floodgate-Fabric", "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate-Fabric/job/master/"))
-                .put("paper", new DownloadOption("Paper", "https://papermc.io/downloads", "https://avatars.githubusercontent.com/u/7608950"))
-                .put("viaversion", new DownloadOption("ViaVersion", "https://ci.viaversion.com/job/ViaVersion/", "https://avatars.githubusercontent.com/u/42077435"))
+                .put("paper", new DownloadOption("Paper", "https://papermc.io/downloads", "https://github.com/PaperMC.png"))
+                .put("viaversion", new DownloadOption("ViaVersion", "https://ci.viaversion.com/job/ViaVersion/", "https://github.com/ViaVersion.png"))
                 .build();
 
         List<Command.Choice> choices = new ArrayList<>();
@@ -56,7 +81,7 @@ public class DownloadCommand extends SlashCommand {
 
         DownloadOption downloadOption = optionsToRepository.getOrDefault(program.toLowerCase(Locale.ROOT), this.defaultDownloadOption);
 
-        event.getMessage().reply(new EmbedBuilder()
+        event.getMessage().replyEmbeds(new EmbedBuilder()
                 .setTitle("Download " + downloadOption.friendlyName)
                 .setDescription("Download at " + downloadOption.downloadUrl)
                 .setThumbnail(downloadOption.imageUrl)
@@ -92,13 +117,13 @@ public class DownloadCommand extends SlashCommand {
 
     private static class GeyserDownloadOption extends DownloadOption {
         public GeyserDownloadOption(String friendlyName, String downloadUrl) {
-            super(friendlyName, downloadUrl, "https://avatars.githubusercontent.com/u/52673035");
+            super(friendlyName, downloadUrl, "https://github.com/GeyserMC.png");
         }
     }
 
     private static class FabricDownloadOption extends DownloadOption {
         public FabricDownloadOption(String friendlyName, String downloadUrl) {
-            super(friendlyName, downloadUrl, "https://avatars.githubusercontent.com/u/21025855");
+            super(friendlyName, downloadUrl, "https://github.com/FabricMC.png");
         }
     }
 }

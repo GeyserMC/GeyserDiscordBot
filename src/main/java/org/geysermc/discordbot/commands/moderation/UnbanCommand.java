@@ -32,12 +32,12 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 
-import java.awt.Color;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,11 +56,11 @@ public class UnbanCommand extends Command {
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
         // Fetch the user
-        Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
+        User user = BotHelpers.getUser(args.remove(0));
 
         // Check user is valid
-        if (member == null) {
-            event.getMessage().reply(new EmbedBuilder()
+        if (user == null) {
+            event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
                     .setColor(BotColors.FAILURE.getColor())
@@ -68,8 +68,18 @@ public class UnbanCommand extends Command {
             return;
         }
 
-        // Get the user from the member
-        User user = member.getUser();
+        // Check if the user is banned
+        try {
+            event.getGuild().retrieveBan(user).complete();
+        } catch (ErrorResponseException ignored) {
+            event.getMessage().replyEmbeds(new EmbedBuilder()
+                    .setTitle("User not banned")
+                    .setDescription("The user ID specified doesn't have a ban on this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build()).queue();
+            return;
+        }
+
         boolean silent = false;
 
         // Handle all the option args
@@ -79,12 +89,11 @@ public class UnbanCommand extends Command {
                 break;
             }
 
-            if (arg.toCharArray()[1] == ('s')) {
+            if (arg.toCharArray()[1] == 's') {
+                // Check for silent flag
                 silent = true;
             } else {
-
-
-                event.getMessage().reply(new EmbedBuilder()
+                event.getMessage().replyEmbeds(new EmbedBuilder()
                         .setTitle("Invalid option")
                         .setDescription("The option `" + arg + "` is invalid")
                         .setColor(BotColors.FAILURE.getColor())
@@ -94,36 +103,44 @@ public class UnbanCommand extends Command {
             args.remove(0);
         }
 
-        String reason = String.join(" ", args);
+        // Get the reason or use None
+        String reasonParts = String.join(" ", args);
+        String reason;
+        if (reasonParts.trim().isEmpty()) {
+            reason = "*None*";
+        } else {
+            reason = reasonParts;
+        }
 
         // Let the user know they're unbanned if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) ->
-                    channel.sendMessage(new EmbedBuilder()
+                    channel.sendMessageEmbeds(new EmbedBuilder()
                             .setTitle("You have been unbanned from GeyserMC!")
                             .addField("Reason", reason, false)
                             .setTimestamp(Instant.now())
                             .setColor(BotColors.SUCCESS.getColor())
-                            .build()).queue());
+                            .build()).queue(message -> {}, throwable -> {}), throwable -> {});
         }
 
         // Unban user
-        member.getGuild().unban(user).queue();
+        event.getGuild().unban(user).queue();
 
         // Log the change
-        GeyserBot.storageManager.addLog(event.getMember(), "unban", user, reason);
+        int id = GeyserBot.storageManager.addLog(event.getMember(), "unban", user, reason);
 
         MessageEmbed unbannedEmbed = new EmbedBuilder()
                 .setTitle("Unbanned user")
                 .addField("User", user.getAsMention(), false)
                 .addField("Staff member", event.getAuthor().getAsMention(), false)
                 .addField("Reason", reason, false)
+                .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor())
                 .build();
 
         // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessage(unbannedEmbed).queue();
-        event.getMessage().reply(unbannedEmbed).queue();
+        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(unbannedEmbed).queue();
+        event.getMessage().replyEmbeds(unbannedEmbed).queue();
     }
 }

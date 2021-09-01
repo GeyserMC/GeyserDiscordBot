@@ -29,6 +29,7 @@ package org.geysermc.discordbot.storage;
 import net.dv8tion.jda.api.entities.*;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.PropertiesManager;
+import org.geysermc.discordbot.util.UserById;
 
 import java.sql.*;
 import java.time.Instant;
@@ -37,7 +38,7 @@ import java.util.List;
 
 public class MySQLStorageManager extends AbstractStorageManager {
 
-    private Connection connection;
+    protected Connection connection;
 
     @Override
     public void setupStorage() {
@@ -126,33 +127,79 @@ public class MySQLStorageManager extends AbstractStorageManager {
     }
 
     @Override
-    public void addLog(Member user, String action, User target, String reason) {
+    public int addLog(Member user, String action, User target, String reason) {
         try {
             Statement addLogEntry = connection.createStatement();
-            addLogEntry.executeUpdate("INSERT INTO `mod_log` (`server`, `time`, `user`, `action`, `target`, `reason`) VALUES (" + user.getGuild().getId() + ", " + Instant.now().getEpochSecond() + ", " + user.getId() + ", '" + action + "', " + target.getId() + ", '" + reason + "');");
+            long time = Instant.now().getEpochSecond();
+            addLogEntry.executeUpdate("INSERT INTO `mod_log` (`server`, `time`, `user`, `action`, `target`, `reason`) VALUES (" + user.getGuild().getId() + ", " + time + ", " + user.getId() + ", '" + action + "', " + target.getId() + ", '" + reason + "');");
             addLogEntry.close();
+
+            Statement getLogEntry = connection.createStatement();
+            ResultSet rs = getLogEntry.executeQuery("SELECT `id` FROM `mod_log` WHERE `server`=" + user.getGuild().getId() + " AND `time`=" + time + " AND `user`=" + user.getId() + " AND `action`='" + action + "' AND `target`=" + target.getId() + " AND `reason`='" + reason + "' LIMIT 1;");
+
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+
+            getLogEntry.close();
         } catch (SQLException ignored) { }
+
+        return -1;
     }
 
     @Override
-    public List<ModLog> getLog(Guild guild, User target, int limit) {
+    public List<ModLog> getLogs(Guild guild, User target, int limit) {
         List<ModLog> logs = new ArrayList<>();
 
         try {
             Statement getLogEntry = connection.createStatement();
-            ResultSet rs = getLogEntry.executeQuery("SELECT `time`, `user`, `action`, `reason` FROM `mod_log` WHERE `server`=" + guild.getId() + " AND `target`=" + target.getId() + " LIMIT " + limit + ";");
+            ResultSet rs = getLogEntry.executeQuery("SELECT `id`, `time`, `user`, `action`, `reason` FROM `mod_log` WHERE `server`=" + guild.getId() + " AND `target`=" + target.getId() + " ORDER BY `time` ASC LIMIT " + limit + ";");
 
             while (rs.next()) {
                 Instant time = Instant.ofEpochSecond(rs.getLong("time"));
                 Member user = guild.getMemberById(rs.getLong("user"));
 
-                logs.add(new ModLog(time, user, rs.getString("action"), target, rs.getString("reason")));
+                logs.add(new ModLog(rs.getInt("id"), time, user, rs.getString("action"), target, rs.getString("reason")));
             }
 
             getLogEntry.close();
         } catch (SQLException ignored) { }
 
         return logs;
+    }
+
+    @Override
+    public ModLog getLog(Guild guild, int id) {
+        try {
+            Statement getLogEntry = connection.createStatement();
+            ResultSet rs = getLogEntry.executeQuery("SELECT `id`, `time`, `user`, `action`, `target`, `reason` FROM `mod_log` WHERE `server`=" + guild.getId() + " AND `id`=" + id + ";");
+
+            if (rs.next()) {
+                Instant time = Instant.ofEpochSecond(rs.getLong("time"));
+                Member user = guild.getMemberById(rs.getLong("user"));
+                User target = guild.getJDA().getUserById(rs.getLong("target"));
+
+                // Construct a user from the id
+                if (target == null) {
+                    target = new UserById(rs.getLong("target"));
+                }
+
+                return new ModLog(rs.getInt("id"), time, user, rs.getString("action"), target, rs.getString("reason"));
+            }
+
+            getLogEntry.close();
+        } catch (SQLException ignored) { }
+
+        return null;
+    }
+
+    @Override
+    public void updateLog(Guild guild, int id, String reason) {
+        try {
+            Statement updateLevelValue = connection.createStatement();
+            updateLevelValue.executeUpdate("UPDATE `mod_log` SET `reason`='" + reason + "' WHERE `id`=" + id + ";");
+            updateLevelValue.close();
+        } catch (SQLException ignored) { }
     }
 
     @Override

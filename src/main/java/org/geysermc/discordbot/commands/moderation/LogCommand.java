@@ -30,17 +30,15 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ModLog;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
-import org.geysermc.discordbot.util.PropertiesManager;
 
-import java.awt.*;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,7 +63,7 @@ public class LogCommand extends Command {
 
         // Check user is valid
         if (user == null) {
-            event.getMessage().reply(new EmbedBuilder()
+            event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user.")
                     .setColor(BotColors.FAILURE.getColor())
@@ -78,18 +76,18 @@ public class LogCommand extends Command {
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor());
 
-        List<ModLog> logs = GeyserBot.storageManager.getLog(event.getGuild(), user);
+        List<ModLog> logs = GeyserBot.storageManager.getLogs(event.getGuild(), user);
 
         if (logs.isEmpty()) {
             logEmbedBuilder.setDescription("No logs for the selected user");
         } else {
             for (ModLog log : logs) {
-                String title = log.getAction().substring(0, 1).toUpperCase() + log.getAction().substring(1);
-                logEmbedBuilder = logEmbedBuilder.addField(title, "**Time:** " + OffsetDateTime.ofInstant(log.getTime(), ZoneOffset.UTC).format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\n**By:** " + log.getUser().getAsMention() + "\n**Reason:** " + log.getReason(), false);
+                String title = log.getAction().substring(0, 1).toUpperCase() + log.getAction().substring(1) + " (" + log.getId() + ")";
+                logEmbedBuilder.addField(title, "**Time:** " + TimeFormat.DATE_TIME_LONG.format(OffsetDateTime.ofInstant(log.getTime(), ZoneOffset.UTC)) + "\n**By:** " + log.getUser().getAsMention() + "\n**Reason:** " + log.getReason(), false);
             }
         }
 
         // Send the embed as a reply
-        event.getMessage().reply(logEmbedBuilder.build()).queue();
+        event.getMessage().replyEmbeds(logEmbedBuilder.build()).queue();
     }
 }

@@ -30,14 +30,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.geysermc.discordbot.util.BotColors;
 
-import java.awt.Color;
-
 public class TagsListener implements CommandListener {
 
     @Override
     public void onNonCommandMessage(MessageReceivedEvent event) {
         if (event.getMessage().getContentRaw().startsWith("!!") || event.getMessage().getContentRaw().startsWith("!tag ")) {
-            event.getMessage().reply(new EmbedBuilder()
+            event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setColor(BotColors.FAILURE.getColor())
                     .setTitle("Invalid tag")
                     .setDescription("Missing requested tag")
