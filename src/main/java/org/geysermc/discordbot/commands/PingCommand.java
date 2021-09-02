@@ -135,7 +135,7 @@ public class PingCommand extends SlashCommand {
             MCPingResponse data = MCPing.getPing(options);
 
             javaInfo = "**MOTD:** \n```\n" + data.getDescription().getStrippedText() + "\n```\n" +
-                    "**Players:** " + data.getPlayers().getOnline() + "/" + data.getPlayers().getMax() + "\n" +
+                    "**Players:** " + (data.getPlayers() == null ? "Unknown" : data.getPlayers().getOnline() + "/" + data.getPlayers().getMax()) + "\n" +
                     "**Version:** " + data.getVersion().getName() + " (" + data.getVersion().getProtocol() + ")";
             success = true;
         } catch (IOException ignored) {
