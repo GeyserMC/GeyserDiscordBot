@@ -225,6 +225,13 @@
             <artifactId>sentry-logback</artifactId>
             <version>5.1.2</version>
         </dependency>
+
+        <!-- For adding users to the user cache in JDA -->
+        <dependency>
+            <groupId>net.sf.trove4j</groupId>
+            <artifactId>trove4j</artifactId>
+            <version>3.0.3</version>
+        </dependency>
     </dependencies>
 
     <build>
