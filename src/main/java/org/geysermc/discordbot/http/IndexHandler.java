@@ -34,6 +34,7 @@ import org.geysermc.discordbot.storage.ServerSettings;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -115,10 +116,11 @@ public class IndexHandler implements HttpHandler {
     }
 
     private void respond(HttpExchange t, String response, int code) throws IOException {
+        byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
         t.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
-        t.sendResponseHeaders(code, response.length());
+        t.sendResponseHeaders(code, bytes.length);
         OutputStream os = t.getResponseBody();
-        os.write(response.getBytes());
+        os.write(bytes);
         os.close();
     }
 }
