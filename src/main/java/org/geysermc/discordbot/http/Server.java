@@ -112,6 +112,6 @@ public class Server {
      * @return The formatted url
      */
     public static String getUrl(long idLong) {
-        return String.format("%s/?guild=%s", PropertiesManager.getPublicWebAddress(), idLong);
+        return String.format("%s/?server=%s", PropertiesManager.getPublicWebAddress(), idLong);
     }
 }

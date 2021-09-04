@@ -30,6 +30,7 @@ import com.sun.net.httpserver.HttpHandler;
 import freemarker.template.TemplateException;
 import net.dv8tion.jda.api.entities.Guild;
 import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.storage.ServerSettings;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -75,29 +76,35 @@ public class IndexHandler implements HttpHandler {
         // Check we are in the specified guild
         Optional<Guild> guild = GeyserBot.getJDA().getGuilds().stream().filter(filterGuild -> filterGuild.getIdLong() == serverId).findFirst();
         if (guild.isPresent()) {
-            Map<String, Object> input = new HashMap<>();
-            input.put("guild", guild.get());
-            input.put("darkMode", true);
-            input.put("rows", GeyserBot.storageManager.getLevels(serverId));
+            if (!ServerSettings.serverLevelsDisabled(guild.get())) {
+                Map<String, Object> input = new HashMap<>();
+                input.put("guild", guild.get());
+                input.put("darkMode", true);
+                input.put("rows", GeyserBot.storageManager.getLevels(serverId));
 
-            // Get the darkMode cookie and set the bool for theme based on that
-            if (t.getRequestHeaders().containsKey("Cookie")) {
-                try {
-                    for (String cookie : t.getRequestHeaders().get("Cookie").get(0).split(";")) {
-                        String[] httpCookie = cookie.trim().split("=");
-                        if (httpCookie[0].equals("darkMode")) {
-                            input.put("darkMode", httpCookie.length > 1 && httpCookie[1].trim().equals("dark-mode"));
-                            break;
+                // Get the darkMode cookie and set the bool for theme based on that
+                if (t.getRequestHeaders().containsKey("Cookie")) {
+                    try {
+                        for (String cookie : t.getRequestHeaders().get("Cookie").get(0).split(";")) {
+                            String[] httpCookie = cookie.trim().split("=");
+                            if (httpCookie[0].equals("darkMode")) {
+                                input.put("darkMode", httpCookie.length > 1 && httpCookie[1].trim().equals("dark-mode"));
+                                break;
+                            }
                         }
+                    } catch (IndexOutOfBoundsException ignored) {
                     }
-                } catch (IndexOutOfBoundsException ignored) { }
-            }
+                }
 
-            try {
-                response = GeyserBot.getHttpServer().processTemplate("index.ftl", input);
-            } catch (TemplateException e) {
-                response = e.getMessage();
-                code = 500;
+                try {
+                    response = GeyserBot.getHttpServer().processTemplate("index.ftl", input);
+                } catch (TemplateException e) {
+                    response = e.getMessage();
+                    code = 500;
+                }
+            } else {
+                response = "Levels are disabled for this server!";
+                code = 403;
             }
         } else {
             response = "Bot not in specified server!";

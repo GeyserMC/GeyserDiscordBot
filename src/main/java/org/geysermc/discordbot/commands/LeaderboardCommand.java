@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.geysermc.discordbot.http.Server;
+import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 
 public class LeaderboardCommand extends SlashCommand {
@@ -18,7 +19,7 @@ public class LeaderboardCommand extends SlashCommand {
 
     @Override
     protected void execute(CommandEvent event) {
-        event.getMessage().reply(getEmbed(event.getGuild())).queue();
+        event.getMessage().replyEmbeds(getEmbed(event.getGuild())).queue();
     }
 
     @Override
@@ -27,6 +28,14 @@ public class LeaderboardCommand extends SlashCommand {
     }
 
     private MessageEmbed getEmbed(Guild guild) {
+        if (ServerSettings.serverLevelsDisabled(guild)) {
+            return new EmbedBuilder()
+                    .setTitle("Levels disabled")
+                    .setDescription("Levels are disabled for this server!")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
         return new EmbedBuilder()
                 .setTitle("Leaderboard for " + guild.getName(), Server.getUrl(guild.getIdLong()))
                 .setDescription("Click the above for the leaderboard")
