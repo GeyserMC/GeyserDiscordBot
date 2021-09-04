@@ -31,6 +31,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.util.BotColors;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 public class EmbedTag extends Command {
@@ -38,12 +40,28 @@ public class EmbedTag extends Command {
     private final String description;
     private final String image;
 
-    public EmbedTag(String name, String description, String image, String aliases) {
+    /**
+     * Create a new EmbedTag
+     * @param name The name of the tag to be used when calling it
+     * @param description The text content
+     * @param image The URL of the image to display
+     * @param aliases Any aliases that can be used to call it
+     * @throws IllegalArgumentException If the description is null or empty while the image is also null or empty. It would result in a tag with no content. Also throws if the name is null or empty.
+     */
+    @SuppressWarnings("ConstantConditions")
+    public EmbedTag(@Nonnull String name, @Nullable String description, @Nullable String image, @Nullable String aliases) throws IllegalArgumentException {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("name may not be null or empty");
+        }
+        if ((description == null || description.isEmpty()) && (image == null || image.isEmpty())) {
+            throw new IllegalArgumentException("description may not be null or empty while image is null or empty");
+        }
+
         this.name = name;
         this.description = description;
         this.image = image;
         this.guildOnly = false;
-        if (aliases != null) {
+        if (aliases != null && !aliases.isEmpty()) {
             this.aliases = Arrays.stream(aliases.split(",")).map(String::trim).toArray(String[]::new);
         }
     }

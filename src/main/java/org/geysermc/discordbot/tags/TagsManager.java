@@ -123,18 +123,24 @@ public class TagsManager {
                                 }
                             }
 
-                            if (content.toString().isEmpty()) {
-                                GeyserBot.LOGGER.debug("Tag '" + tagName + "' has empty content!");
-                            }
-
                             // Create the tag from the stored data
                             switch (tagData.get("type")) {
                                 case "text":
-                                    TAGS.add(new EmbedTag(tagName, content.toString(), tagData.get("image"), tagData.get("aliases")));
+                                    try {
+                                        TAGS.add(new EmbedTag(tagName, content.toString(), tagData.get("image"), tagData.get("aliases")));
+                                    } catch (IllegalArgumentException e) {
+                                        GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
+                                        continue;
+                                    }
                                     break;
 
                                 case "text-raw":
-                                    TAGS.add(new RawTag(tagName, content.toString(), tagData.get("aliases")));
+                                    try {
+                                        TAGS.add(new RawTag(tagName, content.toString(), tagData.get("aliases")));
+                                    } catch (IllegalArgumentException e) {
+                                        GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
+                                        continue;
+                                    }
                                     break;
 
                                 case "issue-only":
