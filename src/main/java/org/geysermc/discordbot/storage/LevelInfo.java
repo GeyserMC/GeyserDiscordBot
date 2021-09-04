@@ -42,7 +42,15 @@ public class LevelInfo {
     }
 
     public User getUser() {
-        return GeyserBot.getJDA().getUserById(userId);
+        // Get the user from the cache
+        User user = GeyserBot.getJDA().getUserById(userId);
+
+        // Get the user from the api since it wasn't in the cache
+        if (user == null) {
+            user = GeyserBot.getJDA().retrieveUserById(userId).complete();
+        }
+
+        return user;
     }
 
     public int getLevel() {
