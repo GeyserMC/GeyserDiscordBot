@@ -209,12 +209,12 @@ public class MySQLStorageManager extends AbstractStorageManager {
             ResultSet rs = getLevelValue.executeQuery("SELECT `level`, `xp`, `messages` FROM `levels` WHERE `server`=" + user.getGuild().getId() + " AND `user`=" + user.getId() + ";");
 
             if (rs.next()) {
-                return new LevelInfo(rs.getInt("level"), rs.getInt("xp"), rs.getInt("messages"));
+                return new LevelInfo(user.getIdLong(), rs.getInt("level"), rs.getInt("xp"), rs.getInt("messages"));
             }
 
             getLevelValue.close();
 
-            return new LevelInfo(0, 0, 0);
+            return new LevelInfo(0, 0, 0, 0);
         } catch (SQLException ignored) { }
 
         return null;
@@ -227,6 +227,23 @@ public class MySQLStorageManager extends AbstractStorageManager {
             updateLevelValue.executeUpdate("INSERT INTO `levels` (`server`, `user`, `level`, `xp`, `messages`) VALUES (" + user.getGuild().getId() + ", " + user.getId() + ", " + levelInfo.getLevel() + ", " + levelInfo.getXp() + ", " + levelInfo.getMessages() + ") ON DUPLICATE KEY UPDATE `level`=" + levelInfo.getLevel() + ", `xp`=" + levelInfo.getXp() + ", `messages`=" + levelInfo.getMessages() + ";");
             updateLevelValue.close();
         } catch (SQLException ignored) { }
+    }
+
+    @Override
+    public List<LevelInfo> getLevels(long guild) {
+        List<LevelInfo> levels = new ArrayList<>();
+        try {
+            Statement getLevelValue = connection.createStatement();
+            ResultSet rs = getLevelValue.executeQuery("SELECT `user`, `level`, `xp`, `messages` FROM `levels` WHERE `server`=" + guild + " ORDER BY xp DESC LIMIT 100;");
+
+            while (rs.next()) {
+                levels.add(new LevelInfo(rs.getLong("user"), rs.getInt("level"), rs.getInt("xp"), rs.getInt("messages")));
+            }
+
+            getLevelValue.close();
+        } catch (SQLException ignored) { }
+
+        return levels;
     }
 
     @Override

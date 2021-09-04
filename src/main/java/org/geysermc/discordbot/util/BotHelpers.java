@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -244,8 +245,10 @@ public class BotHelpers {
     }
 
     /**
-     * @param resourcePath the resource to read off of
-     * @return the byte array of an InputStream
+     * Get the bytes representing a resource file
+     *
+     * @param resourcePath The resource to read off of
+     * @return The byte array of an {@link InputStream}
      */
     public static byte[] bytesFromResource(String resourcePath) {
         InputStream stream = BotHelpers.class.getClassLoader().getResourceAsStream(resourcePath);
@@ -260,6 +263,16 @@ public class BotHelpers {
         } catch (IOException e) {
             throw new RuntimeException("Error while trying to read input stream!");
         }
+    }
+
+    /**
+     * Gets a resource as a string
+     *
+     * @param resourcePath The resource to read
+     * @return The utf-8 contents of the requested resource
+     */
+    public static String stringFromResource(String resourcePath) {
+        return new String(bytesFromResource(resourcePath), StandardCharsets.UTF_8);
     }
 
     /**

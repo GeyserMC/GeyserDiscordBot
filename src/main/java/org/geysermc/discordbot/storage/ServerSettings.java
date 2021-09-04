@@ -134,4 +134,15 @@ public class ServerSettings {
         List<String> dontLevel = getList(channel.getGuild().getIdLong(), "dont-level");
         return dontLevel.size() > 0 && dontLevel.get(0).equals("0") || dontLevel.contains(channel.getId());
     }
+
+    /**
+     * Check if the given guild has leveling disabled
+     *
+     * @param guild The {@link Guild} to check
+     * @return If levels are disabled
+     */
+    public static boolean serverLevelsDisabled(Guild guild) {
+        List<String> dontLevel = getList(guild.getIdLong(), "dont-level");
+        return dontLevel.size() > 0 && dontLevel.get(0).equals("0");
+    }
 }

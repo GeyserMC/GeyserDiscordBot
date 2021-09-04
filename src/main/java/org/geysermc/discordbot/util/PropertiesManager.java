@@ -25,6 +25,8 @@
 
 package org.geysermc.discordbot.util;
 
+import java.awt.*;
+import java.net.InetSocketAddress;
 import java.util.Properties;
 
 // config.json and .env manager
@@ -82,6 +84,19 @@ public class PropertiesManager {
      */
     public static String getPass() {
         return properties.getProperty("db-pass");
+    }
+
+    /**
+     * @return Web server address and port
+     */
+    public static InetSocketAddress getWebAddress() {
+        return new InetSocketAddress(properties.getProperty("web-address"), Integer.parseInt(properties.getProperty("web-port")));
+    }
+    /**
+     * @return Web server public address
+     */
+    public static String getPublicWebAddress() {
+        return properties.getProperty("web-public-address");
     }
 
     /**
