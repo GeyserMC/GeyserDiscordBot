@@ -39,38 +39,36 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class IndexHandler implements HttpHandler {
+public class LeaderboardHandler extends PageHandler {
+
     @Override
-    public void handle(HttpExchange t) throws IOException {
-        String response = "";
-        int code = 200;
+    public String requestUrl() {
+        return "/leaderboard/";
+    }
 
-        // 404 any non index requests
-        if (!t.getRequestURI().getPath().equals("/")) {
-            code = 404;
+    @Override
+    public String requestUrlRegex() {
+        return "/leaderboard/.*";
+    }
 
-            respond(t, response, code);
-            return;
-        }
-
-        Map<String, String> queryMap;
-        if (t.getRequestURI().getRawQuery() == null || (queryMap = Server.queryToMap(t.getRequestURI().getRawQuery())) == null || !queryMap.containsKey("server")) {
+    @Override
+    protected void handleRequest(HttpExchange t) {
+        String serverIdArg = t.getRequestURI().getPath().replace(requestUrl(), "").trim();
+        if (serverIdArg.isEmpty()) {
             response = "No server id specified";
             code = 400;
 
-            respond(t, response, code);
             return;
         }
 
         // Get the guild from the request
         long serverId;
         try {
-            serverId = Long.parseLong(queryMap.get("server"));
+            serverId = Long.parseLong(serverIdArg);
         } catch (NumberFormatException e) {
             response = "Invalid server id specified";
             code = 400;
 
-            respond(t, response, code);
             return;
         }
 
@@ -80,29 +78,9 @@ public class IndexHandler implements HttpHandler {
             if (!ServerSettings.serverLevelsDisabled(guild.get())) {
                 Map<String, Object> input = new HashMap<>();
                 input.put("guild", guild.get());
-                input.put("darkMode", true);
                 input.put("rows", GeyserBot.storageManager.getLevels(serverId));
 
-                // Get the darkMode cookie and set the bool for theme based on that
-                if (t.getRequestHeaders().containsKey("Cookie")) {
-                    try {
-                        for (String cookie : t.getRequestHeaders().get("Cookie").get(0).split(";")) {
-                            String[] httpCookie = cookie.trim().split("=");
-                            if (httpCookie[0].equals("darkMode")) {
-                                input.put("darkMode", httpCookie.length > 1 && httpCookie[1].trim().equals("dark-mode"));
-                                break;
-                            }
-                        }
-                    } catch (IndexOutOfBoundsException ignored) {
-                    }
-                }
-
-                try {
-                    response = GeyserBot.getHttpServer().processTemplate("index.ftl", input);
-                } catch (TemplateException e) {
-                    response = e.getMessage();
-                    code = 500;
-                }
+                buildTemplate(t, "leaderboard.ftl", input);
             } else {
                 response = "Levels are disabled for this server!";
                 code = 403;
@@ -111,16 +89,5 @@ public class IndexHandler implements HttpHandler {
             response = "Bot not in specified server!";
             code = 404;
         }
-
-        respond(t, response, code);
-    }
-
-    private void respond(HttpExchange t, String response, int code) throws IOException {
-        byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
-        t.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
-        t.sendResponseHeaders(code, bytes.length);
-        OutputStream os = t.getResponseBody();
-        os.write(bytes);
-        os.close();
     }
 }
