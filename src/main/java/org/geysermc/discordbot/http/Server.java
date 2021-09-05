@@ -45,6 +45,7 @@ public class Server {
     public Server() throws Exception {
         server = HttpServer.create(PropertiesManager.getWebAddress(), 0);
         PageHandler.register(server, LeaderboardHandler.class);
+        PageHandler.register(server, IndexHandler.class);
         server.setExecutor(null); // creates a default executor
 
         cfg = new Configuration(new Version(2, 3, 31));
