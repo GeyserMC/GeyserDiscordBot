@@ -5,7 +5,7 @@ aliases: gc
 
 There is an **Unofficial** public [GeyserConnect](https://github.com/GeyserMC/GeyserConnect) instance running. You can connect to it via
 *Addresses:* 
-Americas: `us.geyserconnect.net`
+United States: `us.geyserconnect.net`
 Europe: `eu.geyserconnect.net`
 Port: `19132` for both addresses.
 
