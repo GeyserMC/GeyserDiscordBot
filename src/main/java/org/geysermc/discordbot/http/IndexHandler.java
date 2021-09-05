@@ -28,8 +28,11 @@ package org.geysermc.discordbot.http;
 import com.sun.net.httpserver.HttpExchange;
 import net.dv8tion.jda.api.entities.Guild;
 import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.storage.ServerSettings;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class IndexHandler extends PageHandler {
@@ -41,10 +44,19 @@ public class IndexHandler extends PageHandler {
 
     @Override
     protected void handleRequest(HttpExchange t) {
+        List<Guild> guilds = new ArrayList<>();
+        int members = 0;
+        for (Guild guild : GeyserBot.getJDA().getGuilds()) {
+            if (!ServerSettings.serverLevelsDisabled(guild)) {
+                guilds.add(guild);
+                members += guild.getMemberCount();
+            }
+        }
+
         Map<String, Object> input = new HashMap<>();
         input.put("self", GeyserBot.getJDA().getSelfUser());
-        input.put("guilds", GeyserBot.getJDA().getGuilds());
-        input.put("members", GeyserBot.getJDA().getGuilds().stream().mapToInt(Guild::getMemberCount).sum());
+        input.put("guilds", guilds);
+        input.put("members", members);
 
         buildTemplate(t, "index.ftl", input);
     }
