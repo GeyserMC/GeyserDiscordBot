@@ -44,6 +44,8 @@ public class IndexHandler extends PageHandler {
 
     @Override
     protected void handleRequest(HttpExchange t) {
+        cache = true;
+
         List<Guild> guilds = new ArrayList<>();
         int members = 0;
         for (Guild guild : GeyserBot.getJDA().getGuilds()) {

@@ -41,6 +41,9 @@ import java.util.Map;
 public abstract class PageHandler implements HttpHandler {
     protected String response = "";
     protected int code = 200;
+    protected boolean cache = false;
+    protected int cacheTime = 1800;
+    protected boolean cacheImmutable = false;
 
     public abstract String requestUrl();
 
@@ -97,8 +100,13 @@ public abstract class PageHandler implements HttpHandler {
     }
 
     private void respond(HttpExchange t, String response, int code) throws IOException {
-        byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
         t.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
+
+        if (cache) {
+            t.getResponseHeaders().set("Cache-Control", String.format("max-age=%d%s, public", cacheTime, (cacheImmutable ? ", immutable" : "")));
+        }
+
+        byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
         t.sendResponseHeaders(code, bytes.length);
         OutputStream os = t.getResponseBody();
         os.write(bytes);

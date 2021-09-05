@@ -53,10 +53,13 @@ public class LeaderboardHandler extends PageHandler {
 
     @Override
     protected void handleRequest(HttpExchange t) {
+        cache = true;
+
         String serverIdArg = t.getRequestURI().getPath().replace(requestUrl(), "").trim();
         if (serverIdArg.isEmpty()) {
             response = "No server id specified";
             code = 400;
+            cacheImmutable = true;
 
             return;
         }
@@ -68,26 +71,33 @@ public class LeaderboardHandler extends PageHandler {
         } catch (NumberFormatException e) {
             response = "Invalid server id specified";
             code = 400;
+            cacheImmutable = true;
 
             return;
         }
 
         // Check we are in the specified guild
         Optional<Guild> guild = GeyserBot.getJDA().getGuilds().stream().filter(filterGuild -> filterGuild.getIdLong() == serverId).findFirst();
-        if (guild.isPresent()) {
-            if (!ServerSettings.serverLevelsDisabled(guild.get())) {
-                Map<String, Object> input = new HashMap<>();
-                input.put("guild", guild.get());
-                input.put("rows", GeyserBot.storageManager.getLevels(serverId));
 
-                buildTemplate(t, "leaderboard.ftl", input);
-            } else {
-                response = "Levels are disabled for this server!";
-                code = 403;
-            }
-        } else {
+        // Check if guild exists
+        if (!guild.isPresent()) {
             response = "Bot not in specified server!";
             code = 404;
+            cache = false;
+            return;
         }
+
+        // Check if levels are disabled for the guild
+        if (ServerSettings.serverLevelsDisabled(guild.get())) {
+            response = "Levels are disabled for this server!";
+            code = 403;
+            return;
+        }
+
+        Map<String, Object> input = new HashMap<>();
+        input.put("guild", guild.get());
+        input.put("rows", GeyserBot.storageManager.getLevels(serverId));
+
+        buildTemplate(t, "leaderboard.ftl", input);
     }
 }
