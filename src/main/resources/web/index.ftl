@@ -3,8 +3,8 @@
     <div class="d-flex flex-row align-items-center">
         <img src='${self.effectiveAvatarUrl}' alt='${self.name}%27s Avatar' class='rounded-circle p-2' />
         <h1>
-            ${self.name}<br>
-            <small class="text-muted">Serving ${guilds?size} Discord servers and ${members} users!</small>
+            ${self.name} <a href="https://github.com/GeyserMC/GeyserDiscordBot/" class="fs-4"><i class="bi bi-file-earmark-code"></i></a><br>
+            <small class="text-muted">Serving ${guilds?size} Discord server<#if guilds?size != 1>s</#if> and ${members} members!</small>
         </h1>
     </div>
     <div class="row row-cols-3 g-2 pb-2">
