@@ -220,12 +220,14 @@ public class GeyserBot {
         jda.addEventListener();
 
         // Setup the http server
-        try {
-            httpServer = new Server();
-            httpServer.start();
-        } catch (Exception e) {
-            // TODO
-            e.printStackTrace();
+        if (PropertiesManager.enableWeb()) {
+            try {
+                httpServer = new Server();
+                httpServer.start();
+            } catch (Exception e) {
+                // TODO
+                e.printStackTrace();
+            }
         }
 
         // Setup the update check scheduler

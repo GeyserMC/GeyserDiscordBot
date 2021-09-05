@@ -25,13 +25,11 @@
 
 package org.geysermc.discordbot.util;
 
-import java.awt.*;
 import java.net.InetSocketAddress;
 import java.util.Properties;
 
-// config.json and .env manager
 public class PropertiesManager {
-    public static Properties properties;
+    private static Properties properties;
 
     public static void loadProperties(Properties config) {
         properties = config;
@@ -87,11 +85,19 @@ public class PropertiesManager {
     }
 
     /**
+     * @return Should the web server be enabled
+     */
+    public static boolean enableWeb() {
+        return properties.containsKey("web-address");
+    }
+
+    /**
      * @return Web server address and port
      */
     public static InetSocketAddress getWebAddress() {
         return new InetSocketAddress(properties.getProperty("web-address"), Integer.parseInt(properties.getProperty("web-port")));
     }
+
     /**
      * @return Web server public address
      */
