@@ -1,5 +1,5 @@
 type: text-raw
-alaises: ask
+aliases: ask
 
 ---
 
