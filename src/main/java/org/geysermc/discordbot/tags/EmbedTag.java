@@ -42,6 +42,7 @@ public class EmbedTag extends Command {
 
     /**
      * Create a new EmbedTag
+     *
      * @param name The name of the tag to be used when calling it
      * @param description The text content
      * @param image The URL of the image to display

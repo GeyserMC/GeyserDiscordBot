@@ -39,6 +39,7 @@ public class RawTag extends Command {
 
     /**
      * Create a new RawTag
+     *
      * @param name The name of the tag to be used when calling it
      * @param content The text content
      * @param aliases Any aliases that can be used to call it
