@@ -57,7 +57,7 @@ public class PingCommand extends SlashCommand {
 
     public PingCommand() {
         this.name = "ping";
-        this.aliases = new String[] {"status"};
+        this.aliases = new String[] { "status" };
         this.arguments = "<server>";
         this.help = "Ping a server to check if its accessible";
         this.guildOnly = false;
