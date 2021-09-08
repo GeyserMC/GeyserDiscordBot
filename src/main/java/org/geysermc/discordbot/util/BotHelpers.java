@@ -85,10 +85,20 @@ public class BotHelpers {
     @Nullable
     public static Member getMember(Guild guild, String userTag) {
         try {
-            return guild.getMember(getUser(userTag));
-        } catch (IllegalArgumentException ignored) {
-            return null;
-        }
+            User user = getUser(userTag);
+
+            if (user == null) {
+                // Try and find a member by name using the passed string
+                List<Member> members = guild.getMembersByEffectiveName(userTag, true);
+                if (!members.isEmpty()) {
+                    return members.get(0);
+                }
+            } else {
+                return guild.getMember(user);
+            }
+        } catch (IllegalArgumentException ignored) { }
+
+        return null;
     }
 
     /**
