@@ -35,6 +35,7 @@ import org.geysermc.discordbot.util.DicesCoefficient;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,35 +46,59 @@ public class BadLinksHandler extends ListenerAdapter {
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         // Ignore users with the manage message perms
         if (event.getMember() == null || event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
-            return;
+//            return;
         }
 
         // Find URLs
         Matcher m = HTTP_PATTERN.matcher(event.getMessage().getContentRaw());
 
+        List<String> checkDomains = ServerSettings.getList(event.getGuild().getIdLong(), "check-domains");
+        List<String> bannedDomains = ServerSettings.getList(event.getGuild().getIdLong(), "banned-domains");
+
+        boolean foundMatch = false;
+        String foundDomain = "";
+
         while (m.find()) {
             String link = m.group();
             String domain = link.split("//")[1].split("/")[0];
 
-            for (String checkDomain : ServerSettings.getList(event.getGuild().getIdLong(), "check-domains")) {
-                // Is the domain not exact but still close
-                if (!domain.equals(checkDomain) && compareDomain(domain, checkDomain)) {
-                    ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                            .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
-                            .setDescription("**Link removed, sent by** " + event.getAuthor().getAsMention() + " **deleted in** " + event.getChannel().getAsMention() + "\n" + event.getMessage().getContentRaw())
-                            .addField("Link", link, false)
-                            .addField("Matched domain", checkDomain, false)
-                            .setFooter("Author: " + event.getAuthor().getId() + " | Message ID: " + event.getMessageId())
-                            .setTimestamp(Instant.now())
-                            .setColor(BotColors.FAILURE.getColor())
-                            .build()).queue();
+            for (String bannedDomain : bannedDomains) {
+                if (domain.equals(bannedDomain)) {
+                    foundMatch = true;
+                    foundDomain = bannedDomain;
 
-                    LogHandler.PURGED_MESSAGES.add(event.getMessageId());
-
-                    event.getMessage().delete().queue();
-
-                    return;
+                    break;
                 }
+            }
+
+            if (!foundMatch) {
+                for (String checkDomain : checkDomains) {
+                    // Is the domain not exact but still close
+                    if (!domain.equals(checkDomain) && compareDomain(domain, checkDomain)) {
+                        foundMatch = true;
+                        foundDomain = checkDomain;
+
+                        break;
+                    }
+                }
+            }
+
+            if (foundMatch) {
+                ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                        .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
+                        .setDescription("**Link removed, sent by** " + event.getAuthor().getAsMention() + " **deleted in** " + event.getChannel().getAsMention() + "\n" + event.getMessage().getContentRaw())
+                        .addField("Link", link, false)
+                        .addField("Matched domain", foundDomain, false)
+                        .setFooter("Author: " + event.getAuthor().getId() + " | Message ID: " + event.getMessageId())
+                        .setTimestamp(Instant.now())
+                        .setColor(BotColors.FAILURE.getColor())
+                        .build()).queue();
+
+                LogHandler.PURGED_MESSAGES.add(event.getMessageId());
+
+                event.getMessage().delete().queue();
+
+                return;
             }
         }
     }
