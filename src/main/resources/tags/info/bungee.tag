@@ -5,7 +5,7 @@ aliases: bungeecord, velocity
 
 For the most basic installation, the Geyser and Floodgate Bungeecord or Velocity plugins only need to be installed on the proxy.
 
-For more andvance/complete features, you may also install Floodgate on the backend servers:
+For more advanced/complete features, you may also install Floodgate on the backend servers:
 ***-*** It makes it so that Bedrock players don't have to switch backend servers for their skins to start displaying (once they're uploaded to the skin server).
 ***-*** If you intend to use certain plugins such as [BedrockPlayerManager](https://www.spigotmc.org/resources/bedrock-player-managment-for-floodgate-geyser.82278/)
 ***-*** If you wish to use the API for your own puropses. Run `!!api` in <#613194762249437245> for more information regarding the Floodgate API.
