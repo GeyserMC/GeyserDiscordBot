@@ -29,3 +29,4 @@ Most of these are lists which values are seperated by `,` and a few are seperate
 | `dont-level`         | Channel IDs to ignore messages for the level system, set to 0 to disable server wide | `754458074818805811`                                        |
 | `punishment-message` | A message to add to the end of a punishment DM                                       | `If you wish to appeal your punishment, contact an admin.`  |
 | `banned-domains`     | Domains that if found in a message, the message will be removed                      | `dlscord-nitro.click,discord-airdrop.com`                   |
+| `banned-ips`         | IPs that if a domain found in a message resolves to, the message will be removed     | `95.181.163.44,95.181.163.46`                               |

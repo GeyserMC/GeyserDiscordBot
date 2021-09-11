@@ -34,6 +34,8 @@ import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.DicesCoefficient;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.Instant;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -46,7 +48,7 @@ public class BadLinksHandler extends ListenerAdapter {
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         // Ignore users with the manage message perms
         if (event.getMember() == null || event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
-//            return;
+            return;
         }
 
         // Find URLs
@@ -54,6 +56,7 @@ public class BadLinksHandler extends ListenerAdapter {
 
         List<String> checkDomains = ServerSettings.getList(event.getGuild().getIdLong(), "check-domains");
         List<String> bannedDomains = ServerSettings.getList(event.getGuild().getIdLong(), "banned-domains");
+        List<String> bannedIPs = ServerSettings.getList(event.getGuild().getIdLong(), "banned-ips");
 
         boolean foundMatch = false;
         String foundDomain = "";
@@ -81,6 +84,22 @@ public class BadLinksHandler extends ListenerAdapter {
                         break;
                     }
                 }
+            }
+
+            if (!foundMatch && !bannedIPs.isEmpty()) {
+                try {
+                    String address = InetAddress.getAllByName(domain)[0].getHostAddress();
+
+                    for (String checkIP : bannedIPs) {
+                        // Check if the ip is banned
+                        if (address.equals(checkIP)) {
+                            foundMatch = true;
+                            foundDomain = checkIP + " (DNS lookup)";
+
+                            break;
+                        }
+                    }
+                } catch (UnknownHostException e) { }
             }
 
             if (foundMatch) {
