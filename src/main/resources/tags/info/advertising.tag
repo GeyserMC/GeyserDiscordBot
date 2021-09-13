@@ -3,7 +3,7 @@ aliases: advert, advertise
 
 ---
 
-We no longer allow advretising in <#754458074818805811>, however, there are two other option available to you:
+We no longer allow advertising in <#754458074818805811>, however, there are two other options available to you:
 
 1. [This website](https://mcservers.top/bedrockandjavacrossplay/) Has a specific tag for Java and Bedrock crossplay servers.
 
