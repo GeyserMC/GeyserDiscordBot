@@ -92,7 +92,7 @@ public class PingCommand extends SlashCommand {
 
     private MessageEmbed handle(String ip) {
         // Check we were given a valid IP/domain
-        if (!ip.matches("[\\w.-:]+")) {
+        if (!ip.matches("[\\w.\\-:]+")) {
             return MessageHelper.errorResponse(null, "IP invalid", "The given IP appears to be invalid so won't be queried. If you believe this is incorrect please contact an admin.");
         }
 
