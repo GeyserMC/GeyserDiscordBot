@@ -30,22 +30,8 @@ import net.dv8tion.jda.api.entities.User;
 
 import java.time.Instant;
 
-public class ModLog {
-    private final int id;
-    private final Instant time;
-    private final Member user;
-    private final String action;
-    private final User target;
-    private final String reason;
-
-    public ModLog(int id, Instant time, Member user, String action, User target, String reason) {
-        this.id = id;
-        this.time = time;
-        this.user = user;
-        this.action = action;
-        this.target = target;
-        this.reason = reason;
-    }
+public record ModLog(int id, Instant time, Member user, String action,
+                     User target, String reason) {
 
     public int getId() {
         return id;

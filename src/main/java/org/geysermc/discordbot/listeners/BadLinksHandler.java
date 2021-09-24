@@ -42,7 +42,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BadLinksHandler extends ListenerAdapter {
-    private static final Pattern HTTP_PATTERN = Pattern.compile("https?:\\/\\/[^\\s<]+[^<.,:;\"')\\]\\s]", Pattern.CASE_INSENSITIVE);
+    private static final Pattern HTTP_PATTERN = Pattern.compile("https?://[^\\s<]+[^<.,:;\"')\\]\\s]", Pattern.CASE_INSENSITIVE);
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
@@ -99,7 +99,7 @@ public class BadLinksHandler extends ListenerAdapter {
                             break;
                         }
                     }
-                } catch (UnknownHostException e) { }
+                } catch (UnknownHostException ignored) { }
             }
 
             if (foundMatch) {

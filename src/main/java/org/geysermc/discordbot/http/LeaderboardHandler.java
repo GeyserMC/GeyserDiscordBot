@@ -26,15 +26,10 @@
 package org.geysermc.discordbot.http;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import freemarker.template.TemplateException;
 import net.dv8tion.jda.api.entities.Guild;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -80,7 +75,7 @@ public class LeaderboardHandler extends PageHandler {
         Optional<Guild> guild = GeyserBot.getJDA().getGuilds().stream().filter(filterGuild -> filterGuild.getIdLong() == serverId).findFirst();
 
         // Check if guild exists
-        if (!guild.isPresent()) {
+        if (guild.isEmpty()) {
             response = "Bot not in specified server!";
             code = 404;
             cache = false;

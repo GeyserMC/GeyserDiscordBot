@@ -27,14 +27,7 @@ package org.geysermc.discordbot.health_checker;
 
 import net.dv8tion.jda.api.entities.Message;
 
-public class HealthStatus {
-    private final Message message;
-    private final int statusCode;
-
-    public HealthStatus(Message message, int statusCode) {
-        this.message = message;
-        this.statusCode = statusCode;
-    }
+public record HealthStatus(Message message, int statusCode) {
 
     public Message getMessage() {
         return message;

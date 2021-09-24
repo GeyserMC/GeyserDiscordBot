@@ -96,7 +96,7 @@ public class UpdateCommand extends Command {
                 logText.append("\n").append("Updated!").append("\n\n").append("Restarting...");
                 message.editMessage("```\n" + logText + "\n```").queue(ignored -> event.getJDA().shutdown());
             } catch (IOException e) {
-                logText.append("\n").append("Unable to download updated jar!").append("\n").append(e.toString());
+                logText.append("\n").append("Unable to download updated jar!").append("\n").append(e);
                 message.editMessage("```\n" + logText + "\n```").queue();
             }
         });

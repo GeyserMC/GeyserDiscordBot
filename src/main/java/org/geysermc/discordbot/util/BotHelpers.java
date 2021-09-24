@@ -233,7 +233,7 @@ public class BotHelpers {
         if (dirURL.getProtocol().equals("jar")) {
             /* A JAR path */
             String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!")); //strip out only the JAR file
-            JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+            JarFile jar = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8));
             Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
             Set<String> result = new HashSet<>(); //avoid duplicates in case it is a subdirectory
             while(entries.hasMoreElements()) {
@@ -305,27 +305,27 @@ public class BotHelpers {
      */
     public static int parseTimeString(String input) {
         int result = 0;
-        String number = "";
+        StringBuilder number = new StringBuilder();
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
             if (Character.isDigit(c)) {
-                number += c;
-            } else if (Character.isLetter(c) && !number.isEmpty()) {
-                result += convert(Integer.parseInt(number), c);
-                number = "";
+                number.append(c);
+            } else if (Character.isLetter(c) && (number.length() > 0)) {
+                result += convert(Integer.parseInt(number.toString()), c);
+                number = new StringBuilder();
             }
         }
         return result;
     }
 
     private static int convert(int value, char unit) {
-        switch (unit) {
-            case 'd' : return value * 60 * 60 * 24;
-            case 'h' : return value * 60 * 60;
-            case 'm' : return value * 60;
-            case 's' : return value;
-        }
-        return 0;
+        return switch (unit) {
+            case 'd' -> value * 60 * 60 * 24;
+            case 'h' -> value * 60 * 60;
+            case 'm' -> value * 60;
+            case 's' -> value;
+            default -> 0;
+        };
     }
 
     /**

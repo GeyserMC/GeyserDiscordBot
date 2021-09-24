@@ -54,6 +54,7 @@ public class DicesCoefficient {
      *         of the strings contain less than 2 characters and are not equal.
      * @author Jelle Fresen
      */
+    @SuppressWarnings("StringEquality")
     public static double diceCoefficientOptimized(String s1, String s2)
     {
         // Verifying the input:

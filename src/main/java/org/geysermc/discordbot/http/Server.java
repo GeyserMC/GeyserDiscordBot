@@ -32,15 +32,15 @@ import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 public class Server {
-    private HttpServer server;
-    private Configuration cfg;
+    private final HttpServer server;
+    private final Configuration cfg;
 
     public Server() throws Exception {
         server = HttpServer.create(PropertiesManager.getWebAddress(), 0);
@@ -93,15 +93,13 @@ public class Server {
         }
         Map<String, String> result = new HashMap<>();
         for (String param : query.split("&")) {
-            try {
-                param = URLDecoder.decode(param, "UTF-8");
-                String[] entry = param.split("=");
-                if (entry.length > 1) {
-                    result.put(entry[0], entry[1]);
-                } else {
-                    result.put(entry[0], "");
-                }
-            } catch (UnsupportedEncodingException ignored) { }
+            param = URLDecoder.decode(param, StandardCharsets.UTF_8);
+            String[] entry = param.split("=");
+            if (entry.length > 1) {
+                result.put(entry[0], entry[1]);
+            } else {
+                result.put(entry[0], "");
+            }
         }
         return result;
     }

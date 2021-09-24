@@ -30,6 +30,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 
 import java.time.Instant;
@@ -42,7 +43,7 @@ public class SettingsCommand extends Command {
     public SettingsCommand() {
         this.name = "settings";
         this.hidden = true;
-        this.userPermissions = new Permission[] { Permission.MANAGE_ROLES };
+        this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
     }
 
     @Override
@@ -55,18 +56,16 @@ public class SettingsCommand extends Command {
 
         String action = args.remove(0);
         switch (action) {
-            case "get":
+            case "get" -> {
                 title = "Setting value";
                 value = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), key);
-                break;
-
-            case "set":
+            }
+            case "set" -> {
                 title = "Updated setting";
                 value = String.join(" ", args);
                 GeyserBot.storageManager.setServerPreference(event.getGuild().getIdLong(), key, value);
-                break;
-
-            default:
+            }
+            default -> {
                 event.getChannel().sendMessageEmbeds(new EmbedBuilder()
                         .setTitle("Invalid action specified")
                         .setDescription("Unknown action `" + args.get(0) + "`, it can be one of: `get`, `set`")
@@ -74,6 +73,7 @@ public class SettingsCommand extends Command {
                         .setColor(BotColors.FAILURE.getColor())
                         .build()).queue();
                 return;
+            }
         }
 
         event.getChannel().sendMessageEmbeds(new EmbedBuilder()

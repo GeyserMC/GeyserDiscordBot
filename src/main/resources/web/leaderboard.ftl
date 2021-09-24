@@ -43,7 +43,7 @@
                     <div class='row'>
                         <div class='col d-flex flex-row align-items-center'>
                             <div class='place place-${row_index + 1}'>${row_index + 1}</div>
-                            <img src='${row.user.effectiveAvatarUrl!}' class='avatar' />
+                            <img src='${row.user.effectiveAvatarUrl!}' class='avatar'  alt="${row.user.name}#${row.user.discriminator}' avatar"/>
                             <span class='p-2 text-break'>${row.user.name}#${row.user.discriminator}</span>
                         </div>
                         <div class='col-xl-4 text-center justify-content-center justify-content-xl-end d-flex flex-row'>

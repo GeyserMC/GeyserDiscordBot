@@ -43,6 +43,7 @@ import pw.chew.chewbotcca.util.RestClient;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -90,17 +91,10 @@ public class WikiCommand extends SlashCommand {
         }
 
         List<WikiResult> results;
-        try {
-            results = doSearch(query);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return null;
-        }
+        results = doSearch(query);
 
-        String url = "";
-        try {
-            url = "https://github.com/GeyserMC/Geyser/search?q=" + URLEncoder.encode(query, "UTF-8") + "&type=Wikis";
-        } catch (UnsupportedEncodingException ignored) { }
+        String url;
+        url = "https://github.com/GeyserMC/Geyser/search?q=" + URLEncoder.encode(query, StandardCharsets.UTF_8) + "&type=Wikis";
 
         // Set the title and color for the embed
         embed.setTitle("Search for " + query, url);
@@ -140,9 +134,9 @@ public class WikiCommand extends SlashCommand {
      * @param query The search query
      * @return The list of provider objects with title, desc, updated and url
      */
-    public List<WikiResult> doSearch(String query) throws UnsupportedEncodingException {
+    public List<WikiResult> doSearch(String query) {
         // Fetch the search page
-        String contents = RestClient.get("https://github.com/GeyserMC/Geyser/search?q=" + URLEncoder.encode(query, "UTF-8") + "&type=Wikis");
+        String contents = RestClient.get("https://github.com/GeyserMC/Geyser/search?q=" + URLEncoder.encode(query, StandardCharsets.UTF_8) + "&type=Wikis");
 
         // Make sure we got a response
         if (contents.equals("")) {
@@ -181,9 +175,7 @@ public class WikiCommand extends SlashCommand {
 
             // Fix last character breaking urls
             String lastChar = url.substring(url.length() - 1);
-            try {
-                lastChar = URLEncoder.encode(lastChar, "UTF-8");
-            } catch (UnsupportedEncodingException ignored) { }
+            lastChar = URLEncoder.encode(lastChar, StandardCharsets.UTF_8);
 
             this.url = url.substring(0, url.length() - 1) + lastChar;
         }

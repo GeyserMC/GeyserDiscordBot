@@ -39,11 +39,9 @@ import org.jetbrains.annotations.NotNull;
 public class SentryEventManager extends InterfacedEventManager {
     @Override
     public void handle(@NotNull GenericEvent event) {
-        if (event instanceof MessageReceivedEvent) {
-            MessageReceivedEvent messageReceivedEvent = (MessageReceivedEvent) event;
+        if (event instanceof MessageReceivedEvent messageReceivedEvent) {
             Sentry.configureScope(scope -> buildMessageScope(scope, messageReceivedEvent.getAuthor(), messageReceivedEvent.getGuild(), messageReceivedEvent.getChannel(), messageReceivedEvent.getMessageId()));
-        } else if (event instanceof GuildMessageReceivedEvent) {
-            GuildMessageReceivedEvent messageReceivedEvent = (GuildMessageReceivedEvent) event;
+        } else if (event instanceof GuildMessageReceivedEvent messageReceivedEvent) {
             Sentry.configureScope(scope -> buildMessageScope(scope, messageReceivedEvent.getAuthor(), messageReceivedEvent.getGuild(), messageReceivedEvent.getChannel(), messageReceivedEvent.getMessageId()));
         }
 

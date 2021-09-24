@@ -103,23 +103,11 @@ public class TagsManager {
                                     continue;
                                 }
 
-                                switch (lineParts[0]) {
-                                    case "type": // intentional fallthrough
-                                    case "aliases":
-                                        tagData.put(lineParts[0], lineParts[1].trim().toLowerCase());
-                                        break;
-
-                                    case "image":
-                                        tagData.put(lineParts[0], lineParts[1].trim());
-                                        break;
-
-                                    case "issues":
-                                        issueTriggers = lineParts[1].split("\\|\\|");
-                                        break;
-
-                                    default:
-                                        GeyserBot.LOGGER.warn("Invalid tag option key '" + lineParts[0] + "' for tag '" + tagName + "'!");
-                                        break;
+                                switch (lineParts[0]) { // intentional fallthrough
+                                    case "type", "aliases" -> tagData.put(lineParts[0], lineParts[1].trim().toLowerCase());
+                                    case "image" -> tagData.put(lineParts[0], lineParts[1].trim());
+                                    case "issues" -> issueTriggers = lineParts[1].split("\\|\\|");
+                                    default -> GeyserBot.LOGGER.warn("Invalid tag option key '" + lineParts[0] + "' for tag '" + tagName + "'!");
                                 }
                             }
 

@@ -52,7 +52,7 @@ import java.util.regex.Pattern;
 
 public class IssueCommand extends SlashCommand {
 
-    private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w\\.\\-]+\\/)?([\\w\\.\\-]+)( |$)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w.\\-]+/)?([\\w.\\-]+)( |$)", Pattern.CASE_INSENSITIVE);
     private static final Pattern ISSUE_PATTERN = Pattern.compile("(^| )#?([0-9]+)( |$)", Pattern.CASE_INSENSITIVE);
 
     public IssueCommand() {
