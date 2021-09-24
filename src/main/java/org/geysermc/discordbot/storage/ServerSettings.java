@@ -28,6 +28,7 @@ package org.geysermc.discordbot.storage;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
+import org.apache.commons.lang3.StringUtils;
 import org.geysermc.discordbot.GeyserBot;
 
 import java.util.*;
@@ -52,7 +53,11 @@ public class ServerSettings {
             return Collections.emptyList();
         }
 
-        return Arrays.asList(listData.split(",").clone());
+        return new ArrayList<>(Arrays.asList(listData.split(",").clone()));
+    }
+
+    public static void setList(long serverID, String key, List<String> data) {
+        GeyserBot.storageManager.setServerPreference(serverID, key, StringUtils.join(data, ","));
     }
 
     /**

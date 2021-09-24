@@ -65,6 +65,26 @@ public class SettingsCommand extends Command {
                 value = String.join(" ", args);
                 GeyserBot.storageManager.setServerPreference(event.getGuild().getIdLong(), key, value);
             }
+            case "add" -> {
+                title = "Updated setting";
+
+                List<String> list = ServerSettings.getList(event.getGuild().getIdLong(), key);
+                list.add(String.join(" ", args));
+
+                ServerSettings.setList(event.getGuild().getIdLong(), key, list);
+
+                value = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), key);
+            }
+            case "remove" -> {
+                title = "Updated setting";
+
+                List<String> list = ServerSettings.getList(event.getGuild().getIdLong(), key);
+                list.remove(String.join(" ", args));
+
+                ServerSettings.setList(event.getGuild().getIdLong(), key, list);
+
+                value = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), key);
+            }
             default -> {
                 event.getChannel().sendMessageEmbeds(new EmbedBuilder()
                         .setTitle("Invalid action specified")
