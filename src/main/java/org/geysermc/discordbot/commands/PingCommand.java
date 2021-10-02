@@ -121,6 +121,10 @@ public class PingCommand extends SlashCommand {
             }
         }
 
+        if (jePort < 1 || jePort > 65535) {
+            return MessageHelper.errorResponse(null, "Invalid port", "The port you specified is not a valid number.");
+        }
+
         String javaInfo = "Unable to find Java server at the requested address";
         String bedrockInfo = "Unable to find Bedrock server at the requested address";
         boolean success = false;
