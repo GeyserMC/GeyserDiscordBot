@@ -46,7 +46,7 @@ public class RenameCommand extends Command {
 
     public RenameCommand() {
         this.name = "rename";
-        this.aliases = new String[] {"nick", "nickname"};
+        this.aliases = new String[] { "nick", "nickname" };
         this.hidden = true;
         this.userPermissions = new Permission[] { Permission.NICKNAME_MANAGE };
     }

@@ -109,7 +109,7 @@ public class SwearHandler extends ListenerAdapter {
         // Find all non ascii chars and normalise them based on REPLACE_TOKENS
         Matcher matcher = NON_ASCII_PATTERN.matcher(normalInput);
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while (matcher.find()) {
             matcher.appendReplacement(sb, REPLACE_TOKENS.getOrDefault(matcher.group(1), matcher.group(1)));
         }
@@ -142,7 +142,12 @@ public class SwearHandler extends ListenerAdapter {
 //    }
 
     private void handleMessageEvent(Message message, boolean notifyUser) {
-        if (message.getAuthor().isBot()) {
+        if (message.getAuthor().isBot() || !message.isFromGuild()) {
+            return;
+        }
+
+        String disableFilter = GeyserBot.storageManager.getServerPreference(message.getGuild().getIdLong(), "disable-filter");
+        if (disableFilter != null && !disableFilter.isEmpty()) {
             return;
         }
 

@@ -50,7 +50,7 @@ public class PurgeCommand extends Command {
 
     public PurgeCommand() {
         this.name = "purge";
-        this.aliases = new String[] {"prune"};
+        this.aliases = new String[] { "prune" };
         this.hidden = true;
         this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
     }

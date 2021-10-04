@@ -88,19 +88,15 @@ public class KickCommand extends Command {
                 break;
             }
 
-            switch (arg.toCharArray()[1]) {
-                // Check for silent flag
-                case 's':
-                    silent = true;
-                    break;
-
-                default:
-                    event.getMessage().replyEmbeds(new EmbedBuilder()
-                            .setTitle("Invalid option")
-                            .setDescription("The option `" + arg + "` is invalid")
-                            .setColor(BotColors.FAILURE.getColor())
-                            .build()).queue();
-                    break;
+            // Check for silent flag
+            if (arg.toCharArray()[1] == 's') {
+                silent = true;
+            } else {
+                event.getMessage().replyEmbeds(new EmbedBuilder()
+                        .setTitle("Invalid option")
+                        .setDescription("The option `" + arg + "` is invalid")
+                        .setColor(BotColors.FAILURE.getColor())
+                        .build()).queue();
             }
 
             args.remove(0);

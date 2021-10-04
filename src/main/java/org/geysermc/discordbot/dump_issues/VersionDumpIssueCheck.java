@@ -46,13 +46,10 @@ public class VersionDumpIssueCheck extends AbstractDumpIssueCheck {
         String platform = bootstrapInfo.getString("platform");
         String supportedMinecraft = dump.getJSONObject("versionInfo").getJSONObject("mcInfo").getString("javaVersion");
 
-        boolean isOldVersion = false;
+        boolean isOldVersion = !(platform.equals("BUNGEECORD") || platform.equals("VELOCITY") || platform.equals("FABRIC") || platform.equals("ANDROID")) &&
+                !bootstrapInfo.getString("platformVersion").contains(supportedMinecraft);
 
         // Check if we are running an old server version
-        if (!(platform.equals("BUNGEECORD") || platform.equals("VELOCITY") || platform.equals("FABRIC") || platform.equals("ANDROID")) &&
-                !bootstrapInfo.getString("platformVersion").contains(supportedMinecraft)) {
-            isOldVersion = true;
-        }
 
         // Check plugins
         if (bootstrapInfo.has("plugins")) {

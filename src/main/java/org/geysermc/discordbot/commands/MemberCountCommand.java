@@ -44,7 +44,7 @@ public class MemberCountCommand extends SlashCommand {
 
     public MemberCountCommand() {
         this.name = "membercount";
-        this.aliases = new String[] {"members"};
+        this.aliases = new String[] { "members" };
         this.arguments = "[role]";
         this.help = "Show the current member count";
 

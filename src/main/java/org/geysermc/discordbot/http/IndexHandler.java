@@ -23,37 +23,43 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.storage;
+package org.geysermc.discordbot.http;
 
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
+import com.sun.net.httpserver.HttpExchange;
+import net.dv8tion.jda.api.entities.Guild;
+import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.storage.ServerSettings;
 
-import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public record ModLog(int id, Instant time, Member user, String action,
-                     User target, String reason) {
+public class IndexHandler extends PageHandler {
 
-    public int getId() {
-        return id;
+    @Override
+    public String requestUrl() {
+        return "/";
     }
 
-    public Instant getTime() {
-        return time;
-    }
+    @Override
+    protected void handleRequest(HttpExchange t) {
+        cache = true;
 
-    public Member getUser() {
-        return user;
-    }
+        List<Guild> guilds = new ArrayList<>();
+        int members = 0;
+        for (Guild guild : GeyserBot.getJDA().getGuilds()) {
+            if (!ServerSettings.serverLevelsDisabled(guild)) {
+                guilds.add(guild);
+                members += guild.getMemberCount();
+            }
+        }
 
-    public String getAction() {
-        return action;
-    }
+        Map<String, Object> input = new HashMap<>();
+        input.put("self", GeyserBot.getJDA().getSelfUser());
+        input.put("guilds", guilds);
+        input.put("members", members);
 
-    public User getTarget() {
-        return target;
-    }
-
-    public String getReason() {
-        return reason;
+        buildTemplate(t, "index.ftl", input);
     }
 }

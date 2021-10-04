@@ -45,6 +45,7 @@ public class ReasonCommand extends Command {
 
     public ReasonCommand() {
         this.name = "reason";
+        this.aliases = new String[] { "case" };
         this.hidden = true;
         this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
     }

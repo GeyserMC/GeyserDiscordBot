@@ -52,12 +52,12 @@ import java.util.regex.Pattern;
 
 public class IssueCommand extends SlashCommand {
 
-    private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w\\.\\-]+\\/)?([\\w\\.\\-]+)( |$)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w.\\-]+/)?([\\w.\\-]+)( |$)", Pattern.CASE_INSENSITIVE);
     private static final Pattern ISSUE_PATTERN = Pattern.compile("(^| )#?([0-9]+)( |$)", Pattern.CASE_INSENSITIVE);
 
     public IssueCommand() {
         this.name = "issue";
-        this.aliases = new String[] {"pr"};
+        this.aliases = new String[] { "pr" };
         this.arguments = "<number> [repo]";
         this.help = "Get info about a given GitHub issue/pr.";
         this.guildOnly = false;

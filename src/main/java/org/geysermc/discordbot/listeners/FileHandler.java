@@ -75,7 +75,7 @@ public class FileHandler extends ListenerAdapter {
 
                     RequestBody body = RequestBody.create("{" +
                                 "\"name\":" + JSONObject.quote(attachment.getFileName()) + "," +
-                                "\"expires\":\"" + event.getMessage().getTimeCreated().plusDays(1).toString() + "\"," +
+                                "\"expires\":\"" + event.getMessage().getTimeCreated().plusDays(1) + "\"," +
                                 "\"files\": [" +
                                     "{" +
                                         "\"name\":" + JSONObject.quote(attachment.getFileName()) + "," +

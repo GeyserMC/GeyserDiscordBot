@@ -46,7 +46,7 @@ public class RankCommand extends SlashCommand {
 
     public RankCommand() {
         this.name = "rank";
-        this.aliases = new String[] {"role"};
+        this.aliases = new String[] { "role" };
         this.arguments = "<role>";
         this.help = "Give yourself a role";
 
