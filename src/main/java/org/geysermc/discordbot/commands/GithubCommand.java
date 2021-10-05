@@ -11,7 +11,6 @@ import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.kohsuke.github.*;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Objects;
@@ -76,9 +75,8 @@ public class GithubCommand extends SlashCommand {
         EmbedBuilder builder = new EmbedBuilder()
                 .setAuthor(userName, String.valueOf(user.getHtmlUrl()), user.getAvatarUrl())
                 .setTitle(repo.getName(), String.valueOf(repo.getHtmlUrl()))
-                .setDescription(cleanBody.length() > 400 ? cleanBody.substring(0, 400) + "..." : cleanBody)
-                .setColor(BotColors.SUCCESS.getColor());
-        builder.setColor(Color.decode("#28a745"));
+                .setDescription(cleanBody.length() > 400 ? cleanBody.substring(0, 400) + "..." : cleanBody);
+        builder.setColor(BotColors.SUCCESS.getColor());
 
         return builder.build();
     }
