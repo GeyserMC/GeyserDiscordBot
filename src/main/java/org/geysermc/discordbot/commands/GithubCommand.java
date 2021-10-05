@@ -85,10 +85,6 @@ public class GithubCommand extends SlashCommand {
                 .addField("License",repo.getLicense().getName(),false)
                 .setFooter("Repo created at | " + repo.getCreatedAt()
                 );
-
-
-
-
         builder.setColor(BotColors.SUCCESS.getColor());
 
         return builder.build();
