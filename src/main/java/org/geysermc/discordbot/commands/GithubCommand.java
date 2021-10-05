@@ -36,10 +36,14 @@ public class GithubCommand extends SlashCommand {
     protected void execute(SlashCommandEvent event) {
         // Repo
         String repo =  Objects.requireNonNull(event.getOption("repo")).getAsString();
-        event.replyEmbeds(handle(repo)).queue();
+        try {
+            event.replyEmbeds(handle(repo)).queue();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private MessageEmbed handle(String repoString) {
+    private MessageEmbed handle(String repoString) throws IOException {
         GHRepository repo;
         GHUser user;
         String userName;
@@ -71,11 +75,18 @@ public class GithubCommand extends SlashCommand {
         if (repo.getDescription()!= null && repo.getDescription().trim().length() != 0) {
             cleanBody = repo.getDescription().replaceAll("<!--.*-->(\r\n)?", "");
         }
-
         EmbedBuilder builder = new EmbedBuilder()
                 .setAuthor(userName, String.valueOf(user.getHtmlUrl()), user.getAvatarUrl())
                 .setTitle(repo.getName(), String.valueOf(repo.getHtmlUrl()))
-                .setDescription(cleanBody.length() > 400 ? cleanBody.substring(0, 400) + "..." : cleanBody);
+                .setDescription(
+                        cleanBody.length() > 400 ? cleanBody.substring(0, 400) + "..." : cleanBody
+                                + "\n\n" + "Most Used Language" + "\n" + repo.getLanguage()
+                                + "\n" + "Forks" + "\n" + repo.getForksCount()
+                                + "\n" + "Watchers" + "\n" + repo.getWatchersCount()
+                                + "\n" + "License" + "\n" + repo.getLicense().getName())
+                .setFooter("Repo created at | " + repo.getCreatedAt()
+                );
+
         builder.setColor(BotColors.SUCCESS.getColor());
 
         return builder.build();
