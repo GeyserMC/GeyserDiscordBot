@@ -13,7 +13,8 @@ import org.kohsuke.github.*;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,8 +28,7 @@ public class GithubCommand extends SlashCommand {
         this.arguments = "<repo>";
         this.help = "Get info about a given GitHub repo.";
         this.guildOnly = false;
-
-        this.options = Arrays.asList(
+        this.options = Collections.singletonList(
                 new OptionData(OptionType.STRING, "repo", "The repository to lookup, defaults to GeyserMC/Geyser")
         );
     }
@@ -36,7 +36,7 @@ public class GithubCommand extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         // Repo
-        String repo =  event.getOption("repo").getAsString();
+        String repo =  Objects.requireNonNull(event.getOption("repo")).getAsString();
         event.replyEmbeds(handle(repo)).queue();
     }
 
@@ -78,8 +78,8 @@ public class GithubCommand extends SlashCommand {
                 .setTitle(repo.getName(), String.valueOf(repo.getHtmlUrl()))
                 .setDescription(cleanBody.length() > 400 ? cleanBody.substring(0, 400) + "..." : cleanBody)
                 .setColor(BotColors.SUCCESS.getColor());
-
         builder.setColor(Color.decode("#28a745"));
+
         return builder.build();
     }
 }
