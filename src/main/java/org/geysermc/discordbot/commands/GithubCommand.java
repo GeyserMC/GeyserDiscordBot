@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 
 public class GithubCommand extends SlashCommand {
 
-
     private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w.\\-]+/)?([\\w.\\-]+)( |$)", Pattern.CASE_INSENSITIVE);
 
     public GithubCommand() {
@@ -27,15 +26,17 @@ public class GithubCommand extends SlashCommand {
         this.arguments = "<repo>";
         this.help = "Get info about a given GitHub repo.";
         this.guildOnly = false;
+
         this.options = Collections.singletonList(
                 new OptionData(OptionType.STRING, "repo", "The repository to lookup, defaults to GeyserMC/Geyser")
+                        .setRequired(true)
         );
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
         // Repo
-        String repo =  Objects.requireNonNull(event.getOption("repo")).getAsString();
+        String repo = Objects.requireNonNull(event.getOption("repo")).getAsString();
         try {
             event.replyEmbeds(handle(repo)).queue();
         } catch (IOException e) {
@@ -83,10 +84,9 @@ public class GithubCommand extends SlashCommand {
                 .addField("Forks", String.valueOf(repo.getForksCount()),false)
                 .addField("Watchers", String.valueOf(repo.getWatchersCount()),false)
                 .addField("License",repo.getLicense().getName(),false)
-                .setFooter("Repo created at | " + repo.getCreatedAt()
+                .setFooter("Repo created at | " + repo.getCreatedAt())
+                .setColor(BotColors.SUCCESS.getColor()
                 );
-        builder.setColor(BotColors.SUCCESS.getColor());
-
         return builder.build();
     }
 }
