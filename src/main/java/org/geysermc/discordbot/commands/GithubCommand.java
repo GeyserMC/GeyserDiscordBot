@@ -26,7 +26,6 @@ public class GithubCommand extends SlashCommand {
         this.arguments = "<repo>";
         this.help = "Get info about a given GitHub repo.";
         this.guildOnly = false;
-
         this.options = Collections.singletonList(
                 new OptionData(OptionType.STRING, "repo", "The repository to lookup, defaults to GeyserMC/Geyser")
                         .setRequired(true)
