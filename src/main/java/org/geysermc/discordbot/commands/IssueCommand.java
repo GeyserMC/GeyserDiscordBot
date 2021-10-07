@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,32 +27,26 @@ package org.geysermc.discordbot.commands;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
-import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.BotColors;
+import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
-import org.kohsuke.github.GHFileNotFoundException;
-import org.kohsuke.github.GHIssue;
-import org.kohsuke.github.GHIssueState;
-import org.kohsuke.github.GHPullRequest;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GHUser;
-import org.kohsuke.github.PagedSearchIterable;
+import org.kohsuke.github.*;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class IssueCommand extends SlashCommand {
 
-    private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w.\\-]+/)?([\\w.\\-]+)( |$)", Pattern.CASE_INSENSITIVE);
     private static final Pattern ISSUE_PATTERN = Pattern.compile("(^| )#?([0-9]+)( |$)", Pattern.CASE_INSENSITIVE);
 
     public IssueCommand() {
@@ -71,9 +65,9 @@ public class IssueCommand extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         // Issue
-        int issue = (int) event.optLong("number", 0);
+        int issue = (int) Objects.requireNonNull(event.getOption("number")).getAsLong();
         // Repo
-        String repo = event.optString("repo", "GeyserMC/Geyser");
+        String repo = event.getOptions().size() > 1 ? Objects.requireNonNull(event.getOption("repo")).getAsString() : "";
 
         event.replyEmbeds(handle(issue, repo)).queue();
     }
@@ -97,23 +91,7 @@ public class IssueCommand extends SlashCommand {
         Instant timestamp;
 
         try {
-            GHRepository repo;
-            Matcher matcherRepo = REPO_PATTERN.matcher(repoString);
-
-            if (matcherRepo.find()) {
-                if (matcherRepo.group(2) == null) {
-                    PagedSearchIterable<GHRepository> results = GeyserBot.getGithub().searchRepositories().q(matcherRepo.group(3)).list();
-                    if (results.getTotalCount() == 0) {
-                        return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
-                    }
-                    repo = results.toArray()[0];
-                } else {
-                    repo = GeyserBot.getGithub().getRepository(matcherRepo.group(2) + matcherRepo.group(3));
-                }
-            } else {
-                repo = GeyserBot.getGithub().getRepository("GeyserMC/Geyser");
-            }
-
+            GHRepository repo = (GHRepository) BotHelpers.getRepo(repoString);
             issue = repo.getIssue(issueNumber);
             user = issue.getUser();
             userName = (user.getName() != null ? user.getName() : user.getLogin());
