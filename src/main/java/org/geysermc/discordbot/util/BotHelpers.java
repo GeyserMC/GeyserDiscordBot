@@ -111,6 +111,9 @@ public class BotHelpers {
     /**
      * Get a discord user from a given id string
      * Input examples:
+     * <@!1234>
+     * 1234
+     * abc#1234
      *
      * @param userTag The tag to use to find the member
      * @return The found User or null
@@ -147,6 +150,9 @@ public class BotHelpers {
     /**
      * Get a discord role from a given id string
      * Input examples:
+     * <@&1234>
+     * 1234
+     * admin
      *
      * @param guild The guild to find the role in
      * @param roleTag The tag to use to find the member
@@ -206,7 +212,8 @@ public class BotHelpers {
      * This is basically a brute-force implementation.
      * Works for regular files and also JARs.
      * http://www.uofr.net/~greg/java/get-resource-listing.html
-     *
+     * *
+     * @author Greg Briggs
      * @param clazz Any java class that lives in the same place as the resources you want.
      * @param path Should end with "/", but not start with one.
      * @return Just the name of each member item, not the full paths.
@@ -349,7 +356,7 @@ public class BotHelpers {
     /**
      * Trim a string down to the given length and end with a ... if it was trimmed
      *
-     * @param input Input string to trim
+     * @param input  Input string to trim
      * @param length Max length
      * @return Trimmed string
      */
