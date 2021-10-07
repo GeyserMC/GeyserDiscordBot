@@ -33,6 +33,8 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.geysermc.discordbot.GeyserBot;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.PagedSearchIterable;
 
 import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
@@ -50,10 +52,12 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BotHelpers {
 
     private static final Int2ObjectMap<String> BEDROCK_VERSIONS = new Int2ObjectOpenHashMap<>();
+    private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w.\\-]+/)?([\\w.\\-]+)( |$)", Pattern.CASE_INSENSITIVE);
 
     static {
         BEDROCK_VERSIONS.put(291, "1.7.0");
@@ -360,5 +364,33 @@ public class BotHelpers {
         }
 
         return input.substring(0, length - 3) + "...";
+    }
+
+    /**
+     * Get an Github repository
+     *
+     * @param repoString Input string to get repository
+     * @return Repository
+     */
+    public static Object getRepo(String repoString) throws IOException {
+
+        GHRepository repo;
+        Matcher matcherRepo = REPO_PATTERN.matcher(repoString);
+
+        if (matcherRepo.find()) {
+            if (matcherRepo.group(2) == null) {
+                PagedSearchIterable<GHRepository> results = GeyserBot.getGithub().searchRepositories().q(matcherRepo.group(3)).list();
+                if (results.getTotalCount() == 0) {
+                    return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
+                }
+                repo = results.toArray()[0];
+            } else {
+                repo = GeyserBot.getGithub().getRepository(matcherRepo.group(2) + matcherRepo.group(3));
+            }
+        } else {
+            repo = GeyserBot.getGithub().getRepository("GeyserMC/Geyser");
+        }
+
+        return repo;
     }
 }
