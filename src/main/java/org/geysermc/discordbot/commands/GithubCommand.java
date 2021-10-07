@@ -12,7 +12,6 @@ import org.geysermc.discordbot.util.MessageHelper;
 import org.kohsuke.github.*;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.regex.Matcher;
