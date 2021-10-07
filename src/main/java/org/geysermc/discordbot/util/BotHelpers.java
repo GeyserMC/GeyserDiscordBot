@@ -356,7 +356,7 @@ public class BotHelpers {
     /**
      * Trim a string down to the given length and end with a ... if it was trimmed
      *
-     * @param input  Input string to trim
+     * @param input Input string to trim
      * @param length Max length
      * @return Trimmed string
      */
