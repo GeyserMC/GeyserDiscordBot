@@ -108,9 +108,6 @@ public class BotHelpers {
     /**
      * Get a discord user from a given id string
      * Input examples:
-     *  <@!1234>
-     *  1234
-     *  abc#1234
      *
      * @param userTag The tag to use to find the member
      * @return The found User or null
@@ -147,9 +144,6 @@ public class BotHelpers {
     /**
      * Get a discord role from a given id string
      * Input examples:
-     *  <@&1234>
-     *  1234
-     *  admin
      *
      * @param guild The guild to find the role in
      * @param roleTag The tag to use to find the member
@@ -208,10 +202,8 @@ public class BotHelpers {
      * List directory contents for a resource folder. Not recursive.
      * This is basically a brute-force implementation.
      * Works for regular files and also JARs.
-     *
      * http://www.uofr.net/~greg/java/get-resource-listing.html
      *
-     * @author Greg Briggs
      * @param clazz Any java class that lives in the same place as the resources you want.
      * @param path Should end with "/", but not start with one.
      * @return Just the name of each member item, not the full paths.
@@ -372,25 +364,21 @@ public class BotHelpers {
      * @param repoString Input string to get repository
      * @return Repository
      */
-    public static Object getRepo(String repoString) throws IOException {
-
-        GHRepository repo;
-        Matcher matcherRepo = REPO_PATTERN.matcher(repoString);
-
-        if (matcherRepo.find()) {
-            if (matcherRepo.group(2) == null) {
-                PagedSearchIterable<GHRepository> results = GeyserBot.getGithub().searchRepositories().q(matcherRepo.group(3)).list();
-                if (results.getTotalCount() == 0) {
-                    return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
+    public static Object getRepo(String repoString) {
+        GHRepository repo = new GHRepository();
+        try {
+            Matcher matcherRepo = REPO_PATTERN.matcher(repoString);
+            if (matcherRepo.find()) {
+                if (matcherRepo.group(2) == null) {
+                    PagedSearchIterable<GHRepository> results = GeyserBot.getGithub().searchRepositories().q(matcherRepo.group(3)).list();
+                    repo = results.toArray()[0];
+                } else {
+                    repo = GeyserBot.getGithub().getRepository(matcherRepo.group(2) + matcherRepo.group(3));
                 }
-                repo = results.toArray()[0];
             } else {
-                repo = GeyserBot.getGithub().getRepository(matcherRepo.group(2) + matcherRepo.group(3));
+                repo = GeyserBot.getGithub().getRepository("GeyserMC/Geyser");
             }
-        } else {
-            repo = GeyserBot.getGithub().getRepository("GeyserMC/Geyser");
-        }
-
+        } catch (IOException ignored) { }
         return repo;
     }
 }

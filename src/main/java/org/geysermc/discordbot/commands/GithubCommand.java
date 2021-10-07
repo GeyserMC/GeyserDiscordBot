@@ -40,18 +40,16 @@ public class GithubCommand extends SlashCommand {
     }
 
     private MessageEmbed handle(String repoString) throws IOException {
-        GHRepository repo = (GHRepository) BotHelpers.getRepo(repoString);
+        GHRepository repo;
+        try {
+           repo = (GHRepository) BotHelpers.getRepo(repoString);
+        } catch (Exception e) {
+            return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
+        }
         GHUser user;
         String userName;
-
-        try {
-            user = repo.getOwner();
-            userName = (user.getName() != null ? user.getName() : user.getLogin());
-        } catch (GHFileNotFoundException ignored) {
-            return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
-        } catch (IOException ignored) {
-            return MessageHelper.errorResponse(null, "Error occurred!", "Don't ask me what went wrong, I'm just letting you know, try again.");
-        }
+        user = repo.getOwner();
+        userName = (user.getName() != null ? user.getName() : user.getLogin());
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setAuthor(userName, String.valueOf(user.getHtmlUrl()), user.getAvatarUrl());
