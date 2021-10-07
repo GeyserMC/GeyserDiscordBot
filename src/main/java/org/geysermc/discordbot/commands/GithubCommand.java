@@ -78,7 +78,6 @@ public class GithubCommand extends SlashCommand {
 
         EmbedBuilder builder = new EmbedBuilder();
         builder.setAuthor(userName, String.valueOf(user.getHtmlUrl()), user.getAvatarUrl());
-        builder.setAuthor(userName, String.valueOf(user.getHtmlUrl()), user.getAvatarUrl());
         builder.setTitle(repo.getName(), String.valueOf(repo.getHtmlUrl()));
         builder.setDescription(repo.getDescription());
         builder.addField("Most Used Language", repo.getLanguage(), false);
