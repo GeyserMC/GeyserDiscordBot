@@ -12,6 +12,7 @@ import org.geysermc.discordbot.util.MessageHelper;
 import org.kohsuke.github.*;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -72,20 +73,23 @@ public class GithubCommand extends SlashCommand {
         }
 
         String cleanBody = "No description provided.";
-        if (repo.getDescription()!= null && repo.getDescription().trim().length() != 0) {
+        if (repo.getDescription() != null && repo.getDescription().trim().length() != 0) {
             cleanBody = repo.getDescription().replaceAll("<!--.*-->(\r\n)?", "");
         }
-        EmbedBuilder builder = new EmbedBuilder()
-                .setAuthor(userName, String.valueOf(user.getHtmlUrl()), user.getAvatarUrl())
-                .setTitle(repo.getName(), String.valueOf(repo.getHtmlUrl()))
-                .setDescription(cleanBody.length() > 400 ? cleanBody.substring(0, 400) + "..." : cleanBody)
-                .addField("Most Used Language",repo.getLanguage(),false)
-                .addField("Forks", String.valueOf(repo.getForksCount()),false)
-                .addField("Watchers", String.valueOf(repo.getWatchersCount()),false)
-                .addField("License",repo.getLicense().getName(),false)
-                .setFooter("Repo created at | " + repo.getCreatedAt())
-                .setColor(BotColors.SUCCESS.getColor()
-                );
+
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setAuthor(userName, String.valueOf(user.getHtmlUrl()), user.getAvatarUrl());
+        builder.setAuthor(userName, String.valueOf(user.getHtmlUrl()), user.getAvatarUrl());
+        builder.setTitle(repo.getName(), String.valueOf(repo.getHtmlUrl()));
+        builder.setDescription(repo.getDescription());
+        builder.addField("Most Used Language", repo.getLanguage(), false);
+        builder.addField("Forks", String.valueOf(repo.getForksCount()), false);
+        builder.addField("Watchers", String.valueOf(repo.getWatchersCount()), false);
+        if (repo.getLicense() != null)
+            builder.addField("License", repo.getLicense().getName(), false);
+        builder.setFooter("Created at ").setTimestamp(repo.getCreatedAt().toInstant());
+        builder.setColor(BotColors.SUCCESS.getColor());
+
         return builder.build();
     }
 }
