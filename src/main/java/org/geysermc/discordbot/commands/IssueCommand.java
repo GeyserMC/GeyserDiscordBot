@@ -68,8 +68,9 @@ public class IssueCommand extends SlashCommand {
         int issue = (int) Objects.requireNonNull(event.getOption("number")).getAsLong();
         // Repo
         String repo = event.getOptions().size() > 1 ? Objects.requireNonNull(event.getOption("repo")).getAsString() : "";
-
-        event.replyEmbeds(handle(issue, repo)).queue();
+        event.deferReply(false).queue(interactionHook -> {
+            interactionHook.editOriginalEmbeds(handle(issue, repo)).queue();
+        });
     }
 
     @Override
@@ -142,7 +143,6 @@ public class IssueCommand extends SlashCommand {
 
             } catch (IOException ignored) { }
         }
-
         return builder.build();
     }
 }

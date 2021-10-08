@@ -30,11 +30,16 @@ public class GithubCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        // Repo
         String repo = Objects.requireNonNull(event.getOption("repo")).getAsString();
         try {
-            event.replyEmbeds(handle(repo)).queue();
-        } catch (IOException e) {
+            event.deferReply(false).queue(interactionHook -> {
+                try {
+                    interactionHook.editOriginalEmbeds(handle(repo)).queue();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -60,7 +65,8 @@ public class GithubCommand extends SlashCommand {
         builder.addField("Watchers", String.valueOf(repo.getWatchersCount()), false);
         if (repo.getLicense() != null)
             builder.addField("License", repo.getLicense().getName(), false);
-        builder.setFooter("Created at ").setTimestamp(repo.getCreatedAt().toInstant());
+        if (repo.getCreatedAt() != null)
+            builder.setFooter("Created at ").setTimestamp(repo.getCreatedAt().toInstant());
         builder.setColor(BotColors.SUCCESS.getColor());
 
         return builder.build();
