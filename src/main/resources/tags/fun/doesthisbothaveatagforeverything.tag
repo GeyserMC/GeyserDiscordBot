@@ -3,4 +3,4 @@ aliases: dowehaveatagforeverything, doyouhaveatagforeverything
 
 ---
 
-Yes
+Yes, except for Rory
