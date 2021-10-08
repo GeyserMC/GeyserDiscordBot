@@ -208,6 +208,7 @@ public class BotHelpers {
      * List directory contents for a resource folder. Not recursive.
      * This is basically a brute-force implementation.
      * Works for regular files and also JARs.
+     *
      * http://www.uofr.net/~greg/java/get-resource-listing.html
      *
      * @author Greg Briggs
