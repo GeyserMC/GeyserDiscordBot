@@ -31,17 +31,11 @@ public class GithubCommand extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         String repo = Objects.requireNonNull(event.getOption("repo")).getAsString();
-        try {
-            event.deferReply(false).queue(interactionHook -> {
-                try {
-                    interactionHook.editOriginalEmbeds(handle(repo)).queue();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        event.deferReply(false).queue(interactionHook -> {
+            try {
+                interactionHook.editOriginalEmbeds(handle(repo)).queue();
+            } catch (IOException ignored) { }
+        });
     }
 
     private MessageEmbed handle(String repoString) throws IOException {
