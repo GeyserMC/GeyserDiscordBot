@@ -135,7 +135,7 @@ public class MuteCommand extends Command {
         event.getGuild().addRoleToMember(member, muteRole).queue();
 
         // Persist the role
-        GeyserBot.storageManager.addPersistentRole(event.getMember(), muteRole);
+        GeyserBot.storageManager.addPersistentRole(member, muteRole);
 
         // Log the change
         int id = GeyserBot.storageManager.addLog(event.getMember(), "mute", user, reason);
