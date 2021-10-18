@@ -128,7 +128,7 @@ public class UnmuteCommand extends Command {
         event.getGuild().removeRoleFromMember(member, muteRole).queue();
 
         // UnPersist the role
-        GeyserBot.storageManager.removePersistentRole(event.getMember(), muteRole);
+        GeyserBot.storageManager.removePersistentRole(member, muteRole);
 
         // Log the change
         int id = GeyserBot.storageManager.addLog(event.getMember(), "unmute", user, reason);
