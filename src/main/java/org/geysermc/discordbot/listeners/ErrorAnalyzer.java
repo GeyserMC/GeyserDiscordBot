@@ -108,7 +108,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 groups[i] = groups[i] == null ? "" : groups[i]; // Replace nulls with empty strings
             }
 
-            url = String.format(logUrlPatterns.get(regex), groups);
+            url = String.format(logUrlPatterns.get(regex), groups); // Casting this to Object breaks something, don't do it
             break;
         }
 
@@ -147,7 +147,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 break;
             }
 
-            if (logContent.contains(issue)) {
+            if (logContent.toLowerCase().contains(issue.toLowerCase())) {
                 String title = BotHelpers.trim(issue, MessageEmbed.TITLE_MAX_LENGTH);
 
                 if (MessageHelper.similarFieldExists(embedBuilder.getFields(), title)) {
@@ -161,7 +161,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         }
 
         // Add any errors from stacktraces
-        if (exceptions.size() != 0) {
+        if (!exceptions.isEmpty()) {
             // Get the github trees for fetching the file paths
             String branch = "master";
             Matcher branchMatcher = BRANCH_PATTERN.matcher(logContent);
