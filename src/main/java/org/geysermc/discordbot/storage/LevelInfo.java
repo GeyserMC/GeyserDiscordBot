@@ -25,15 +25,41 @@
 
 package org.geysermc.discordbot.storage;
 
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.internal.utils.UnlockHook;
+import net.dv8tion.jda.internal.utils.cache.SnowflakeCacheViewImpl;
+import org.geysermc.discordbot.GeyserBot;
+
 public class LevelInfo {
+    private final long userId;
     private int level;
     private int xp;
     private int messages;
 
-    public LevelInfo(int level, int xp, int messages) {
+    public LevelInfo(long userId, int level, int xp, int messages) {
+        this.userId = userId;
         this.level = level;
         this.xp = xp;
         this.messages = messages;
+    }
+
+    public User getUser() {
+        // Get the user from the cache
+        User user = GeyserBot.getJDA().getUserById(userId);
+
+        // Get the user from the API since it wasn't in the cache
+        if (user == null) {
+            user = GeyserBot.getJDA().retrieveUserById(userId).complete();
+
+            // Add the user to the user cache since JDA doesn't do that
+            SnowflakeCacheViewImpl<User> usersView = (SnowflakeCacheViewImpl<User>) GeyserBot.getJDA().getUserCache();
+            try (UnlockHook hook = usersView.writeLock())
+            {
+                usersView.getMap().put(user.getIdLong(), user);
+            }
+        }
+
+        return user;
     }
 
     public int getLevel() {

@@ -95,7 +95,7 @@ public class RestClient {
      * @return a response
      */
     public static String post(String url, JSONObject json) {
-        RequestBody body = RequestBody.create(JSON, json.toString());
+        RequestBody body = RequestBody.create(json.toString(), JSON);
 
         Request request = new Request.Builder()
             .url(url)

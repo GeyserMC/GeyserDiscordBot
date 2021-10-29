@@ -29,9 +29,9 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -55,10 +55,10 @@ public class UnbanCommand extends Command {
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
         // Fetch the user
-        Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
+        User user = BotHelpers.getUser(args.remove(0));
 
         // Check user is valid
-        if (member == null) {
+        if (user == null) {
             event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
@@ -67,8 +67,18 @@ public class UnbanCommand extends Command {
             return;
         }
 
-        // Get the user from the member
-        User user = member.getUser();
+        // Check if the user is banned
+        try {
+            event.getGuild().retrieveBan(user).complete();
+        } catch (ErrorResponseException ignored) {
+            event.getMessage().replyEmbeds(new EmbedBuilder()
+                    .setTitle("User not banned")
+                    .setDescription("The user ID specified doesn't have a ban on this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build()).queue();
+            return;
+        }
+
         boolean silent = false;
 
         // Handle all the option args
@@ -78,11 +88,10 @@ public class UnbanCommand extends Command {
                 break;
             }
 
-            if (arg.toCharArray()[1] == ('s')) {
+            if (arg.toCharArray()[1] == 's') {
+                // Check for silent flag
                 silent = true;
             } else {
-
-
                 event.getMessage().replyEmbeds(new EmbedBuilder()
                         .setTitle("Invalid option")
                         .setDescription("The option `" + arg + "` is invalid")
@@ -114,7 +123,7 @@ public class UnbanCommand extends Command {
         }
 
         // Unban user
-        member.getGuild().unban(user).queue();
+        event.getGuild().unban(user).queue();
 
         // Log the change
         int id = GeyserBot.storageManager.addLog(event.getMember(), "unban", user, reason);

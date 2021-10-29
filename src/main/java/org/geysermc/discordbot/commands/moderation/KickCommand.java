@@ -67,6 +67,16 @@ public class KickCommand extends Command {
             return;
         }
 
+        // Check we can target the user
+        if (!event.getSelfMember().canInteract(member) || !event.getMember().canInteract(member)) {
+            event.getMessage().replyEmbeds(new EmbedBuilder()
+                    .setTitle("Higher role")
+                    .setDescription("Either the bot or you cannot target that user.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build()).queue();
+            return;
+        }
+
         // Maybe worth getting rid of this depends on how many times its used
         User user = member.getUser();
         boolean silent = false;
@@ -78,19 +88,15 @@ public class KickCommand extends Command {
                 break;
             }
 
-            switch (arg.toCharArray()[1]) {
-                // Check for silent flag
-                case 's':
-                    silent = true;
-                    break;
-
-                default:
-                    event.getMessage().replyEmbeds(new EmbedBuilder()
-                            .setTitle("Invalid option")
-                            .setDescription("The option `" + arg + "` is invalid")
-                            .setColor(BotColors.FAILURE.getColor())
-                            .build()).queue();
-                    break;
+            // Check for silent flag
+            if (arg.toCharArray()[1] == 's') {
+                silent = true;
+            } else {
+                event.getMessage().replyEmbeds(new EmbedBuilder()
+                        .setTitle("Invalid option")
+                        .setDescription("The option `" + arg + "` is invalid")
+                        .setColor(BotColors.FAILURE.getColor())
+                        .build()).queue();
             }
 
             args.remove(0);

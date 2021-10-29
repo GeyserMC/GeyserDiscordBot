@@ -45,7 +45,8 @@ public class QueueCommand extends SlashCommand {
     public QueueCommand() {
         this.name = "queue";
         this.help = "Show stats about the current global API skin queue";
-        this.aliases = new String[] {"skinqueue"};
+        this.aliases = new String[] { "skinqueue" };
+        this.guildOnly = false;
     }
 
     @Override

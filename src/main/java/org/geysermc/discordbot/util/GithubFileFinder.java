@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class GithubFileFinder {
-    private static final List<String> REPOS = new ArrayList<String>()  {
+    private static final List<String> REPOS = new ArrayList<>() {
         {
             add("GeyserMC/Geyser");
             add("GeyserMC/Floodgate");

@@ -147,6 +147,21 @@ public abstract class AbstractStorageManager {
     public abstract void setLevel(Member user, LevelInfo levelInfo);
 
     /**
+     * @see AbstractStorageManager#getLevels(long)
+     */
+    public List<LevelInfo> getLevels(Guild guild) {
+        return getLevels(guild.getIdLong());
+    }
+
+    /**
+     * Get the top 100 levels for a given guild id
+     *
+     * @param guildId The guild to get the levels for
+     * @return A list of up to 100 level info entries
+     */
+    public abstract List<LevelInfo> getLevels(long guildId);
+
+    /**
      * Get the slow mode channels for a {@link Guild}
      *
      * @param guild The Guild to get the channels for

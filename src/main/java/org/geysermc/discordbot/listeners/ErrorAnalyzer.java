@@ -65,6 +65,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         logUrlPatterns.put(Pattern.compile("paste\\.shockbyte\\.com/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://paste.shockbyte.com/raw/%s");
         logUrlPatterns.put(Pattern.compile("pastie\\.io/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastie.io/raw/%s");
         logUrlPatterns.put(Pattern.compile("rentry\\.co/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://rentry.co/%s/raw");
+        logUrlPatterns.put(Pattern.compile("pastebin.pl/view/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.pl/view/raw/%s");
     }
 
     @Override

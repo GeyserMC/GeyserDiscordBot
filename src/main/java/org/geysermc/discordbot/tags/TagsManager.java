@@ -103,39 +103,32 @@ public class TagsManager {
                                     continue;
                                 }
 
-                                switch (lineParts[0]) {
-                                    case "type": // intentional fallthrough
-                                    case "aliases":
-                                        tagData.put(lineParts[0], lineParts[1].trim().toLowerCase());
-                                        break;
-
-                                    case "image":
-                                        tagData.put(lineParts[0], lineParts[1].trim());
-                                        break;
-
-                                    case "issues":
-                                        issueTriggers = lineParts[1].split("\\|\\|");
-                                        break;
-
-                                    default:
-                                        GeyserBot.LOGGER.warn("Invalid tag option key '" + lineParts[0] + "' for tag '" + tagName + "'!");
-                                        break;
+                                switch (lineParts[0]) { // intentional fallthrough
+                                    case "type", "aliases" -> tagData.put(lineParts[0], lineParts[1].trim().toLowerCase());
+                                    case "image" -> tagData.put(lineParts[0], lineParts[1].trim());
+                                    case "issues" -> issueTriggers = lineParts[1].split("\\|\\|");
+                                    default -> GeyserBot.LOGGER.warn("Invalid tag option key '" + lineParts[0] + "' for tag '" + tagName + "'!");
                                 }
-                            }
-
-                            if (content.toString().isEmpty()) {
-                                GeyserBot.LOGGER.warn("Tag '" + tagName + "' has empty content! Skipping tag.");
-                                continue;
                             }
 
                             // Create the tag from the stored data
                             switch (tagData.get("type")) {
                                 case "text":
-                                    TAGS.add(new EmbedTag(tagName, content.toString(), tagData.get("image"), tagData.get("aliases")));
+                                    try {
+                                        TAGS.add(new EmbedTag(tagName, content.toString(), tagData.get("image"), tagData.get("aliases")));
+                                    } catch (IllegalArgumentException e) {
+                                        GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
+                                        continue;
+                                    }
                                     break;
 
                                 case "text-raw":
-                                    TAGS.add(new RawTag(tagName, content.toString(), tagData.get("aliases")));
+                                    try {
+                                        TAGS.add(new RawTag(tagName, content.toString(), tagData.get("aliases")));
+                                    } catch (IllegalArgumentException e) {
+                                        GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
+                                        continue;
+                                    }
                                     break;
 
                                 case "issue-only":

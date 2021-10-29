@@ -143,7 +143,7 @@ public class ProviderCommand extends SlashCommand {
         String category = "";
         List<Provider> providers = new ArrayList<>();
 
-        Pattern providerPattern = Pattern.compile("\\[([\\w \\\\.-]+)\\]\\(([\\w\\\\.\\\\/:-]+)\\)");
+        Pattern providerPattern = Pattern.compile("\\[([\\w \\\\.-]+)]\\(([\\w\\\\./:-]+)\\)");
         Pattern instructionsPattern = Pattern.compile(" \\((.+)\\)");
 
         for (String line : contents.split("\n")) {

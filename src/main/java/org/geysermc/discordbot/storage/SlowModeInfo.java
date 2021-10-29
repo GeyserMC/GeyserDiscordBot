@@ -25,16 +25,7 @@
 
 package org.geysermc.discordbot.storage;
 
-public class SlowModeInfo {
-    private final long guild;
-    private final long channel;
-    private final int delay;
-
-    public SlowModeInfo(long guild, long channel, int delay) {
-        this.guild = guild;
-        this.channel = channel;
-        this.delay = delay;
-    }
+public record SlowModeInfo(long guild, long channel, int delay) {
 
     public long getGuild() {
         return guild;

@@ -45,7 +45,7 @@ public class SlowmodeCommand extends Command {
 
     public SlowmodeCommand() {
         this.name = "slowmode";
-        this.aliases = new String[] {"slow"};
+        this.aliases = new String[] { "slow" };
         this.hidden = true;
         this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
     }

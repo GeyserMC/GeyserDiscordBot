@@ -57,7 +57,7 @@ public class PingCommand extends SlashCommand {
 
     public PingCommand() {
         this.name = "ping";
-        this.aliases = new String[] {"status"};
+        this.aliases = new String[] { "status" };
         this.arguments = "<server>";
         this.help = "Ping a server to check if its accessible";
         this.guildOnly = false;
@@ -91,6 +91,12 @@ public class PingCommand extends SlashCommand {
     }
 
     private MessageEmbed handle(String ip) {
+        // Check we were given a valid IP/domain
+        if (!ip.matches("[\\w.\\-:]+")) {
+            return MessageHelper.errorResponse(null, "IP invalid", "The given IP appears to be invalid so won't be queried. If you believe this is incorrect please contact an admin.");
+        }
+
+        // Make sure the IP is not longer than 128 characters
         if (ip.length() > 128) {
             return MessageHelper.errorResponse(null, "IP too long", "Search query is over the max allowed character count of 128 (" + ip.length() + ")");
         }
@@ -115,6 +121,10 @@ public class PingCommand extends SlashCommand {
             }
         }
 
+        if (jePort < 1 || jePort > 65535) {
+            return MessageHelper.errorResponse(null, "Invalid port", "The port you specified is not a valid number.");
+        }
+
         String javaInfo = "Unable to find Java server at the requested address";
         String bedrockInfo = "Unable to find Bedrock server at the requested address";
         boolean success = false;
@@ -129,7 +139,7 @@ public class PingCommand extends SlashCommand {
             MCPingResponse data = MCPing.getPing(options);
 
             javaInfo = "**MOTD:** \n```\n" + data.getDescription().getStrippedText() + "\n```\n" +
-                    "**Players:** " + data.getPlayers().getOnline() + "/" + data.getPlayers().getMax() + "\n" +
+                    "**Players:** " + (data.getPlayers() == null ? "Unknown" : data.getPlayers().getOnline() + "/" + data.getPlayers().getMax()) + "\n" +
                     "**Version:** " + data.getVersion().getName() + " (" + data.getVersion().getProtocol() + ")";
             success = true;
         } catch (IOException ignored) {

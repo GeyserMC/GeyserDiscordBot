@@ -46,7 +46,7 @@ public class RenameCommand extends Command {
 
     public RenameCommand() {
         this.name = "rename";
-        this.aliases = new String[] {"nick", "nickname"};
+        this.aliases = new String[] { "nick", "nickname" };
         this.hidden = true;
         this.userPermissions = new Permission[] { Permission.NICKNAME_MANAGE };
     }
@@ -63,6 +63,16 @@ public class RenameCommand extends Command {
             event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build()).queue();
+            return;
+        }
+
+        // Check we can target the user
+        if (!event.getSelfMember().canInteract(member) || !event.getMember().canInteract(member)) {
+            event.getMessage().replyEmbeds(new EmbedBuilder()
+                    .setTitle("Higher role")
+                    .setDescription("Either the bot or you cannot target that user.")
                     .setColor(BotColors.FAILURE.getColor())
                     .build()).queue();
             return;

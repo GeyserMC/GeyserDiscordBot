@@ -40,8 +40,6 @@ public class RestartCommand extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
-        event.getMessage().reply("```\nRestarting...\n```").queue(message -> {
-            event.getJDA().shutdown();
-        });
+        event.getMessage().reply("```\nRestarting...\n```").queue(message -> event.getJDA().shutdown());
     }
 }

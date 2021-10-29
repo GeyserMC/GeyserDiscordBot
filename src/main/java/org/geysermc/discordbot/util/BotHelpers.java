@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -71,6 +72,7 @@ public class BotHelpers {
         BEDROCK_VERSIONS.put(428, "1.16.210");
         BEDROCK_VERSIONS.put(431, "1.16.220");
         BEDROCK_VERSIONS.put(440, "1.17.0");
+        BEDROCK_VERSIONS.put(448, "1.17.10 - 1.17.11");
     }
 
     /**
@@ -83,10 +85,20 @@ public class BotHelpers {
     @Nullable
     public static Member getMember(Guild guild, String userTag) {
         try {
-            return guild.getMember(getUser(userTag));
-        } catch (IllegalArgumentException ignored) {
-            return null;
-        }
+            User user = getUser(userTag);
+
+            if (user == null) {
+                // Try and find a member by name using the passed string
+                List<Member> members = guild.getMembersByEffectiveName(userTag, true);
+                if (!members.isEmpty()) {
+                    return members.get(0);
+                }
+            } else {
+                return guild.getMember(user);
+            }
+        } catch (IllegalArgumentException ignored) { }
+
+        return null;
     }
 
     /**
@@ -221,7 +233,7 @@ public class BotHelpers {
         if (dirURL.getProtocol().equals("jar")) {
             /* A JAR path */
             String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!")); //strip out only the JAR file
-            JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+            JarFile jar = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8));
             Enumeration<JarEntry> entries = jar.entries(); //gives ALL entries in jar
             Set<String> result = new HashSet<>(); //avoid duplicates in case it is a subdirectory
             while(entries.hasMoreElements()) {
@@ -243,8 +255,10 @@ public class BotHelpers {
     }
 
     /**
-     * @param resourcePath the resource to read off of
-     * @return the byte array of an InputStream
+     * Get the bytes representing a resource file
+     *
+     * @param resourcePath The resource to read off of
+     * @return The byte array of an {@link InputStream}
      */
     public static byte[] bytesFromResource(String resourcePath) {
         InputStream stream = BotHelpers.class.getClassLoader().getResourceAsStream(resourcePath);
@@ -259,6 +273,16 @@ public class BotHelpers {
         } catch (IOException e) {
             throw new RuntimeException("Error while trying to read input stream!");
         }
+    }
+
+    /**
+     * Gets a resource as a string
+     *
+     * @param resourcePath The resource to read
+     * @return The utf-8 contents of the requested resource
+     */
+    public static String stringFromResource(String resourcePath) {
+        return new String(bytesFromResource(resourcePath), StandardCharsets.UTF_8);
     }
 
     /**
@@ -281,27 +305,27 @@ public class BotHelpers {
      */
     public static int parseTimeString(String input) {
         int result = 0;
-        String number = "";
+        StringBuilder number = new StringBuilder();
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
             if (Character.isDigit(c)) {
-                number += c;
-            } else if (Character.isLetter(c) && !number.isEmpty()) {
-                result += convert(Integer.parseInt(number), c);
-                number = "";
+                number.append(c);
+            } else if (Character.isLetter(c) && (number.length() > 0)) {
+                result += convert(Integer.parseInt(number.toString()), c);
+                number = new StringBuilder();
             }
         }
         return result;
     }
 
     private static int convert(int value, char unit) {
-        switch (unit) {
-            case 'd' : return value * 60 * 60 * 24;
-            case 'h' : return value * 60 * 60;
-            case 'm' : return value * 60;
-            case 's' : return value;
-        }
-        return 0;
+        return switch (unit) {
+            case 'd' -> value * 60 * 60 * 24;
+            case 'h' -> value * 60 * 60;
+            case 'm' -> value * 60;
+            case 's' -> value;
+            default -> 0;
+        };
     }
 
     /**
