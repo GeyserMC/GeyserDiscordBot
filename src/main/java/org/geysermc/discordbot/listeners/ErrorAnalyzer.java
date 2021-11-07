@@ -108,7 +108,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 groups[i] = groups[i] == null ? "" : groups[i]; // Replace nulls with empty strings
             }
 
-            url = String.format(logUrlPatterns.get(regex), groups); // Casting this to Object breaks something, don't do it
+            url = String.format(logUrlPatterns.get(regex), (Object[]) groups);
             break;
         }
 
