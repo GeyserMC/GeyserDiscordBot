@@ -29,10 +29,17 @@ import com.rtm516.stackparser.Parser;
 import com.rtm516.stackparser.StackException;
 import com.rtm516.stackparser.StackLine;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Emoji;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.MessageReference;
+import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.Button;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
@@ -212,7 +219,10 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 embedBuilder.setDescription("We don't currently have automated responses for the detected errors!");
             }
 
-            event.getMessage().replyEmbeds(embedBuilder.build()).queue();
+            // Build button
+            Button button = Button.secondary("listeners:error_analyzer:clear", Emoji.fromMarkdown("🗑"));
+
+            event.getMessage().replyEmbeds(embedBuilder.build()).setActionRows(ActionRow.of(button)).queue();
         }
     }
 
@@ -249,6 +259,31 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
             embedBuilder.addField(fieldTitle, response, false);
             return fieldTitle.length() + response.length();
+        }
+    }
+
+    /**
+     * Clear the message if requests
+     *
+     * @param event The event to handle
+     */
+    public static void clearMessage(ButtonClickEvent event) {
+        Member member = event.getMember();
+        Message message = event.getMessage();
+        MessageReference messageReference = message.getMessageReference();
+
+        if (member == null || messageReference == null) {
+            return;
+        }
+
+        Message originalMessage = messageReference.resolve().complete();
+
+        // Ensure the user is authorized to remove the embed
+        if (member.hasPermission(Permission.MESSAGE_MANAGE) || member.getUser().getId().equals(originalMessage.getAuthor().getId())) {
+            // Remove the message
+            event.getMessage().delete().queue(unused -> event.reply("Removed!").setEphemeral(true).queue());
+        } else {
+            event.reply("Only the author can clear this embed!").setEphemeral(true).queue();
         }
     }
 }
