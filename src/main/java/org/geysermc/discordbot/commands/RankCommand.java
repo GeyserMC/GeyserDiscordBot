@@ -38,6 +38,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
+import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.time.Instant;
 import java.util.*;
@@ -57,7 +58,7 @@ public class RankCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String role = event.getOption("role").getAsString();
+        String role = OptionHelper.optString(event, "role", "");
 
         event.replyEmbeds(handle(event.getGuild(), event.getMember(), role)).queue();
     }
