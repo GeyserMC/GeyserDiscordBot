@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.util;
 
-import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.dv8tion.jda.api.entities.Guild;
