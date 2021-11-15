@@ -25,6 +25,7 @@
 
 package org.geysermc.discordbot.util;
 
+import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.dv8tion.jda.api.entities.Guild;
@@ -367,12 +368,12 @@ public class BotHelpers {
     }
 
     /**
-     * Get an Github repository
+     * Get a Github repository
      *
      * @param repoString Input string to get repository
-     * @return Repository
+     * @return Repository A repository if one was found, or null otherwise.
      */
-    public static Object getRepo(String repoString) {
+    public static GHRepository getRepo(String repoString) {
         GHRepository repo = new GHRepository();
         try {
             Matcher matcherRepo = REPO_PATTERN.matcher(repoString);
