@@ -34,6 +34,7 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
+import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.util.*;
 
@@ -91,7 +92,7 @@ public class DownloadCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String program = event.getOptions().size() > 0 ? event.getOptions().get(0).getAsString() : "geyser";
+        String program = OptionHelper.optString(event, "program", "geyser");
 
         DownloadOption downloadOption = optionsToRepository.getOrDefault(program.toLowerCase(Locale.ROOT), this.defaultDownloadOption);
 

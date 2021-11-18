@@ -42,6 +42,7 @@ import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
 import org.kohsuke.github.PagedSearchIterable;
+import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -71,9 +72,9 @@ public class IssueCommand extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         // Issue
-        int issue = (int) event.getOption("number").getAsLong();
+        int issue = (int) OptionHelper.optLong(event, "number", 0);
         // Repo
-        String repo = event.getOptions().size() > 1 ? event.getOption("repo").getAsString() : "";
+        String repo = OptionHelper.optString(event, "repo", "GeyserMC/Geyser");
 
         event.replyEmbeds(handle(issue, repo)).queue();
     }
