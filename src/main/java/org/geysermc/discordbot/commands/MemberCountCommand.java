@@ -36,6 +36,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
+import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -56,10 +57,7 @@ public class MemberCountCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        Role role = null;
-        if (event.getOption("role") != null) {
-            role = event.getOption("role").getAsRole();
-        }
+        Role role = OptionHelper.optRole(event, "role", null);
 
         event.replyEmbeds(handle(event.getGuild(), role)).queue();
     }

@@ -28,17 +28,21 @@ package org.geysermc.discordbot.tags;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.Button;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.util.BotColors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.List;
 
 public class EmbedTag extends Command {
 
     private final String description;
     private final String image;
+    private final List<Button> buttons;
 
     /**
      * Create a new EmbedTag
@@ -50,7 +54,7 @@ public class EmbedTag extends Command {
      * @throws IllegalArgumentException If the description is null or empty while the image is also null or empty. It would result in a tag with no content. Also throws if the name is null or empty.
      */
     @SuppressWarnings("ConstantConditions")
-    public EmbedTag(@Nonnull String name, @Nullable String description, @Nullable String image, @Nullable String aliases) throws IllegalArgumentException {
+    public EmbedTag(@Nonnull String name, @Nullable String description, @Nullable String image, @Nullable String aliases, @Nonnull List<Button> buttons) throws IllegalArgumentException {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("name may not be null or empty");
         }
@@ -65,6 +69,8 @@ public class EmbedTag extends Command {
         if (aliases != null && !aliases.isEmpty()) {
             this.aliases = Arrays.stream(aliases.split(",")).map(String::trim).toArray(String[]::new);
         }
+
+        this.buttons = buttons;
     }
 
     @Override
@@ -82,6 +88,10 @@ public class EmbedTag extends Command {
             embed.setImage(image);
         }
 
-        event.getMessage().replyEmbeds(embed.build()).queue();
+        var reply = event.getMessage().replyEmbeds(embed.build());
+        if (!buttons.isEmpty()) {
+            reply = reply.setActionRows(ActionRow.of(buttons));
+        }
+        reply.queue();
     }
 }

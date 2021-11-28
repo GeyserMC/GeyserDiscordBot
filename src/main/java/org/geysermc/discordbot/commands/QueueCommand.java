@@ -65,7 +65,7 @@ public class QueueCommand extends SlashCommand {
         JSONObject stats = null;
         String errorMessage = "";
         try {
-            stats = new JSONObject(RestClient.get("https://api.geysermc.org/v1/stats"));
+            stats = new JSONObject(RestClient.get("https://api.geysermc.org/v2/stats"));
 
             if (stats.has("error")) {
                 errorMessage = stats.getString("error");
@@ -91,7 +91,7 @@ public class QueueCommand extends SlashCommand {
                 .addField("Pre-upload queue",  String.format("%,d", stats.getJSONObject("pre_upload_queue").getInt("length")), true)
                 .addField("Upload queue",  String.format("%,d", stats.getJSONObject("upload_queue").getInt("length")), true)
                 .addField("Upload queue time", queueTimeText, true)
-                .setFooter("https://api.geysermc.org/v1/stats")
+                .setFooter("https://api.geysermc.org/v2/stats")
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor())
                 .build();
