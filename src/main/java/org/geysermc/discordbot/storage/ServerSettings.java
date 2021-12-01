@@ -26,10 +26,13 @@
 package org.geysermc.discordbot.storage;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.GuildChannel;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.geysermc.discordbot.GeyserBot;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -120,11 +123,17 @@ public class ServerSettings {
     /**
      * Check if the given channel should be excluded from logs
      *
-     * @param channel The {@link TextChannel} to check
+     * @param channel The {@link MessageChannel} to check
      * @return If we should exclude the channel
      */
-    public static boolean shouldNotLogChannel(TextChannel channel) {
-        List<String> dontLog = getList(channel.getGuild().getIdLong(), "dont-log");
+    public static boolean shouldNotLogChannel(MessageChannel channel) {
+        Guild guild = getGuild(channel);
+
+        if (guild == null) {
+            return false;
+        }
+
+        List<String> dontLog = getList(guild.getIdLong(), "dont-log");
         return dontLog.contains(channel.getId());
     }
 
@@ -132,12 +141,35 @@ public class ServerSettings {
      * Check if the given channel should be excluded from the level system
      * if value is 0 then disables all channels
      *
-     * @param channel The {@link TextChannel} to check
+     * @param channel The {@link MessageChannel} to check
      * @return If we should exclude the channel
      */
-    public static boolean shouldDisableLevels(TextChannel channel) {
-        List<String> dontLevel = getList(channel.getGuild().getIdLong(), "dont-level");
+    public static boolean shouldDisableLevels(MessageChannel channel) {
+        Guild guild = getGuild(channel);
+
+        if (guild == null) {
+            return false;
+        }
+        
+        List<String> dontLevel = getList(guild.getIdLong(), "dont-level");
         return dontLevel.size() > 0 && dontLevel.get(0).equals("0") || dontLevel.contains(channel.getId());
+    }
+
+    /**
+     * Get the guild from a {@link MessageChannel}
+     *
+     * @param channel The channel to get the guild for
+     * @return The guild or null
+     */
+    @Nullable
+    private static Guild getGuild(MessageChannel channel) {
+        Guild guild = null;
+
+        if (channel instanceof GuildChannel guildChannel) {
+            guild = guildChannel.getGuild();
+        }
+
+        return guild;
     }
 
     /**
