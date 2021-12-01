@@ -130,7 +130,7 @@ public class ServerSettings {
         Guild guild = getGuild(channel);
 
         if (guild == null) {
-            return false;
+            return true;
         }
 
         List<String> dontLog = getList(guild.getIdLong(), "dont-log");
@@ -148,7 +148,7 @@ public class ServerSettings {
         Guild guild = getGuild(channel);
 
         if (guild == null) {
-            return false;
+            return true;
         }
         
         List<String> dontLevel = getList(guild.getIdLong(), "dont-level");

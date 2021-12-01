@@ -132,9 +132,6 @@ public class SwearHandler extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        // Make sure we are in a guild
-        if (!event.isFromGuild()) return;
-
         handleMessageEvent(event.getMessage(), true);
     }
 
@@ -172,7 +169,7 @@ public class SwearHandler extends ListenerAdapter {
                 ServerSettings.getLogChannel(message.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                         .setTitle("Profanity removed")
                         .setDescription("**Sender:** " + message.getAuthor().getAsMention() + "\n" +
-                                "**Channel:** <#" + message.getChannel().getId() + ">\n" +
+                                "**Channel:** " + message.getChannel().getAsMention() + "\n" +
                                 "**Regex:** `" + filterPattern + "`\n" +
                                 "**Message:** " + message.getContentRaw())
                         .setColor(BotColors.FAILURE.getColor())
