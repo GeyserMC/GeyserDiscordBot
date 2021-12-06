@@ -31,6 +31,8 @@ import br.com.azalim.mcserverping.MCPingResponse;
 import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockPong;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.net.util.SubnetUtils;
@@ -56,6 +58,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -112,22 +115,72 @@ public class DumpHandler extends ListenerAdapter {
         Matcher matcher = DUMP_URL.matcher(event.getMessage().getContentRaw());
 
         if (!matcher.find()) {
+            // Check attached files
+            for (Message.Attachment attachment : event.getMessage().getAttachments()) {
+                if (attachment.getFileName().equals("dump.json")) {
+                    String contents = RestClient.get(attachment.getUrl());
+
+                    if (isDump(contents)) {
+                        parseDump(event, null, contents);
+                    }
+                }
+            }
+
             return;
         }
 
         String cleanURL = "https://dump.geysermc.org/" + matcher.group(2);
         String rawURL = "https://dump.geysermc.org/raw/" + matcher.group(2);
 
-        JSONObject dump;
-        JSONObject config;
-        JSONObject configBedrock;
-        JSONObject configRemote;
-        JSONObject gitInfo;
-        JSONObject bootstrapInfo;
+        parseDump(event, cleanURL, RestClient.get(rawURL));
+    }
 
+    /**
+     * Check if the given json matches the signature of a valid dump
+     *
+     * @param contents Json in text format to check
+     * @return True if the dump matches the signature
+     */
+    private boolean isDump(String contents) {
         try {
             // Get json data from dump
-            dump = new JSONObject(RestClient.get(rawURL));
+            JSONObject dump = new JSONObject(contents);
+
+            // Check the dump isn't empty or an error message
+            if (dump.isEmpty() || (dump.length() == 1 && dump.has("message"))) {
+                return false;
+            }
+
+            // Check for the dump parts
+            JSONObject config = dump.getJSONObject("config");
+            config.getJSONObject("bedrock");
+            config.getJSONObject("remote");
+            dump.getJSONObject("gitInfo");
+            dump.getJSONObject("bootstrapInfo");
+
+            return true;
+        } catch (JSONException ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * Parse and handle the information for a dump
+     *
+     * @param event Message event that caused the check
+     * @param cleanURL The url of the dump
+     * @param contents Contents of the dump to check
+     */
+    private void parseDump(@NotNull MessageReceivedEvent event, String cleanURL, String contents) {
+        JSONObject bootstrapInfo;
+        JSONObject gitInfo;
+        JSONObject dump;
+        JSONObject configRemote;
+        JSONObject configBedrock;
+        JSONObject config;
+        try {
+            // Get json data from dump
+            dump = new JSONObject(contents);
 
             // Check the dump isn't empty or an error message
             if (dump.isEmpty() || (dump.length() == 1 && dump.has("message"))) {

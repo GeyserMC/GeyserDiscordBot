@@ -25,8 +25,11 @@
 
 package org.geysermc.discordbot.listeners;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import okhttp3.MediaType;
@@ -44,8 +47,18 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class FileHandler extends ListenerAdapter {
+    private final Cache<Long, Long> fileCache;
+
+    public FileHandler() {
+        this.fileCache = CacheBuilder.newBuilder()
+                .expireAfterWrite(24, TimeUnit.HOURS)
+                .maximumSize(1000)
+                .build();
+    }
+
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         for (Message.Attachment attachment : event.getMessage().getAttachments()) {
@@ -113,8 +126,18 @@ public class FileHandler extends ListenerAdapter {
                     embed.setDescription("An exception occurred during upload: " + e.getMessage());
                 }
 
-                event.getMessage().replyEmbeds(embed.build()).queue();
+                event.getMessage().replyEmbeds(embed.build()).queue(message -> {
+                    fileCache.put(event.getMessageIdLong(), message.getIdLong());
+                });
             }
+        }
+    }
+
+    @Override
+    public void onMessageDelete(@NotNull MessageDeleteEvent event) {
+        Long responseId = fileCache.getIfPresent(event.getMessageIdLong());
+        if (responseId != null) {
+            event.getChannel().deleteMessageById(responseId).queue();
         }
     }
 }

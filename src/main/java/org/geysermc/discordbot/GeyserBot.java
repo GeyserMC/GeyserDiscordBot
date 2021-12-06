@@ -51,6 +51,7 @@ import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.updates.UpdateManager;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.PropertiesManager;
+import org.geysermc.discordbot.util.RssFeedManager;
 import org.geysermc.discordbot.util.SentryEventManager;
 import org.json.JSONArray;
 import org.kohsuke.github.GitHub;
@@ -235,6 +236,9 @@ public class GeyserBot {
 
         // Setup the health check scheduler
         HealthCheckerManager.setup();
+
+        // Setup the rss feed check scheduler
+        RssFeedManager.setup();
 
         // Setup all slow mode handlers
         generalThreadPool.schedule(() -> {

@@ -40,8 +40,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pw.chew.chewbotcca.util.RestClient;
+import pw.chew.jdachewtils.command.OptionHelper;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class WikiCommand extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         // Get arguments
-        String args = event.getOption("search").getAsString();
+        String args = OptionHelper.optString(event, "search", "");
         MessageEmbed response = handle(args);
         if (response != null) event.replyEmbeds(response).queue();
     }
