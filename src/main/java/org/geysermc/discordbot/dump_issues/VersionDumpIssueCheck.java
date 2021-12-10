@@ -31,6 +31,7 @@ import org.json.JSONObject;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 public class VersionDumpIssueCheck extends AbstractDumpIssueCheck {
 
@@ -44,10 +45,23 @@ public class VersionDumpIssueCheck extends AbstractDumpIssueCheck {
     public List<String> checkIssues(JSONObject dump) {
         JSONObject bootstrapInfo = dump.getJSONObject("bootstrapInfo");
         String platform = bootstrapInfo.getString("platform");
-        String supportedMinecraft = dump.getJSONObject("versionInfo").getJSONObject("mcInfo").getString("javaVersion");
+        JSONObject jsonSupportedMinecraft = dump.getJSONObject("versionInfo").getJSONObject("mcInfo");
+        List<String> supportedMinecraft;
+        if (jsonSupportedMinecraft.get("javaVersions") instanceof JSONArray array) {
+            supportedMinecraft = StreamSupport.stream(array.spliterator(), false).map((object) -> (String) object).toList();
+        } else {
+            supportedMinecraft = Collections.singletonList(jsonSupportedMinecraft.getString("javaVersion"));
+        }
 
-        boolean isOldVersion = !(platform.equals("BUNGEECORD") || platform.equals("VELOCITY") || platform.equals("FABRIC") || platform.equals("ANDROID")) &&
-                !bootstrapInfo.getString("platformVersion").contains(supportedMinecraft);
+        boolean isOldVersion = false;
+        if (!(platform.equals("BUNGEECORD") || platform.equals("VELOCITY") || platform.equals("FABRIC") || platform.equals("ANDROID"))) {
+            for (String version : supportedMinecraft) {
+                isOldVersion = !bootstrapInfo.getString("platformVersion").contains(version);
+                if (!isOldVersion) {
+                    break;
+                }
+            }
+        }
 
         // Check if we are running an old server version
 
@@ -66,7 +80,11 @@ public class VersionDumpIssueCheck extends AbstractDumpIssueCheck {
         }
 
         if (isOldVersion) {
-            return Collections.singletonList("- Your server is not on Minecraft " + supportedMinecraft + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).");
+            if (supportedMinecraft.size() > 1) {
+                return Collections.singletonList("- Your server is not on one the following Minecraft versions: " + supportedMinecraft + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).");
+            } else {
+                return Collections.singletonList("- Your server is not on Minecraft " + supportedMinecraft.get(0) + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).");
+            }
         }
 
         return Collections.emptyList();

@@ -32,7 +32,6 @@ import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockPong;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.net.util.SubnetUtils;
@@ -58,7 +57,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -232,12 +230,15 @@ public class DumpHandler extends ListenerAdapter {
             MessageHelper.errorResponse(event, "Failed to get latest commit", "There was an issue trying to get the latest commit!\n" + e.getMessage());
         }
 
-        // Set the latest info based on the returned comparison
-        if (compare.getBehindBy() != 0 || compare.getAheadBy() != 0) {
-            gitData.append("**Latest:** No\n");
-            problems.add("- You aren't on the latest Geyser version! Please [download](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/) the latest version.");
-        } else {
-            gitData.append("**Latest:** Yes\n");
+        // Can be null for unpublished commits
+        if (compare != null) {
+            // Set the latest info based on the returned comparison
+            if (compare.getBehindBy() != 0 || compare.getAheadBy() != 0) {
+                gitData.append("**Latest:** No\n");
+                problems.add("- You aren't on the latest Geyser version! Please [download](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/) the latest version.");
+            } else {
+                gitData.append("**Latest:** Yes\n");
+            }
         }
 
         boolean isFork = false;
@@ -250,7 +251,7 @@ public class DumpHandler extends ListenerAdapter {
         gitData.append("**Commit:** [`").append(gitInfo.getString("git.commit.id.abbrev")).append("`](").append(gitUrl).append("/commit/").append(gitInfo.getString("git.commit.id")).append(")\n");
         gitData.append("**Branch:** [`").append(gitInfo.getString("git.branch")).append("`](").append(gitUrl).append("/tree/").append(gitInfo.getString("git.branch")).append(")\n");
 
-        if (compare.getAheadBy() != 0) {
+        if (compare != null && compare.getAheadBy() != 0) {
             gitData.append("Ahead by ").append(compare.getAheadBy()).append(" commit").append(compare.getAheadBy() == 1 ? "" : "s").append("\n");
         }
 
@@ -275,7 +276,7 @@ public class DumpHandler extends ListenerAdapter {
         }
 
         if (!compareByBuildNumber) {
-            if (compare.getBehindBy() != 0) {
+            if (compare != null && compare.getBehindBy() != 0) {
                 gitData.append("Behind by ").append(compare.getBehindBy()).append(" commit").append(compare.getBehindBy() == 1 ? "" : "s").append("\n");
             }
         }
