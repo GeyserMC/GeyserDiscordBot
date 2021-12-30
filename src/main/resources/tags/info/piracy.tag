@@ -1,5 +1,5 @@
 type: text
-aliases: offline, offlinemode, cracked
+aliases: offline, offlinemode, cracked, tlauncher
 
 ---
 
