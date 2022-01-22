@@ -1,5 +1,5 @@
 type: text
-aliases: j17, latestjava, outdatedjava, unsupportedclassversion, updatejava
+aliases: j17, java17, j16, java16, latestjava, unsupportedclassversion, updatejava
 
 ---
 
