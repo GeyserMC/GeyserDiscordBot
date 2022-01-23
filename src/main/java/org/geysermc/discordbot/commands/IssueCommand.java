@@ -36,6 +36,7 @@ import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.kohsuke.github.*;
+import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -65,9 +66,9 @@ public class IssueCommand extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         // Issue
-        int issue = (int) Objects.requireNonNull(event.getOption("number")).getAsLong();
+        int issue = (int) OptionHelper.optLong(event, "number", 0);
         // Repo
-        String repo = event.getOptions().size() > 1 ? Objects.requireNonNull(event.getOption("repo")).getAsString() : "";
+        String repo = OptionHelper.optString(event, "repo", "GeyserMC/Geyser");
         event.deferReply(false).queue(interactionHook -> {
             interactionHook.editOriginalEmbeds(handle(issue, repo)).queue();
         });

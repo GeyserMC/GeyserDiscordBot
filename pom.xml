@@ -192,7 +192,7 @@
         <dependency>
             <groupId>org.kohsuke</groupId>
             <artifactId>github-api</artifactId>
-            <version>1.301</version>
+            <version>1.135</version>
             <scope>compile</scope>
         </dependency>
 
