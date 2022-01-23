@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
+import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,10 +57,7 @@ public class TagsCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String search = "";
-        if (event.getOption("search") != null) {
-            search = event.getOption("search").getAsString();
-        }
+        String search = OptionHelper.optString(event, "search", "");
 
         event.replyEmbeds(handle(search)).queue();
     }

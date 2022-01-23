@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -77,6 +77,8 @@ public class BotHelpers {
         BEDROCK_VERSIONS.put(431, "1.16.220");
         BEDROCK_VERSIONS.put(440, "1.17.0");
         BEDROCK_VERSIONS.put(448, "1.17.10 - 1.17.11");
+        BEDROCK_VERSIONS.put(465, "1.17.30 - 1.17.34");
+        BEDROCK_VERSIONS.put(471, "1.17.40 - 1.17.41");
     }
 
     /**

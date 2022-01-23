@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 package org.geysermc.discordbot.tags;
 
 import com.jagrosh.jdautilities.command.Command;
+import net.dv8tion.jda.api.interactions.components.Button;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.BotHelpers;
 
@@ -80,6 +81,7 @@ public class TagsManager {
                             Map<String, String> tagData = new HashMap<>();
                             String[] issueTriggers = null;
                             StringBuilder content = new StringBuilder();
+                            List<Button> buttons = new ArrayList<>();
 
                             boolean hitSeparator = false;
 
@@ -107,6 +109,10 @@ public class TagsManager {
                                     case "type", "aliases" -> tagData.put(lineParts[0], lineParts[1].trim().toLowerCase());
                                     case "image" -> tagData.put(lineParts[0], lineParts[1].trim());
                                     case "issues" -> issueTriggers = lineParts[1].split("\\|\\|");
+                                    case "button" -> {
+                                        String[] data = lineParts[1].trim().replace("[", "").replace(")", "").split("]\\(");
+                                        buttons.add(Button.link(data[1], data[0]));
+                                    }
                                     default -> GeyserBot.LOGGER.warn("Invalid tag option key '" + lineParts[0] + "' for tag '" + tagName + "'!");
                                 }
                             }
@@ -115,7 +121,7 @@ public class TagsManager {
                             switch (tagData.get("type")) {
                                 case "text":
                                     try {
-                                        TAGS.add(new EmbedTag(tagName, content.toString(), tagData.get("image"), tagData.get("aliases")));
+                                        TAGS.add(new EmbedTag(tagName, content.toString(), tagData.get("image"), tagData.get("aliases"), buttons));
                                     } catch (IllegalArgumentException e) {
                                         GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
                                         continue;
@@ -124,7 +130,7 @@ public class TagsManager {
 
                                 case "text-raw":
                                     try {
-                                        TAGS.add(new RawTag(tagName, content.toString(), tagData.get("aliases")));
+                                        TAGS.add(new RawTag(tagName, content.toString(), tagData.get("aliases"), buttons));
                                     } catch (IllegalArgumentException e) {
                                         GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
                                         continue;

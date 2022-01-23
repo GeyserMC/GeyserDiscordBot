@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@ import br.com.azalim.mcserverping.MCPingResponse;
 import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockPong;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.net.util.SubnetUtils;
@@ -112,22 +113,72 @@ public class DumpHandler extends ListenerAdapter {
         Matcher matcher = DUMP_URL.matcher(event.getMessage().getContentRaw());
 
         if (!matcher.find()) {
+            // Check attached files
+            for (Message.Attachment attachment : event.getMessage().getAttachments()) {
+                if (attachment.getFileName().equals("dump.json")) {
+                    String contents = RestClient.get(attachment.getUrl());
+
+                    if (isDump(contents)) {
+                        parseDump(event, null, contents);
+                    }
+                }
+            }
+
             return;
         }
 
         String cleanURL = "https://dump.geysermc.org/" + matcher.group(2);
         String rawURL = "https://dump.geysermc.org/raw/" + matcher.group(2);
 
-        JSONObject dump;
-        JSONObject config;
-        JSONObject configBedrock;
-        JSONObject configRemote;
-        JSONObject gitInfo;
-        JSONObject bootstrapInfo;
+        parseDump(event, cleanURL, RestClient.get(rawURL));
+    }
 
+    /**
+     * Check if the given json matches the signature of a valid dump
+     *
+     * @param contents Json in text format to check
+     * @return True if the dump matches the signature
+     */
+    private boolean isDump(String contents) {
         try {
             // Get json data from dump
-            dump = new JSONObject(RestClient.get(rawURL));
+            JSONObject dump = new JSONObject(contents);
+
+            // Check the dump isn't empty or an error message
+            if (dump.isEmpty() || (dump.length() == 1 && dump.has("message"))) {
+                return false;
+            }
+
+            // Check for the dump parts
+            JSONObject config = dump.getJSONObject("config");
+            config.getJSONObject("bedrock");
+            config.getJSONObject("remote");
+            dump.getJSONObject("gitInfo");
+            dump.getJSONObject("bootstrapInfo");
+
+            return true;
+        } catch (JSONException ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * Parse and handle the information for a dump
+     *
+     * @param event Message event that caused the check
+     * @param cleanURL The url of the dump
+     * @param contents Contents of the dump to check
+     */
+    private void parseDump(@NotNull MessageReceivedEvent event, String cleanURL, String contents) {
+        JSONObject bootstrapInfo;
+        JSONObject gitInfo;
+        JSONObject dump;
+        JSONObject configRemote;
+        JSONObject configBedrock;
+        JSONObject config;
+        try {
+            // Get json data from dump
+            dump = new JSONObject(contents);
 
             // Check the dump isn't empty or an error message
             if (dump.isEmpty() || (dump.length() == 1 && dump.has("message"))) {
@@ -179,12 +230,15 @@ public class DumpHandler extends ListenerAdapter {
             MessageHelper.errorResponse(event, "Failed to get latest commit", "There was an issue trying to get the latest commit!\n" + e.getMessage());
         }
 
-        // Set the latest info based on the returned comparison
-        if (compare.getBehindBy() != 0 || compare.getAheadBy() != 0) {
-            gitData.append("**Latest:** No\n");
-            problems.add("- You aren't on the latest Geyser version! Please [download](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/) the latest version.");
-        } else {
-            gitData.append("**Latest:** Yes\n");
+        // Can be null for unpublished commits
+        if (compare != null) {
+            // Set the latest info based on the returned comparison
+            if (compare.getBehindBy() != 0 || compare.getAheadBy() != 0) {
+                gitData.append("**Latest:** No\n");
+                problems.add("- You aren't on the latest Geyser version! Please [download](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/) the latest version.");
+            } else {
+                gitData.append("**Latest:** Yes\n");
+            }
         }
 
         boolean isFork = false;
@@ -197,7 +251,7 @@ public class DumpHandler extends ListenerAdapter {
         gitData.append("**Commit:** [`").append(gitInfo.getString("git.commit.id.abbrev")).append("`](").append(gitUrl).append("/commit/").append(gitInfo.getString("git.commit.id")).append(")\n");
         gitData.append("**Branch:** [`").append(gitInfo.getString("git.branch")).append("`](").append(gitUrl).append("/tree/").append(gitInfo.getString("git.branch")).append(")\n");
 
-        if (compare.getAheadBy() != 0) {
+        if (compare != null && compare.getAheadBy() != 0) {
             gitData.append("Ahead by ").append(compare.getAheadBy()).append(" commit").append(compare.getAheadBy() == 1 ? "" : "s").append("\n");
         }
 
@@ -222,7 +276,7 @@ public class DumpHandler extends ListenerAdapter {
         }
 
         if (!compareByBuildNumber) {
-            if (compare.getBehindBy() != 0) {
+            if (compare != null && compare.getBehindBy() != 0) {
                 gitData.append("Behind by ").append(compare.getBehindBy()).append(" commit").append(compare.getBehindBy() == 1 ? "" : "s").append("\n");
             }
         }
