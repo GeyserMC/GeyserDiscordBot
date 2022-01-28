@@ -5,7 +5,7 @@ import com.jagrosh.jdautilities.command.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import org.geysermc.discordbot.http.Server;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;

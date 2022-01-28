@@ -27,7 +27,7 @@ import io.sentry.protocol.Message;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
 public class BotCommandListener implements CommandListener {
     // Methods to detect command usage. Currently unused

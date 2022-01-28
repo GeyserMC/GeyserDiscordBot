@@ -26,13 +26,16 @@
 package org.geysermc.discordbot.tags;
 
 import com.jagrosh.jdautilities.command.Command;
-import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.BotHelpers;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TagsManager {
 
