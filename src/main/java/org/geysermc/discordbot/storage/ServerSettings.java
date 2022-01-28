@@ -34,7 +34,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.geysermc.discordbot.GeyserBot;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class gives easy methods for accessing stored data about a server
@@ -150,7 +155,7 @@ public class ServerSettings {
         if (guild == null) {
             return true;
         }
-        
+
         List<String> dontLevel = getList(guild.getIdLong(), "dont-level");
         return dontLevel.size() > 0 && dontLevel.get(0).equals("0") || dontLevel.contains(channel.getId());
     }

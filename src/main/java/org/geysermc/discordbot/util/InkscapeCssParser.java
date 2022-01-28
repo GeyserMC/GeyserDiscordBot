@@ -27,6 +27,7 @@ package org.geysermc.discordbot.util;
 
 import org.apache.batik.css.parser.Parser;
 import org.w3c.css.sac.CSSException;
+
 import java.io.IOException;
 
 /**

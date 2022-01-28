@@ -25,7 +25,7 @@
 
 package org.geysermc.discordbot.util;
 
-import java.awt.*;
+import java.awt.Color;
 
 public enum BotColors {
     NEUTRAL("#2B5797"),
