@@ -180,7 +180,7 @@ public class GeyserBot {
         client.addCommands(COMMANDS.toArray(new Command[0]));
         client.addSlashCommands(SLASH_COMMANDS.toArray(new SlashCommand[0]));
         client.setListener(new CommandErrorHandler());
-        client.setCommandPreProcessFunction(event -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
+        client.setCommandPreProcessBiFunction((event, command) -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
 
         // Setup the tag client
         CommandClientBuilder tagClient = new CommandClientBuilder();
@@ -192,7 +192,7 @@ public class GeyserBot {
         tagClient.useHelpBuilder(false);
         tagClient.addCommands(TagsManager.getTags().toArray(new Command[0]));
         tagClient.setListener(new TagsListener());
-        tagClient.setCommandPreProcessFunction(event -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
+        tagClient.setCommandPreProcessBiFunction((event, command) -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
 
         // Disable pings on replies
         MessageAction.setDefaultMentionRepliedUser(false);
