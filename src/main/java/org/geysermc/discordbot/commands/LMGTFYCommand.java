@@ -70,13 +70,13 @@ public class LMGTFYCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String arg = event.getOption("Search").getAsString().replaceAll("[^\\s^\\w]", "").replaceAll("\\s", "%20");
-        event.reply("".equals(arg) || arg == null ? "Your search query is invalid!" : "https://lmgtfy.app/#gsc.tab=0&gsc.q=" + arg);
+        String arg = event.getOption("Search").getAsString().replaceAll("[^\\s^\\w]", "").replaceAll("\\s", "+");
+        event.reply("".equals(arg) || arg == null ? "Your search query is invalid!" : "https://lmgtfy.app/?q=" + arg);
     }
 
     @Override
     protected void execute(CommandEvent event) {
         String arg = event.getArgs().replaceAll("[^\\s^\\w]", "").replaceAll("\\s", "%20");
-        event.reply("".equals(arg) || arg == null ? "Your search query is invalid!" : "https://lmgtfy.app/#gsc.tab=0&gsc.q=" + arg);
+        event.reply("".equals(arg) || arg == null ? "Your search query is invalid!" : "https://lmgtfy.app/?q=" + arg);
     }
 }
