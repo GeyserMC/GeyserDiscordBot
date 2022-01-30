@@ -50,12 +50,12 @@ public class LMGTFYCommand extends SlashCommand {
     protected void execute(SlashCommandEvent event) {
         String arg = OptionHelper.optString(event, 
  "Search", "").replaceAll("[^\\s^\\w]", "").replaceAll("\\s", "+");
-        event.reply("".equals(arg) || arg == null ? "Your search query is invalid!" : "https://lmgtfy.app/?q=" + arg);
+        event.reply(arg.isBlank() ? "Your search query is invalid!" : "https://lmgtfy.app/?q=" + arg);
     }
 
     @Override
     protected void execute(CommandEvent event) {
         String arg = event.getArgs().replaceAll("[^\\s^\\w]", "").replaceAll("\\s", "%20");
-        event.reply("".equals(arg) || arg == null ? "Your search query is invalid!" : "https://lmgtfy.app/?q=" + arg);
+        event.reply(arg.isBlank() ? "Your search query is invalid!" : "https://lmgtfy.app/?q=" + arg);
     }
 }
