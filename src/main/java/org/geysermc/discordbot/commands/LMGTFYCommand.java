@@ -27,34 +27,12 @@ package org.geysermc.discordbot.commands;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
-import org.apache.batik.transcoder.TranscoderException;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.PNGTranscoder;
-import org.apache.batik.util.XMLResourceDescriptor;
-import org.geysermc.discordbot.GeyserBot;
-import org.geysermc.discordbot.storage.LevelInfo;
-import org.geysermc.discordbot.util.BotHelpers;
-import org.geysermc.discordbot.util.InkscapeCssParser;
-import org.geysermc.discordbot.util.MessageHelper;
-import org.w3c.dom.Document;
 import pw.chew.jdachewtils.command.OptionHelper;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 public class LMGTFYCommand extends SlashCommand {
 
