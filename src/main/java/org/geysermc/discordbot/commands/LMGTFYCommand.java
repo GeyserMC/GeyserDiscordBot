@@ -64,7 +64,7 @@ public class LMGTFYCommand extends SlashCommand {
         this.help = "Generate an LMGTFY link";
 
         this.options = Collections.singletonList(
-                new OptionData(OptionType.STRING, "Search", "The query you want to input into lmgtfy")
+                new OptionData(OptionType.STRING, "Search", "The query you want to input into lmgtfy", true)
         );
     }
 
