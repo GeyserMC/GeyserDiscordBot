@@ -70,7 +70,8 @@ public class LMGTFYCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String arg = event.getOption("Search").getAsString().replaceAll("[^\\s^\\w]", "").replaceAll("\\s", "+");
+        String arg = OptionHelper.optString(event, 
+ "Search", "").replaceAll("[^\\s^\\w]", "").replaceAll("\\s", "+");
         event.reply("".equals(arg) || arg == null ? "Your search query is invalid!" : "https://lmgtfy.app/?q=" + arg);
     }
 
