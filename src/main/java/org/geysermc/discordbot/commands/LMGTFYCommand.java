@@ -42,13 +42,13 @@ public class LMGTFYCommand extends SlashCommand {
         this.help = "Generate an LMGTFY link";
 
         this.options = Collections.singletonList(
-                new OptionData(OptionType.STRING, "Search", "The query you want to input into lmgtfy", true)
+                new OptionData(OptionType.STRING, "search", "The query you want to input into lmgtfy", true)
         );
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String arg = OptionHelper.optString(event, "Search", "").replaceAll("[^\\s^\\w]", "").replaceAll("\\s", "+");
+        String arg = OptionHelper.optString(event, "search", "").replaceAll("[^\\s^\\w]", "").replaceAll("\\s", "+");
         event.reply(arg.isBlank() ? "Your search query is invalid!" : "https://lmgtfy.app/?q=" + arg);
     }
 
