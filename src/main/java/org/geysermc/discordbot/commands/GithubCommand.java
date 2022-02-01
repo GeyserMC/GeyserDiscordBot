@@ -60,7 +60,7 @@ public class GithubCommand extends SlashCommand {
             try {
                 interactionHook.editOriginalEmbeds(handle(repo)).queue();
             } catch (IOException e) {
-                MessageHelper.errorResponse(event.getChannel(),"Error 404, mayday!", "Could not retrieve data from GitHub, try again later!");
+                MessageHelper.errorResponse(event.getChannel(), "Error 404, mayday!", "Could not retrieve data from GitHub, try again later!");
             }
         });
     }
@@ -69,26 +69,26 @@ public class GithubCommand extends SlashCommand {
         GHRepository repo;
         try {
            repo = BotHelpers.getRepo(repoString);
-        } catch (Exception e) {
-            return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
+        } catch (Exception e) { return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
         }
-        GHUser user;
-        String userName;
-        user = repo.getOwner();
-        userName = (user.getName() != null ? user.getName() : user.getLogin());
 
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setAuthor(userName, String.valueOf(user.getHtmlUrl()), user.getAvatarUrl());
-        builder.setTitle(repo.getName(), String.valueOf(repo.getHtmlUrl()));
-        builder.setDescription(repo.getDescription());
-        builder.addField("Most Used Language", repo.getLanguage(), false);
-        builder.addField("Forks", String.valueOf(repo.getForksCount()), false);
-        builder.addField("Watchers", String.valueOf(repo.getWatchersCount()), false);
-        if (repo.getLicense() != null)
+        GHUser user = repo.getOwner();;
+
+        EmbedBuilder builder = new EmbedBuilder()
+            .setAuthor(user.getName() != null ? user.getName() : user.getLogin(), String.valueOf(user.getHtmlUrl()), user.getAvatarUrl())
+            .setTitle(repo.getName(), String.valueOf(repo.getHtmlUrl()))
+            .setDescription(repo.getDescription())
+            .addField("Most Used Language", repo.getLanguage(), false)
+            .addField("Forks", String.valueOf(repo.getForksCount()), false)
+            .addField("Watchers", String.valueOf(repo.getWatchersCount()), false)
+            .setColor(BotColors.SUCCESS.getColor());
+
+        if (repo.getLicense() != null) {
             builder.addField("License", repo.getLicense().getName(), false);
-        if (repo.getCreatedAt() != null)
+        }
+        if (repo.getCreatedAt() != null) {
             builder.setFooter("Created at ").setTimestamp(repo.getCreatedAt().toInstant());
-        builder.setColor(BotColors.SUCCESS.getColor());
+        }
 
         return builder.build();
     }
