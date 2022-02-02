@@ -36,7 +36,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
-import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.time.Instant;
 import java.util.Collections;

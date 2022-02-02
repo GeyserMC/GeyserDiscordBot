@@ -45,7 +45,6 @@ import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.InkscapeCssParser;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.w3c.dom.Document;
-import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -36,7 +36,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
-import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;

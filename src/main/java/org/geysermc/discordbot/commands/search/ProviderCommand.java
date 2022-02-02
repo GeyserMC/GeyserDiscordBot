@@ -36,7 +36,6 @@ import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.DicesCoefficient;
 import org.geysermc.discordbot.util.MessageHelper;
 import pw.chew.chewbotcca.util.RestClient;
-import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -39,7 +39,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
-import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.time.Instant;
 import java.util.ArrayList;

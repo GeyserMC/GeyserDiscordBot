@@ -42,7 +42,6 @@ import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
 import org.kohsuke.github.PagedSearchIterable;
-import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.awt.Color;
 import java.io.IOException;

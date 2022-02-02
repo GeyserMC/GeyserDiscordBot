@@ -40,7 +40,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pw.chew.chewbotcca.util.RestClient;
-import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
