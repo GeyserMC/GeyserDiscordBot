@@ -72,9 +72,9 @@ public class IssueCommand extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         // Issue
-        int issue = (int) OptionHelper.optLong(event, "number", 0);
+        int issue = (int) event.optLong("number", 0);
         // Repo
-        String repo = OptionHelper.optString(event, "repo", "GeyserMC/Geyser");
+        String repo = event.optString("repo", "GeyserMC/Geyser");
 
         event.replyEmbeds(handle(issue, repo)).queue();
     }

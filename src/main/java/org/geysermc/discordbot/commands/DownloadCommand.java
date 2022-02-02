@@ -97,7 +97,7 @@ public class DownloadCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String program = OptionHelper.optString(event, "program", "geyser");
+        String program = event.optString("program", "geyser");
 
         DownloadOption downloadOption = optionsToRepository.getOrDefault(program.toLowerCase(Locale.ROOT), this.defaultDownloadOption);
 

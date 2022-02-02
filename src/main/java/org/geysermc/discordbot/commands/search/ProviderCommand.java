@@ -60,7 +60,7 @@ public class ProviderCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        event.replyEmbeds(handle(OptionHelper.optString(event, "provider", ""))).queue();
+        event.replyEmbeds(handle(event.optString("provider", ""))).queue();
     }
 
     @Override

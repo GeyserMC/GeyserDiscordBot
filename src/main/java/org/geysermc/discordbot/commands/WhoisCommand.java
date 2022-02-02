@@ -64,7 +64,7 @@ public class WhoisCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        Member member = OptionHelper.optMember(event, "member", event.getMember());
+        Member member = event.optMember("member", event.getMember());
 
         event.replyEmbeds(handle(member)).queue();
     }

@@ -57,7 +57,7 @@ public class TagsCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String search = OptionHelper.optString(event, "search", "");
+        String search = event.optString("search", "");
 
         event.replyEmbeds(handle(search)).queue();
     }

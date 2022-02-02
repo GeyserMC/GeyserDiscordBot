@@ -66,7 +66,7 @@ public class WikiCommand extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         // Get arguments
-        String args = OptionHelper.optString(event, "search", "");
+        String args = event.optString("search", "");
         MessageEmbed response = handle(args);
         if (response != null) event.replyEmbeds(response).queue();
     }

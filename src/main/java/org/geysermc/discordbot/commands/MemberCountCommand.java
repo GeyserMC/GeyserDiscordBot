@@ -57,7 +57,7 @@ public class MemberCountCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        Role role = OptionHelper.optRole(event, "role", null);
+        Role role = event.optRole("role", null);
 
         event.replyEmbeds(handle(event.getGuild(), role)).queue();
     }

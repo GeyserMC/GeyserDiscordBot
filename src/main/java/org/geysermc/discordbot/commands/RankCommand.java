@@ -62,7 +62,7 @@ public class RankCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String role = OptionHelper.optString(event, "role", "");
+        String role = event.optString("role", "");
 
         event.replyEmbeds(handle(event.getGuild(), event.getMember(), role)).queue();
     }

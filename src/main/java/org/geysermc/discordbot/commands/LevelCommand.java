@@ -70,7 +70,7 @@ public class LevelCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        Member member = OptionHelper.optMember(event, "member", event.getMember());
+        Member member = event.optMember("member", event.getMember());
 
         // Defer to wait for us to load a response and allows for files to be uploaded
         InteractionHook interactionHook = event.deferReply().complete();
