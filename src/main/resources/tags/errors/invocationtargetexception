@@ -1,5 +1,5 @@
 type: text
-issues: java.lang.reflect.InvocationTargetException
+issues: Caused by: java.lang.IllegalArgumentException: Name and ID cannot both be blank
 
 ---
 
