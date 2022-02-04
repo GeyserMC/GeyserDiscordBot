@@ -194,6 +194,7 @@ public class GeyserBot {
         tagClient.addCommands(TagsManager.getTags().toArray(new Command[0]));
         tagClient.setListener(new TagsListener());
         tagClient.setCommandPreProcessBiFunction((event, command) -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
+        tagClient.setManualUpsert(true);
 
         // Disable pings on replies
         MessageAction.setDefaultMentionRepliedUser(false);
