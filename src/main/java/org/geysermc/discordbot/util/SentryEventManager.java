@@ -32,7 +32,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.InterfacedEventManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,8 +39,6 @@ public class SentryEventManager extends InterfacedEventManager {
     @Override
     public void handle(@NotNull GenericEvent event) {
         if (event instanceof MessageReceivedEvent messageReceivedEvent) {
-            Sentry.configureScope(scope -> buildMessageScope(scope, messageReceivedEvent.getAuthor(), messageReceivedEvent.getGuild(), messageReceivedEvent.getChannel(), messageReceivedEvent.getMessageId()));
-        } else if (event instanceof GuildMessageReceivedEvent messageReceivedEvent) {
             Sentry.configureScope(scope -> buildMessageScope(scope, messageReceivedEvent.getAuthor(), messageReceivedEvent.getGuild(), messageReceivedEvent.getChannel(), messageReceivedEvent.getMessageId()));
         }
 

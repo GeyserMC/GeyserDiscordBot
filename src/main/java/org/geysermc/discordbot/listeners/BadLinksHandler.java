@@ -27,7 +27,7 @@ package org.geysermc.discordbot.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -45,7 +45,10 @@ public class BadLinksHandler extends ListenerAdapter {
     private static final Pattern HTTP_PATTERN = Pattern.compile("https?://[^\\s<]+[^<.,:;\"')\\]\\s]", Pattern.CASE_INSENSITIVE);
 
     @Override
-    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        // Make sure we are in a guild
+        if (!event.isFromGuild()) return;
+
         // Ignore users with the manage message perms
         if (event.getMember() == null || event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
             return;

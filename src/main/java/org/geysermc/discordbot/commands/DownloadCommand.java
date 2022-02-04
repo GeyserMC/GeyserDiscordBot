@@ -28,15 +28,19 @@ package org.geysermc.discordbot.commands;
 import com.google.common.collect.ImmutableMap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
-import pw.chew.jdachewtils.command.OptionHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class DownloadCommand extends SlashCommand {
     private final DownloadOption defaultDownloadOption;
@@ -92,7 +96,7 @@ public class DownloadCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String program = OptionHelper.optString(event, "program", "geyser");
+        String program = event.optString("program", "geyser");
 
         DownloadOption downloadOption = optionsToRepository.getOrDefault(program.toLowerCase(Locale.ROOT), this.defaultDownloadOption);
 

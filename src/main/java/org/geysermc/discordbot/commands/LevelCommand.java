@@ -27,9 +27,9 @@ package org.geysermc.discordbot.commands;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -45,7 +45,6 @@ import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.InkscapeCssParser;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.w3c.dom.Document;
-import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -70,7 +69,7 @@ public class LevelCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        Member member = OptionHelper.optMember(event, "member", event.getMember());
+        Member member = event.optMember("member", event.getMember());
 
         // Defer to wait for us to load a response and allows for files to be uploaded
         InteractionHook interactionHook = event.deferReply().complete();

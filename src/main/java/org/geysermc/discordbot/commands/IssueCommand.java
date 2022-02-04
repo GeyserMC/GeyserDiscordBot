@@ -27,9 +27,9 @@ package org.geysermc.discordbot.commands;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
@@ -42,7 +42,6 @@ import org.kohsuke.github.GHPullRequest;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
 import org.kohsuke.github.PagedSearchIterable;
-import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -72,9 +71,9 @@ public class IssueCommand extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         // Issue
-        int issue = (int) OptionHelper.optLong(event, "number", 0);
+        int issue = (int) event.optLong("number", 0);
         // Repo
-        String repo = OptionHelper.optString(event, "repo", "GeyserMC/Geyser");
+        String repo = event.optString("repo", "GeyserMC/Geyser");
 
         event.replyEmbeds(handle(issue, repo)).queue();
     }
