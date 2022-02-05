@@ -27,27 +27,32 @@ package org.geysermc.discordbot.commands;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
-import org.kohsuke.github.*;
-import pw.chew.jdachewtils.command.OptionHelper;
+import org.kohsuke.github.GHFileNotFoundException;
+import org.kohsuke.github.GHIssue;
+import org.kohsuke.github.GHIssueState;
+import org.kohsuke.github.GHPullRequest;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHUser;
+import org.kohsuke.github.PagedSearchIterable;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class IssueCommand extends SlashCommand {
 
+    private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w.\\-]+/)?([\\w.\\-]+)( |$)", Pattern.CASE_INSENSITIVE);
     private static final Pattern ISSUE_PATTERN = Pattern.compile("(^| )#?([0-9]+)( |$)", Pattern.CASE_INSENSITIVE);
 
     public IssueCommand() {
@@ -58,20 +63,19 @@ public class IssueCommand extends SlashCommand {
         this.guildOnly = false;
 
         this.options = Arrays.asList(
-            new OptionData(OptionType.INTEGER, "number", "The issue/pr number").setRequired(true),
-            new OptionData(OptionType.STRING, "repo", "The repository to lookup, defaults to GeyserMC/Geyser")
+                new OptionData(OptionType.INTEGER, "number", "The issue/pr number").setRequired(true),
+                new OptionData(OptionType.STRING, "repo", "The repository to lookup, defaults to GeyserMC/Geyser")
         );
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
         // Issue
-        int issue = (int) OptionHelper.optLong(event, "number", 0);
+        int issue = (int) event.optLong("number", 0);
         // Repo
-        String repo = OptionHelper.optString(event, "repo", "GeyserMC/Geyser");
-        event.deferReply(false).queue(interactionHook -> {
-            interactionHook.editOriginalEmbeds(handle(issue, repo)).queue();
-        });
+        String repo = event.optString("repo", "GeyserMC/Geyser");
+
+        event.replyEmbeds(handle(issue, repo)).queue();
     }
 
     @Override
@@ -87,23 +91,36 @@ public class IssueCommand extends SlashCommand {
     }
 
     private MessageEmbed handle(int issueNumber, String repoString) {
-        GHRepository repo;
-        try {
-            repo = BotHelpers.getRepo(repoString);
-        } catch (Exception e) {
-            return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
-        }
         GHIssue issue;
         GHUser user;
         String userName;
         Instant timestamp;
 
         try {
+            GHRepository repo;
+            Matcher matcherRepo = REPO_PATTERN.matcher(repoString);
+
+            if (matcherRepo.find()) {
+                if (matcherRepo.group(2) == null) {
+                    PagedSearchIterable<GHRepository> results = GeyserBot.getGithub().searchRepositories().q(matcherRepo.group(3)).list();
+                    if (results.getTotalCount() == 0) {
+                        return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
+                    }
+                    repo = results.toArray()[0];
+                } else {
+                    repo = GeyserBot.getGithub().getRepository(matcherRepo.group(2) + matcherRepo.group(3));
+                }
+            } else {
+                repo = GeyserBot.getGithub().getRepository("GeyserMC/Geyser");
+            }
+
             issue = repo.getIssue(issueNumber);
             user = issue.getUser();
             userName = (user.getName() != null ? user.getName() : user.getLogin());
             timestamp = issue.getCreatedAt().toInstant();
-        } catch (IOException e) {
+        } catch (GHFileNotFoundException ignored) {
+            return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
+        } catch (IOException ignored) {
             return MessageHelper.errorResponse(null, "Error occurred!", "Don't ask me what went wrong, I'm just letting you know, try again.");
         }
 
@@ -147,6 +164,7 @@ public class IssueCommand extends SlashCommand {
 
             } catch (IOException ignored) { }
         }
+
         return builder.build();
     }
 }
