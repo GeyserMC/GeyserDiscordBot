@@ -89,7 +89,7 @@ public class IssueCommand extends SlashCommand {
     private MessageEmbed handle(int issueNumber, String repoString) {
         GHRepository repo;
         try {
-            repo = (GHRepository) BotHelpers.getRepo(repoString);
+            repo = BotHelpers.getRepo(repoString);
         } catch (Exception e) {
             return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
         }
