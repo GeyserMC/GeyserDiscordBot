@@ -52,7 +52,7 @@ public class DownloadCommand extends SlashCommand {
         this.help = "Sends a link to download the latest version of Geyser or another program";
         this.guildOnly = false;
 
-        this.defaultDownloadOption = new GeyserDownloadOption("Geyser", "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/");
+        this.defaultDownloadOption = new GeyserDownloadOption("Geyser", "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master");
         this.optionsToRepository = ImmutableMap.<String, DownloadOption>builder()
                 .put("geyser", this.defaultDownloadOption)
                 .put("floodgate", new GeyserDownloadOption("Floodgate", "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/"))
