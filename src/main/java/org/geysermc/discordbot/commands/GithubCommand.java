@@ -26,19 +26,19 @@
 package org.geysermc.discordbot.commands;
 
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
-import org.kohsuke.github.*;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GHUser;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Objects;
 
 public class GithubCommand extends SlashCommand {
 
@@ -48,8 +48,7 @@ public class GithubCommand extends SlashCommand {
         this.help = "Get info about a given GitHub repo.";
         this.guildOnly = false;
         this.options = Collections.singletonList(
-                new OptionData(OptionType.STRING, "repo", "The repository to lookup")
-                        .setRequired(true)
+            new OptionData(OptionType.STRING, "repo", "The repository to lookup", true)
         );
     }
 
@@ -66,14 +65,12 @@ public class GithubCommand extends SlashCommand {
     }
 
     private MessageEmbed handle(String repoString) throws IOException {
-        GHRepository repo;
-        try {
-           repo = BotHelpers.getRepo(repoString);
-        } catch (Exception e) { 
+        GHRepository repo = BotHelpers.getRepo(repoString);
+        if (repo == null) {
             return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
         }
 
-        GHUser user = repo.getOwner();;
+        GHUser user = repo.getOwner();
 
         EmbedBuilder builder = new EmbedBuilder()
             .setAuthor(user.getName() != null ? user.getName() : user.getLogin(), String.valueOf(user.getHtmlUrl()), user.getAvatarUrl())
