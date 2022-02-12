@@ -87,7 +87,7 @@ public class DumpHandler extends ListenerAdapter {
         }
         ISSUE_CHECKS = checks;
 
-        // We cache the infos here since its expensive to create them every time we need them
+        // We cache the infos here since it's expensive to create them every time we need them
         INTERNAL_IP_RANGES = new SubnetUtils.SubnetInfo[] {
                 new SubnetUtils("0.0.0.0/8").getInfo(),
                 new SubnetUtils("10.0.0.0/8").getInfo(),
@@ -268,7 +268,8 @@ public class DumpHandler extends ListenerAdapter {
                     int buildNumDiff = latestBuildNum - buildNum;
                     if (buildNumDiff > 0) {
                         compareByBuildNumber = true;
-                        gitData.append("Behind by ").append(buildNumDiff).append(" CI build").append(buildNumDiff == 1 ? "" : "s").append("\n");
+                        String compareUrl = gitUrl + "/compare/" + gitInfo.getString("git.commit.id.abbrev") + "..." + gitInfo.getString("git.branch");
+                        gitData.append("Behind by [").append(buildNumDiff).append(" CI build").append(buildNumDiff == 1 ? "" : "s").append("](").append(compareUrl).append(")\n");
                     }
                 }
             } catch (IOException | NumberFormatException ignored) {
@@ -277,7 +278,8 @@ public class DumpHandler extends ListenerAdapter {
 
         if (!compareByBuildNumber) {
             if (compare != null && compare.getBehindBy() != 0) {
-                gitData.append("Behind by ").append(compare.getBehindBy()).append(" commit").append(compare.getBehindBy() == 1 ? "" : "s").append("\n");
+                String compareUrl = gitUrl + "/compare/" + gitInfo.getString("git.commit.id.abbrev") + "..." + gitInfo.getString("git.branch");
+                gitData.append("Behind by [").append(compare.getBehindBy()).append(" commit").append(compare.getBehindBy() == 1 ? "" : "s").append("](").append(compareUrl).append(")\n");
             }
         }
 
