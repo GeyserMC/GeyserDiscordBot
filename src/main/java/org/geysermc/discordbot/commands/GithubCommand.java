@@ -69,7 +69,8 @@ public class GithubCommand extends SlashCommand {
         GHRepository repo;
         try {
            repo = BotHelpers.getRepo(repoString);
-        } catch (Exception e) { return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
+        } catch (Exception e) { 
+            return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
         }
 
         GHUser user = repo.getOwner();;
