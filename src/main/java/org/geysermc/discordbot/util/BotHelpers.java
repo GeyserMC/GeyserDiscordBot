@@ -376,7 +376,7 @@ public class BotHelpers {
      * @return Repository A repository if one was found, or null otherwise.
      */
     public static GHRepository getRepo(String repoString) {
-        GHRepository repo = new GHRepository();
+        GHRepository repo = null;
         try {
             Matcher matcherRepo = REPO_PATTERN.matcher(repoString);
             if (matcherRepo.find()) {
