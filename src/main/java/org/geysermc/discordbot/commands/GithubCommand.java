@@ -55,7 +55,7 @@ public class GithubCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String repo = Objects.requireNonNull(event.getOption("repo")).getAsString();
+        String repo = event.optString("repo", "");
         event.deferReply(false).queue(interactionHook -> {
             try {
                 interactionHook.editOriginalEmbeds(handle(repo)).queue();
