@@ -63,8 +63,8 @@ public class IssueCommand extends SlashCommand {
         this.guildOnly = false;
 
         this.options = Arrays.asList(
-                new OptionData(OptionType.INTEGER, "number", "The issue/pr number").setRequired(true),
-                new OptionData(OptionType.STRING, "repo", "The repository to lookup, defaults to GeyserMC/Geyser")
+            new OptionData(OptionType.INTEGER, "number", "The issue/pr number").setRequired(true),
+            new OptionData(OptionType.STRING, "repo", "The repository to lookup, defaults to GeyserMC/Geyser")
         );
     }
 
