@@ -20,7 +20,7 @@ type: text
 aliases: test1, test2
 image: https://example.com/example.png
 button: [View Rory](https://example.com)
-button: [Floodagte Wiki](https://github.com/GeyserMC/Floodgate)
+button: [Floodagte Wiki](https://wiki.geysermc.org/floodgate/)
 
 ---
 
