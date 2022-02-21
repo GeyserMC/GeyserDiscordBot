@@ -124,7 +124,7 @@ public class TagsManager {
                             switch (tagData.get("type")) {
                                 case "text":
                                     try {
-                                        TAGS.add(new EmbedTag(tagName, content.toString(), tagData.get("image"), tagData.get("aliases"), buttons));
+                                        TAGS.add(new EmbedTag(tagName, content.toString().trim(), tagData.get("image"), tagData.get("aliases"), buttons));
                                     } catch (IllegalArgumentException e) {
                                         GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
                                         continue;
@@ -133,7 +133,7 @@ public class TagsManager {
 
                                 case "text-raw":
                                     try {
-                                        TAGS.add(new RawTag(tagName, content.toString(), tagData.get("aliases"), buttons));
+                                        TAGS.add(new RawTag(tagName, content.toString().trim(), tagData.get("aliases"), buttons));
                                     } catch (IllegalArgumentException e) {
                                         GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
                                         continue;
