@@ -26,34 +26,25 @@
 package org.geysermc.discordbot.dump_issues;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONObject;
-import pw.chew.chewbotcca.util.RestClient;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
-public class IntegrityDumpIssueCheck extends AbstractDumpIssueCheck {
-    //https://ci.opencollab.dev/fingerprint/d614e47bdf2914bf8c037497c7733090/api/json
-
+public class DockerDumpIssueCheck extends AbstractDumpIssueCheck {
 
     @NotNull
     @Override
     public List<String> checkIssues(JSONObject dump) {
-        List<String> issues = new ArrayList<>();
+        JSONObject versionInfo = dump.getJSONObject("versionInfo");
+        JSONObject network = versionInfo.getJSONObject("network");
 
-        // Make sure this is an official build
-        if (!dump.getJSONObject("gitInfo").getString("git.build.host").equals("nukkitx.com")) {
-            return issues;
+        if (network.getBoolean("dockerCheck")) {
+            return Collections.singletonList("- You're server is running inside a docker container, please make sure the Geyser port (using UDP) is exported out to the host. If your using Pterodactyl panel then you need to make sure you have allocated the port to the server.");
         }
 
-        String md5Hash = dump.getJSONObject("hashInfo").getString("md5Hash");
-        String response = RestClient.get("https://ci.opencollab.dev/fingerprint/" + md5Hash + "/api/json");
-
-        // Check if 404
-        if (response.startsWith("<html>")) {
-            issues.add("- You're Geyser jar is corrupt or has been tampered with. Please redownload it [from the CI](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/).");
-        }
-
-        return issues;
+        return Collections.emptyList();
     }
 }

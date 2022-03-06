@@ -27,33 +27,22 @@ package org.geysermc.discordbot.dump_issues;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
-import pw.chew.chewbotcca.util.RestClient;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class IntegrityDumpIssueCheck extends AbstractDumpIssueCheck {
-    //https://ci.opencollab.dev/fingerprint/d614e47bdf2914bf8c037497c7733090/api/json
-
+public class BukkitDumpIssueCheck extends AbstractDumpIssueCheck {
 
     @NotNull
     @Override
     public List<String> checkIssues(JSONObject dump) {
-        List<String> issues = new ArrayList<>();
+        JSONObject bootstrapInfo = dump.getJSONObject("bootstrapInfo");
+        String platformName = bootstrapInfo.getString("platformName");
 
-        // Make sure this is an official build
-        if (!dump.getJSONObject("gitInfo").getString("git.build.host").equals("nukkitx.com")) {
-            return issues;
+        if (platformName.equals("CraftBukkit")) {
+            return Collections.singletonList("- You're server is running on CraftBukkit please switch over to Spigot or Paper (run `!!bukkit` in <#613194762249437245> for more information).");
         }
 
-        String md5Hash = dump.getJSONObject("hashInfo").getString("md5Hash");
-        String response = RestClient.get("https://ci.opencollab.dev/fingerprint/" + md5Hash + "/api/json");
-
-        // Check if 404
-        if (response.startsWith("<html>")) {
-            issues.add("- You're Geyser jar is corrupt or has been tampered with. Please redownload it [from the CI](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/).");
-        }
-
-        return issues;
+        return Collections.emptyList();
     }
 }
