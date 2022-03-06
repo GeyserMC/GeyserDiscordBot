@@ -51,7 +51,7 @@ public class IntegrityDumpIssueCheck extends AbstractDumpIssueCheck {
 
         // Check if 404
         if (response.startsWith("<html>")) {
-            issues.add("- You're Geyser jar is corrupt or has been tampered with. Please redownload it [from the CI](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/).");
+            issues.add("- Your Geyser jar is corrupt or has been tampered with. Please redownload it [from the CI](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/).");
         }
 
         return issues;

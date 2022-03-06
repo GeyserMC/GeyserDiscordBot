@@ -40,7 +40,7 @@ public class BukkitDumpIssueCheck extends AbstractDumpIssueCheck {
         String platformName = bootstrapInfo.getString("platformName");
 
         if (platformName.equals("CraftBukkit")) {
-            return Collections.singletonList("- You're server is running on CraftBukkit please switch over to Spigot or Paper (run `!!bukkit` in <#613194762249437245> for more information).");
+            return Collections.singletonList("- Your server is running on CraftBukkit please switch over to Spigot or Paper (run `!!bukkit` in <#613194762249437245> for more information).");
         }
 
         return Collections.emptyList();

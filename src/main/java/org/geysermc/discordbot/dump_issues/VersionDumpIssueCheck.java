@@ -81,9 +81,9 @@ public class VersionDumpIssueCheck extends AbstractDumpIssueCheck {
 
         if (isOldVersion) {
             if (supportedMinecraft.size() > 1) {
-                return Collections.singletonList("- You're server is not on one the following Minecraft versions: " + supportedMinecraft + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).");
+                return Collections.singletonList("- Your server is not on one the following Minecraft versions: " + supportedMinecraft + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).");
             } else {
-                return Collections.singletonList("- You're server is not on Minecraft " + supportedMinecraft.get(0) + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).");
+                return Collections.singletonList("- Your server is not on Minecraft " + supportedMinecraft.get(0) + "! If you're on an old version you can use [ViaVersion](https://www.spigotmc.org/resources/viaversion.19254/).");
             }
         }
 

@@ -42,7 +42,7 @@ public class DockerDumpIssueCheck extends AbstractDumpIssueCheck {
         JSONObject network = versionInfo.getJSONObject("network");
 
         if (network.getBoolean("dockerCheck")) {
-            return Collections.singletonList("- You're server is running inside a docker container, please make sure the Geyser port (using UDP) is exported out to the host. If your using Pterodactyl panel then you need to make sure you have allocated the port to the server.");
+            return Collections.singletonList("- Your server is running inside a docker container, please make sure the Geyser port (using UDP) is exported out to the host. If you're using Pterodactyl panel then you need to make sure you have allocated the port to the server.");
         }
 
         return Collections.emptyList();
