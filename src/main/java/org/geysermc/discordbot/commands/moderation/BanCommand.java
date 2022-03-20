@@ -55,10 +55,12 @@ public class BanCommand extends Command {
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
         // Fetch the user
-        Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
+        String selectorString = args.remove(0);
+        User user = BotHelpers.getUser(selectorString);
+        Member member = BotHelpers.getMember(event.getGuild(), selectorString);
 
         // Check user is valid
-        if (member == null) {
+        if (user == null) {
             event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
@@ -68,7 +70,7 @@ public class BanCommand extends Command {
         }
 
         // Check we can target the user
-        if (!event.getSelfMember().canInteract(member) || !event.getMember().canInteract(member)) {
+        if (member != null && (!event.getSelfMember().canInteract(member) || !event.getMember().canInteract(member))) {
             event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Higher role")
                     .setDescription("Either the bot or you cannot target that user.")
@@ -78,7 +80,6 @@ public class BanCommand extends Command {
         }
 
         // Maybe worth getting rid of this depends on how many times its used
-        User user = member.getUser();
         int delDays = 0;
         boolean silent = false;
 
@@ -136,7 +137,7 @@ public class BanCommand extends Command {
                         .setColor(BotColors.FAILURE.getColor());
 
                 String punishmentMessage = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), "punishment-message");
-                if (!punishmentMessage.isEmpty()) {
+                if (punishmentMessage != null && !punishmentMessage.isEmpty()) {
                     embedBuilder.addField("Additional Info", punishmentMessage, false);
                 }
 
@@ -145,7 +146,7 @@ public class BanCommand extends Command {
         }
 
         // Ban user
-        member.ban(delDays, String.join(" ", args)).queue();
+        event.getGuild().ban(user, delDays, String.join(" ", args)).queue();
 
         // Log the change
         int id = GeyserBot.storageManager.addLog(event.getMember(), "ban", user, reason);
