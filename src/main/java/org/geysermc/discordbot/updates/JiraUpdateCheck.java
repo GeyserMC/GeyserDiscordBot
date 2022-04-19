@@ -52,7 +52,10 @@ public class JiraUpdateCheck extends AbstractUpdateCheck {
         JSONArray versions = new JSONArray(RestClient.get(CHECK_URL + project + "/versions"));
 
         for (int i = 0; i < versions.length(); i++) {
-            KNOWN_VERSIONS.add(versions.getJSONObject(i).getString("name"));
+            String name = versions.getJSONObject(i).getString("name");
+            if (!name.toLowerCase().contains("future version")) {
+                KNOWN_VERSIONS.add(name);
+            }
         }
 
         GeyserBot.LOGGER.info("Loaded " + KNOWN_VERSIONS.size() + " initial " + platform + " jira versions");
@@ -67,7 +70,7 @@ public class JiraUpdateCheck extends AbstractUpdateCheck {
 
             for (int i = 0; i < versions.length(); i++) {
                 String name = versions.getJSONObject(i).getString("name");
-                if (!KNOWN_VERSIONS.contains(name)) {
+                if (!KNOWN_VERSIONS.contains(name) && !name.toLowerCase().contains("future version")) {
                     KNOWN_VERSIONS.add(name);
                     UpdateManager.sendMessage("A new " + platform + " version (" + name + ") has been added to the Minecraft issue tracker!");
                 }
