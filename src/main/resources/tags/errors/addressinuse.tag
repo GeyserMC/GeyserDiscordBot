@@ -1,5 +1,6 @@
 type: text
 issues: java.net.BindException: Address already in use
+aliases: bind, failedtobind, bindissue, addressalreadyinuse
 
 ---
 
