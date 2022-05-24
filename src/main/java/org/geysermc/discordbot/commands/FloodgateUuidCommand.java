@@ -25,8 +25,6 @@
 
 package org.geysermc.discordbot.commands;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 
@@ -35,17 +33,18 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.HttpUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+import pw.chew.chewbotcca.util.RestClient;
 
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 
-public class FuidCommand extends SlashCommand {
-    private static final String urlString = "https://api.geysermc.org/v2/xbox/xuid/";
+public class FloodgateUuidCommand extends SlashCommand {
 
-    public FuidCommand() {
+    public FloodgateUuidCommand() {
         this.name = "fuuid";
         this.help = "get floodgate uuid from player";
         this.arguments = "<bedrock-username>";
@@ -58,44 +57,46 @@ public class FuidCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String username = Objects.requireNonNull(event.getOption("bedrock-username")).getAsString();
+        // get bedrock username, replace char in case they include Floodgate prefix.
+        String username = Objects.requireNonNull(event.getOption("bedrock-username")).getAsString().replace(".", "");
+        try {
+            // get xuid as json object and convert xuid into Floodgate uuid
+            JSONObject getXuid = new JSONObject(RestClient.get("https://api.geysermc.org/v2/xbox/xuid/" + username));
+            UUID floodgateUUID;
 
-        HttpUtils.asyncGet(urlString + username)
-                .whenComplete((result, error) -> {
-                    if (error != null) {
-                        error.printStackTrace();
-                        return;
-                    }
-
-                    JsonObject response = result.getResponse();
-                    JsonElement xuidElement = response.get("xuid");
-
-                    if (xuidElement == null) {
-                        event.replyEmbeds(handle(username, "User was not found")).queue();
-                        return;
-                    }
-
-                    long xuid = xuidElement.getAsLong();
-                    UUID floodgateUUID = getJavaUuid(xuid);
-                    event.replyEmbeds(handle(username, String.valueOf(floodgateUUID))).queue();
-                });
+            if (getXuid.has("xuid")) {
+                long xuid = getXuid.getLong("xuid");
+                floodgateUUID = new UUID(0, xuid);
+                event.replyEmbeds(floodgateUUID(username, floodgateUUID, false)).queue();
+            }
+            if (getXuid.has("message")) {
+                event.replyEmbeds(floodgateUUID(username, null, false)).queue();
+            }
+        } catch (JSONException e) {
+            event.replyEmbeds(floodgateUUID(username, null, true)).queue();
+            e.printStackTrace();
+        }
     }
 
-    private MessageEmbed handle(String username, String fuuid) {
-        EmbedBuilder builder = new EmbedBuilder()
-                .setTitle("Floodgate UUID")
-                .addField("PlayerName", username, false)
-                .addField("Floodgate UUID", String.valueOf(fuuid), false)
-                .setTimestamp(Instant.now())
-                .setColor(BotColors.SUCCESS.getColor());
-        if (fuuid.contains("User")){
+    private MessageEmbed floodgateUUID(String username, UUID uuid, boolean error) {
+        EmbedBuilder builder = new EmbedBuilder();
+        builder.setTitle("Floodgate UUID");
+
+        if (!error) {
+            if (uuid != null) {
+                builder.addField("PlayerName", username, false);
+                builder.addField("Floodgate UUID", uuid.toString(), false);
+                builder.setColor(BotColors.SUCCESS.getColor());
+            } else {
+                builder.addField("Error", "Could not find bedrock player: " + username, false);
+                builder.setColor(BotColors.FAILURE.getColor());
+            }
+        } else {
+            builder.addField("Error", "Unable to lookup uuid, FloodgateAPI currently unavailable", false);
             builder.setColor(BotColors.FAILURE.getColor());
         }
 
+        builder.setTimestamp(Instant.now());
         return builder.build();
-    }
-
-    public static UUID getJavaUuid(long xuid) {
-        return new UUID(0, xuid);
     }
 }
