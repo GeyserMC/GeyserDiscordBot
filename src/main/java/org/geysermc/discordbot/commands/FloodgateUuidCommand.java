@@ -62,13 +62,12 @@ public class FloodgateUuidCommand extends SlashCommand {
         try {
             // get xuid as json object and convert xuid into Floodgate uuid
             JSONObject getXuid = new JSONObject(RestClient.get("https://api.geysermc.org/v2/xbox/xuid/" + username));
-            UUID floodgateUUID;
 
             if (getXuid.has("xuid")) {
-                long xuid = getXuid.getLong("xuid");
-                floodgateUUID = new UUID(0, xuid);
+                UUID floodgateUUID = new UUID(0, getXuid.getLong("xuid"));
                 event.replyEmbeds(floodgateUUID(username, floodgateUUID, false)).queue();
             }
+
             if (getXuid.has("message")) {
                 event.replyEmbeds(floodgateUUID(username, null, false)).queue();
             }
