@@ -37,28 +37,26 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
 
-import java.time.Instant;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.UUID;
 
 public class FloodgateUuidCommand extends SlashCommand {
 
     public FloodgateUuidCommand() {
-        this.name = "fuuid";
-        this.help = "get floodgate uuid from player";
+        this.name = "floodgateuuid";
+        this.help = "Get Floodgate player uuid from bedrock username.";
         this.arguments = "<bedrock-username>";
         this.guildOnly = false;
 
         this.options = Collections.singletonList(
-                new OptionData(OptionType.STRING, "bedrock-username", "username to grab floodgate uuid").setRequired(true)
+                new OptionData(OptionType.STRING, "bedrock-username", "username to grab floodgate uuid from").setRequired(true)
         );
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
         // get bedrock username, replace char in case they include Floodgate prefix.
-        String username = Objects.requireNonNull(event.getOption("bedrock-username")).getAsString().replace(".", "");
+        String username = event.optString("bedrock-username","").replace(".", "");
         try {
             // get xuid as json object and convert xuid into Floodgate uuid
             JSONObject getXuid = new JSONObject(RestClient.get("https://api.geysermc.org/v2/xbox/xuid/" + username));
@@ -66,6 +64,7 @@ public class FloodgateUuidCommand extends SlashCommand {
             if (getXuid.has("xuid")) {
                 UUID floodgateUUID = new UUID(0, getXuid.getLong("xuid"));
                 event.replyEmbeds(floodgateUUID(username, floodgateUUID, false)).queue();
+                return;
             }
 
             if (getXuid.has("message")) {
@@ -77,25 +76,29 @@ public class FloodgateUuidCommand extends SlashCommand {
         }
     }
 
+    /**
+     * @param username Bedrock username
+     * @param uuid The converted xuid "floodgate uuid"
+     * @param error Error occurs when floodgate API is offline.
+     * @return Returns embed that contains floodgate uuid or state Floodgate API.
+     */
     private MessageEmbed floodgateUUID(String username, UUID uuid, boolean error) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Floodgate UUID");
 
-        if (!error) {
-            if (uuid != null) {
-                builder.addField("PlayerName", username, false);
-                builder.addField("Floodgate UUID", uuid.toString(), false);
-                builder.setColor(BotColors.SUCCESS.getColor());
-            } else {
-                builder.addField("Error", "Could not find bedrock player: " + username, false);
-                builder.setColor(BotColors.FAILURE.getColor());
-            }
-        } else {
+        if (error) {
             builder.addField("Error", "Unable to lookup uuid, FloodgateAPI currently unavailable", false);
             builder.setColor(BotColors.FAILURE.getColor());
+            return builder.build();
         }
-
-        builder.setTimestamp(Instant.now());
+        if (uuid == null) {
+            builder.addField("Error", "Could not find bedrock player: " + username, false);
+            builder.setColor(BotColors.FAILURE.getColor());
+            return builder.build();
+        }
+        builder.addField("PlayerName", username, false);
+        builder.addField("Floodgate UUID", uuid.toString(), false);
+        builder.setColor(BotColors.SUCCESS.getColor());
         return builder.build();
     }
 }
