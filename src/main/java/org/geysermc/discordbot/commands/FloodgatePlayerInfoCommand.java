@@ -35,18 +35,21 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.ocpsoft.prettytime.PrettyTime;
 import pw.chew.chewbotcca.util.RestClient;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.UUID;
 
-public class FloodgateUuidCommand extends SlashCommand {
+public class FloodgatePlayerInfoCommand extends SlashCommand {
 
-    public FloodgateUuidCommand() {
-        this.name = "floodgateuuid";
-        this.help = "Get Floodgate player uuid from bedrock username.";
+    public FloodgatePlayerInfoCommand() {
+        this.name = "floodgateplayer";
+        this.help = "Get Floodgate data from bedrock username.";
         this.arguments = "<bedrock-username>";
         this.guildOnly = false;
+        this.cooldown = 60;
 
         this.options = Collections.singletonList(
                 new OptionData(OptionType.STRING, "bedrock-username", "username to grab floodgate uuid from").setRequired(true)
@@ -63,15 +66,16 @@ public class FloodgateUuidCommand extends SlashCommand {
 
             if (getXuid.has("xuid")) {
                 UUID floodgateUUID = new UUID(0, getXuid.getLong("xuid"));
-                event.replyEmbeds(floodgateUUID(username, floodgateUUID, false)).queue();
+                event.replyEmbeds(floodgateUUID(username, floodgateUUID, false, getXuid.getLong("xuid"))).queue();
                 return;
             }
-
+            // if message gets returned = player wasn't found
             if (getXuid.has("message")) {
-                event.replyEmbeds(floodgateUUID(username, null, false)).queue();
+                event.replyEmbeds(floodgateUUID(username, null, false,0)).queue();
             }
+            // this occurs when api wasn't available
         } catch (JSONException e) {
-            event.replyEmbeds(floodgateUUID(username, null, true)).queue();
+            event.replyEmbeds(floodgateUUID(username, null, true,0)).queue();
             e.printStackTrace();
         }
     }
@@ -82,23 +86,47 @@ public class FloodgateUuidCommand extends SlashCommand {
      * @param error Error occurs when floodgate API is offline.
      * @return Returns embed that contains floodgate uuid or state Floodgate API.
      */
-    private MessageEmbed floodgateUUID(String username, UUID uuid, boolean error) {
+    private MessageEmbed floodgateUUID(String username, UUID uuid, boolean error, long xuid) {
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setTitle("Floodgate UUID");
+        builder.setTitle("Floodgate player information");
 
         if (error) {
             builder.addField("Error", "Unable to lookup uuid, FloodgateAPI currently unavailable", false);
             builder.setColor(BotColors.FAILURE.getColor());
             return builder.build();
         }
+
         if (uuid == null) {
             builder.addField("Error", "Could not find bedrock player: " + username, false);
             builder.setColor(BotColors.FAILURE.getColor());
             return builder.build();
         }
-        builder.addField("PlayerName", username, false);
+
+        builder.addField("Bedrock player name", username, false);
         builder.addField("Floodgate UUID", uuid.toString(), false);
+        builder.addField("XUID", String.valueOf(xuid), false);
+
+        // get skin data
+        try {
+            JSONObject getSkinJson = new JSONObject(RestClient.get("https://api.geysermc.org/v2/skin/" + xuid));
+            // check if xuid returns hash, if not something went wrong with players xuid
+            if (getSkinJson.has("hash")) {
+                // Calculate last skin uploading time
+                Instant now = Instant.now();
+                PrettyTime time = new PrettyTime();
+                Instant lastSkinUpdate = now.minusNanos(getSkinJson.getLong("last_update"));
+                String getCorrectTime = time.format(time.calculatePreciseDuration(lastSkinUpdate));
+                builder.addField("Skin was last uploaded", getCorrectTime, false);
+                // get floodgate skin img
+                builder.setImage("https://mc-heads.net/body/" + getSkinJson.getString("texture_id") + "//");
+            } else {
+                builder.addField("Error", "Something went wrong when getting hash from xuid!", false);
+            }
+        } catch (JSONException e) {
+            builder.addField("Error", "Skin API is currently down, please try again later!", false);
+        }
         builder.setColor(BotColors.SUCCESS.getColor());
+
         return builder.build();
     }
 }
