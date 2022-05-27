@@ -81,6 +81,7 @@ public class FloodgatePlayerInfoCommand extends SlashCommand {
     }
 
     /**
+     * Send floodgate data profile from a bedrock username
      * @param username Bedrock username
      * @param uuid The converted xuid "floodgate uuid"
      * @param error Error occurs when floodgate API is offline.
@@ -105,6 +106,7 @@ public class FloodgatePlayerInfoCommand extends SlashCommand {
         builder.addField("Bedrock player name", username, false);
         builder.addField("Floodgate UUID", uuid.toString(), false);
         builder.addField("XUID", String.valueOf(xuid), false);
+        builder.setColor(BotColors.SUCCESS.getColor());
 
         // get skin data
         try {
@@ -116,16 +118,17 @@ public class FloodgatePlayerInfoCommand extends SlashCommand {
                 PrettyTime time = new PrettyTime();
                 Instant lastSkinUpdate = now.minusNanos(getSkinJson.getLong("last_update"));
                 String getCorrectTime = time.format(time.calculatePreciseDuration(lastSkinUpdate));
+                // add upload time in builder
                 builder.addField("Skin was last uploaded", getCorrectTime, false);
-                // get floodgate skin img
+                // set floodgate skin img in builder
                 builder.setImage("https://mc-heads.net/body/" + getSkinJson.getString("texture_id") + "//");
             } else {
+                // no hash was returned invalid xuid
                 builder.addField("Error", "Something went wrong when getting hash from xuid!", false);
             }
         } catch (JSONException e) {
             builder.addField("Error", "Skin API is currently down, please try again later!", false);
         }
-        builder.setColor(BotColors.SUCCESS.getColor());
 
         return builder.build();
     }
