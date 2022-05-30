@@ -114,9 +114,8 @@ public class FloodgatePlayerInfoCommand extends SlashCommand {
             // check if xuid returns hash, if not something went wrong with players xuid
             if (getSkinJson.has("hash")) {
                 // Calculate last skin uploading time
-                Instant now = Instant.now();
                 PrettyTime time = new PrettyTime();
-                Instant lastSkinUpdate = now.minusNanos(getSkinJson.getLong("last_update"));
+                Instant lastSkinUpdate = Instant.ofEpochMilli(getSkinJson.getLong("last_update"));
                 String getCorrectTime = time.format(time.calculatePreciseDuration(lastSkinUpdate));
                 // add upload time in builder
                 builder.addField("Skin was last uploaded", getCorrectTime, false);
