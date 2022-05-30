@@ -82,6 +82,7 @@ public class FloodgatePlayerInfoCommand extends SlashCommand {
 
     /**
      * Send floodgate data profile from a bedrock username
+     *
      * @param username Bedrock username
      * @param uuid The converted xuid "floodgate uuid"
      * @param error Error occurs when floodgate API is offline.
