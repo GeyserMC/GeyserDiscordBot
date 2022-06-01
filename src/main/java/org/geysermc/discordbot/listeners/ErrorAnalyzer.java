@@ -64,15 +64,15 @@ public class ErrorAnalyzer extends ListenerAdapter {
         logUrlPatterns = new HashMap<>();
 
         // Log url patterns
-        logUrlPatterns.put(Pattern.compile("hastebin\\.com/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hastebin.com/raw/%s");
-        logUrlPatterns.put(Pattern.compile("hasteb\\.in/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hasteb.in/raw/%s");
-        logUrlPatterns.put(Pattern.compile("mclo\\.gs/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://api.mclo.gs/1/raw/%s");
-        logUrlPatterns.put(Pattern.compile("pastebin\\.com/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.com/raw/%s");
-        logUrlPatterns.put(Pattern.compile("gist\\.github\\.com/([0-9-a-zA-Z]+)/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://gist.githubusercontent.com/%1$s/%2$s/raw/");
-        logUrlPatterns.put(Pattern.compile("paste\\.shockbyte\\.com/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://paste.shockbyte.com/raw/%s");
-        logUrlPatterns.put(Pattern.compile("pastie\\.io/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastie.io/raw/%s");
-        logUrlPatterns.put(Pattern.compile("rentry\\.co/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://rentry.co/%s/raw");
-        logUrlPatterns.put(Pattern.compile("pastebin.pl/view/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.pl/view/raw/%s");
+        logUrlPatterns.put(Pattern.compile("hastebin\\.com/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hastebin.com/raw/%s");
+        logUrlPatterns.put(Pattern.compile("hasteb\\.in/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hasteb.in/raw/%s");
+        logUrlPatterns.put(Pattern.compile("mclo\\.gs/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://api.mclo.gs/1/raw/%s");
+        logUrlPatterns.put(Pattern.compile("pastebin\\.com/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.com/raw/%s");
+        logUrlPatterns.put(Pattern.compile("gist\\.github\\.com/([0-9a-zA-Z]+)/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://gist.githubusercontent.com/%1$s/%2$s/raw/");
+        logUrlPatterns.put(Pattern.compile("paste\\.shockbyte\\.com/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://paste.shockbyte.com/raw/%s");
+        logUrlPatterns.put(Pattern.compile("pastie\\.io/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastie.io/raw/%s");
+        logUrlPatterns.put(Pattern.compile("rentry\\.co/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://rentry.co/%s/raw");
+        logUrlPatterns.put(Pattern.compile("pastebin.pl/view/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.pl/view/raw/%s");
     }
 
     @Override
