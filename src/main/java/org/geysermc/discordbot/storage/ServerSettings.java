@@ -145,18 +145,16 @@ public class ServerSettings {
     /**
      * Check if the given channel should be excluded from checking errors
      *
-     * @param channel The {@link TextChannel} to check
+     * @param channel The {@link MessageChannel} to check
      * @return If we should exclude the channel
      */
     public static boolean shouldNotCheckError(MessageChannel channel) {
-        Guild guild = getGuild(channel);
 
-        if (guild == null) {
+        if (getGuild(channel) == null) {
             return true;
         }
 
-        List<String> dontLog = getList(channel.getIdLong(), "dont-checkerror");
-        return dontLog.contains(channel.getId());
+        return getList(channel.getIdLong(), "dont-checkerror").contains(channel.getId());
     }
 
     /**

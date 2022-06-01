@@ -58,19 +58,21 @@ import java.util.regex.Pattern;
 public class ErrorAnalyzer extends ListenerAdapter {
     private final Map<Pattern, String> logUrlPatterns;
 
+    private final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[\\da-zA-Z]+-([\\da-zA-Z]{7})\\)");
+
     public ErrorAnalyzer() {
         logUrlPatterns = new HashMap<>();
 
         // Log url patterns
-        logUrlPatterns.put(Pattern.compile("hastebin\\.com/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hastebin.com/raw/%s");
-        logUrlPatterns.put(Pattern.compile("hasteb\\.in/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hasteb.in/raw/%s");
-        logUrlPatterns.put(Pattern.compile("mclo\\.gs/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://api.mclo.gs/1/raw/%s");
-        logUrlPatterns.put(Pattern.compile("pastebin\\.com/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.com/raw/%s");
-        logUrlPatterns.put(Pattern.compile("gist\\.github\\.com/([\\da-zA-Z]+)/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://gist.githubusercontent.com/%1$s/%2$s/raw/");
-        logUrlPatterns.put(Pattern.compile("paste\\.shockbyte\\.com/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://paste.shockbyte.com/raw/%s");
-        logUrlPatterns.put(Pattern.compile("pastie\\.io/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastie.io/raw/%s");
-        logUrlPatterns.put(Pattern.compile("rentry\\.co/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://rentry.co/%s/raw");
-        logUrlPatterns.put(Pattern.compile("pastebin.pl/view/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.pl/view/raw/%s");
+        logUrlPatterns.put(Pattern.compile("hastebin\\.com/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hastebin.com/raw/%s");
+        logUrlPatterns.put(Pattern.compile("hasteb\\.in/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hasteb.in/raw/%s");
+        logUrlPatterns.put(Pattern.compile("mclo\\.gs/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://api.mclo.gs/1/raw/%s");
+        logUrlPatterns.put(Pattern.compile("pastebin\\.com/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.com/raw/%s");
+        logUrlPatterns.put(Pattern.compile("gist\\.github\\.com/([0-9-a-zA-Z]+)/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://gist.githubusercontent.com/%1$s/%2$s/raw/");
+        logUrlPatterns.put(Pattern.compile("paste\\.shockbyte\\.com/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://paste.shockbyte.com/raw/%s");
+        logUrlPatterns.put(Pattern.compile("pastie\\.io/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastie.io/raw/%s");
+        logUrlPatterns.put(Pattern.compile("rentry\\.co/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://rentry.co/%s/raw");
+        logUrlPatterns.put(Pattern.compile("pastebin.pl/view/([0-9-a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.pl/view/raw/%s");
     }
 
     @Override
@@ -79,9 +81,38 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
         // Check attachments
         for (Message.Attachment attachment : event.getMessage().getAttachments()) {
-            if (!attachment.isImage()) {
-                List<String> extensions;
+            if (attachment.isImage()) {
+                // exclude certain channels.
+                if (ServerSettings.shouldNotCheckError(event.getChannel())) {
+                    return;
+                }
 
+                ITesseract getPicture = new Tesseract();
+                // setDatapath is needed even if we are not using it.
+                getPicture.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata");
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                String errorText;
+                try {
+                    embedBuilder.setTitle("Found errors in the image!");
+                    embedBuilder.setColor(BotColors.FAILURE.getColor());
+                    // scale img -> needed for IOS print screens.
+                    BufferedImage bi = ImageIO.read(attachment.retrieveInputStream().get());
+                    Dimension newMaxSize = new Dimension(2000, 1400);
+                    BufferedImage resizedImg = Scalr.resize(bi, Scalr.Method.BALANCED,
+                            newMaxSize.width, newMaxSize.height);
+                    errorText = getPicture.doOCR(resizedImg);
+                    // send img text to errorHandler
+                    ErrorHandler(errorText, embedBuilder, event);
+
+                } catch (InterruptedException | ExecutionException | IOException | TesseractException e) {
+                    embedBuilder.addField("Error","Something went wrong wile reading the image.",false);
+                    embedBuilder.setDescription(e.getMessage());
+                    embedBuilder.setColor(BotColors.FAILURE.getColor());
+                    event.getMessage().replyEmbeds(embedBuilder.build()).queue();
+                    return;
+                }
+            } else {
+                List<String> extensions;
                 // Get the guild extensions and if not in a guild just use some defaults
                 if (event.isFromGuild()) {
                     extensions = ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions");
@@ -92,34 +123,8 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     extensions.add("yml");
                     extensions.add("0");
                 }
-
                 if (extensions.contains(attachment.getFileExtension())) {
                     handleLog(event, RestClient.get(attachment.getUrl()));
-                }
-            } else {
-                if (ServerSettings.shouldNotCheckError(event.getChannel())) {
-                    return;
-                }
-
-                ITesseract getPicture = new Tesseract();
-                getPicture.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata");
-                EmbedBuilder embedBuilder = new EmbedBuilder();
-                String errorText;
-
-                try {
-                    embedBuilder.setTitle("Found errors in the image!");
-                    embedBuilder.setColor(BotColors.FAILURE.getColor());
-                    // scale img -> needed for IOS print screens.
-                    BufferedImage bi = ImageIO.read(attachment.retrieveInputStream().get());
-                    Dimension newMaxSize = new Dimension(2000, 1400);
-                    BufferedImage resizedImg = Scalr.resize(bi, Scalr.Method.BALANCED,
-                            newMaxSize.width, newMaxSize.height);
-                    errorText = getPicture.doOCR(resizedImg);
-
-                    ErrorHandler(errorText, embedBuilder, event);
-
-                } catch (InterruptedException | ExecutionException | IOException | TesseractException e) {
-                    e.printStackTrace();
                 }
             }
         }
@@ -171,7 +176,6 @@ public class ErrorAnalyzer extends ListenerAdapter {
         ErrorHandler(logContent, embedBuilder, event);
     }
 
-    private final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[\\da-zA-Z]+-([\\da-zA-Z]{7})\\)");
     private void ErrorHandler(String error, EmbedBuilder embedBuilder, MessageReceivedEvent event) {
         List<StackException> exceptions = Parser.parse(error);
 

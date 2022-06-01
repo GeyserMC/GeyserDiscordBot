@@ -1,5 +1,6 @@
 type: text
 issues: invalid nickname
+
 ---
 
 This "error" is caused by an login plug-in.
