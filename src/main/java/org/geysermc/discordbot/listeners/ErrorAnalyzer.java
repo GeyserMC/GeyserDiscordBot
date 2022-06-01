@@ -33,39 +33,44 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.GithubFileFinder;
 import org.geysermc.discordbot.util.MessageHelper;
+import org.imgscalr.Scalr;
 import pw.chew.chewbotcca.util.RestClient;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.*;
+import java.io.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ErrorAnalyzer extends ListenerAdapter {
     private final Map<Pattern, String> logUrlPatterns;
 
-    private static final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[0-9a-zA-Z]+-([0-9a-zA-Z]{7})\\)");
-
     public ErrorAnalyzer() {
         logUrlPatterns = new HashMap<>();
 
         // Log url patterns
-        logUrlPatterns.put(Pattern.compile("hastebin\\.com/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hastebin.com/raw/%s");
-        logUrlPatterns.put(Pattern.compile("hasteb\\.in/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hasteb.in/raw/%s");
-        logUrlPatterns.put(Pattern.compile("mclo\\.gs/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://api.mclo.gs/1/raw/%s");
-        logUrlPatterns.put(Pattern.compile("pastebin\\.com/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.com/raw/%s");
-        logUrlPatterns.put(Pattern.compile("gist\\.github\\.com/([0-9a-zA-Z]+)/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://gist.githubusercontent.com/%1$s/%2$s/raw/");
-        logUrlPatterns.put(Pattern.compile("paste\\.shockbyte\\.com/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://paste.shockbyte.com/raw/%s");
-        logUrlPatterns.put(Pattern.compile("pastie\\.io/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastie.io/raw/%s");
-        logUrlPatterns.put(Pattern.compile("rentry\\.co/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://rentry.co/%s/raw");
-        logUrlPatterns.put(Pattern.compile("pastebin.pl/view/([0-9a-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.pl/view/raw/%s");
+        logUrlPatterns.put(Pattern.compile("hastebin\\.com/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hastebin.com/raw/%s");
+        logUrlPatterns.put(Pattern.compile("hasteb\\.in/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://hasteb.in/raw/%s");
+        logUrlPatterns.put(Pattern.compile("mclo\\.gs/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://api.mclo.gs/1/raw/%s");
+        logUrlPatterns.put(Pattern.compile("pastebin\\.com/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.com/raw/%s");
+        logUrlPatterns.put(Pattern.compile("gist\\.github\\.com/([\\da-zA-Z]+)/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://gist.githubusercontent.com/%1$s/%2$s/raw/");
+        logUrlPatterns.put(Pattern.compile("paste\\.shockbyte\\.com/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://paste.shockbyte.com/raw/%s");
+        logUrlPatterns.put(Pattern.compile("pastie\\.io/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastie.io/raw/%s");
+        logUrlPatterns.put(Pattern.compile("rentry\\.co/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://rentry.co/%s/raw");
+        logUrlPatterns.put(Pattern.compile("pastebin.pl/view/([\\da-zA-Z]+)", Pattern.CASE_INSENSITIVE), "https://pastebin.pl/view/raw/%s");
     }
 
     @Override
@@ -74,21 +79,48 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
         // Check attachments
         for (Message.Attachment attachment : event.getMessage().getAttachments()) {
-            List<String> extensions;
+            if (!attachment.isImage()) {
+                List<String> extensions;
 
-            // Get the guild extensions and if not in a guild just use some defaults
-            if (event.isFromGuild()) {
-                extensions = ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions");
+                // Get the guild extensions and if not in a guild just use some defaults
+                if (event.isFromGuild()) {
+                    extensions = ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions");
+                } else {
+                    extensions = new ArrayList<>();
+                    extensions.add("txt");
+                    extensions.add("log");
+                    extensions.add("yml");
+                    extensions.add("0");
+                }
+
+                if (extensions.contains(attachment.getFileExtension())) {
+                    handleLog(event, RestClient.get(attachment.getUrl()));
+                }
             } else {
-                extensions = new ArrayList<>();
-                extensions.add("txt");
-                extensions.add("log");
-                extensions.add("yml");
-                extensions.add("0");
-            }
+                if (ServerSettings.shouldNotCheckError(event.getChannel())) {
+                    return;
+                }
 
-            if (extensions.contains(attachment.getFileExtension())) {
-                handleLog(event, RestClient.get(attachment.getUrl()));
+                ITesseract getPicture = new Tesseract();
+                getPicture.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata");
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                String errorText;
+
+                try {
+                    embedBuilder.setTitle("Found errors in the image!");
+                    embedBuilder.setColor(BotColors.FAILURE.getColor());
+                    // scale img -> needed for IOS print screens.
+                    BufferedImage bi = ImageIO.read(attachment.retrieveInputStream().get());
+                    Dimension newMaxSize = new Dimension(2000, 1400);
+                    BufferedImage resizedImg = Scalr.resize(bi, Scalr.Method.BALANCED,
+                            newMaxSize.width, newMaxSize.height);
+                    errorText = getPicture.doOCR(resizedImg);
+
+                    ErrorHandler(errorText, embedBuilder, event);
+
+                } catch (InterruptedException | ExecutionException | IOException | TesseractException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -136,7 +168,12 @@ public class ErrorAnalyzer extends ListenerAdapter {
         embedBuilder.setDescription("See below for details and possible fixes");
         embedBuilder.setColor(BotColors.FAILURE.getColor());
 
-        List<StackException> exceptions = Parser.parse(logContent);
+        ErrorHandler(logContent, embedBuilder, event);
+    }
+
+    private final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[\\da-zA-Z]+-([\\da-zA-Z]{7})\\)");
+    private void ErrorHandler(String error, EmbedBuilder embedBuilder, MessageReceivedEvent event) {
+        List<StackException> exceptions = Parser.parse(error);
 
         int embedLength = embedBuilder.length();
 
@@ -147,7 +184,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 break;
             }
 
-            if (logContent.contains(issue)) {
+            if (error.contains(issue)) {
                 String title = BotHelpers.trim(issue, MessageEmbed.TITLE_MAX_LENGTH);
 
                 if (MessageHelper.similarFieldExists(embedBuilder.getFields(), title)) {
@@ -164,7 +201,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         if (exceptions.size() != 0) {
             // Get the github trees for fetching the file paths
             String branch = "master";
-            Matcher branchMatcher = BRANCH_PATTERN.matcher(logContent);
+            Matcher branchMatcher = BRANCH_PATTERN.matcher(error);
             if (branchMatcher.find()) {
                 branch = branchMatcher.group(1);
             }
@@ -211,7 +248,6 @@ public class ErrorAnalyzer extends ListenerAdapter {
             } else {
                 embedBuilder.setDescription("We don't currently have automated responses for the detected errors!");
             }
-
             event.getMessage().replyEmbeds(embedBuilder.build()).queue();
         }
     }
