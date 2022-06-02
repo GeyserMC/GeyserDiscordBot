@@ -125,4 +125,10 @@ public class PropertiesManager {
     public static String getSentryEnv() {
         return properties.getProperty("sentry-env");
     }
+
+    /**
+     * @return Sentry environment
+     */
+    public static String getOCRPath() { return properties.getProperty("ocr-path");
+    }
 }

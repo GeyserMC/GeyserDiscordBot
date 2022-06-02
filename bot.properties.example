@@ -11,3 +11,4 @@ web-port: 8000
 github-token: github_oauth_token
 sentry-dsn: https://xxx@xxx.ingest.sentry.io/xxx
 sentry-env: production
+ocr-path: /usr/share/tesseract-ocr/4.00/tessdata

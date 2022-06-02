@@ -38,10 +38,7 @@ import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.tags.TagsManager;
-import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.BotHelpers;
-import org.geysermc.discordbot.util.GithubFileFinder;
-import org.geysermc.discordbot.util.MessageHelper;
+import org.geysermc.discordbot.util.*;
 import org.imgscalr.Scalr;
 import pw.chew.chewbotcca.util.RestClient;
 
@@ -51,6 +48,7 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -87,30 +85,28 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     return;
                 }
 
-                ITesseract getPicture = new Tesseract();
-                // setDatapath is needed even if we are not using it.
-                getPicture.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata");
                 EmbedBuilder embedBuilder = new EmbedBuilder();
-                String errorText;
+                // run ocr in a new block-able thread.
+                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                    try {
+                        ITesseract getPicture = new Tesseract();
+                        // setDatapath is needed even if we are not using it.
+                        getPicture.setDatapath(PropertiesManager.getOCRPath());
+                        embedBuilder.setTitle("Found errors in the image!");
+                        // scale img -> needed for IOS print screens.
+                        BufferedImage bi = ImageIO.read(attachment.retrieveInputStream().get());
+                        Dimension newMaxSize = new Dimension(2000, 1400);
+                        BufferedImage resizedImg = Scalr.resize(bi, Scalr.Method.BALANCED,
+                                newMaxSize.width, newMaxSize.height);
+                        errorHandler(getPicture.doOCR(resizedImg), embedBuilder, event);
+                    } catch (TesseractException | InterruptedException | IOException | ExecutionException e) {
+                        handleLog(event, e.getMessage(),true);
+                    }
+                });
                 try {
-                    embedBuilder.setTitle("Found errors in the image!");
-                    embedBuilder.setColor(BotColors.FAILURE.getColor());
-                    // scale img -> needed for IOS print screens.
-                    BufferedImage bi = ImageIO.read(attachment.retrieveInputStream().get());
-                    Dimension newMaxSize = new Dimension(2000, 1400);
-                    BufferedImage resizedImg = Scalr.resize(bi, Scalr.Method.BALANCED,
-                            newMaxSize.width, newMaxSize.height);
-                    errorText = getPicture.doOCR(resizedImg);
-                    // send img text to errorHandler
-                    ErrorHandler(errorText, embedBuilder, event);
-
-                } catch (InterruptedException | ExecutionException | IOException | TesseractException e) {
-                    embedBuilder.addField("Error","Something went wrong wile reading the image.",false);
-                    embedBuilder.setDescription(e.getMessage());
-                    embedBuilder.setColor(BotColors.FAILURE.getColor());
-                    event.getMessage().replyEmbeds(embedBuilder.build()).queue();
-                    return;
-                }
+                    future.get();
+                    // ignore since we handle them in new thread.
+                } catch (InterruptedException | ExecutionException ignored) {}
             } else {
                 List<String> extensions;
                 // Get the guild extensions and if not in a guild just use some defaults
@@ -124,7 +120,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     extensions.add("0");
                 }
                 if (extensions.contains(attachment.getFileExtension())) {
-                    handleLog(event, RestClient.get(attachment.getUrl()));
+                    handleLog(event, RestClient.get(attachment.getUrl()),false);
                 }
             }
         }
@@ -157,26 +153,32 @@ public class ErrorAnalyzer extends ListenerAdapter {
             content = RestClient.get(url);
         }
 
-        handleLog(event, content);
+        handleLog(event, content, false);
     }
 
     /**
      * Handle the log content and output any errors
      *
      * @param event Message to respond to
-     * @param logContent The log to check
+     * @param content The log to check
      */
-    private void handleLog(MessageReceivedEvent event, String logContent) {
+    private void handleLog(MessageReceivedEvent event, String content, boolean error) {
         // Create the embed and format it
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("Found errors in the log!");
-        embedBuilder.setDescription("See below for details and possible fixes");
-        embedBuilder.setColor(BotColors.FAILURE.getColor());
-
-        ErrorHandler(logContent, embedBuilder, event);
+        if (error) {
+            embedBuilder.setColor(BotColors.FAILURE.getColor());
+            embedBuilder.addField("Error","Something went wrong wile reading the image.",false);
+            embedBuilder.setDescription(content);
+            event.getMessage().replyEmbeds(embedBuilder.build()).queue();
+        } else {
+            embedBuilder.setTitle("Found errors in the log!");
+            embedBuilder.setDescription("See below for details and possible fixes");
+            embedBuilder.setColor(BotColors.FAILURE.getColor());
+            errorHandler(content, embedBuilder, event);
+        }
     }
 
-    private void ErrorHandler(String error, EmbedBuilder embedBuilder, MessageReceivedEvent event) {
+    private void errorHandler(String error, EmbedBuilder embedBuilder, MessageReceivedEvent event) {
         List<StackException> exceptions = Parser.parse(error);
 
         int embedLength = embedBuilder.length();
