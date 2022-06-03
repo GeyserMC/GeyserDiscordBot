@@ -93,6 +93,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                         // setDatapath is needed even if we are not using it.
                         getPicture.setDatapath(PropertiesManager.getOCRPath());
                         embedBuilder.setTitle("Found errors in the image!");
+                        embedBuilder.setColor(BotColors.FAILURE.getColor());
                         // scale img -> needed for IOS print screens.
                         BufferedImage bi = ImageIO.read(attachment.retrieveInputStream().get());
                         Dimension newMaxSize = new Dimension(2000, 1400);
