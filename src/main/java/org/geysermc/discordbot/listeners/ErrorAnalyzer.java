@@ -100,6 +100,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                         BufferedImage resizedImg = Scalr.resize(bi, Scalr.Method.BALANCED,
                                 newMaxSize.width, newMaxSize.height);
                         errorHandler(getPicture.doOCR(resizedImg), embedBuilder, event);
+                        System.out.println(getPicture.doOCR(resizedImg));
                     } catch (TesseractException | InterruptedException | IOException | ExecutionException e) {
                         handleLog(event, e.getMessage(),true);
                     }
