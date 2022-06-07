@@ -127,7 +127,7 @@ public class PropertiesManager {
     }
 
     /**
-     * @return Sentry environment
+     * @return Ocr path
      */
     public static String getOCRPath() { return properties.getProperty("ocr-path");
     }

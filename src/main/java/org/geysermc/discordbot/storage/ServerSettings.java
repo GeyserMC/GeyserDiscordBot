@@ -154,7 +154,7 @@ public class ServerSettings {
             return true;
         }
 
-        return getList(channel.getIdLong(), "dont-checkerror").contains(channel.getId());
+        return getList(channel.getIdLong(), "dont-check-error").contains(channel.getId());
     }
 
     /**

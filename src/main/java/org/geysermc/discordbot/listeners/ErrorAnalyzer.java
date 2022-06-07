@@ -57,7 +57,7 @@ import java.util.regex.Pattern;
 public class ErrorAnalyzer extends ListenerAdapter {
     private final Map<Pattern, String> logUrlPatterns;
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
-    private final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[\\da-zA-Z]+-([\\da-zA-Z]{7})\\)");
+    private static final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[\\da-zA-Z]+-([\\da-zA-Z]{7})\\)");
 
     public ErrorAnalyzer() {
         logUrlPatterns = new HashMap<>();
@@ -78,31 +78,31 @@ public class ErrorAnalyzer extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
 
+        // exclude certain channels.
+        if (ServerSettings.shouldNotCheckError(event.getChannel())) {
+            return;
+        }
+
         // Check attachments
         for (Message.Attachment attachment : event.getMessage().getAttachments()) {
             if (attachment.isImage()) {
-                // exclude certain channels.
-                if (ServerSettings.shouldNotCheckError(event.getChannel())) {
-                    return;
-                }
 
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 // run ocr in a new block-able thread.
                 Runnable runnable = () -> {
                     try {
-                        ITesseract getPicture = new Tesseract();
+                        ITesseract tesseract = new Tesseract();
                         // setDatapath is needed even if we are not using it.
-                        getPicture.setDatapath(PropertiesManager.getOCRPath());
+                        tesseract.setDatapath(PropertiesManager.getOCRPath());
                         embedBuilder.setTitle("Found errors in the image!");
                         embedBuilder.setColor(BotColors.FAILURE.getColor());
                         // scale img -> needed for IOS print screens.
                         BufferedImage bi = ImageIO.read(attachment.retrieveInputStream().get());
-                        Dimension newMaxSize = new Dimension(2000, 1400);
-                        BufferedImage resizedImg = Scalr.resize(bi, Scalr.Method.BALANCED,
-                                newMaxSize.width, newMaxSize.height);
-                        errorHandler(getPicture.doOCR(resizedImg), embedBuilder, event);
+                        Dimension newMaxSize = new Dimension();
+                        BufferedImage resizedImg = Scalr.resize(bi, Scalr.Method.BALANCED, newMaxSize.width, newMaxSize.height);
+                        errorHandler(tesseract.doOCR(resizedImg), embedBuilder, event);
                     } catch (TesseractException | InterruptedException | IOException | ExecutionException e) {
-                        handleLog(event, e.getMessage(),true);
+                        handleLog(event, e.getMessage(), true);
                     }
                 };
                 EXECUTOR.submit(runnable);
@@ -120,7 +120,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     extensions.add("0");
                 }
                 if (extensions.contains(attachment.getFileExtension())) {
-                    handleLog(event, RestClient.get(attachment.getUrl()),false);
+                    handleLog(event, RestClient.get(attachment.getUrl()), false);
                 }
             }
         }
@@ -167,7 +167,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         if (error) {
             embedBuilder.setColor(BotColors.FAILURE.getColor());
-            embedBuilder.addField("Error","Something went wrong wile reading the image.",false);
+            embedBuilder.addField("Error","Something went wrong wile reading the image.", false);
             embedBuilder.setDescription(content);
             event.getMessage().replyEmbeds(embedBuilder.build()).queue();
         } else {
