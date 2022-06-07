@@ -48,14 +48,15 @@ import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ErrorAnalyzer extends ListenerAdapter {
     private final Map<Pattern, String> logUrlPatterns;
-
+    private static final ExecutorService ex  = Executors.newSingleThreadExecutor();
     private final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[\\da-zA-Z]+-([\\da-zA-Z]{7})\\)");
 
     public ErrorAnalyzer() {
@@ -87,7 +88,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 // run ocr in a new block-able thread.
-                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                Runnable runnable = () -> {
                     try {
                         ITesseract getPicture = new Tesseract();
                         // setDatapath is needed even if we are not using it.
@@ -103,11 +104,9 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     } catch (TesseractException | InterruptedException | IOException | ExecutionException e) {
                         handleLog(event, e.getMessage(),true);
                     }
-                });
-                try {
-                    future.get();
-                    // ignore since we handle them in new thread.
-                } catch (InterruptedException | ExecutionException ignored) {}
+                };
+                ex.submit(runnable);
+
             } else {
                 List<String> extensions;
                 // Get the guild extensions and if not in a guild just use some defaults
