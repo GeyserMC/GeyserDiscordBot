@@ -1,4 +1,5 @@
 type: text
+issues: Outdated Bedrock client
 
 ---
 

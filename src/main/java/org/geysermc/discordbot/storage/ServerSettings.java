@@ -143,6 +143,21 @@ public class ServerSettings {
     }
 
     /**
+     * Check if the given channel should be excluded from checking errors
+     *
+     * @param channel The {@link MessageChannel} to check
+     * @return If we should exclude the channel
+     */
+    public static boolean shouldNotCheckError(MessageChannel channel) {
+
+        if (getGuild(channel) == null) {
+            return true;
+        }
+
+        return getList(channel.getIdLong(), "dont-checkerror").contains(channel.getId());
+    }
+
+    /**
      * Check if the given channel should be excluded from the level system
      * if value is 0 then disables all channels
      *
