@@ -98,7 +98,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                         embedBuilder.setColor(BotColors.FAILURE.getColor());
                         // scale img -> needed for IOS print screens.
                         BufferedImage bi = ImageIO.read(attachment.retrieveInputStream().get());
-                        Dimension newMaxSize = new Dimension();
+                        Dimension newMaxSize = new Dimension(2000,1400);
                         BufferedImage resizedImg = Scalr.resize(bi, Scalr.Method.BALANCED, newMaxSize.width, newMaxSize.height);
                         errorHandler(tesseract.doOCR(resizedImg), embedBuilder, event);
                     } catch (TesseractException | InterruptedException | IOException | ExecutionException e) {
