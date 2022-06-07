@@ -56,7 +56,7 @@ import java.util.regex.Pattern;
 
 public class ErrorAnalyzer extends ListenerAdapter {
     private final Map<Pattern, String> logUrlPatterns;
-    private static final ExecutorService ex  = Executors.newSingleThreadExecutor();
+    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     private final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[\\da-zA-Z]+-([\\da-zA-Z]{7})\\)");
 
     public ErrorAnalyzer() {
@@ -105,7 +105,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                         handleLog(event, e.getMessage(),true);
                     }
                 };
-                ex.submit(runnable);
+                EXECUTOR.submit(runnable);
 
             } else {
                 List<String> extensions;
