@@ -94,6 +94,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                         ITesseract tesseract = new Tesseract();
                         // setDatapath is needed even if we are not using it.
                         tesseract.setDatapath(PropertiesManager.getOCRPath());
+                        tesseract.setLanguage("eng");
                         embedBuilder.setTitle("Found errors in the image!");
                         embedBuilder.setColor(BotColors.FAILURE.getColor());
                         // scale img -> needed for IOS print screens.
