@@ -10,6 +10,7 @@ ExecStart=java -jar GeyserBot.jar
 WorkingDirectory=/srv/GeyserBot/
 User=geyser
 Group=geyser
+Environment="LC_ALL=C"
 
 [Install]
 WantedBy=multi-user.target
