@@ -1,5 +1,5 @@
 type: text
-issues: This server requires secure profiles
+issues: This server requires secure profiles || multiplayer.disconnect.missing_public_key
 
 ---
 
