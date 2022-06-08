@@ -3,7 +3,7 @@ issues: This server requires secure profiles
 
 ---
 
-Minecraft 1.19 adds key signing, which is currently only used to verify that chat messages purported to be sent by a user come from said user by verifcation through the user's Mojang-signed public key. 
+Minecraft 1.19 adds key signing, which is currently only used to verify that chat messages purported to be sent by a user come from said user by verification through the user's Mojang-signed public key. 
 Floodgate and Geyser currently do not support this, so it should be disabled using the following instructions:
 
 **Spigot, Paper, & all forks**
