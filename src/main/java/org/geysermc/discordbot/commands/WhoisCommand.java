@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,19 +27,18 @@ package org.geysermc.discordbot.commands;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
-import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -50,7 +49,7 @@ import java.util.stream.Collectors;
 
 public class WhoisCommand extends SlashCommand {
 
-    private static final List<Permission> PRIVILEGED_PERMISSIONS = Arrays.asList(Permission.ADMINISTRATOR, Permission.MANAGE_SERVER, Permission.MANAGE_ROLES, Permission.MANAGE_CHANNEL, Permission.MESSAGE_MANAGE, Permission.MANAGE_WEBHOOKS, Permission.NICKNAME_MANAGE, Permission.MANAGE_EMOTES, Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.MESSAGE_MENTION_EVERYONE);
+    private static final List<Permission> PRIVILEGED_PERMISSIONS = Arrays.asList(Permission.ADMINISTRATOR, Permission.MANAGE_SERVER, Permission.MANAGE_ROLES, Permission.MANAGE_CHANNEL, Permission.MESSAGE_MANAGE, Permission.MANAGE_WEBHOOKS, Permission.NICKNAME_MANAGE, Permission.MANAGE_EMOTES_AND_STICKERS, Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.MESSAGE_MENTION_EVERYONE);
 
     public WhoisCommand() {
         this.name = "whois";
@@ -64,7 +63,7 @@ public class WhoisCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        Member member = OptionHelper.optMember(event, "member", event.getMember());
+        Member member = event.optMember("member", event.getMember());
 
         event.replyEmbeds(handle(member)).queue();
     }

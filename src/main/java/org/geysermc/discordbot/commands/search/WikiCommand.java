@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,9 +27,9 @@ package org.geysermc.discordbot.commands.search;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
@@ -40,7 +40,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pw.chew.chewbotcca.util.RestClient;
-import pw.chew.jdachewtils.command.OptionHelper;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -66,7 +65,7 @@ public class WikiCommand extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         // Get arguments
-        String args = OptionHelper.optString(event, "search", "");
+        String args = event.optString("search", "");
         MessageEmbed response = handle(args);
         if (response != null) event.replyEmbeds(response).queue();
     }

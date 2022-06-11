@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,9 +40,9 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.TimeFormat;
@@ -198,7 +198,10 @@ public class LogHandler extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event) {
+    public void onMessageUpdate(@NotNull MessageUpdateEvent event) {
+        // Make sure we are in a guild
+        if (!event.isFromGuild()) return;
+
         // Ignore non logged channels
         if (ServerSettings.shouldNotLogChannel(event.getChannel())) {
             return;
@@ -228,7 +231,10 @@ public class LogHandler extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        // Make sure we are in a guild
+        if (!event.isFromGuild()) return;
+
         // Ignore non logged channels
         if (ServerSettings.shouldNotLogChannel(event.getChannel())) {
             return;
@@ -257,7 +263,10 @@ public class LogHandler extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
+    public void onMessageDelete(@NotNull MessageDeleteEvent event) {
+        // Make sure we are in a guild
+        if (!event.isFromGuild()) return;
+
         // Don't show purged messages or non-logged channels
         if (PURGED_MESSAGES.remove(event.getMessageId()) || ServerSettings.shouldNotLogChannel(event.getChannel())) {
             return;

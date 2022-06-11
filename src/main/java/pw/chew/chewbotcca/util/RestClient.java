@@ -18,6 +18,7 @@ package pw.chew.chewbotcca.util;
 
 import okhttp3.FormBody;
 import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -152,7 +153,9 @@ public class RestClient {
      * @return a response
      */
     public static String performRequest(Request request) {
-        try (Response response = GeyserBot.getJDA().getHttpClient().newCall(request).execute()) { // GeyserMC - Replace JDA call with our JDA
+        // GeyserMC - Replace JDA call with our JDA
+        OkHttpClient client = GeyserBot.getJDA() == null ? new OkHttpClient() : GeyserBot.getJDA().getHttpClient();
+        try (Response response = client.newCall(request).execute()) {
             String body;
             ResponseBody responseBody = response.body();
             if(responseBody == null) {

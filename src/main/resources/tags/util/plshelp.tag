@@ -2,4 +2,4 @@ type: text-raw
 
 ---
 
-https://cdn.discordapp.com/attachments/744287608217272351/796607950265253908/help.png
+https://raw.githubusercontent.com/GeyserMC/GeyserDiscordBot/master/src/main/resources/assets/new_pleasehelp.png

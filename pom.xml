@@ -28,13 +28,8 @@
             <url>https://jitpack.io</url>
         </repository>
         <repository>
-            <id>dv8tion</id>
-            <name>m2-dv8tion</name>
-            <url>https://m2.dv8tion.net/releases</url>
-        </repository>
-        <repository>
             <id>chew-m2-releases</id>
-            <url>https://m2.chew.pro/releases/</url>
+            <url>https://m2.chew.pro/snapshots/</url>
         </repository>
         <repository>
             <id>opencollab-release-repo</id>
@@ -67,7 +62,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.4.0_350</version>
+            <version>5.0.0-alpha.9</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -82,7 +77,7 @@
         <dependency>
             <groupId>pw.chew</groupId>
             <artifactId>jda-chewtils</artifactId>
-            <version>1.23.0</version>
+            <version>2.0-SNAPSHOT</version>
             <scope>compile</scope>
             <type>pom</type>
         </dependency>
@@ -231,6 +226,38 @@
             <groupId>net.sf.trove4j</groupId>
             <artifactId>trove4j</artifactId>
             <version>3.0.3</version>
+        </dependency>
+
+        <!-- Reading the rss feeds -->
+        <!-- https://mvnrepository.com/artifact/com.rometools/rome -->
+        <dependency>
+            <groupId>com.rometools</groupId>
+            <artifactId>rome</artifactId>
+            <version>1.16.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ocr -->
+        <!-- https://mvnrepository.com/artifact/net.sourceforge.tess4j/tess4j -->
+        <dependency>
+            <groupId>net.sourceforge.tess4j</groupId>
+            <artifactId>tess4j</artifactId>
+            <version>5.2.1</version>
+        </dependency>
+
+        <!-- scaling img ocr -->
+        <!-- https://mvnrepository.com/artifact/org.imgscalr/imgscalr-lib/4.2 -->
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>4.2</version>
         </dependency>
     </dependencies>
 

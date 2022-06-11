@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,9 +40,20 @@ import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import org.geysermc.discordbot.http.Server;
 import org.geysermc.discordbot.health_checker.HealthCheckerManager;
-import org.geysermc.discordbot.listeners.*;
+import org.geysermc.discordbot.http.Server;
+import org.geysermc.discordbot.listeners.BadLinksHandler;
+import org.geysermc.discordbot.listeners.CommandErrorHandler;
+import org.geysermc.discordbot.listeners.DumpHandler;
+import org.geysermc.discordbot.listeners.ErrorAnalyzer;
+import org.geysermc.discordbot.listeners.FileHandler;
+import org.geysermc.discordbot.listeners.LevelHandler;
+import org.geysermc.discordbot.listeners.LogHandler;
+import org.geysermc.discordbot.listeners.PersistentRoleHandler;
+import org.geysermc.discordbot.listeners.ShutdownHandler;
+import org.geysermc.discordbot.listeners.SlowmodeHandler;
+import org.geysermc.discordbot.listeners.SwearHandler;
+import org.geysermc.discordbot.listeners.VoiceGroupHandler;
 import org.geysermc.discordbot.storage.AbstractStorageManager;
 import org.geysermc.discordbot.storage.SlowModeInfo;
 import org.geysermc.discordbot.storage.StorageType;
@@ -51,6 +62,7 @@ import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.updates.UpdateManager;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.PropertiesManager;
+import org.geysermc.discordbot.util.RssFeedManager;
 import org.geysermc.discordbot.util.SentryEventManager;
 import org.json.JSONArray;
 import org.kohsuke.github.GitHub;
@@ -149,7 +161,7 @@ public class GeyserBot {
         StorageType storageType = StorageType.getByName(PropertiesManager.getDatabaseType());
         if (storageType == StorageType.UNKNOWN) {
             LOGGER.error("Invalid database type! '" + PropertiesManager.getDatabaseType() + "'");
-            System.exit(0);
+            System.exit(1);
         }
 
         try {
@@ -157,7 +169,7 @@ public class GeyserBot {
             storageManager.setupStorage();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             LOGGER.error("Unable to create database link!");
-            System.exit(0);
+            System.exit(1);
         }
 
         // Setup the main client
@@ -169,7 +181,7 @@ public class GeyserBot {
         client.addCommands(COMMANDS.toArray(new Command[0]));
         client.addSlashCommands(SLASH_COMMANDS.toArray(new SlashCommand[0]));
         client.setListener(new CommandErrorHandler());
-        client.setCommandPreProcessFunction(event -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
+        client.setCommandPreProcessBiFunction((event, command) -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
 
         // Setup the tag client
         CommandClientBuilder tagClient = new CommandClientBuilder();
@@ -181,7 +193,8 @@ public class GeyserBot {
         tagClient.useHelpBuilder(false);
         tagClient.addCommands(TagsManager.getTags().toArray(new Command[0]));
         tagClient.setListener(new TagsListener());
-        tagClient.setCommandPreProcessFunction(event -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
+        tagClient.setCommandPreProcessBiFunction((event, command) -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
+        tagClient.setManualUpsert(true);
 
         // Disable pings on replies
         MessageAction.setDefaultMentionRepliedUser(false);
@@ -190,31 +203,36 @@ public class GeyserBot {
         generalThreadPool = Executors.newScheduledThreadPool(5);
 
         // Register JDA
-        jda = JDABuilder.createDefault(PropertiesManager.getToken())
-                .setChunkingFilter(ChunkingFilter.ALL)
-                .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .enableIntents(GatewayIntent.GUILD_MEMBERS)
-                .enableIntents(GatewayIntent.GUILD_PRESENCES)
-                .enableCache(CacheFlag.ACTIVITY)
-                .enableCache(CacheFlag.ROLE_TAGS)
-                .setStatus(OnlineStatus.ONLINE)
-                .setActivity(Activity.playing("Booting..."))
-                .setEnableShutdownHook(true)
-                .setEventManager(new SentryEventManager())
-                .addEventListeners(waiter,
-                    new LogHandler(),
-                    new SwearHandler(),
-                    new PersistentRoleHandler(),
-                    new FileHandler(),
-                    new LevelHandler(),
-                    new DumpHandler(),
-                    new ErrorAnalyzer(),
-                    new ShutdownHandler(),
-                    new VoiceGroupHandler(),
-                    new BadLinksHandler(),
-                    client.build(),
-                    tagClient.build())
-                .build();
+        try {
+            jda = JDABuilder.createDefault(PropertiesManager.getToken())
+                    .setChunkingFilter(ChunkingFilter.ALL)
+                    .setMemberCachePolicy(MemberCachePolicy.ALL)
+                    .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                    .enableIntents(GatewayIntent.GUILD_PRESENCES)
+                    .enableCache(CacheFlag.ACTIVITY)
+                    .enableCache(CacheFlag.ROLE_TAGS)
+                    .setStatus(OnlineStatus.ONLINE)
+                    .setActivity(Activity.playing("Booting..."))
+                    .setEnableShutdownHook(true)
+                    .setEventManager(new SentryEventManager())
+                    .addEventListeners(waiter,
+                            new LogHandler(),
+                            new SwearHandler(),
+                            new PersistentRoleHandler(),
+                            new FileHandler(),
+                            new LevelHandler(),
+                            new DumpHandler(),
+                            new ErrorAnalyzer(),
+                            new ShutdownHandler(),
+                            new VoiceGroupHandler(),
+                            new BadLinksHandler(),
+                            client.build(),
+                            tagClient.build())
+                    .build();
+        } catch (IllegalArgumentException exception) {
+            LOGGER.error("Failed to initialize JDA!", exception);
+            System.exit(1);
+        }
 
         // Register listeners
         jda.addEventListener();
@@ -235,6 +253,9 @@ public class GeyserBot {
 
         // Setup the health check scheduler
         HealthCheckerManager.setup();
+
+        // Setup the rss feed check scheduler
+        RssFeedManager.setup();
 
         // Setup all slow mode handlers
         generalThreadPool.schedule(() -> {

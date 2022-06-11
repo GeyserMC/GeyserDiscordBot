@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
@@ -131,7 +131,7 @@ public class SwearHandler extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         handleMessageEvent(event.getMessage(), true);
     }
 
@@ -169,7 +169,7 @@ public class SwearHandler extends ListenerAdapter {
                 ServerSettings.getLogChannel(message.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                         .setTitle("Profanity removed")
                         .setDescription("**Sender:** " + message.getAuthor().getAsMention() + "\n" +
-                                "**Channel:** <#" + message.getChannel().getId() + ">\n" +
+                                "**Channel:** " + message.getChannel().getAsMention() + "\n" +
                                 "**Regex:** `" + filterPattern + "`\n" +
                                 "**Message:** " + message.getContentRaw())
                         .setColor(BotColors.FAILURE.getColor())

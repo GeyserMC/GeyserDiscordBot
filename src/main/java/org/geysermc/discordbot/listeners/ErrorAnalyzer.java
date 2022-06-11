@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,25 +33,31 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.tags.TagsManager;
-import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.BotHelpers;
-import org.geysermc.discordbot.util.GithubFileFinder;
-import org.geysermc.discordbot.util.MessageHelper;
+import org.geysermc.discordbot.util.*;
+import org.imgscalr.Scalr;
 import pw.chew.chewbotcca.util.RestClient;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.*;
+import java.io.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ErrorAnalyzer extends ListenerAdapter {
     private final Map<Pattern, String> logUrlPatterns;
-
-    private static final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[0-9a-zA-Z]+-([0-9a-zA-Z]{7})\\)");
+    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
+    private static final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[\\da-zA-Z]+-([\\da-zA-Z]{7})\\)");
 
     public ErrorAnalyzer() {
         logUrlPatterns = new HashMap<>();
@@ -72,23 +78,50 @@ public class ErrorAnalyzer extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
 
+        // exclude certain channels.
+        if (ServerSettings.shouldNotCheckError(event.getChannel())) {
+            return;
+        }
+
         // Check attachments
         for (Message.Attachment attachment : event.getMessage().getAttachments()) {
-            List<String> extensions;
+            if (attachment.isImage()) {
 
-            // Get the guild extensions and if not in a guild just use some defaults
-            if (event.isFromGuild()) {
-                extensions = ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions");
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                // run ocr in a new block-able thread.
+                Runnable runnable = () -> {
+                    try {
+                        ITesseract tesseract = new Tesseract();
+                        // setDatapath is needed even if we are not using it.
+                        tesseract.setDatapath(PropertiesManager.getOCRPath());
+                        embedBuilder.setTitle("Found errors in the image!");
+                        embedBuilder.setColor(BotColors.FAILURE.getColor());
+                        // scale img -> needed for IOS print screens.
+                        BufferedImage bi = ImageIO.read(attachment.retrieveInputStream().get());
+                        Dimension newMaxSize = new Dimension(2000,1400);
+                        BufferedImage resizedImg = Scalr.resize(bi, Scalr.Method.BALANCED, newMaxSize.width, newMaxSize.height);
+                        errorHandler(tesseract.doOCR(resizedImg), embedBuilder, event);
+                    } catch (TesseractException | InterruptedException | IOException | ExecutionException e) {
+                        handleLog(event, e.getMessage(), true);
+                    }
+                };
+                EXECUTOR.submit(runnable);
+
             } else {
-                extensions = new ArrayList<>();
-                extensions.add("txt");
-                extensions.add("log");
-                extensions.add("yml");
-                extensions.add("0");
-            }
-
-            if (extensions.contains(attachment.getFileExtension())) {
-                handleLog(event, RestClient.get(attachment.getUrl()));
+                List<String> extensions;
+                // Get the guild extensions and if not in a guild just use some defaults
+                if (event.isFromGuild()) {
+                    extensions = ServerSettings.getList(event.getGuild().getIdLong(), "convert-extensions");
+                } else {
+                    extensions = new ArrayList<>();
+                    extensions.add("txt");
+                    extensions.add("log");
+                    extensions.add("yml");
+                    extensions.add("0");
+                }
+                if (extensions.contains(attachment.getFileExtension())) {
+                    handleLog(event, RestClient.get(attachment.getUrl()), false);
+                }
             }
         }
 
@@ -120,23 +153,33 @@ public class ErrorAnalyzer extends ListenerAdapter {
             content = RestClient.get(url);
         }
 
-        handleLog(event, content);
+        handleLog(event, content, false);
     }
 
     /**
      * Handle the log content and output any errors
      *
      * @param event Message to respond to
-     * @param logContent The log to check
+     * @param content The log to check
      */
-    private void handleLog(MessageReceivedEvent event, String logContent) {
+    private void handleLog(MessageReceivedEvent event, String content, boolean error) {
         // Create the embed and format it
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("Found errors in the log!");
-        embedBuilder.setDescription("See below for details and possible fixes");
-        embedBuilder.setColor(BotColors.FAILURE.getColor());
+        if (error) {
+            embedBuilder.setColor(BotColors.FAILURE.getColor());
+            embedBuilder.addField("Error","Something went wrong wile reading the image.", false);
+            embedBuilder.setDescription(content);
+            event.getMessage().replyEmbeds(embedBuilder.build()).queue();
+        } else {
+            embedBuilder.setTitle("Found errors in the log!");
+            embedBuilder.setDescription("See below for details and possible fixes");
+            embedBuilder.setColor(BotColors.FAILURE.getColor());
+            errorHandler(content, embedBuilder, event);
+        }
+    }
 
-        List<StackException> exceptions = Parser.parse(logContent);
+    private void errorHandler(String error, EmbedBuilder embedBuilder, MessageReceivedEvent event) {
+        List<StackException> exceptions = Parser.parse(error);
 
         int embedLength = embedBuilder.length();
 
@@ -147,7 +190,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 break;
             }
 
-            if (logContent.toLowerCase().contains(issue.toLowerCase())) {
+            if (error.toLowerCase().contains(issue.toLowerCase())) {
                 String title = BotHelpers.trim(issue, MessageEmbed.TITLE_MAX_LENGTH);
 
                 if (MessageHelper.similarFieldExists(embedBuilder.getFields(), title)) {
@@ -164,7 +207,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         if (!exceptions.isEmpty()) {
             // Get the github trees for fetching the file paths
             String branch = "master";
-            Matcher branchMatcher = BRANCH_PATTERN.matcher(logContent);
+            Matcher branchMatcher = BRANCH_PATTERN.matcher(error);
             if (branchMatcher.find()) {
                 branch = branchMatcher.group(1);
             }
@@ -211,7 +254,6 @@ public class ErrorAnalyzer extends ListenerAdapter {
             } else {
                 embedBuilder.setDescription("We don't currently have automated responses for the detected errors!");
             }
-
             event.getMessage().replyEmbeds(embedBuilder.build()).queue();
         }
     }
