@@ -99,7 +99,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 if (messageCache.getIfPresent(event.getAuthor()) != null) {
                     // If it is, delete the message and send message to wait a minute.
                     event.getMessage().delete().queue();
-                    event.getChannel().sendMessage("Sorry, You have to wait a minute before you can send an image").queue();
+                    event.getChannel().sendMessage("Please wait a minute before sending an image!").queue();
                     return;
                 }
                 // Put the author in the cache. (1 minute) This is to prevent spamming images.
