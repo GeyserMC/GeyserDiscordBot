@@ -25,12 +25,15 @@
 
 package org.geysermc.discordbot.listeners;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.rtm516.stackparser.Parser;
 import com.rtm516.stackparser.StackException;
 import com.rtm516.stackparser.StackLine;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.sourceforge.tess4j.ITesseract;
@@ -51,6 +54,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,8 +62,13 @@ public class ErrorAnalyzer extends ListenerAdapter {
     private final Map<Pattern, String> logUrlPatterns;
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     private static final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[\\da-zA-Z]+-([\\da-zA-Z]{7})\\)");
-
+    private final Cache<User, String> messageCache;
     public ErrorAnalyzer() {
+        // Cache the last message sent by a user to avoid spamming them with images.
+        this.messageCache = CacheBuilder.newBuilder()
+                .expireAfterWrite(1, TimeUnit.MINUTES)
+                .build();
+
         logUrlPatterns = new HashMap<>();
 
         // Log url patterns
@@ -86,6 +95,15 @@ public class ErrorAnalyzer extends ListenerAdapter {
         // Check attachments
         for (Message.Attachment attachment : event.getMessage().getAttachments()) {
             if (attachment.isImage()) {
+                // Check if author is in the cache.
+                if (messageCache.getIfPresent(event.getAuthor()) != null) {
+                    // If it is, delete the message and send message to wait a minute.
+                    event.getMessage().delete().queue();
+                    event.getChannel().sendMessage("Sorry, You have to wait a minute before you can send an image").queue();
+                    return;
+                }
+                // Put the author in the cache. (1 minute) This is to prevent spamming images.
+                messageCache.put(event.getAuthor(), attachment.getFileName());
 
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 // run ocr in a new block-able thread.
