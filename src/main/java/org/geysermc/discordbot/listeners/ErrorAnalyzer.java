@@ -63,6 +63,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     private static final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[\\da-zA-Z]+-([\\da-zA-Z]{7})\\)");
     private final Cache<User, Integer> messageCache;
+
     public ErrorAnalyzer() {
         // Cache the last message sent by a user to avoid spamming them with images.
         this.messageCache = CacheBuilder.newBuilder()
