@@ -62,7 +62,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
     private final Map<Pattern, String> logUrlPatterns;
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     private static final Pattern BRANCH_PATTERN = Pattern.compile("Geyser .* \\(git-[\\da-zA-Z]+-([\\da-zA-Z]{7})\\)");
-    private final Cache<User, String> messageCache;
+    private final Cache<User, Integer> messageCache;
     public ErrorAnalyzer() {
         // Cache the last message sent by a user to avoid spamming them with images.
         this.messageCache = CacheBuilder.newBuilder()
@@ -95,15 +95,20 @@ public class ErrorAnalyzer extends ListenerAdapter {
         // Check attachments
         for (Message.Attachment attachment : event.getMessage().getAttachments()) {
             if (attachment.isImage()) {
-                // Check if author is in the cache.
-                if (messageCache.getIfPresent(event.getAuthor()) != null) {
-                    // If it is, delete the message and send message to wait a minute.
-                    event.getMessage().delete().queue();
-                    event.getChannel().sendMessage("Please wait a minute before sending an image!").queue();
+                // Check if author sent an image
+                int maxImages = 2;
+                Integer count = messageCache.getIfPresent(event.getAuthor());
+                if (count == null) {
+                    // If author has not sent an image put them in to cache.
+                    messageCache.put(event.getAuthor(), 0);
+                } else {
+                    // Author has already sent an image, up the count.
+                    messageCache.put(event.getAuthor(), count + 1);
+                }
+                // Author has sent too many images, ocr ignore.
+                if (count != null && count >= maxImages) {
                     return;
                 }
-                // Put the author in the cache. (1 minute) This is to prevent spamming images.
-                messageCache.put(event.getAuthor(), attachment.getFileName());
 
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 // run ocr in a new block-able thread.
