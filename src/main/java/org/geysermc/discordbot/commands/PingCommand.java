@@ -157,7 +157,7 @@ public class PingCommand extends SlashCommand {
 
             bedrockInfo = "**MOTD:** \n```\n" + MCPingUtil.stripColors(pong.getMotd()) + (pong.getSubMotd() != null ? "\n" + MCPingUtil.stripColors(pong.getSubMotd()) : "") + "\n```\n" +
                     "**Players:** " + pong.getPlayerCount() + "/" + pong.getMaximumPlayerCount() + "\n" +
-                    "**Version:** " + BotHelpers.getBedrockVersionName(pong.getProtocolVersion()) + " (" + pong.getProtocolVersion() + ")";
+                    "**Version:** " + pong.getVersion() + " (" + pong.getProtocolVersion() + ")";
             success = true;
         } catch (InterruptedException | ExecutionException ignored) {
         } finally {

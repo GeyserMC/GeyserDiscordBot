@@ -53,33 +53,6 @@ import java.util.regex.Matcher;
 
 public class BotHelpers {
 
-    private static final Int2ObjectMap<String> BEDROCK_VERSIONS = new Int2ObjectOpenHashMap<>();
-
-    static {
-        BEDROCK_VERSIONS.put(291, "1.7.0");
-        BEDROCK_VERSIONS.put(313, "1.8.0");
-        BEDROCK_VERSIONS.put(332, "1.9.0");
-        BEDROCK_VERSIONS.put(340, "1.10.0");
-        BEDROCK_VERSIONS.put(354, "1.11.0");
-        BEDROCK_VERSIONS.put(361, "1.12.0");
-        BEDROCK_VERSIONS.put(388, "1.13.0");
-        BEDROCK_VERSIONS.put(389, "1.14.0 - 1.14.50");
-        BEDROCK_VERSIONS.put(390, "1.14.60");
-        BEDROCK_VERSIONS.put(407, "1.16.0 - 1.16.10");
-        BEDROCK_VERSIONS.put(408, "1.16.20");
-        BEDROCK_VERSIONS.put(419, "1.16.100");
-        BEDROCK_VERSIONS.put(422, "1.16.200 - 1.16.201");
-        BEDROCK_VERSIONS.put(428, "1.16.210");
-        BEDROCK_VERSIONS.put(431, "1.16.220");
-        BEDROCK_VERSIONS.put(440, "1.17.0");
-        BEDROCK_VERSIONS.put(448, "1.17.10 - 1.17.11");
-        BEDROCK_VERSIONS.put(465, "1.17.30 - 1.17.34");
-        BEDROCK_VERSIONS.put(471, "1.17.40 - 1.17.41");
-        BEDROCK_VERSIONS.put(475, "1.18.0 - 1.18.2");
-        BEDROCK_VERSIONS.put(486, "1.18.10 - 1.18.12");
-        BEDROCK_VERSIONS.put(503, "1.18.30 - 1.18.32");
-    }
-
     /**
      * Get a guild member from a given id string
      *
@@ -288,16 +261,6 @@ public class BotHelpers {
      */
     public static String stringFromResource(String resourcePath) {
         return new String(bytesFromResource(resourcePath), StandardCharsets.UTF_8);
-    }
-
-    /**
-     * Get the name of a bedrock version from the protocol version number
-     *
-     * @param protocolVersion Protocol version number
-     * @return The name of the version or 'Unknown'
-     */
-    public static String getBedrockVersionName(int protocolVersion) {
-        return BEDROCK_VERSIONS.getOrDefault(protocolVersion, "Unknown");
     }
 
     /**
