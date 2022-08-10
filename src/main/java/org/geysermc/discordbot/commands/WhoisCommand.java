@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 
 public class WhoisCommand extends SlashCommand {
 
-    private static final List<Permission> PRIVILEGED_PERMISSIONS = Arrays.asList(Permission.ADMINISTRATOR, Permission.MANAGE_SERVER, Permission.MANAGE_ROLES, Permission.MANAGE_CHANNEL, Permission.MESSAGE_MANAGE, Permission.MANAGE_WEBHOOKS, Permission.NICKNAME_MANAGE, Permission.MANAGE_EMOTES_AND_STICKERS, Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.MESSAGE_MENTION_EVERYONE);
+    private static final List<Permission> PRIVILEGED_PERMISSIONS = Arrays.asList(Permission.ADMINISTRATOR, Permission.MANAGE_SERVER, Permission.MANAGE_ROLES, Permission.MANAGE_CHANNEL, Permission.MESSAGE_MANAGE, Permission.MANAGE_WEBHOOKS, Permission.NICKNAME_MANAGE, Permission.MANAGE_EMOJIS_AND_STICKERS, Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.MESSAGE_MENTION_EVERYONE);
 
     public WhoisCommand() {
         this.name = "whois";

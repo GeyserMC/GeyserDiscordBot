@@ -31,9 +31,9 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.PropertiesManager;
-import org.geysermc.discordbot.util.UserById;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -185,11 +185,11 @@ public class MySQLStorageManager extends AbstractStorageManager {
             if (rs.next()) {
                 Instant time = Instant.ofEpochSecond(rs.getLong("time"));
                 Member user = guild.getMemberById(rs.getLong("user"));
-                User target = guild.getJDA().getUserById(rs.getLong("target"));
+                UserSnowflake target = guild.getJDA().getUserById(rs.getLong("target"));
 
                 // Construct a user from the id
                 if (target == null) {
-                    target = new UserById(rs.getLong("target"));
+                    target = User.fromId(rs.getLong("target"));
                 }
 
                 return new ModLog(rs.getInt("id"), time, user, rs.getString("action"), target, rs.getString("reason"));

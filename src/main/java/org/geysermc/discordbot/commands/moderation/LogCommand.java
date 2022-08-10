@@ -82,8 +82,8 @@ public class LogCommand extends Command {
             logEmbedBuilder.setDescription("No logs for the selected user");
         } else {
             for (ModLog log : logs) {
-                String title = log.getAction().substring(0, 1).toUpperCase() + log.getAction().substring(1) + " (" + log.getId() + ")";
-                logEmbedBuilder.addField(title, "**Time:** " + TimeFormat.DATE_TIME_LONG.format(OffsetDateTime.ofInstant(log.getTime(), ZoneOffset.UTC)) + "\n**By:** " + log.getUser().getAsMention() + "\n**Reason:** " + log.getReason(), false);
+                String title = log.action().substring(0, 1).toUpperCase() + log.action().substring(1) + " (" + log.id() + ")";
+                logEmbedBuilder.addField(title, "**Time:** " + TimeFormat.DATE_TIME_LONG.format(OffsetDateTime.ofInstant(log.time(), ZoneOffset.UTC)) + "\n**By:** " + log.user().getAsMention() + "\n**Reason:** " + log.reason(), false);
             }
         }
 

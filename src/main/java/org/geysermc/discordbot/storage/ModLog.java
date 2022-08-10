@@ -26,34 +26,10 @@
 package org.geysermc.discordbot.storage;
 
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 
 import java.time.Instant;
 
 public record ModLog(int id, Instant time, Member user, String action,
-                     User target, String reason) {
-
-    public int getId() {
-        return id;
-    }
-
-    public Instant getTime() {
-        return time;
-    }
-
-    public Member getUser() {
-        return user;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public User getTarget() {
-        return target;
-    }
-
-    public String getReason() {
-        return reason;
-    }
+                     UserSnowflake target, String reason) {
 }

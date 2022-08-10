@@ -73,7 +73,7 @@ public class SlowmodeHandler extends ListenerAdapter {
                                 channel.sendMessageEmbeds(new EmbedBuilder()
                                         .setTitle("Message deleted")
                                         .appendDescription("Your message has been removed because there is still a delay before you can type!")
-                                        .addField("Channel", event.getMessage().getTextChannel().getAsMention(), false)
+                                        .addField("Channel", event.getMessage().getChannel().getAsMention(), false)
                                         .addField("When you can post again", TimeFormat.RELATIVE.format(dateTime.plusSeconds(seconds).toInstant()), false)
                                         .setTimestamp(Instant.now())
                                         .setColor(BotColors.FAILURE.getColor())

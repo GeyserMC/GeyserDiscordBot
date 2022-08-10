@@ -25,16 +25,16 @@
 
 package org.geysermc.discordbot.util;
 
+import net.dv8tion.jda.api.entities.UserSnowflake;
+import net.dv8tion.jda.internal.entities.UserSnowflakeImpl;
 import org.jetbrains.annotations.NotNull;
 
-public class UserById extends net.dv8tion.jda.internal.entities.UserById {
-
+public class UserById extends UserSnowflakeImpl implements UserSnowflake {
     public UserById(long id) {
         super(id);
     }
 
     @NotNull
-    @Override
     public String getAsTag() {
         return super.getId();
     }

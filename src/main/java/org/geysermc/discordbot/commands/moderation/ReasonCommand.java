@@ -72,22 +72,22 @@ public class ReasonCommand extends Command {
                 .setTitle("Mod log: " + logId)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor())
-                .addField("Action", log.getAction().substring(0, 1).toUpperCase() + log.getAction().substring(1), true)
-                .addField("Target", log.getTarget().getAsTag(), true)
-                .addField("By", log.getUser().getAsMention(), true)
-                .addField("Time", TimeFormat.DATE_TIME_LONG.format(OffsetDateTime.ofInstant(log.getTime(), ZoneOffset.UTC)), false);
+                .addField("Action", log.action().substring(0, 1).toUpperCase() + log.action().substring(1), true)
+                .addField("Target", log.target().getAsMention(), true)
+                .addField("By", log.user().getAsMention(), true)
+                .addField("Time", TimeFormat.DATE_TIME_LONG.format(OffsetDateTime.ofInstant(log.time(), ZoneOffset.UTC)), false);
 
         String newReason = String.join(" ", args);
 
         if (!newReason.trim().isEmpty()) {
             logEmbedBuilder
                     .setTitle("Updated mod log: " + logId)
-                    .addField("Old Reason", log.getReason(), false)
+                    .addField("Old Reason", log.reason(), false)
                     .addField("New Reason", newReason, false);
 
             GeyserBot.storageManager.updateLog(event.getGuild(), logId, newReason);
         } else {
-            logEmbedBuilder.addField("Reason", log.getReason(), false);
+            logEmbedBuilder.addField("Reason", log.reason(), false);
         }
 
         // Send the embed as a reply
