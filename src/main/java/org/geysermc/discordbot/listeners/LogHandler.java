@@ -28,12 +28,14 @@ package org.geysermc.discordbot.listeners;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
+import net.dv8tion.jda.api.events.guild.GuildTimeoutEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
@@ -240,6 +242,9 @@ public class LogHandler extends ListenerAdapter {
             return;
         }
 
+        // Do this before the invite log just incase its removed
+        putCacheMessage(event.getGuild(), event.getMessage());
+
         for (String inviteCode : event.getMessage().getInvites()) {
             try {
                 Invite invite = Invite.resolve(event.getJDA(), inviteCode, true).complete();
@@ -256,10 +261,13 @@ public class LogHandler extends ListenerAdapter {
                             .setColor(BotColors.NEUTRAL.getColor())
                             .build()).queue();
                 } catch (IllegalArgumentException ignored) { }
+
+                // Bypass for users with MESSAGE_MANAGE permission
+                if (!event.getMember().hasPermission(Permission.MESSAGE_MANAGE) && !ServerSettings.getList(event.getGuild().getIdLong(), "allowed-invites").contains(invite.getGuild().getId())) {
+                    event.getMessage().delete().complete();
+                }
             } catch (ErrorResponseException ignored) { }
         }
-
-        putCacheMessage(event.getGuild(), event.getMessage());
     }
 
     @Override

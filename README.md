@@ -30,4 +30,5 @@ Most of these are lists which values are seperated by `,` and a few are seperate
 | `punishment-message` | A message to add to the end of a punishment DM                                       | `If you wish to appeal your punishment, contact an admin.`  |
 | `banned-domains`     | Domains that if found in a message, the message will be removed                      | `dlscord-nitro.click,discord-airdrop.com`                   |
 | `banned-ips`         | IPs that if a domain found in a message resolves to, the message will be removed     | `95.181.163.44,95.181.163.46`                               |
-| `rss-feeds`          | Channel IDs to log RSS posts to along with the RSS feed url                          | `916482484122824704\|https://blog.geysermc.org/feed.xml`     |
+| `rss-feeds`          | Channel IDs to log RSS posts to along with the RSS feed url                          | `916482484122824704\|https://blog.geysermc.org/feed.xml`    |
+| `allowed-invites`    | Guild IDs for allowed invites                                                        | `613163671870242838,393465748535640064`                     |
