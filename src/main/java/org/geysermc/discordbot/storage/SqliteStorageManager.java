@@ -33,7 +33,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.PropertiesManager;
-import org.geysermc.discordbot.util.UserById;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;

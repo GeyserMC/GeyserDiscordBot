@@ -312,7 +312,7 @@ public class LogHandler extends ListenerAdapter {
         try {
             ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                     .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
-                    .setDescription(event.getMember().getAsMention() + " **joined voice channel #" + event.getChannelJoined().getName() + "**")
+                    .setDescription(event.getMember().getAsMention() + " **joined voice channel " + event.getChannelJoined().getAsMention() + "**")
                     .setFooter("ID: " + event.getMember().getId())
                     .setTimestamp(Instant.now())
                     .setColor(BotColors.SUCCESS.getColor())
@@ -325,7 +325,7 @@ public class LogHandler extends ListenerAdapter {
         try {
             ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                     .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
-                    .setDescription(event.getMember().getAsMention() + " **switched voice channel `#" + event.getChannelLeft().getName() + "` -> `#" + event.getChannelJoined().getName() + "`**")
+                    .setDescription(event.getMember().getAsMention() + " **switched voice channel " + event.getChannelLeft().getAsMention() + " -> " + event.getChannelJoined().getAsMention() + "**")
                     .setFooter("ID: " + event.getMember().getId())
                     .setTimestamp(Instant.now())
                     .setColor(BotColors.SUCCESS.getColor())
@@ -338,7 +338,7 @@ public class LogHandler extends ListenerAdapter {
         try {
             ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                     .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
-                    .setDescription(event.getMember().getAsMention() + " **left voice channel #" + event.getChannelLeft().getName() + "**")
+                    .setDescription(event.getMember().getAsMention() + " **left voice channel " + event.getChannelLeft().getAsMention() + "**")
                     .setFooter("ID: " + event.getMember().getId())
                     .setTimestamp(Instant.now())
                     .setColor(BotColors.FAILURE.getColor())
