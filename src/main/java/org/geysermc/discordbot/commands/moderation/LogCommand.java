@@ -33,7 +33,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.TimeFormat;
@@ -63,7 +62,7 @@ public class LogCommand extends SlashCommand {
         this.userPermissions = new Permission[]{Permission.KICK_MEMBERS};
         this.botPermissions = new Permission[]{Permission.KICK_MEMBERS};
 
-        this.guildOnly = false;
+        this.guildOnly = true;
         this.options = Collections.singletonList(
                 new OptionData(OptionType.USER, "member", "Member to fetch").setRequired(true)
         );
@@ -71,12 +70,11 @@ public class LogCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        // Defer to wait for us to handle the command
-        InteractionHook interactionHook = event.deferReply().complete();
-
+        // Fetch user
         User user = event.getOption("member").getAsUser();
+
         if (user == null) {
-            interactionHook.editOriginalEmbeds(new EmbedBuilder()
+            event.replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
                     .setColor(BotColors.FAILURE.getColor())
@@ -84,7 +82,7 @@ public class LogCommand extends SlashCommand {
             return;
         }
 
-        interactionHook.editOriginalEmbeds(handle(user, event.getGuild())).queue();
+        event.replyEmbeds(handle(user, event.getGuild())).queue();
     }
 
     @Override

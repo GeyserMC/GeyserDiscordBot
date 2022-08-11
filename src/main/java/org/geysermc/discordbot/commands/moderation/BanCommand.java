@@ -34,7 +34,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
@@ -57,7 +57,7 @@ public class BanCommand extends SlashCommand {
         this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
         this.botPermissions = new Permission[]{Permission.BAN_MEMBERS};
 
-        this.guildOnly = false;
+        this.guildOnly = true;
         this.options = Arrays.asList(
                 new OptionData(OptionType.USER, "member", "The member to ban").setRequired(true),
                 new OptionData(OptionType.INTEGER, "days", "How many days worth of messages should we purge").setRequired(false),
@@ -68,21 +68,20 @@ public class BanCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        // Defer to wait for us to handle the command
-        InteractionHook interactionHook = event.deferReply().complete();
-
-        // Fetch options
+        // Fetch members
         Member member = event.getOption("member").getAsMember();
         User user = event.getOption("member").getAsUser();
         Member moderator = event.getMember();
-        int days = 0;
-        boolean silent = false;
-        String reason;
+
+        // Fetch ban args
+        int days = event.getOption("days", 0, OptionMapping::getAsInt);
+        boolean silent = event.optBoolean("silent", false);
+        String reason = event.optString("reason", "*None*");
 
         if (member != null) {
             // Check we can target the user
             if (!event.getMember().canInteract(member) || member.getIdLong() == GeyserBot.getJDA().getSelfUser().getIdLong()) {
-                interactionHook.editOriginalEmbeds(new EmbedBuilder()
+                event.replyEmbeds(new EmbedBuilder()
                         .setTitle("Higher role")
                         .setDescription("Either the bot or you cannot target that user.")
                         .setColor(BotColors.FAILURE.getColor())
@@ -90,7 +89,7 @@ public class BanCommand extends SlashCommand {
                 return;
             }
         } else {
-            interactionHook.editOriginalEmbeds(new EmbedBuilder()
+            event.replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
                     .setColor(BotColors.FAILURE.getColor())
@@ -99,24 +98,7 @@ public class BanCommand extends SlashCommand {
 
         }
 
-        //Check if we should be silent
-        if (event.hasOption("silent")) {
-            silent = event.getOption("silent").getAsBoolean();
-        }
-
-        //Get the reason or use none
-        if (event.hasOption("reason")) {
-            reason = event.getOption("reason").getAsString();
-        } else {
-            reason = "*None*";
-        }
-
-        //Get number of days to purge
-        if (event.hasOption("days")) {
-            days = event.getOption("days").getAsInt();
-        }
-
-        interactionHook.editOriginalEmbeds(handle(user, moderator, event.getGuild(), days, silent, reason)).queue();
+        event.replyEmbeds(handle(user, moderator, event.getGuild(), days, silent, reason)).queue();
     }
 
     @Override

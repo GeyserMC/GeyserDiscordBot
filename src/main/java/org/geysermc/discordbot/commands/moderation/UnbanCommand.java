@@ -32,7 +32,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
@@ -55,7 +54,7 @@ public class UnbanCommand extends SlashCommand {
         this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
         this.botPermissions = new Permission[]{Permission.BAN_MEMBERS};
 
-        this.guildOnly = false;
+        this.guildOnly = true;
         this.options = Arrays.asList(
                 new OptionData(OptionType.USER, "member", "The member to unban").setRequired(true),
                 new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user upon unbanning").setRequired(false),
@@ -65,16 +64,16 @@ public class UnbanCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        //Defer to wait for us to handle the command
-        InteractionHook interactionHook = event.deferReply().complete();
-
+        // Fetch users
         User user = BotHelpers.getUser(event.getOption("member").getAsString());
         Member moderator = event.getMember();
-        boolean silent = false;
-        String reason;
+
+        // Fetch args
+        boolean silent = event.optBoolean("silent", false);
+        String reason = event.optString("reason", "*None*");
 
         if (user == null) {
-            interactionHook.editOriginalEmbeds(new EmbedBuilder()
+            event.replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
                     .setColor(BotColors.FAILURE.getColor())
@@ -85,7 +84,7 @@ public class UnbanCommand extends SlashCommand {
         try {
             event.getGuild().retrieveBan(user).complete();
         } catch (ErrorResponseException ignored) {
-            interactionHook.editOriginalEmbeds(new EmbedBuilder()
+            event.replyEmbeds(new EmbedBuilder()
                     .setTitle("User not banned")
                     .setDescription("The user ID specified doesn't have a ban on this server.")
                     .setColor(BotColors.FAILURE.getColor())
@@ -93,19 +92,7 @@ public class UnbanCommand extends SlashCommand {
             return;
         }
 
-        //Check if we should be silent
-        if (event.hasOption("silent")) {
-            silent = event.getOption("silent").getAsBoolean();
-        }
-
-        //Get the reason or use none
-        if (event.hasOption("reason")) {
-            reason = event.getOption("reason").getAsString();
-        } else {
-            reason = "*None*";
-        }
-
-        interactionHook.editOriginalEmbeds(handle(user, moderator, event.getGuild(), silent, reason)).queue();
+        event.replyEmbeds(handle(user, moderator, event.getGuild(), silent, reason)).queue();
     }
 
     @Override

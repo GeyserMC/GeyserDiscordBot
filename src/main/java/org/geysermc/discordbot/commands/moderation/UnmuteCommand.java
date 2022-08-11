@@ -31,7 +31,6 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
@@ -54,7 +53,7 @@ public class UnmuteCommand extends SlashCommand {
         this.userPermissions = new Permission[]{Permission.KICK_MEMBERS};
         this.botPermissions = new Permission[]{Permission.KICK_MEMBERS};
 
-        this.guildOnly = false;
+        this.guildOnly = true;
         this.options = Arrays.asList(
                 new OptionData(OptionType.USER, "member", "The member to unmute").setRequired(true),
                 new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user on unmute").setRequired(false),
@@ -64,17 +63,17 @@ public class UnmuteCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        //Defer to wait for us to handle the command
-        InteractionHook interactionHook = event.deferReply().complete();
-
+        // Fetch users
         Member member = event.getOption("member").getAsMember();
         Member moderator = event.getMember();
-        boolean silent = false;
-        String reason;
+
+        // Fetch args
+        boolean silent = event.optBoolean("silent", false);
+        String reason = event.optString("reason", "*None*");
 
         // Check we can target the user
         if (!event.getMember().canInteract(member) || member.getIdLong() == GeyserBot.getJDA().getSelfUser().getIdLong()) {
-            interactionHook.editOriginalEmbeds(new EmbedBuilder()
+            event.replyEmbeds(new EmbedBuilder()
                     .setTitle("Higher role")
                     .setDescription("Either the bot or you cannot target that user.")
                     .setColor(BotColors.FAILURE.getColor())
@@ -82,19 +81,7 @@ public class UnmuteCommand extends SlashCommand {
             return;
         }
 
-        //Check if we should be silent
-        if (event.hasOption("silent")) {
-            silent = event.getOption("silent").getAsBoolean();
-        }
-
-        //Get the reason or use none
-        if (event.hasOption("reason")) {
-            reason = event.getOption("reason").getAsString();
-        } else {
-            reason = "*None*";
-        }
-
-        interactionHook.editOriginalEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
+        event.replyEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
     }
 
     @Override

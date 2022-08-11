@@ -29,7 +29,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 
 public class RestartCommand extends SlashCommand {
 
@@ -39,7 +38,7 @@ public class RestartCommand extends SlashCommand {
         this.help = "Restart the bot";
 
         this.userMissingPermMessage = "";
-        this.guildOnly = true;
+        this.guildOnly = false;
 
         this.userPermissions = new Permission[] { Permission.MANAGE_ROLES };
         this.botPermissions = new Permission[] { Permission.MANAGE_ROLES };

@@ -32,11 +32,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.checkerframework.checker.units.qual.C;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -52,59 +49,44 @@ public class SettingsCommand extends SlashCommand {
         this.name = "settings";
         this.hidden = true;
         this.help = "Customize the bot's settings";
-        this.guildOnly = false;
+        this.guildOnly = true;
 
         this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
         this.botPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
 
-        List<Command.Choice> types = new ArrayList<>();
-        List<Command.Choice> settings = new ArrayList<>();
-
-        types.add(new Command.Choice("add","add"));
-        types.add(new Command.Choice("get", "get"));
-        types.add(new Command.Choice("set", "set"));
-        types.add(new Command.Choice("remove","remove"));
-
-        settings.add(new Command.Choice("Allowed Invites", "allowed-invites"));
-        settings.add(new Command.Choice("Banned domains","banned-domains"));
-        settings.add(new Command.Choice("Banned IPs", "banned-ips"));
-        settings.add(new Command.Choice("Check domains", "check-domains"));
-        settings.add(new Command.Choice("Convert Extensions", "convert-extensions"));
-        settings.add(new Command.Choice("Don't level", "dont-level"));
-        settings.add(new Command.Choice("Don't log","dont-log"));
-        settings.add(new Command.Choice("Health Checks", "health-checks"));
-        settings.add(new Command.Choice("Log channel", "log-channel"));
-        settings.add(new Command.Choice("Punishment Message","punishment-message"));
-        settings.add(new Command.Choice("Roles","roles"));
-        settings.add(new Command.Choice("RSS Feeds", "rss-feeds"));
-        settings.add(new Command.Choice("Update channel", "update-channel"));
-        settings.add(new Command.Choice("Voice Role", "voice-role"));
-
-
         this.options = Arrays.asList(
-                new OptionData(OptionType.STRING, "action", "The action to perform").setRequired(true).addChoices(types),
-                new OptionData(OptionType.STRING, "key", "The setting name").setRequired(true).addChoices(settings),
+                new OptionData(OptionType.STRING, "action", "The action to perform").setRequired(true)
+                        .addChoice("add","add")
+                        .addChoice("get", "get")
+                        .addChoice("set", "set")
+                        .addChoice("remove","remove"),
+                new OptionData(OptionType.STRING, "key", "The setting name").setRequired(true)
+                        .addChoice("Allowed Invites", "allowed-invites")
+                        .addChoice("Banned domains","banned-domains")
+                        .addChoice("Banned IPs", "banned-ips")
+                        .addChoice("Check domains", "check-domains")
+                        .addChoice("Convert Extensions", "convert-extensions")
+                        .addChoice("Don't level", "dont-level")
+                        .addChoice("Don't log","dont-log")
+                        .addChoice("Health Checks", "health-checks")
+                        .addChoice("Log channel", "log-channel")
+                        .addChoice("Punishment Message","punishment-message")
+                        .addChoice("Roles","roles")
+                        .addChoice("RSS Feeds", "rss-feeds")
+                        .addChoice("Update channel", "update-channel")
+                        .addChoice("Voice Role", "voice-role"),
                 new OptionData(OptionType.STRING, "value", "The value to set").setRequired(false)
         );
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        // Defer to wait for us to handle the command
-        InteractionHook interactionHook = event.deferReply().complete();
-
         // Fetch values
         String action = event.getOption("action").getAsString();
         String key = event.getOption("key").getAsString();
-        String value;
+        String value = event.optString("value", null);
 
-        if (event.hasOption("value")) {
-            value = event.getOption("value").getAsString();
-        } else {
-            value = null;
-        }
-
-        interactionHook.editOriginalEmbeds(handle(event.getGuild(), action, key, value)).queue();
+        event.replyEmbeds(handle(event.getGuild(), action, key, value)).queue();
     }
 
     @Override

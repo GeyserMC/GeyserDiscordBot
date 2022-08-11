@@ -32,7 +32,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.TimeFormat;
@@ -58,7 +57,7 @@ public class ReasonCommand extends SlashCommand {
         this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
         this.botPermissions = new Permission[] { Permission.KICK_MEMBERS };
 
-        this.guildOnly = false;
+        this.guildOnly = true;
         this.options = Arrays.asList(
                 new OptionData(OptionType.INTEGER, "id", "The event ID to fetch").setRequired(true),
                 new OptionData(OptionType.STRING, "reason", "Set the reason").setRequired(false)
@@ -67,21 +66,11 @@ public class ReasonCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        // Defer to wait for us to handle the command
-        InteractionHook interactionHook = event.deferReply().complete();
-
+        // Fetch args
         int logID = event.getOption("id").getAsInt();
-        String updatedReason;
+        String updatedReason = event.optString("reason", null);
 
-        // Get reason if specified
-        if (event.hasOption("reason")) {
-            updatedReason = event.getOption("reason").getAsString();
-        } else {
-            updatedReason = null;
-        }
-
-        interactionHook.editOriginalEmbeds(handle(logID, updatedReason, event.getGuild())).queue();
-
+        event.replyEmbeds(handle(logID, updatedReason, event.getGuild())).queue();
     }
 
     @Override

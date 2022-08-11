@@ -34,7 +34,6 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
@@ -60,7 +59,7 @@ public class SlowmodeCommand extends SlashCommand {
         this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
         this.botPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
 
-        this.guildOnly = false;
+        this.guildOnly = true;
         this.options = Collections.singletonList(
                 new OptionData(OptionType.STRING, "args", "Set length or turn off slowmode").setRequired(true)
         );
@@ -68,13 +67,10 @@ public class SlowmodeCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        // Defer to wait for us to handle the command
-        InteractionHook interactionHook = event.deferReply().complete();
-
         String arg = event.getOption("args").getAsString();
 
-        if (arg.trim().isEmpty()) {
-            interactionHook.editOriginalEmbeds(new EmbedBuilder()
+        if (arg.isBlank()) {
+            event.replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid usage")
                     .setDescription("Please specify a time in the correct format `1h2m3s`.")
                     .setColor(BotColors.FAILURE.getColor())
@@ -82,7 +78,7 @@ public class SlowmodeCommand extends SlashCommand {
             return;
         }
 
-        interactionHook.editOriginalEmbeds(handle(event.getMember(), event.getGuild(), event.getTextChannel(), arg)).queue();
+        event.replyEmbeds(handle(event.getMember(), event.getGuild(), event.getTextChannel(), arg)).queue();
     }
 
     @Override

@@ -33,7 +33,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
@@ -58,7 +57,7 @@ public class RenameCommand extends SlashCommand {
         this.userPermissions = new Permission[] { Permission.NICKNAME_MANAGE };
         this.botPermissions = new Permission[] { Permission.NICKNAME_MANAGE };
 
-        this.guildOnly = false;
+        this.guildOnly = true;
         this.options = List.of(
                 new OptionData(OptionType.USER, "member", "The member to rename").setRequired(true)
         );
@@ -66,13 +65,10 @@ public class RenameCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        // Defer to wait for us to handle the command
-        InteractionHook interactionHook = event.deferReply().complete();
-
         Member member = event.getOption("member").getAsMember();
 
         if (member == null) {
-            interactionHook.editOriginalEmbeds(new EmbedBuilder()
+            event.replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
                     .setColor(BotColors.FAILURE.getColor())
@@ -81,7 +77,7 @@ public class RenameCommand extends SlashCommand {
         } else {
             // Check we can target the user
             if (!event.getMember().canInteract(member) || member.getIdLong() == GeyserBot.getJDA().getSelfUser().getIdLong()) {
-                interactionHook.editOriginalEmbeds(new EmbedBuilder()
+                event.replyEmbeds(new EmbedBuilder()
                         .setTitle("Higher role")
                         .setDescription("Either the bot or you cannot target that user.")
                         .setColor(BotColors.FAILURE.getColor())
@@ -91,7 +87,7 @@ public class RenameCommand extends SlashCommand {
         }
 
         // Send the embed when done
-        interactionHook.editOriginalEmbeds(handle(member, event.getMember(), event.getGuild())).queue();
+        event.replyEmbeds(handle(member, event.getMember(), event.getGuild())).queue();
     }
 
     @Override

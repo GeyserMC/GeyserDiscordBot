@@ -31,7 +31,6 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.listeners.LogHandler;
@@ -57,7 +56,7 @@ public class PurgeCommand extends SlashCommand {
         this.userPermissions = new Permission[] {Permission.MESSAGE_MANAGE};
         this.botPermissions = new Permission[] {Permission.MESSAGE_MANAGE};
 
-        this.guildOnly = false;
+        this.guildOnly = true;
         this.options = Arrays.asList(
                 new OptionData(OptionType.INTEGER, "count", "The member to unmute").setRequired(true),
                 new OptionData(OptionType.USER, "member", "Remove only this user's messages").setRequired(false)
@@ -66,9 +65,6 @@ public class PurgeCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        //Defer to wait for us to handle the command
-        InteractionHook interactionHook = event.deferReply().setEphemeral(true).complete();
-
         User user = null;
         MessageHistory history = event.getChannel().getHistory();
         Member moderator = event.getMember();
@@ -76,7 +72,7 @@ public class PurgeCommand extends SlashCommand {
 
         // Make sure we don't have a invalid number
         if (count <= 0) {
-            interactionHook.editOriginal("Invalid count, Please specify a positive integer for the number of messages to delete!").queue();
+            event.reply("Invalid count, Please specify a positive integer for the number of messages to delete!").setEphemeral(true).queue();
             return;
         }
 
@@ -84,7 +80,7 @@ public class PurgeCommand extends SlashCommand {
             user = event.getOption("member").getAsUser();
 
             if (user == null) {
-                interactionHook.editOriginal("Invalid user, The user ID specified doesn't link with any valid user in this server.").queue();
+                event.reply("Invalid user, The user ID specified doesn't link with any valid user in this server.").setEphemeral(true).queue();
                 return;
             }
         }
@@ -93,7 +89,7 @@ public class PurgeCommand extends SlashCommand {
 
         if (delList == null) {
             // Should only return null when its a single entry
-            interactionHook.editOriginal("Purged 1/1 messages!").queue();
+            event.reply("Purged 1/1 messages!").setEphemeral(true).queue();
             return;
         }
 
@@ -102,7 +98,7 @@ public class PurgeCommand extends SlashCommand {
         delList.remove(delList.size()-1);
 
         event.getTextChannel().deleteMessagesByIds(delList).queue();
-        interactionHook.editOriginal("Purged " + purged + " messages!").queue();
+        event.reply("Purged " + purged + " messages!").setEphemeral(true).queue();
 
     }
 

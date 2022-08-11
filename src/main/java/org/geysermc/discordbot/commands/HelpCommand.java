@@ -31,7 +31,6 @@ import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
@@ -52,27 +51,18 @@ public class HelpCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        // Defer to fetch the help menu
-        InteractionHook interactionHook = event.deferReply().complete();
-        interactionHook.editOriginalEmbeds(handle(true)).queue();
+        event.replyEmbeds(handle("/")).queue();
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        event.getMessage().replyEmbeds(handle(false)).queue();
+        event.getMessage().replyEmbeds(handle(event.getPrefix())).queue();
     }
 
-    private MessageEmbed handle(boolean isSlashCmd) {
+    private MessageEmbed handle(String prefix) {
         EmbedBuilder helpEmbed = new EmbedBuilder()
                 .setColor(BotColors.SUCCESS.getColor())
                 .setTitle("Geyser Bot Help");
-
-        String prefix;
-        if (isSlashCmd) {
-            prefix = "/";
-        } else {
-            prefix = PropertiesManager.getPrefix();
-        }
 
         for (Command command : GeyserBot.COMMANDS.stream().sorted(Comparator.comparing(Command::getName)).collect(Collectors.toList())) {
             if (!command.isHidden()) {
