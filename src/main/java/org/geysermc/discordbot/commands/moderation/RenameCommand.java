@@ -25,12 +25,17 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.storage.ServerSettings;
@@ -42,13 +47,51 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class RenameCommand extends Command {
+public class RenameCommand extends SlashCommand {
 
     public RenameCommand() {
         this.name = "rename";
+        this.help = "Rename a user";
         this.aliases = new String[] { "nick", "nickname" };
         this.hidden = true;
+
         this.userPermissions = new Permission[] { Permission.NICKNAME_MANAGE };
+        this.botPermissions = new Permission[] { Permission.NICKNAME_MANAGE };
+
+        this.guildOnly = false;
+        this.options = List.of(
+                new OptionData(OptionType.USER, "member", "The member to rename").setRequired(true)
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        // Defer to wait for us to handle the command
+        InteractionHook interactionHook = event.deferReply().complete();
+
+        Member member = event.getOption("member").getAsMember();
+
+        if (member == null) {
+            interactionHook.editOriginalEmbeds(new EmbedBuilder()
+                    .setTitle("Invalid user")
+                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build()).queue();
+            return;
+        } else {
+            // Check we can target the user
+            if (!event.getMember().canInteract(member) || member.getIdLong() == GeyserBot.getJDA().getSelfUser().getIdLong()) {
+                interactionHook.editOriginalEmbeds(new EmbedBuilder()
+                        .setTitle("Higher role")
+                        .setDescription("Either the bot or you cannot target that user.")
+                        .setColor(BotColors.FAILURE.getColor())
+                        .build()).queue();
+                return;
+            }
+        }
+
+        // Send the embed when done
+        interactionHook.editOriginalEmbeds(handle(member, event.getMember(), event.getGuild())).queue();
     }
 
     @Override
@@ -78,27 +121,33 @@ public class RenameCommand extends Command {
             return;
         }
 
+        event.getMessage().replyEmbeds(handle(member, event.getMember(), event.getGuild())).queue();
+    }
+
+    private MessageEmbed handle(Member member, Member moderator, Guild guild) {
         String oldNick = member.getEffectiveName();
 
         // Rename user
-        member.modifyNickname(SwearHandler.getRandomNick()).queue(unused -> {
-            // Log the change
-            int id = GeyserBot.storageManager.addLog(event.getMember(), "rename", member.getUser(), "");
+        String newNick = SwearHandler.getRandomNick();
+        member.modifyNickname(newNick).queue();
 
-            MessageEmbed renameEmbed = new EmbedBuilder()
-                    .setTitle("Renamed user")
-                    .addField("User", member.getAsMention(), false)
-                    .addField("Staff member", event.getAuthor().getAsMention(), false)
-                    .addField("Old name", oldNick, false)
-                    .addField("New name", member.getEffectiveName(), false)
-                    .setFooter("ID: " + id)
-                    .setTimestamp(Instant.now())
-                    .setColor(BotColors.SUCCESS.getColor())
-                    .build();
+        // Log the change
+        int id = GeyserBot.storageManager.addLog(member, "rename", member.getUser(), "");
 
-            // Send the embed as a reply and to the log
-            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(renameEmbed).queue();
-            event.getMessage().replyEmbeds(renameEmbed).queue();
-        });
+        MessageEmbed renameEmbed = new EmbedBuilder()
+                .setTitle("Renamed user")
+                .addField("User", member.getAsMention(), false)
+                .addField("Staff member", moderator.getAsMention(), false)
+                .addField("Old name", oldNick, false)
+                .addField("New name", newNick, false)
+                .setFooter("ID: " + id)
+                .setTimestamp(Instant.now())
+                .setColor(BotColors.SUCCESS.getColor())
+                .build();
+
+        // Send the embed as a reply and to the log
+        ServerSettings.getLogChannel(guild).sendMessageEmbeds(renameEmbed).queue();
+        return renameEmbed;
     }
+
 }

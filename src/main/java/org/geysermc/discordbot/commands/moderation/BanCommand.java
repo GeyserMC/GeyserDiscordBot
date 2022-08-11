@@ -25,13 +25,18 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -42,12 +47,76 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BanCommand extends Command {
+public class BanCommand extends SlashCommand {
 
     public BanCommand() {
         this.name = "ban";
         this.hidden = true;
-        this.userPermissions = new Permission[] { Permission.BAN_MEMBERS };
+        this.help = "Ban a user";
+
+        this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
+        this.botPermissions = new Permission[]{Permission.BAN_MEMBERS};
+
+        this.guildOnly = false;
+        this.options = Arrays.asList(
+                new OptionData(OptionType.USER, "member", "The member to ban").setRequired(true),
+                new OptionData(OptionType.INTEGER, "days", "How many days worth of messages should we purge").setRequired(false),
+                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user upon banning").setRequired(false),
+                new OptionData(OptionType.STRING, "reason", "Specify a reason for banning").setRequired(false)
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        // Defer to wait for us to handle the command
+        InteractionHook interactionHook = event.deferReply().complete();
+
+        // Fetch options
+        Member member = event.getOption("member").getAsMember();
+        User user = event.getOption("member").getAsUser();
+        Member moderator = event.getMember();
+        int days = 0;
+        boolean silent = false;
+        String reason;
+
+        if (member != null) {
+            // Check we can target the user
+            if (!event.getMember().canInteract(member) || member.getIdLong() == GeyserBot.getJDA().getSelfUser().getIdLong()) {
+                interactionHook.editOriginalEmbeds(new EmbedBuilder()
+                        .setTitle("Higher role")
+                        .setDescription("Either the bot or you cannot target that user.")
+                        .setColor(BotColors.FAILURE.getColor())
+                        .build()).queue();
+                return;
+            }
+        } else {
+            interactionHook.editOriginalEmbeds(new EmbedBuilder()
+                    .setTitle("Invalid user")
+                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build()).queue();
+            return;
+
+        }
+
+        //Check if we should be silent
+        if (event.hasOption("silent")) {
+            silent = event.getOption("silent").getAsBoolean();
+        }
+
+        //Get the reason or use none
+        if (event.hasOption("reason")) {
+            reason = event.getOption("reason").getAsString();
+        } else {
+            reason = "*None*";
+        }
+
+        //Get number of days to purge
+        if (event.hasOption("days")) {
+            days = event.getOption("days").getAsInt();
+        }
+
+        interactionHook.editOriginalEmbeds(handle(user, moderator, event.getGuild(), days, silent, reason)).queue();
     }
 
     @Override
@@ -58,6 +127,7 @@ public class BanCommand extends Command {
         String selectorString = args.remove(0);
         User user = BotHelpers.getUser(selectorString);
         Member member = BotHelpers.getMember(event.getGuild(), selectorString);
+        Member moderator = event.getMember();
 
         // Check user is valid
         if (user == null) {
@@ -70,7 +140,7 @@ public class BanCommand extends Command {
         }
 
         // Check we can target the user
-        if (member != null && (!event.getSelfMember().canInteract(member) || !event.getMember().canInteract(member))) {
+        if (member != null && (!event.getSelfMember().canInteract(member) || !moderator.canInteract(member))) {
             event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Higher role")
                     .setDescription("Either the bot or you cannot target that user.")
@@ -127,6 +197,10 @@ public class BanCommand extends Command {
             reason = reasonParts;
         }
 
+        event.getMessage().replyEmbeds(handle(user, moderator, event.getGuild(),delDays, silent, reason)).queue();
+    }
+
+    private MessageEmbed handle(User user, Member mod, Guild guild,int days, boolean silent, String reason) {
         // Let the user know they're banned if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) -> {
@@ -136,7 +210,7 @@ public class BanCommand extends Command {
                         .setTimestamp(Instant.now())
                         .setColor(BotColors.FAILURE.getColor());
 
-                String punishmentMessage = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), "punishment-message");
+                String punishmentMessage = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "punishment-message");
                 if (punishmentMessage != null && !punishmentMessage.isEmpty()) {
                     embedBuilder.addField("Additional Info", punishmentMessage, false);
                 }
@@ -146,15 +220,15 @@ public class BanCommand extends Command {
         }
 
         // Ban user
-        event.getGuild().ban(user, delDays, String.join(" ", args)).queue();
+        guild.ban(user, days, reason).queue();
 
         // Log the change
-        int id = GeyserBot.storageManager.addLog(event.getMember(), "ban", user, reason);
+        int id = GeyserBot.storageManager.addLog(mod, "ban", user, reason);
 
         MessageEmbed bannedEmbed = new EmbedBuilder()
                 .setTitle("Banned user")
                 .addField("User", user.getAsMention(), false)
-                .addField("Staff member", event.getAuthor().getAsMention(), false)
+                .addField("Staff member", mod.getAsMention(), false)
                 .addField("Reason", reason, false)
                 .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())
@@ -162,7 +236,7 @@ public class BanCommand extends Command {
                 .build();
 
         // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(bannedEmbed).queue();
-        event.getMessage().replyEmbeds(bannedEmbed).queue();
+        ServerSettings.getLogChannel(guild).sendMessageEmbeds(bannedEmbed).queue();
+        return bannedEmbed;
     }
 }

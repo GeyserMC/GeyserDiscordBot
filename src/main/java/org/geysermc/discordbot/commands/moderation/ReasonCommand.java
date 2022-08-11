@@ -25,10 +25,16 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ModLog;
@@ -41,31 +47,72 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ReasonCommand extends Command {
+public class ReasonCommand extends SlashCommand {
 
     public ReasonCommand() {
         this.name = "reason";
         this.aliases = new String[] { "case" };
+        this.help = "Get info on a moderation event";
         this.hidden = true;
+
         this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
+        this.botPermissions = new Permission[] { Permission.KICK_MEMBERS };
+
+        this.guildOnly = false;
+        this.options = Arrays.asList(
+                new OptionData(OptionType.INTEGER, "id", "The event ID to fetch").setRequired(true),
+                new OptionData(OptionType.STRING, "reason", "Set the reason").setRequired(false)
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        // Defer to wait for us to handle the command
+        InteractionHook interactionHook = event.deferReply().complete();
+
+        int logID = event.getOption("id").getAsInt();
+        String updatedReason;
+
+        // Get reason if specified
+        if (event.hasOption("reason")) {
+            updatedReason = event.getOption("reason").getAsString();
+        } else {
+            updatedReason = null;
+        }
+
+        interactionHook.editOriginalEmbeds(handle(logID, updatedReason, event.getGuild())).queue();
+
     }
 
     @Override
     protected void execute(CommandEvent event) {
+        MessageEmbed embed;
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
         // Fetch the entry
         int logId = Integer.parseInt(args.remove(0));
-        ModLog log = GeyserBot.storageManager.getLog(event.getGuild(), logId);
+        String newReason = String.join(" ", args);
 
-        // Check user is valid
+        if (newReason.trim().isEmpty()) {
+            embed = handle(logId, null, event.getGuild());
+        } else {
+            embed = handle(logId, newReason, event.getGuild());
+        }
+
+        event.getMessage().replyEmbeds(embed).queue();
+    }
+
+    private MessageEmbed handle(int logId, String updatedReason, Guild guild) {
+        // Fetch log
+        ModLog log = GeyserBot.storageManager.getLog(guild, logId);
+
+        // Check log is valid
         if (log == null) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
+            return new EmbedBuilder()
                     .setTitle("Invalid moderation log")
                     .setDescription("The moderation log ID specified doesn't exist in the database for this guild.")
                     .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
+                    .build();
         }
 
         EmbedBuilder logEmbedBuilder = new EmbedBuilder()
@@ -77,20 +124,18 @@ public class ReasonCommand extends Command {
                 .addField("By", log.user().getAsMention(), true)
                 .addField("Time", TimeFormat.DATE_TIME_LONG.format(OffsetDateTime.ofInstant(log.time(), ZoneOffset.UTC)), false);
 
-        String newReason = String.join(" ", args);
-
-        if (!newReason.trim().isEmpty()) {
+        if (updatedReason != null) {
             logEmbedBuilder
                     .setTitle("Updated mod log: " + logId)
                     .addField("Old Reason", log.reason(), false)
-                    .addField("New Reason", newReason, false);
+                    .addField("New Reason", updatedReason, false);
 
-            GeyserBot.storageManager.updateLog(event.getGuild(), logId, newReason);
+            GeyserBot.storageManager.updateLog(guild, logId, updatedReason);
         } else {
             logEmbedBuilder.addField("Reason", log.reason(), false);
         }
 
         // Send the embed as a reply
-        event.getMessage().replyEmbeds(logEmbedBuilder.build()).queue();
+        return logEmbedBuilder.build();
     }
 }
