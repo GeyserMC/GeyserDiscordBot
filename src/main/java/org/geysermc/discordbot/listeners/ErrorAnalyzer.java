@@ -93,7 +93,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
             return;
         }
 
-        // Max amount of images for ocr, default set on 3; 3 images per message or 3 images per 3 messages within a minute.
+        // Max amount of images for ocr, default set on 2; 3 images per message or 3 images per 3 messages within a minute.
         int maxImages = 2;
         // Check attachments
         for (ListIterator<Message.Attachment> it = event.getMessage().getAttachments().listIterator(); it.hasNext();) {
