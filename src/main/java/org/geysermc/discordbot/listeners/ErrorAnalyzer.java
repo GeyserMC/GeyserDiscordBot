@@ -93,11 +93,18 @@ public class ErrorAnalyzer extends ListenerAdapter {
             return;
         }
 
+        // Max amount of images for ocr, default set on 2; 3 images per message or 3 images per 3 messages within a minute.
+        int maxImages = 2;
         // Check attachments
-        for (Message.Attachment attachment : event.getMessage().getAttachments()) {
+        for (ListIterator<Message.Attachment> it = event.getMessage().getAttachments().listIterator(); it.hasNext();) {
+            // When index is higher than 2 break loop.
+            if (it.nextIndex() > maxImages) {
+                break;
+            }
+
+            Message.Attachment attachment = it.next();
             if (attachment.isImage()) {
                 // Check if author sent an image
-                int maxImages = 2;
                 Integer count = messageCache.getIfPresent(event.getAuthor());
                 if (count == null) {
                     // If author has not sent an image put them in to cache.
