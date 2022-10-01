@@ -42,18 +42,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.geysermc.discordbot.health_checker.HealthCheckerManager;
 import org.geysermc.discordbot.http.Server;
-import org.geysermc.discordbot.listeners.BadLinksHandler;
-import org.geysermc.discordbot.listeners.CommandErrorHandler;
-import org.geysermc.discordbot.listeners.DumpHandler;
-import org.geysermc.discordbot.listeners.ErrorAnalyzer;
-import org.geysermc.discordbot.listeners.FileHandler;
-import org.geysermc.discordbot.listeners.LevelHandler;
-import org.geysermc.discordbot.listeners.LogHandler;
-import org.geysermc.discordbot.listeners.PersistentRoleHandler;
-import org.geysermc.discordbot.listeners.ShutdownHandler;
-import org.geysermc.discordbot.listeners.SlowmodeHandler;
-import org.geysermc.discordbot.listeners.SwearHandler;
-import org.geysermc.discordbot.listeners.VoiceGroupHandler;
+import org.geysermc.discordbot.listeners.*;
 import org.geysermc.discordbot.storage.AbstractStorageManager;
 import org.geysermc.discordbot.storage.SlowModeInfo;
 import org.geysermc.discordbot.storage.StorageType;
@@ -225,6 +214,7 @@ public class GeyserBot {
                             new ShutdownHandler(),
                             new VoiceGroupHandler(),
                             new BadLinksHandler(),
+                            new HelpHandler(),
                             client.build(),
                             tagClient.build())
                     .build();
