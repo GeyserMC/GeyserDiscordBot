@@ -29,7 +29,6 @@ import br.com.azalim.mcserverping.MCPing;
 import br.com.azalim.mcserverping.MCPingOptions;
 import br.com.azalim.mcserverping.MCPingResponse;
 import com.nukkitx.protocol.bedrock.BedrockClient;
-import com.nukkitx.protocol.bedrock.BedrockPong;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -333,6 +332,10 @@ public class DumpHandler extends ListenerAdapter {
      * @return True if the IP is internal/reserved
      */
     private boolean isInternalIP(String address) {
+        if ("localhost".equalsIgnoreCase(address)) {
+            return true;
+        }
+
         try {
             for (SubnetUtils.SubnetInfo subnetInfo : INTERNAL_IP_RANGES) {
                 if (subnetInfo.isInRange(address) || subnetInfo.getAddress().equals(address)) {
@@ -404,7 +407,7 @@ public class DumpHandler extends ListenerAdapter {
                 client.bind().join();
 
                 InetSocketAddress addressToPing = new InetSocketAddress(address, port);
-                BedrockPong pong = client.ping(addressToPing,1500, TimeUnit.MILLISECONDS).get();
+                client.ping(addressToPing, 1500, TimeUnit.MILLISECONDS).get();
 
                 // Mark the server as pinged and add the status to the address field
                 addrText += " [(server online)](https://mcsrvstat.us/server/" + address + ":" + port + ")";
