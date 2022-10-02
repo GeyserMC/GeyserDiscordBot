@@ -146,7 +146,7 @@ public class BanCommand extends Command {
             }, throwable -> {});
         }
 
-        // Ban user, updated in jda 5.0.0-alpha.20.
+        // Ban user
         event.getGuild().ban(user, delDays, TimeUnit.DAYS).queue();
 
         // Log the change
