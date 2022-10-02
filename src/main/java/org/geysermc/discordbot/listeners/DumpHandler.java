@@ -66,7 +66,7 @@ import java.util.stream.Collectors;
 public class DumpHandler extends ListenerAdapter {
 
     private static final Pattern DUMP_URL = Pattern.compile("dump\\.geysermc\\.org/(raw/)?([0-9a-z]{32})", Pattern.CASE_INSENSITIVE);
-    private static final SubnetUtils.SubnetInfo[] INTERNAL_IP_RANGES;
+    public static final SubnetUtils.SubnetInfo[] INTERNAL_IP_RANGES;
     public static final List<AbstractDumpIssueCheck> ISSUE_CHECKS;
 
     static {
@@ -331,7 +331,7 @@ public class DumpHandler extends ListenerAdapter {
      * @param address IP address to check
      * @return True if the IP is internal/reserved
      */
-    private boolean isInternalIP(String address) {
+    public static boolean isInternalIP(String address) {
         if ("localhost".equalsIgnoreCase(address)) {
             return true;
         }
