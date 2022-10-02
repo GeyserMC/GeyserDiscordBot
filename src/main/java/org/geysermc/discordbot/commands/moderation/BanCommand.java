@@ -147,7 +147,7 @@ public class BanCommand extends Command {
         }
 
         // Ban user
-        event.getGuild().ban(user, delDays, TimeUnit.valueOf(String.join(" ", args))).queue();
+        event.getGuild().ban(user, delDays, TimeUnit.DAYS).queue();
 
         // Log the change
         int id = GeyserBot.storageManager.addLog(event.getMember(), "ban", user, reason);
