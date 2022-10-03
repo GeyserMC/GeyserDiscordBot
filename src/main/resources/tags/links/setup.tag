@@ -1,4 +1,5 @@
 type: text
+help: geyser || setup
 
 ---
 
