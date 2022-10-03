@@ -25,14 +25,14 @@
 
 package org.geysermc.discordbot.util;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.geysermc.discordbot.GeyserBot;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.PagedSearchIterable;
 
 import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
@@ -50,8 +50,12 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BotHelpers {
+
+    private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w.\\-]+/)?([\\w.\\-]+)( |$)", Pattern.CASE_INSENSITIVE);
+
 
     /**
      * Get a guild member from a given id string
@@ -328,5 +332,29 @@ public class BotHelpers {
         }
 
         return input.substring(0, length - 3) + "...";
+    }
+
+    /**
+     * Get a Github repository
+     *
+     * @param repoString Input string to get repository
+     * @return Repository A repository if one was found, or null otherwise.
+     */
+    public static GHRepository getRepo(String repoString) {
+        GHRepository repo = null;
+        try {
+            Matcher matcherRepo = REPO_PATTERN.matcher(repoString);
+            if (matcherRepo.find()) {
+                if (matcherRepo.group(2) == null) {
+                    PagedSearchIterable<GHRepository> results = GeyserBot.getGithub().searchRepositories().q(matcherRepo.group(3)).list();
+                    repo = results.toArray()[0];
+                } else {
+                    repo = GeyserBot.getGithub().getRepository(matcherRepo.group(2) + matcherRepo.group(3));
+                }
+            } else {
+                repo = GeyserBot.getGithub().getRepository("GeyserMC/Geyser");
+            }
+        } catch (IOException ignored) { }
+        return repo;
     }
 }
