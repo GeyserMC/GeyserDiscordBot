@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -75,7 +76,7 @@ public class LevelCommand extends SlashCommand {
         InteractionHook interactionHook = event.deferReply().complete();
 
         File levelFile = handle(member);
-        interactionHook.editOriginal(levelFile).queue(message -> levelFile.delete());
+        interactionHook.editOriginalAttachments(FileUpload.fromData(levelFile)).queue(message -> levelFile.delete());
     }
 
     @Override
@@ -96,7 +97,7 @@ public class LevelCommand extends SlashCommand {
         }
 
         File levelFile = handle(member);
-        event.getMessage().reply(levelFile).queue(message -> levelFile.delete());
+        event.getMessage().replyFiles(FileUpload.fromData(levelFile)).queue(message -> levelFile.delete());
     }
 
     protected File handle(Member member) {

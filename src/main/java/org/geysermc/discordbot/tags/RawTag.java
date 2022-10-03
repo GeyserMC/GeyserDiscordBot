@@ -73,7 +73,7 @@ public class RawTag extends Command {
 
         var reply = event.getMessage().reply(content);
         if (!buttons.isEmpty()) {
-            reply = reply.setActionRows(ActionRow.of(buttons));
+            reply = reply.setComponents(ActionRow.of(buttons));
         }
         reply.queue();
     }

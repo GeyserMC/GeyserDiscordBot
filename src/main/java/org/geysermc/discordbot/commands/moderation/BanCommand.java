@@ -41,6 +41,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class BanCommand extends Command {
 
@@ -146,7 +147,7 @@ public class BanCommand extends Command {
         }
 
         // Ban user
-        event.getGuild().ban(user, delDays, String.join(" ", args)).queue();
+        event.getGuild().ban(user, delDays, TimeUnit.DAYS).queue();
 
         // Log the change
         int id = GeyserBot.storageManager.addLog(event.getMember(), "ban", user, reason);
