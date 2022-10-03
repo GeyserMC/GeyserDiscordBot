@@ -13,7 +13,7 @@
                 <div class="card bg-light h-100">
                     <div class="row g-0 h-100">
                         <div class="col-md-4 d-flex flex-row align-items-center p-2">
-                            <img src="${guild.iconUrl}" class="card-img-top m-auto d-block" alt="${guild.name}%27s Logo" style="max-height: 128px;max-width: 128px;">
+                            <#if guild.iconUrl??><img src="${guild.iconUrl}" class="card-img-top m-auto d-block" alt="${guild.name}%27s Logo" style="max-height: 128px;max-width: 128px;"></#if>
                         </div>
                         <div class="col-md-8">
                             <div class="card-body d-flex flex-column h-100">

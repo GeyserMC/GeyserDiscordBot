@@ -28,9 +28,9 @@ package org.geysermc.discordbot.storage;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.PropertiesManager;
 

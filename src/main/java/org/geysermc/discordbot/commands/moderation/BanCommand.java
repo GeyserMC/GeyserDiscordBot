@@ -46,6 +46,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class BanCommand extends SlashCommand {
 
@@ -202,7 +203,7 @@ public class BanCommand extends SlashCommand {
         }
 
         // Ban user
-        guild.ban(user, days, reason).queue();
+        guild.ban(user, days, TimeUnit.DAYS).reason(reason).queue();
 
         // Log the change
         int id = GeyserBot.storageManager.addLog(mod, "ban", user, reason);
