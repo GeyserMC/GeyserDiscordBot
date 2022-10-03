@@ -82,14 +82,14 @@ public class SlashTag {
 
             var reply = event.replyEmbeds(embed.build());
             if (!buttonList.isEmpty()) {
-                reply = reply.addActionRows(ActionRow.of(buttonList));
+                reply = reply.setComponents(ActionRow.of(buttonList));
             }
 
             reply.queue();
         } else if (type == 1) {
             var reply = event.reply(content);
             if (!buttonList.isEmpty()) {
-                reply = reply.addActionRows(ActionRow.of(buttonList));
+                reply = reply.setComponents(ActionRow.of(buttonList));
             }
 
             reply.queue();
