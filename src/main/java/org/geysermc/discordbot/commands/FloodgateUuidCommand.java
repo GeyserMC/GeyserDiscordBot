@@ -88,7 +88,8 @@ public class FloodgateUuidCommand extends SlashCommand {
         }
 
         if (uuid == null) {
-            builder.addField("Error", "Could not find bedrock player: " + username, false);
+            builder.setDescription("The bedrock player was not found. Either the player has not yet joined a Geyser-Floodgate server or you entered the wrong username.");
+            builder.addField("Error", "could not find bedrock player: " + username, false);
             builder.setColor(BotColors.FAILURE.getColor());
             return builder.build();
         }
