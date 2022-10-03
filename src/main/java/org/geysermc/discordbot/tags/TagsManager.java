@@ -65,7 +65,6 @@ public class TagsManager {
         return ISSUE_RESPONSES;
     }
 
-
     public static Map<String, String> getSelfHelp() {
         if (!tagsLoaded) {
             loadTags();
@@ -177,6 +176,7 @@ public class TagsManager {
                                     ISSUE_RESPONSES.put(issue.trim(), content.toString().trim());
                                 }
                             }
+
                             if (selfHelpTrigger != null) {
                                 for (String help : selfHelpTrigger) {
                                     SELF_HELP.put(help.trim(), content.toString().trim());
