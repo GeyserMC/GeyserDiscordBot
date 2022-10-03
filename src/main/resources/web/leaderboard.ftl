@@ -29,7 +29,7 @@
     </style>
 
     <div class="d-flex flex-row align-items-center">
-        <img src='${guild.iconUrl}' alt='${guild.name}%27s Logo' class='rounded-circle p-2' />
+        <#if guild.iconUrl??><img src='${guild.iconUrl}' alt='${guild.name}%27s Logo' class='rounded-circle p-2' /></#if>
         <h1>
             ${guild.name}<br>
             <small class="text-muted">Levels: Top 100</small>
