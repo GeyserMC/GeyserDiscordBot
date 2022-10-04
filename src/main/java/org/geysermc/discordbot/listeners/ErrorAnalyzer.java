@@ -131,7 +131,16 @@ public class ErrorAnalyzer extends ListenerAdapter {
                         BufferedImage bi = ImageIO.read(attachment.getProxy().download().get());
                         Dimension newMaxSize = new Dimension(2000,1400);
                         BufferedImage resizedImg = Scalr.resize(bi, Scalr.Method.BALANCED, newMaxSize.width, newMaxSize.height);
-                        errorHandler(tesseract.doOCR(resizedImg), embedBuilder, event);
+                        String textFromImage = tesseract.doOCR(resizedImg);
+                        // Send ocr reading to logs channel.
+                        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                                .setTitle("OCR Reading")
+                                .addField("Reading", textFromImage, false)
+                                .addField("Image link", event.getJumpUrl(), false)
+                                .setColor(BotColors.NEUTRAL.getColor())
+                                .build()).queue();
+                        //
+                        errorHandler(textFromImage, embedBuilder, event);
                     } catch (TesseractException | InterruptedException | IOException | ExecutionException e) {
                         handleLog(event, e.getMessage(), true);
                     }
