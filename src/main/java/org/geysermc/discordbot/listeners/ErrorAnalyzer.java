@@ -49,6 +49,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
+import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -137,6 +138,8 @@ public class ErrorAnalyzer extends ListenerAdapter {
                                 .setTitle("OCR Reading")
                                 .addField("Reading", textFromImage, false)
                                 .addField("Image link", event.getJumpUrl(), false)
+                                .setFooter("ID: " + event.getAuthor().getId())
+                                .setTimestamp(Instant.now())
                                 .setColor(BotColors.NEUTRAL.getColor())
                                 .build()).queue();
                         //
