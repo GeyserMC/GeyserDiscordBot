@@ -142,7 +142,6 @@ public class ErrorAnalyzer extends ListenerAdapter {
                                 .setTimestamp(Instant.now())
                                 .setColor(BotColors.NEUTRAL.getColor())
                                 .build()).queue();
-                        //
                         errorHandler(textFromImage, embedBuilder, event);
                     } catch (TesseractException | InterruptedException | IOException | ExecutionException e) {
                         handleLog(event, e.getMessage(), true);
