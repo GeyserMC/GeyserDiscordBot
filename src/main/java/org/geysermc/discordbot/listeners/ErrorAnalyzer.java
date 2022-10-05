@@ -136,8 +136,8 @@ public class ErrorAnalyzer extends ListenerAdapter {
                         // Send ocr reading to logs channel.
                         ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                                 .setTitle("OCR Reading")
+                                .addField("Image link", " [Jump to Image](" + event.getJumpUrl() + ")", true)
                                 .addField("Reading", textFromImage, false)
-                                .addField("Image link", event.getJumpUrl(), false)
                                 .setFooter("ID: " + event.getAuthor().getId())
                                 .setTimestamp(Instant.now())
                                 .setColor(BotColors.NEUTRAL.getColor())
