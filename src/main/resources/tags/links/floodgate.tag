@@ -1,5 +1,5 @@
 type: text
-aliases: floodgate
+aliases: floodgate, openthefloodgates
 help: floodgate
 
 ---
