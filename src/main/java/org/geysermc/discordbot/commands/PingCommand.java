@@ -39,9 +39,9 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.geysermc.discordbot.listeners.DumpHandler;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
+import org.geysermc.discordbot.util.NetworkUtils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -110,7 +110,7 @@ public class PingCommand extends SlashCommand {
 
         String hostname = ipParts[0];
 
-        if (DumpHandler.isInternalIP(hostname)) {
+        if (NetworkUtils.isInternalIP(hostname)) {
             return MessageHelper.errorResponse(null, "IP invalid", "The given IP appears to be an internal address and won't be queried.");
         }
 

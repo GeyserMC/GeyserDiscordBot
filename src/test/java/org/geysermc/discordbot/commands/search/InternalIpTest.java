@@ -27,7 +27,7 @@ package org.geysermc.discordbot.commands.search;
 
 import org.junit.jupiter.api.Test;
 
-import static org.geysermc.discordbot.listeners.DumpHandler.isInternalIP;
+import static org.geysermc.discordbot.util.NetworkUtils.isInternalIP;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
