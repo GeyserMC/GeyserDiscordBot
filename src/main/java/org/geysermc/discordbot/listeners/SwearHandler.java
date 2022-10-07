@@ -26,7 +26,6 @@
 package org.geysermc.discordbot.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
@@ -159,10 +158,8 @@ public class SwearHandler extends ListenerAdapter {
             message.delete().queue(unused -> {
                 if (notifyUser) {
                     // Alert the user message
-                    message.getChannel().sendMessage(new MessageBuilder()
-                            .append(message.getAuthor().getAsMention())
-                            .append(" your message has been removed because it contains profanity! Please read our rules for more information.")
-                            .build()).queue();
+                    message.getChannel().sendMessage(message.getAuthor().getAsMention() +
+                            " your message has been removed because it contains profanity! Please read our rules for more information.").queue();
                 }
 
                 // Send a log to the admin channel

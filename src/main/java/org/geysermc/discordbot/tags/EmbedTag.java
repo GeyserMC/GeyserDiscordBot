@@ -90,7 +90,7 @@ public class EmbedTag extends Command {
 
         var reply = event.getMessage().replyEmbeds(embed.build());
         if (!buttons.isEmpty()) {
-            reply = reply.setActionRows(ActionRow.of(buttons));
+            reply = reply.setComponents(ActionRow.of(buttons));
         }
         reply.queue();
     }
