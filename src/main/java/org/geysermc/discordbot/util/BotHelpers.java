@@ -337,24 +337,35 @@ public class BotHelpers {
     /**
      * Get a Github repository
      *
-     * @param repoString Input string to get repository
+     * @param repository Input string to get repository
      * @return Repository A repository if one was found, or null otherwise.
      */
-    public static GHRepository getRepo(String repoString) {
-        GHRepository repo = null;
-        try {
-            Matcher matcherRepo = REPO_PATTERN.matcher(repoString);
-            if (matcherRepo.find()) {
-                if (matcherRepo.group(2) == null) {
-                    PagedSearchIterable<GHRepository> results = GeyserBot.getGithub().searchRepositories().q(matcherRepo.group(3)).list();
-                    repo = results.toArray()[0];
-                } else {
-                    repo = GeyserBot.getGithub().getRepository(matcherRepo.group(2) + matcherRepo.group(3));
-                }
-            } else {
-                repo = GeyserBot.getGithub().getRepository("GeyserMC/Geyser");
+    public static GHRepository getRepo(String repository, String owner) throws IOException {
+        GHRepository repo;
+        GHRepository defaultRepo = GeyserBot.getGithub().getRepository("GeyserMC/Geyser");
+        // if optional is used we get repo from optional first.
+        if (!owner.isEmpty()) {
+            try {
+                repo = GeyserBot.getGithub().getRepository(owner + "/" + repository);
+                return repo;
+            } catch (IOException e) {
+                // default to geyser repo.
+                return defaultRepo;
             }
-        } catch (IOException ignored) { }
+        }
+        // if no owner is given search github repo's.
+        Matcher matcherRepo = REPO_PATTERN.matcher(repository);
+        if (matcherRepo.find()) {
+            if (matcherRepo.group(2) == null) {
+                PagedSearchIterable<GHRepository> results = GeyserBot.getGithub().searchRepositories().q(matcherRepo.group(3)).list();
+                repo = results.toArray()[0];
+            } else {
+                repo = GeyserBot.getGithub().getRepository(matcherRepo.group(2) + matcherRepo.group(3));
+            }
+        } else {
+            // default to Geyser repo.
+            repo = defaultRepo;
+        }
         return repo;
     }
 }

@@ -38,7 +38,7 @@ import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
 
 public class GithubCommand extends SlashCommand {
 
@@ -47,25 +47,27 @@ public class GithubCommand extends SlashCommand {
         this.arguments = "<repo>";
         this.help = "Get info about a given GitHub repo.";
         this.guildOnly = false;
-        this.options = Collections.singletonList(
-                new OptionData(OptionType.STRING, "repo", "The repository to lookup", true)
+          this.options = Arrays.asList(
+                new OptionData(OptionType.STRING, "repo", "The repository to lookup", true),
+                new OptionData(OptionType.STRING, "owner", "Owner of the repository")
         );
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String repo = event.optString("repo", "");
+        String repository = event.optString("repo", "");
+        String owner = event.optString("owner", "");
         event.deferReply(false).queue(interactionHook -> {
             try {
-                interactionHook.editOriginalEmbeds(handle(repo)).queue();
+                interactionHook.editOriginalEmbeds(handle(repository, owner)).queue();
             } catch (IOException e) {
                 MessageHelper.errorResponse(event.getChannel(), "Error 404, mayday!", "Could not retrieve data from GitHub, try again later!");
             }
         });
     }
 
-    private MessageEmbed handle(String repoString) throws IOException {
-        GHRepository repo = BotHelpers.getRepo(repoString);
+    private MessageEmbed handle(String repository, String owner) throws IOException {
+        GHRepository repo = BotHelpers.getRepo(repository, owner);
         if (repo == null) {
             return MessageHelper.errorResponse(null, "Error 404, mayday!", "Could not find a repo with specified arguments.");
         }
