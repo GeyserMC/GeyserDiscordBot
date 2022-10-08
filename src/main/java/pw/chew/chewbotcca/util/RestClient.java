@@ -168,6 +168,11 @@ public class RestClient {
         return performRequest(request);
     }
 
+    /**
+     * perform the request
+     * @param request a request
+     * @return a server code response
+     */
     public static String serverCode(Request request){
         OkHttpClient client = GeyserBot.getJDA() == null ? new OkHttpClient() : GeyserBot.getJDA().getHttpClient();
         try {
