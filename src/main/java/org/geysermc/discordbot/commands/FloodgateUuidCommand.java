@@ -62,12 +62,12 @@ public class FloodgateUuidCommand extends SlashCommand {
         String url = "https://api.geysermc.org/v2/xbox/xuid/" + username;
         try {
             // get xuid as json object and convert xuid into Floodgate uuid
-            xuid = new JSONObject(RestClient.get(url));
+            xuid = new JSONObject(RestClient.get(url, false));
         } catch (JSONException e) {
             // this occurs when api wasn't available
             builder.addField("Info", "Unable to lookup uuid, Global API currently unavailable", false);
             builder.addField("Error", e.getMessage(), false);
-            builder.addField("Server Status", RestClient.get(url), false);
+            builder.addField("Server Status", RestClient.get(url, true), false);
             builder.setColor(BotColors.FAILURE.getColor());
             event.replyEmbeds(builder.build()).queue();
             return;
