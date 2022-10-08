@@ -53,24 +53,24 @@ public class RestClient {
     }
 
     /**
-     * Make a GET request
+     * Make a request to get server status
      * @param url the url to get
-     * @param checkServerStatus Check to send server code.
      * @return a server code or a response
      */
-    public static String get(String url, boolean checkServerStatus) {
+    public static String serverStatusCode(String url) {
         Request request = new Request.Builder()
                 .url(url)
                 .get()
                 .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org) DBots/739572267855511652") // GeyserMC - Replace with our bot user agent
                 .build();
 
-        if (checkServerStatus) {
-            return serverCode(request);
+        OkHttpClient client = GeyserBot.getJDA() == null ? new OkHttpClient() : GeyserBot.getJDA().getHttpClient();
+        try {
+            Response response = client.newCall(request).execute();
+            return String.valueOf(response.code());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
-        LoggerFactory.getLogger(RestClient.class).debug("Making call to GET " + url);
-        return performRequest(request);
     }
 
     /**
