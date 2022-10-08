@@ -354,6 +354,7 @@ public class BotHelpers {
                 return defaultRepo;
             }
         }
+
         // if no owner is given search github repo's.
         Matcher matcherRepo = REPO_PATTERN.matcher(repository);
         if (matcherRepo.find()) {
