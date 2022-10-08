@@ -169,21 +169,6 @@ public class RestClient {
     }
 
     /**
-     * perform the request
-     * @param request a request
-     * @return a server code response
-     */
-    public static String serverCode(Request request){
-        OkHttpClient client = GeyserBot.getJDA() == null ? new OkHttpClient() : GeyserBot.getJDA().getHttpClient();
-        try {
-            Response response = client.newCall(request).execute();
-            return String.valueOf(response.code());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
      * Actually perform the request
      * @param request a request
      * @return a response
