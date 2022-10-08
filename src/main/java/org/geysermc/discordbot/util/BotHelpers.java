@@ -343,6 +343,7 @@ public class BotHelpers {
     public static GHRepository getRepo(String repository, String owner) throws IOException {
         GHRepository repo;
         GHRepository defaultRepo = GeyserBot.getGithub().getRepository("GeyserMC/Geyser");
+
         // if optional is used we get repo from optional first.
         if (!owner.isEmpty()) {
             try {
