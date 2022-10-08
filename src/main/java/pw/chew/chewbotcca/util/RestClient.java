@@ -156,6 +156,10 @@ public class RestClient {
         // GeyserMC - Replace JDA call with our JDA
         OkHttpClient client = GeyserBot.getJDA() == null ? new OkHttpClient() : GeyserBot.getJDA().getHttpClient();
         try (Response response = client.newCall(request).execute()) {
+            // If response is not 200 server isn't reachable.
+            if (!(response.code() == 200)) {
+                return String.valueOf(response.code());
+            }
             String body;
             ResponseBody responseBody = response.body();
             if(responseBody == null) {
