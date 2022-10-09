@@ -79,7 +79,7 @@ public class FloodgateUuidCommand extends SlashCommand {
 
         // if message gets returned = Floodgate player wasn't found
         if (xuid.has("message") && xuid.getString("message").contains("Unable to find user")) {
-            builder.setDescription("The bedrock player was not found. Either the player has not yet joined a Geyser-Floodgate server or you entered the wrong username.");
+            builder.setDescription("The bedrock player was not found. Either the player has not yet joined a Floodgate server or you entered the wrong username.");
             builder.addField("Error", "could not find bedrock player: " + username, false);
             builder.setColor(BotColors.FAILURE.getColor());
         }
@@ -101,7 +101,7 @@ public class FloodgateUuidCommand extends SlashCommand {
         // this occurs when api wasn't available
         EmbedBuilder embed = new EmbedBuilder();
         embed.addField("Info", "Unable to lookup uuid, Global API currently unavailable", false);
-        if (error.isEmpty()) {
+        if (!error.isEmpty()) {
             embed.addField("Server Error", error, false);
         }
         embed.addField("Server Status", RestClient.serverStatusCode(url), false);
