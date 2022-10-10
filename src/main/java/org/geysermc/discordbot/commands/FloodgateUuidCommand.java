@@ -58,54 +58,52 @@ public class FloodgateUuidCommand extends SlashCommand {
         String username = event.optString("bedrock-username", "").replace(".", "");
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Floodgate Player UUID");
-        JSONObject xuid = null;
+        JSONObject response = null;
         String url = "https://api.geysermc.org/v2/xbox/xuid/" + username;
         try {
-            // get xuid as json object and convert xuid into Floodgate uuid
-            xuid = new JSONObject(RestClient.get(url));
+            // get response as json object and convert response into Floodgate uuid
+            response = new JSONObject(RestClient.get(url));
         } catch (JSONException e) {
-            handleErrorResponse(event, url, "");
+            handleErrorResponse(builder, event, url, "");
         }
 
-        // Get the xuid from floodgate api and convert it into Floodgate UUID
-        assert xuid != null;
-        if (xuid.has("xuid")) {
-            UUID floodgateUUID = new UUID(0, xuid.getLong("xuid"));
+        // Get the response from floodgate api and convert it into Floodgate UUID
+        assert response != null;
+        if (response.has("xuid")) {
+            UUID floodgateUUID = new UUID(0, response.getLong("xuid"));
             builder.addField("Bedrock player name", username, false);
             builder.addField("Floodgate UUID", String.valueOf(floodgateUUID), false);
-            builder.addField("XUID", String.valueOf(xuid.getLong("xuid")), false);
+            builder.addField("XUID", String.valueOf(response.getLong("response")), false);
             builder.setColor(BotColors.SUCCESS.getColor());
         }
 
-        // if message gets returned = Floodgate player wasn't found
-        if (xuid.has("message") && xuid.getString("message").contains("Unable to find user")) {
+        if (response.has("message") && response.getString("message").contains("Unable to find user")) {
             builder.setDescription("The bedrock player was not found. Either the player has not yet joined a Floodgate server or you entered the wrong username.");
             builder.addField("Error", "could not find bedrock player: " + username, false);
             builder.setColor(BotColors.FAILURE.getColor());
         }
 
-        if (xuid.has("message") && xuid.getString("message").contains("404")) {
-            handleErrorResponse(event, url, "Error 404: The Gamertag is invalid (empty or longer than 16 chars)");
+        if (response.has("message") && response.getString("message").startsWith("404")) {
+            handleErrorResponse(builder, event, url, "Error 404: The Gamertag is invalid (empty or longer than 16 chars)");
             return;
         }
 
-        if (xuid.has("message") && xuid.getString("message").contains("503")) {
-            handleErrorResponse(event, url, "Error 503: The requested account was not cached and we where not able to call the Xbox Live API");
+        if (response.has("message") && response.getString("message").startsWith("503")) {
+            handleErrorResponse(builder, event, url, "Error 503: The requested account was not cached and we where not able to call the Xbox Live API");
             return;
         }
 
         event.replyEmbeds(builder.build()).queue();
     }
 
-    private void handleErrorResponse(SlashCommandEvent event, String url, String error) {
-        // this occurs when api wasn't available
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.addField("Info", "Unable to lookup uuid, Global API currently unavailable", false);
+    private void handleErrorResponse(EmbedBuilder builder, SlashCommandEvent event, String url, String error) {
+        // this occurs when api wasn't available or gives an error response.
+        builder.addField("Info", "Unable to lookup uuid, Global API currently unavailable", false);
         if (!error.isEmpty()) {
-            embed.addField("Server Error", error, false);
+            builder.addField("Server Error", error, false);
         }
-        embed.addField("Server Status", RestClient.serverStatusCode(url), false);
-        embed.setColor(BotColors.FAILURE.getColor());
-        event.replyEmbeds(embed.build()).queue();
+        builder.addField("Server Status", RestClient.serverStatusCode(url), false);
+        builder.setColor(BotColors.FAILURE.getColor());
+        event.replyEmbeds(builder.build()).queue();
     }
 }
