@@ -61,7 +61,7 @@ public class FloodgateUuidCommand extends SlashCommand {
         JSONObject response = null;
         String url = "https://api.geysermc.org/v2/xbox/xuid/" + username;
 
-        // Get response as json object and convert response into Floodgate uuid
+        // Get response as json object.
         try {
             response = new JSONObject(RestClient.get(url));
         } catch (JSONException ignored) {}
@@ -87,7 +87,7 @@ public class FloodgateUuidCommand extends SlashCommand {
             }
             case 400 -> {
                 builder.addField("Global API", "Error " + serverCode,false);
-                builder.addField("Reason", " The Gamertag is invalid (empty or longer than 16 chars", false);
+                builder.addField("Reason", " The Gamertag is invalid (empty or longer than 16 chars)", false);
                 builder.setColor(BotColors.FAILURE.getColor());
             }
             case 503 -> {
