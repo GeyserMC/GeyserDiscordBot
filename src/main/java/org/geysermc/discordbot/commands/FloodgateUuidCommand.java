@@ -64,18 +64,19 @@ public class FloodgateUuidCommand extends SlashCommand {
         // Get response as json object and convert response into Floodgate uuid
         try {
             response = new JSONObject(RestClient.get(url));
-        } catch (JSONException e) {
-            handleErrorResponse(builder, event, url, "Sorry, your input was not correct! Try again.");
-        }
+        } catch (JSONException ignored) {}
+
+        int serverCode = Integer.parseInt(RestClient.serverStatusCode(url));
 
         // Null occurs when Global API Server does not provide a response -> server offline/locked.
         if (response == null) {
-            handleErrorResponse(builder, event, url, "");
+            builder.addField("Global API status", "Server responded with a " + serverCode, false );
+            builder.setColor(BotColors.FAILURE.getColor());
+            event.replyEmbeds(builder.build()).queue();
             return;
         }
 
-        // Get the response from floodgate api and convert it into Floodgate UUID
-        int serverCode = Integer.parseInt(RestClient.serverStatusCode(url));
+        // Check what code the server returns and send the corresponding embed to author.
         switch (serverCode) {
             case 200 -> {
                 UUID floodgateUUID = new UUID(0, response.getLong("xuid"));
@@ -85,29 +86,17 @@ public class FloodgateUuidCommand extends SlashCommand {
                 builder.setColor(BotColors.SUCCESS.getColor());
             }
             case 400 -> {
-                handleErrorResponse(builder, event, url, "Error " + serverCode + ": The Gamertag is invalid (empty or longer than 16 chars)");
-                return;
+                builder.addField("Global API", "Error " + serverCode,false);
+                builder.addField("Reason", " The Gamertag is invalid (empty or longer than 16 chars", false);
+                builder.setColor(BotColors.FAILURE.getColor());
             }
             case 503 -> {
-                handleErrorResponse(builder, event, url, "Error " + serverCode + ": The requested account was not cached and we where not able to call the Xbox Live API");
-                return;
+                builder.addField("Global API", "Error " + serverCode,false);
+                builder.addField("Reason", " The requested account was not cached and we where not able to call the Xbox Live API", false);
+                builder.setColor(BotColors.FAILURE.getColor());
             }
         }
 
-        event.replyEmbeds(builder.build()).queue();
-    }
-
-    private void handleErrorResponse(EmbedBuilder builder, SlashCommandEvent event, String url, String error) {
-        // this occurs when api wasn't available or gives an error response.
-        if (!error.isEmpty()) {
-            // Global API server is online but is giving an error on the account
-            builder.addField("Global API Error", error, false);
-        } else {
-            // Server not available, check what server error we get.
-            builder.addField("Server Status", RestClient.serverStatusCode(url), false);
-        }
-
-        builder.setColor(BotColors.FAILURE.getColor());
         event.replyEmbeds(builder.build()).queue();
     }
 }
