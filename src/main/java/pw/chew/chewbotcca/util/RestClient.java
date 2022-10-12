@@ -67,7 +67,9 @@ public class RestClient {
         OkHttpClient client = GeyserBot.getJDA() == null ? new OkHttpClient() : GeyserBot.getJDA().getHttpClient();
         try {
             Response response = client.newCall(request).execute();
-            return String.valueOf(response.code());
+            String errorCode = String.valueOf(response.code());
+            response.close();
+            return errorCode;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
