@@ -29,7 +29,7 @@ import org.apache.commons.net.util.SubnetUtils;
 
 public class NetworkUtils {
 
-    public static final SubnetUtils.SubnetInfo[] INTERNAL_IP_RANGES = new SubnetUtils.SubnetInfo[] {
+    private static final SubnetUtils.SubnetInfo[] INTERNAL_IP_RANGES = new SubnetUtils.SubnetInfo[] {
             new SubnetUtils("0.0.0.0/8").getInfo(),
             new SubnetUtils("10.0.0.0/8").getInfo(),
             new SubnetUtils("100.64.0.0/10").getInfo(),

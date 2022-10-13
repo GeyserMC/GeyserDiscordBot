@@ -23,7 +23,7 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.commands.search;
+package org.geysermc.discordbot.util;
 
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ import static org.geysermc.discordbot.util.NetworkUtils.isInternalIP;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class InternalIpTest {
+public class NetworkUtilsTest {
 
     private static final String[] INTERNAL_ADDRESSES = {"0.0.0.0", "localhost", "127.0.0.1", "192.168.1.7", "10.0.0.8"};
     private static final String[] PUBLIC_ADDRESSES = {"1.1.1.1", "link.geysermc.org", "mc.hypixel.net", "123.456.789.101"};
