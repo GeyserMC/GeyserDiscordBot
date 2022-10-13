@@ -80,19 +80,22 @@ public class FloodgateUuidCommand extends SlashCommand {
         switch (serverCode) {
             case 200 -> {
                 UUID floodgateUUID = new UUID(0, response.getLong("xuid"));
-                builder.addField("Bedrock player name", username, false);
+                builder.addField("Bedrock Player Name", username, false);
                 builder.addField("Floodgate UUID", String.valueOf(floodgateUUID), false);
                 builder.addField("XUID", String.valueOf(response.getLong("xuid")), false);
                 builder.setColor(BotColors.SUCCESS.getColor());
             }
             case 400 -> {
                 builder.addField("Global API", "Error " + serverCode,false);
-                builder.addField("Reason", " The Gamertag is invalid (empty or longer than 16 chars)", false);
+                builder.addField("Bedrock Player Name", username, false);
+                builder.addField("Reason", " The Bedrock player name is invalid (empty or longer than 16 chars)", false);
                 builder.setColor(BotColors.FAILURE.getColor());
             }
             case 503 -> {
                 builder.addField("Global API", "Error " + serverCode,false);
+                builder.addField("Bedrock Player Name", username, false);
                 builder.addField("Reason", " The requested account was not cached and we where not able to call the Xbox Live API", false);
+                builder.addField("Fix", "You have to join a Floodgate server so the Bedrock account will get added to the GlobalAPI cache.", false);
                 builder.setColor(BotColors.FAILURE.getColor());
             }
         }
