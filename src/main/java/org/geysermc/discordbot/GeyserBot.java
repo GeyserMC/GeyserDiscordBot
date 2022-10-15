@@ -36,10 +36,10 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.requests.restaction.MessageAction;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.dv8tion.jda.api.utils.messages.MessageRequest;
 import org.geysermc.discordbot.health_checker.HealthCheckerManager;
 import org.geysermc.discordbot.http.Server;
 import org.geysermc.discordbot.listeners.BadLinksHandler;
@@ -197,7 +197,7 @@ public class GeyserBot {
         tagClient.setManualUpsert(true);
 
         // Disable pings on replies
-        MessageAction.setDefaultMentionRepliedUser(false);
+        MessageRequest.setDefaultMentionRepliedUser(false);
 
         // Setup the thread pool
         generalThreadPool = Executors.newScheduledThreadPool(5);
