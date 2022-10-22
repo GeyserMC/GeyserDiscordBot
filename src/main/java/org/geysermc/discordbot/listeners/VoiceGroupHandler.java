@@ -25,24 +25,23 @@
 
 package org.geysermc.discordbot.listeners;
 
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.jetbrains.annotations.NotNull;
 
 public class VoiceGroupHandler extends ListenerAdapter {
-    @Override
-    public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
-        try {
-            event.getGuild().addRoleToMember(event.getMember(), ServerSettings.getVoiceRole(event.getGuild())).queue();
-        } catch (IllegalArgumentException ignored) { }
-    }
 
     @Override
-    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
-        try {
-            event.getGuild().removeRoleFromMember(event.getMember(), ServerSettings.getVoiceRole(event.getGuild())).queue();
-        } catch (IllegalArgumentException ignored) { }
+    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
+        if (event.getOldValue() == null && event.getNewValue() != null) {
+            try {
+                event.getGuild().addRoleToMember(event.getMember(), ServerSettings.getVoiceRole(event.getGuild())).queue();
+            } catch (IllegalArgumentException ignored) {}
+        } else if (event.getOldValue() != null && event.getNewValue() == null) {
+            try {
+                event.getGuild().removeRoleFromMember(event.getMember(), ServerSettings.getVoiceRole(event.getGuild())).queue();
+            } catch (IllegalArgumentException ignored) {}
+        }
     }
 }
