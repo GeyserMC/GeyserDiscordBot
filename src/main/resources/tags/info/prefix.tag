@@ -8,3 +8,5 @@ We strongly recommend that you **do not remove** the prefix, but instead change 
 
 You can change the prefix (`.`) in players' names by editing the option in Floodgate's config.yml file. Characters that a Java player cannot normally choose to be part of their names are recommended.
 Some examples include `+`, `-`, `!`, and `*`.
+
+**Using "*" as a prefix while on Windows will cause issues**, as some plugins store player data by username - Windows does not allow files to start with "*".
