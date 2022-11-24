@@ -29,16 +29,15 @@ import br.com.azalim.mcserverping.MCPing;
 import br.com.azalim.mcserverping.MCPingOptions;
 import br.com.azalim.mcserverping.MCPingResponse;
 import com.nukkitx.protocol.bedrock.BedrockClient;
-import com.nukkitx.protocol.bedrock.BedrockPong;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.apache.commons.net.util.SubnetUtils;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.dump_issues.AbstractDumpIssueCheck;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
+import org.geysermc.discordbot.util.NetworkUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,7 +66,6 @@ import java.util.stream.Collectors;
 public class DumpHandler extends ListenerAdapter {
 
     private static final Pattern DUMP_URL = Pattern.compile("dump\\.geysermc\\.org/(raw/)?([0-9a-z]{32})", Pattern.CASE_INSENSITIVE);
-    private static final SubnetUtils.SubnetInfo[] INTERNAL_IP_RANGES;
     public static final List<AbstractDumpIssueCheck> ISSUE_CHECKS;
 
     static {
@@ -86,26 +84,6 @@ public class DumpHandler extends ListenerAdapter {
             GeyserBot.LOGGER.error("Unable to load commands", e);
         }
         ISSUE_CHECKS = checks;
-
-        // We cache the infos here since it's expensive to create them every time we need them
-        INTERNAL_IP_RANGES = new SubnetUtils.SubnetInfo[] {
-                new SubnetUtils("0.0.0.0/8").getInfo(),
-                new SubnetUtils("10.0.0.0/8").getInfo(),
-                new SubnetUtils("100.64.0.0/10").getInfo(),
-                new SubnetUtils("127.0.0.0/8").getInfo(),
-                new SubnetUtils("169.254.0.0/16").getInfo(),
-                new SubnetUtils("172.16.0.0/12").getInfo(),
-                new SubnetUtils("192.0.0.0/24").getInfo(),
-                new SubnetUtils("192.0.2.0/24").getInfo(),
-                new SubnetUtils("192.88.99.0/24").getInfo(),
-                new SubnetUtils("192.168.0.0/16").getInfo(),
-                new SubnetUtils("198.18.0.0/15").getInfo(),
-                new SubnetUtils("198.51.100.0/24").getInfo(),
-                new SubnetUtils("203.0.113.0/24").getInfo(),
-                new SubnetUtils("224.0.0.0/4").getInfo(),
-                new SubnetUtils("240.0.0.0/4").getInfo(),
-                new SubnetUtils("255.255.255.255/32").getInfo()
-        };
     }
 
     @Override
@@ -116,7 +94,7 @@ public class DumpHandler extends ListenerAdapter {
             // Check attached files
             for (Message.Attachment attachment : event.getMessage().getAttachments()) {
                 if (attachment.getFileName().equals("dump.json")) {
-                    String contents = RestClient.get(attachment.getUrl());
+                    String contents = RestClient.simpleGetString(attachment.getUrl());
 
                     if (isDump(contents)) {
                         parseDump(event, null, contents);
@@ -130,7 +108,7 @@ public class DumpHandler extends ListenerAdapter {
         String cleanURL = "https://dump.geysermc.org/" + matcher.group(2);
         String rawURL = "https://dump.geysermc.org/raw/" + matcher.group(2);
 
-        parseDump(event, cleanURL, RestClient.get(rawURL));
+        parseDump(event, cleanURL, RestClient.simpleGetString(rawURL));
     }
 
     /**
@@ -259,7 +237,7 @@ public class DumpHandler extends ListenerAdapter {
         if (!isFork && gitInfo.has("git.build.number")) {
             try {
                 // Attempt to see how far behind they are not based on commits but CI builds
-                String buildXML = RestClient.get("https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/" +
+                String buildXML = RestClient.simpleGetString("https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/" +
                         URLEncoder.encode(gitInfo.getString("git.branch"), StandardCharsets.UTF_8.toString()) + "/lastSuccessfulBuild/api/xml?xpath=//buildNumber");
                 if (buildXML.startsWith("<buildNumber>")) {
                     int latestBuildNum = Integer.parseInt(buildXML.replaceAll("<(\\\\)?(/)?buildNumber>", "").trim());
@@ -326,25 +304,6 @@ public class DumpHandler extends ListenerAdapter {
     }
 
     /**
-     * Check if an IP is internal/reserved as defined by the IETF and IANA
-     * https://en.wikipedia.org/wiki/Reserved_IP_addresses
-     *
-     * @param address IP address to check
-     * @return True if the IP is internal/reserved
-     */
-    private boolean isInternalIP(String address) {
-        try {
-            for (SubnetUtils.SubnetInfo subnetInfo : INTERNAL_IP_RANGES) {
-                if (subnetInfo.isInRange(address) || subnetInfo.getAddress().equals(address)) {
-                    return true;
-                }
-            }
-        } catch (IllegalArgumentException ignored) { } // If we get this then its likely a domain
-
-        return false;
-    }
-
-    /**
      * Ping a Java server and return the rich address text
      *
      * @param address Target IP address
@@ -357,7 +316,7 @@ public class DumpHandler extends ListenerAdapter {
         // Censored dump
         if (address.equals("***")) {
             addrText = "\\*\\*\\*:" + port; // Discord formatting
-        } else if (isInternalIP(address)) { // Check if the server is listening on an internal ip and ping it if not
+        } else if (NetworkUtils.isInternalIP(address)) { // Check if the server is listening on an internal ip and ping it if not
             addrText += " (internal IP)";
         } else {
             try {
@@ -393,7 +352,7 @@ public class DumpHandler extends ListenerAdapter {
         // Censored dump
         if (address.equals("***")) {
             addrText = "\\*\\*\\*:" + port; // Discord formatting
-        } else if (isInternalIP(address)) { // Check if the server is listening on an internal ip and ping it if not
+        } else if (NetworkUtils.isInternalIP(address)) { // Check if the server is listening on an internal ip and ping it if not
             addrText += " (internal IP)";
         } else {
             try {
@@ -404,7 +363,7 @@ public class DumpHandler extends ListenerAdapter {
                 client.bind().join();
 
                 InetSocketAddress addressToPing = new InetSocketAddress(address, port);
-                BedrockPong pong = client.ping(addressToPing,1500, TimeUnit.MILLISECONDS).get();
+                client.ping(addressToPing, 1500, TimeUnit.MILLISECONDS).get();
 
                 // Mark the server as pinged and add the status to the address field
                 addrText += " [(server online)](https://mcsrvstat.us/server/" + address + ":" + port + ")";

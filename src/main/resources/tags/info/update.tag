@@ -1,5 +1,6 @@
 type: text
 aliases: updategeyser
+help: update || updating
 
 ---
 

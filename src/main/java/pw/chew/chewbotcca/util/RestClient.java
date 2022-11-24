@@ -16,171 +16,136 @@
  */
 package pw.chew.chewbotcca.util;
 
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
+import okhttp3.*;
 import org.geysermc.discordbot.GeyserBot;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.SSLHandshakeException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 // Off brand RestClient based on the ruby gem of the same name
 public class RestClient {
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public static final String USER_AGENT = "GeyserMC-9444/2.0 (JDA; +https://geysermc.org) DBots/739572267855511652";
 
     /**
      * Make a GET request
      * @param url the url to get
-     * @return a response
+     * @return a JSONArray response
+     * @throws RuntimeException when an (IO)Exception occurred while executing the request
      */
-    public static String get(String url) {
+    public static JSONArray simpleGetJsonArray(String url) throws RuntimeException {
         Request request = new Request.Builder()
             .url(url)
             .get()
-            .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org) DBots/739572267855511652") // GeyserMC - Replace with our bot user agent
+            .addHeader("User-Agent", USER_AGENT)
             .build();
-
-        LoggerFactory.getLogger(RestClient.class).debug("Making call to GET " + url);
-        return performRequest(request);
+        try {
+            return performRequestJsonArray(request).body();
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     /**
-     * Make an Authenticated GET Request
-     * @param url the url
-     * @param key the auth key
-     * @return a response
+     * Make a GET request
+     * @param url the url to get
+     * @return a RestResponse with a JSONObject body
      */
-    public static String get(String url, String key) {
+    public static RestResponse<JSONObject> getJsonObject(String url) {
         Request request = new Request.Builder()
             .url(url)
-            .addHeader("Authorization", key)
-            .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org) DBots/739572267855511652") // GeyserMC - Replace with our bot user agent
             .get()
+            .addHeader("User-Agent", USER_AGENT)
             .build();
-
-        LoggerFactory.getLogger(RestClient.class).debug("Making call to GET " + url);
-        return performRequest(request);
+        return performRequestJsonObject(request);
     }
 
     /**
-     * Make an Authenticated POST Request
-     * @param url the url
-     * @param args the arguments to pass
-     * @param key the auth key
-     * @return a response
+     * Make a GET request
+     * @param url the url to get
+     * @return a JSONObject response
      */
-    public static String post(String url, HashMap<String, Object> args, String key) {
+    public static JSONObject simpleGetJsonObject(String url) {
+        return getJsonObject(url).body();
+    }
+
+    /**
+     * Make a GET request
+     * @param url the url to get
+     * @return a string response
+     */
+    public static String simpleGetString(String url) {
         Request request = new Request.Builder()
             .url(url)
-            .post(bodyFromHash(args))
-            .addHeader("Authorization", key)
-            .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org) DBots/739572267855511652") // GeyserMC - Replace with our bot user agent
+            .get()
+            .addHeader("User-Agent", USER_AGENT)
             .build();
-
-        LoggerFactory.getLogger(RestClient.class).debug("Making call to POST " + url);
-        return performRequest(request);
+        return performRequestString(request).body();
     }
 
     /**
-     * Make an Unauthenticated POST Request with JSON Body
+     * Make an Unauthenticated POST Request with a RequestBody
      * @param url the url
-     * @param json the json body to send
-     * @return a response
+     * @param requestBody the requestBody to send
+     * @return the JSONObject response
      */
-    public static String post(String url, JSONObject json) {
-        RequestBody body = RequestBody.create(json.toString(), JSON);
-
+    public static JSONObject simplePost(String url, RequestBody requestBody) {
         Request request = new Request.Builder()
             .url(url)
-            .post(body)
-            .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org) DBots/739572267855511652") // GeyserMC - Replace with our bot user agent
+            .post(requestBody)
+            .addHeader("User-Agent", USER_AGENT)
             .build();
-
-        LoggerFactory.getLogger(RestClient.class).debug("Making call to POST " + url);
-        return performRequest(request);
+        return performRequestJsonObject(request).body();
     }
 
-    /**
-     * Make an Authenticated POST Request with JSON Body
-     * @param url the url
-     * @param key the auth key
-     * @param json the json body to send
-     * @return a response
-     */
-    public static String post(String url, String key, JSONObject json) {
-        RequestBody body = RequestBody.create(json.toString(), JSON);
-
-        Request request = new Request.Builder()
-            .url(url)
-            .post(body)
-            .addHeader("Authorization", key)
-            .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org) DBots/739572267855511652") // GeyserMC - Replace with our bot user agent
-            .build();
-
-        LoggerFactory.getLogger(RestClient.class).debug("Making call to POST " + url);
-        return performRequest(request);
+    private static RestResponse<JSONArray> performRequestJsonArray(Request request) throws IOException {
+        RestResponse<String> response = performRequestUnsafe(request);
+        return new RestResponse<>(response.statusCode(), new JSONArray(response.body()));
     }
 
-    /**
-     * Make an Authenticated DELETE Request
-     * @param url the url
-     * @param key the auth key
-     * @return a response
-     */
-    public static String delete(String url, String key) {
-        Request request = new Request.Builder()
-            .url(url)
-            .delete()
-            .addHeader("Authorization", key)
-            .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org) DBots/739572267855511652") // GeyserMC - Replace with our bot user agent
-            .build();
-
-        LoggerFactory.getLogger(RestClient.class).debug("Making call to DELETE " + url);
-        return performRequest(request);
+    private static RestResponse<JSONObject> performRequestJsonObject(Request request) {
+        RestResponse<String> response;
+        try {
+            response = performRequestUnsafe(request);
+        } catch (IOException exception) {
+            response = new RestResponse<>(
+                    -1,
+                    "{\"error\": \"%s\"}".formatted(JSONObject.quote(exception.getMessage()))
+            );
+        }
+        return new RestResponse<>(response.statusCode(), new JSONObject(response.body()));
     }
 
-    /**
-     * Actually perform the request
-     * @param request a request
-     * @return a response
-     */
-    public static String performRequest(Request request) {
+    private static RestResponse<String> performRequestString(Request request) {
+        try {
+            return performRequestUnsafe(request);
+        } catch (IOException exception) {
+            return new RestResponse<>(-1, exception.getMessage());
+        }
+    }
+
+    private static RestResponse<String> performRequestUnsafe(Request request) throws IOException {
         // GeyserMC - Replace JDA call with our JDA
         OkHttpClient client = GeyserBot.getJDA() == null ? new OkHttpClient() : GeyserBot.getJDA().getHttpClient();
+
+        LoggerFactory.getLogger(RestClient.class).debug(
+                "Making call to %s %s".formatted(request.method(), request.url())
+        );
         try (Response response = client.newCall(request).execute()) {
-            String body;
-            ResponseBody responseBody = response.body();
-            if(responseBody == null) {
-                body = "{}";
-            } else {
-                body = responseBody.string();
-            }
+            //noinspection ConstantConditions - responseBody cannot be null when using 'execute'
+            String body = response.body().string();
             LoggerFactory.getLogger(RestClient.class).debug("Response is " + body);
-            return body;
-        } catch (SSLHandshakeException e) {
-            LoggerFactory.getLogger(RestClient.class).warn("Call to " + request.url() + " failed with SSLHandshakeException!");
-            return "{error: 'SSLHandshakeException'}";
-        } catch (IOException e) {
-            LoggerFactory.getLogger(RestClient.class).warn("Call to " + request.url() + " failed with IOException!");
-            return "{error: 'IOException'}";
+            return new RestResponse<>(response.code(), body);
+        } catch (IOException exception) {
+            LoggerFactory.getLogger(RestClient.class).warn(
+                    "Call to %s failed with %s!".formatted(request.url(), exception.getClass().getSimpleName())
+            );
+            throw exception;
         }
     }
 
-    public static RequestBody bodyFromHash(HashMap<String, Object> args) {
-        FormBody.Builder bodyArgs = new FormBody.Builder();
-        if (args == null)
-            return bodyArgs.build();
-        for(Map.Entry<String, Object> entry : args.entrySet()) {
-            bodyArgs.add(entry.getKey(), String.valueOf(entry.getValue()));
-        }
-        return bodyArgs.build();
+    public record RestResponse<T>(int statusCode, T body) {
     }
 }

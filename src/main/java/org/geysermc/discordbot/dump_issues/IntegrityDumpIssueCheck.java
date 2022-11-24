@@ -47,7 +47,7 @@ public class IntegrityDumpIssueCheck extends AbstractDumpIssueCheck {
         }
 
         String md5Hash = dump.getJSONObject("hashInfo").getString("md5Hash");
-        String response = RestClient.get("https://ci.opencollab.dev/fingerprint/" + md5Hash + "/api/json");
+        String response = RestClient.simpleGetString("https://ci.opencollab.dev/fingerprint/" + md5Hash + "/api/json");
 
         // Check if 404
         if (response.startsWith("<html>")) {

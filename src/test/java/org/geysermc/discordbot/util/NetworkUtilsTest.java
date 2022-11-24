@@ -23,17 +23,30 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.health_checker;
+package org.geysermc.discordbot.util;
 
-import net.dv8tion.jda.api.entities.Message;
+import org.junit.jupiter.api.Test;
 
-public record HealthStatus(Message message, int statusCode) {
+import static org.geysermc.discordbot.util.NetworkUtils.isInternalIP;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    public Message getMessage() {
-        return message;
+public class NetworkUtilsTest {
+
+    private static final String[] INTERNAL_ADDRESSES = {"0.0.0.0", "localhost", "127.0.0.1", "192.168.1.7", "10.0.0.8"};
+    private static final String[] PUBLIC_ADDRESSES = {"1.1.1.1", "link.geysermc.org", "mc.hypixel.net", "123.456.789.101"};
+
+    @Test
+    public void testLocalAddresses() {
+        for (String address : INTERNAL_ADDRESSES) {
+            assertTrue(isInternalIP(address), address + " should be detected as internal IP");
+        }
     }
 
-    public boolean wasSuccess() {
-        return statusCode >= 200 && statusCode < 300;
+    @Test
+    public void testPublicAddresses() {
+        for (String address : PUBLIC_ADDRESSES) {
+            assertFalse(isInternalIP(address), address + " should be detected as public IP");
+        }
     }
 }

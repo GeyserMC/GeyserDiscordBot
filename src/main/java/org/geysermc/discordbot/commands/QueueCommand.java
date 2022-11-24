@@ -33,7 +33,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.ocpsoft.prettytime.PrettyTime;
 import pw.chew.chewbotcca.util.RestClient;
@@ -62,21 +61,13 @@ public class QueueCommand extends SlashCommand {
     }
 
     protected MessageEmbed handle() {
-        JSONObject stats = null;
-        String errorMessage = "";
-        try {
-            stats = new JSONObject(RestClient.get("https://api.geysermc.org/v2/stats"));
-
-            if (stats.has("error")) {
-                errorMessage = stats.getString("error");
-            }
-        } catch (JSONException e) {
-            errorMessage = e.getMessage();
-        }
-
-        // We have an error
-        if (!errorMessage.trim().isEmpty()) {
-            return MessageHelper.errorResponse(null, "Unable to fetch queue stats", "An error occured while trying to contact the status page: " + errorMessage);
+        JSONObject stats = RestClient.simpleGetJsonObject("https://api.geysermc.org/v2/stats");
+        if (stats.has("error")) {
+            return MessageHelper.errorResponse(
+                    null,
+                    "Unable to fetch queue stats",
+                    "An error occured while trying to contact the status page: " + stats.getString("error")
+            );
         }
 
         // Calculate the queue time and generate a nice string for it
