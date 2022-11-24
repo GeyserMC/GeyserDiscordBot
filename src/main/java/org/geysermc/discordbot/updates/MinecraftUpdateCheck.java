@@ -41,7 +41,7 @@ public class MinecraftUpdateCheck extends AbstractUpdateCheck {
 
     @Override
     public void populate() throws JSONException {
-        JSONObject versionsData = new JSONObject(RestClient.get(CHECK_URL));
+        JSONObject versionsData = RestClient.simpleGetJsonObject(CHECK_URL);
         JSONArray versions = versionsData.getJSONArray("versions");
 
         for (int i = 0; i < versions.length(); i++) {
@@ -53,7 +53,7 @@ public class MinecraftUpdateCheck extends AbstractUpdateCheck {
 
     @Override
     public void check() {
-        JSONObject versionsData = new JSONObject(RestClient.get(CHECK_URL));
+        JSONObject versionsData = RestClient.simpleGetJsonObject(CHECK_URL);
         if (versionsData.has("error")) {
             GeyserBot.LOGGER.warn("Error while checking '" + CHECK_URL + "': " + versionsData.getString("error"));
             return;

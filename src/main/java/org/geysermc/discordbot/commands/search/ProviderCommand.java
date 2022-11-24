@@ -38,7 +38,6 @@ import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.DicesCoefficient;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
 
@@ -173,15 +172,7 @@ public class ProviderCommand extends SlashCommand {
         }
 
         // Fetch the search page
-        JSONObject contents;
-        try {
-            contents = new JSONObject(RestClient.get("https://raw.githubusercontent.com/GeyserMC/GeyserWiki/master/_data/providers.json"));
-        } catch (JSONException e) {
-            // if it fails, just return an empty list
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
-
+        JSONObject contents = RestClient.simpleGetJsonObject("https://raw.githubusercontent.com/GeyserMC/GeyserWiki/master/_data/providers.json");
         Map<String, Object> descriptionTemplates = contents.getJSONObject("description_templates").toMap();
 
         List<Provider> providers = new ArrayList<>();

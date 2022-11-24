@@ -47,11 +47,11 @@ import pw.chew.chewbotcca.util.RestClient;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.time.Instant;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -162,7 +162,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     extensions.add("0");
                 }
                 if (extensions.contains(attachment.getFileExtension())) {
-                    handleLog(event, RestClient.get(attachment.getUrl()), false);
+                    handleLog(event, RestClient.simpleGetString(attachment.getUrl()), false);
                 }
             }
         }
@@ -192,7 +192,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
             content = rawContent;
         } else {
             // We didn't find a url so use the message content
-            content = RestClient.get(url);
+            content = RestClient.simpleGetString(url);
         }
 
         handleLog(event, content, false);
