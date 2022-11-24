@@ -121,15 +121,17 @@ public class HealthCheckerManager {
                     int responseCode;
                     long responseTime;
                     long responseBodyLength;
-                    String responseBody;
+                    String responseBody = null;
 
                     // Make the request and store the info for the embed
                     try (Response response = HTTP_CLIENT.newCall(request).execute()) {
-                        success = response.code() == 200;
+                        success = response.code() == 204;
                         responseCode = response.code();
                         responseTime = response.receivedResponseAtMillis() - response.sentRequestAtMillis();
                         responseBodyLength = response.body().contentLength();
-                        responseBody = (response.body() != null ? response.body().string() : "None");
+                        if (responseBodyLength > 0) {
+                            responseBody = response.body().string();
+                        }
                     } catch (IOException e) {
                         success = false;
                         responseCode = 0;
@@ -137,6 +139,7 @@ public class HealthCheckerManager {
                         responseBodyLength = 0;
                         responseBody = e.toString();
                     }
+                    responseBody = responseBody != null ? "```\n" + responseBody + "```" : "None";
 
                     // Get the existing message if it's the same status
                     Message message = null;
@@ -150,7 +153,7 @@ public class HealthCheckerManager {
                             .setTitle("Health check: " + check.getValue(), check.getValue())
                             .addField("Status code", String.valueOf(responseCode), false)
                             .addField("Response time", responseTime + "ms", false)
-                            .addField("Response (" + responseBodyLength + ")", "```\n" + responseBody + "```", false)
+                            .addField("Response (" + responseBodyLength + ")", responseBody, false)
                             .setTimestamp(Instant.now())
                             .setColor(success ? BotColors.SUCCESS.getColor() : BotColors.FAILURE.getColor())
                             .build();
