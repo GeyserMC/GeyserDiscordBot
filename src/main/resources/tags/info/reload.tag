@@ -1,5 +1,6 @@
 type: text
 aliases: reloading
+help: reload
 
 ---
 
