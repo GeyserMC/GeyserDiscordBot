@@ -135,7 +135,7 @@ public class WikiCommand extends SlashCommand {
      */
     public List<WikiResult> doSearch(String query) {
         // Fetch the search page
-        String contents = RestClient.get("https://github.com/GeyserMC/Geyser/search?q=" + URLEncoder.encode(query, StandardCharsets.UTF_8) + "&type=Wikis");
+        String contents = RestClient.simpleGetString("https://github.com/GeyserMC/Geyser/search?q=" + URLEncoder.encode(query, StandardCharsets.UTF_8) + "&type=Wikis");
 
         // Make sure we got a response
         if (contents.equals("")) {

@@ -116,7 +116,7 @@ public class DumpHandler extends ListenerAdapter {
             // Check attached files
             for (Message.Attachment attachment : event.getMessage().getAttachments()) {
                 if (attachment.getFileName().equals("dump.json")) {
-                    String contents = RestClient.get(attachment.getUrl());
+                    String contents = RestClient.simpleGetString(attachment.getUrl());
 
                     if (isDump(contents)) {
                         parseDump(event, null, contents);
@@ -130,7 +130,7 @@ public class DumpHandler extends ListenerAdapter {
         String cleanURL = "https://dump.geysermc.org/" + matcher.group(2);
         String rawURL = "https://dump.geysermc.org/raw/" + matcher.group(2);
 
-        parseDump(event, cleanURL, RestClient.get(rawURL));
+        parseDump(event, cleanURL, RestClient.simpleGetString(rawURL));
     }
 
     /**
@@ -259,7 +259,7 @@ public class DumpHandler extends ListenerAdapter {
         if (!isFork && gitInfo.has("git.build.number")) {
             try {
                 // Attempt to see how far behind they are not based on commits but CI builds
-                String buildXML = RestClient.get("https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/" +
+                String buildXML = RestClient.simpleGetString("https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/" +
                         URLEncoder.encode(gitInfo.getString("git.branch"), StandardCharsets.UTF_8.toString()) + "/lastSuccessfulBuild/api/xml?xpath=//buildNumber");
                 if (buildXML.startsWith("<buildNumber>")) {
                     int latestBuildNum = Integer.parseInt(buildXML.replaceAll("<(\\\\)?(/)?buildNumber>", "").trim());

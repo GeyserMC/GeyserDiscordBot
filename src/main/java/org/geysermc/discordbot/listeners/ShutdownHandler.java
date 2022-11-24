@@ -25,7 +25,7 @@
 
 package org.geysermc.discordbot.listeners;
 
-import net.dv8tion.jda.api.events.ShutdownEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.jetbrains.annotations.NotNull;
