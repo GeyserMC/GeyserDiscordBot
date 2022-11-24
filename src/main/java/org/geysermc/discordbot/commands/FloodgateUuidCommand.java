@@ -74,13 +74,13 @@ public class FloodgateUuidCommand extends SlashCommand {
                 builder.setColor(BotColors.SUCCESS.getColor());
             }
             case 400 -> {
-                builder.addField("Global API", "Error " + serverCode,false);
+                builder.addField("Global API", "Error " + serverCode, false);
                 builder.addField("Bedrock Player Name", username, false);
                 builder.addField("Reason", " The Bedrock player name is invalid (empty or longer than 16 chars)", false);
                 builder.setColor(BotColors.FAILURE.getColor());
             }
             case 503 -> {
-                builder.addField("Global API", "Error " + serverCode,false);
+                builder.addField("Global API", "Error " + serverCode, false);
                 builder.addField("Bedrock Player Name", username, false);
                 builder.addField("Reason", " The requested account was not cached and we where not able to call the Xbox Live API", false);
                 builder.addField("Fix", "You have to join a Floodgate server so the Bedrock account will get added to the GlobalAPI cache.", false);
