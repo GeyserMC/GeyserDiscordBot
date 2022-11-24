@@ -31,9 +31,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
-import org.json.JSONException;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
+import pw.chew.chewbotcca.util.RestClient.RestResponse;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -58,23 +58,11 @@ public class FloodgateUuidCommand extends SlashCommand {
         String username = event.optString("bedrock-username", "").replace(".", "");
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Floodgate Player UUID");
-        JSONObject response = null;
-        String url = "https://api.geysermc.org/v2/xbox/xuid/" + username;
 
-        // Get response as json object.
-        try {
-            response = new JSONObject(RestClient.get(url));
-        } catch (JSONException ignored) {}
-
-        int serverCode = Integer.parseInt(RestClient.serverStatusCode(url));
-
-        // Null occurs when Global API Server does not provide a response -> server offline/locked.
-        if (response == null) {
-            builder.addField("Global API status", "Server responded with a " + serverCode, false );
-            builder.setColor(BotColors.FAILURE.getColor());
-            event.replyEmbeds(builder.build()).queue();
-            return;
-        }
+        RestResponse<JSONObject> restResponse =
+                RestClient.getJsonObject("https://api.geysermc.org/v2/xbox/xuid/" + username);
+        int serverCode = restResponse.statusCode();
+        JSONObject response = restResponse.body();
 
         // Check what code the server returns and send the corresponding embed to author.
         switch (serverCode) {
@@ -96,6 +84,10 @@ public class FloodgateUuidCommand extends SlashCommand {
                 builder.addField("Bedrock Player Name", username, false);
                 builder.addField("Reason", " The requested account was not cached and we where not able to call the Xbox Live API", false);
                 builder.addField("Fix", "You have to join a Floodgate server so the Bedrock account will get added to the GlobalAPI cache.", false);
+                builder.setColor(BotColors.FAILURE.getColor());
+            }
+            default -> {
+                builder.addField("Global API status", "Server responded with a " + serverCode, false);
                 builder.setColor(BotColors.FAILURE.getColor());
             }
         }
