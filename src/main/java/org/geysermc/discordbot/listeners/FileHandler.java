@@ -32,8 +32,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import okhttp3.MediaType;
-import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -98,15 +96,9 @@ public class FileHandler extends ListenerAdapter {
                                         "}" +
                                     "}" +
                                 "]" +
-                            "}", MediaType.parse("application/json"));
+                            "}", RestClient.JSON);
 
-                    Request request = new Request.Builder()
-                        .url("https://api.paste.gg/v1/pastes")
-                        .post(body)
-                        .addHeader("User-Agent", "GeyserMC-9444/2.0 (JDA; +https://geysermc.org)") // GeyserMC - Replace with our bot user agent
-                        .build();
-
-                    JSONObject response = new JSONObject(RestClient.performRequest(request));
+                    JSONObject response = RestClient.simplePost("https://api.paste.gg/v1/pastes", body);
 
                     // Cleanup the file
                     attachmentFile.delete();

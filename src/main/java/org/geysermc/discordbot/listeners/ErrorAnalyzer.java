@@ -47,10 +47,11 @@ import pw.chew.chewbotcca.util.RestClient;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
-import java.util.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -131,7 +132,17 @@ public class ErrorAnalyzer extends ListenerAdapter {
                         BufferedImage bi = ImageIO.read(attachment.getProxy().download().get());
                         Dimension newMaxSize = new Dimension(2000,1400);
                         BufferedImage resizedImg = Scalr.resize(bi, Scalr.Method.BALANCED, newMaxSize.width, newMaxSize.height);
-                        errorHandler(tesseract.doOCR(resizedImg), embedBuilder, event);
+                        String textFromImage = tesseract.doOCR(resizedImg);
+                        // Send ocr reading to logs channel.
+                        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                                .setTitle("OCR Reading")
+                                .addField("Image link", "[Jump to Image](" + event.getJumpUrl() + ")", true)
+                                .addField("Reading", textFromImage, false)
+                                .setFooter("ID: " + event.getAuthor().getId())
+                                .setTimestamp(Instant.now())
+                                .setColor(BotColors.NEUTRAL.getColor())
+                                .build()).queue();
+                        errorHandler(textFromImage, embedBuilder, event);
                     } catch (TesseractException | InterruptedException | IOException | ExecutionException e) {
                         handleLog(event, e.getMessage(), true);
                     }
@@ -151,7 +162,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     extensions.add("0");
                 }
                 if (extensions.contains(attachment.getFileExtension())) {
-                    handleLog(event, RestClient.get(attachment.getUrl()), false);
+                    handleLog(event, RestClient.simpleGetString(attachment.getUrl()), false);
                 }
             }
         }
@@ -181,7 +192,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
             content = rawContent;
         } else {
             // We didn't find a url so use the message content
-            content = RestClient.get(url);
+            content = RestClient.simpleGetString(url);
         }
 
         handleLog(event, content, false);

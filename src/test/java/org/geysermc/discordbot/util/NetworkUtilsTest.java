@@ -23,25 +23,30 @@
  * @link https://github.com/GeyserMC/GeyserDiscordBot
  */
 
-package org.geysermc.discordbot.listeners;
+package org.geysermc.discordbot.util;
 
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.geysermc.discordbot.storage.ServerSettings;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
-public class VoiceGroupHandler extends ListenerAdapter {
+import static org.geysermc.discordbot.util.NetworkUtils.isInternalIP;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    @Override
-    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
-        if (event.getOldValue() == null && event.getNewValue() != null) {
-            try {
-                event.getGuild().addRoleToMember(event.getMember(), ServerSettings.getVoiceRole(event.getGuild())).queue();
-            } catch (IllegalArgumentException ignored) {}
-        } else if (event.getOldValue() != null && event.getNewValue() == null) {
-            try {
-                event.getGuild().removeRoleFromMember(event.getMember(), ServerSettings.getVoiceRole(event.getGuild())).queue();
-            } catch (IllegalArgumentException ignored) {}
+public class NetworkUtilsTest {
+
+    private static final String[] INTERNAL_ADDRESSES = {"0.0.0.0", "localhost", "127.0.0.1", "192.168.1.7", "10.0.0.8"};
+    private static final String[] PUBLIC_ADDRESSES = {"1.1.1.1", "link.geysermc.org", "mc.hypixel.net", "123.456.789.101"};
+
+    @Test
+    public void testLocalAddresses() {
+        for (String address : INTERNAL_ADDRESSES) {
+            assertTrue(isInternalIP(address), address + " should be detected as internal IP");
+        }
+    }
+
+    @Test
+    public void testPublicAddresses() {
+        for (String address : PUBLIC_ADDRESSES) {
+            assertFalse(isInternalIP(address), address + " should be detected as public IP");
         }
     }
 }

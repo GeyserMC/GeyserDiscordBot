@@ -76,7 +76,7 @@ public class UpdateCommand extends SlashCommand {
             try {
                 gitProp.load(UpdateCommand.class.getClassLoader().getResourceAsStream("git.properties"));
 
-                String buildXML = RestClient.get("https://ci.opencollab.dev/job/GeyserMC/job/GeyserDiscordBot/job/" + URLEncoder.encode(gitProp.getProperty("git.branch"), StandardCharsets.UTF_8.toString()) + "/lastSuccessfulBuild/api/xml?xpath=//buildNumber");
+                String buildXML = RestClient.simpleGetString("https://ci.opencollab.dev/job/GeyserMC/job/GeyserDiscordBot/job/" + URLEncoder.encode(gitProp.getProperty("git.branch"), StandardCharsets.UTF_8.toString()) + "/lastSuccessfulBuild/api/xml?xpath=//buildNumber");
                 if (buildXML.startsWith("<buildNumber>")) {
                     int latestBuildNum = Integer.parseInt(buildXML.replaceAll("<(\\\\)?(/)?buildNumber>", "").trim());
                     int buildNum = Integer.parseInt(gitProp.getProperty("git.build.number"));

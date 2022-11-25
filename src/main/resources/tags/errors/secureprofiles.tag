@@ -7,7 +7,7 @@ Minecraft 1.19 adds key signing, which is currently only used to verify that cha
 Floodgate and Geyser currently do not support this, so it should be disabled using the following instructions:
 
 **Spigot, Paper, & all forks**
-Set `enforce-secure-profile: false` in [server.properties](https://minecraft.fandom.com/wiki/Server.properties)
+Set `enforce-secure-profile=false` in [server.properties](https://minecraft.fandom.com/wiki/Server.properties)
 
 **Bungeecord**
 Set `enforce_secure_profile: false` in [config.yml](https://www.spigotmc.org/wiki/bungeecord-configuration-guide/)

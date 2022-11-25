@@ -34,6 +34,6 @@ public record HealthStatus(Message message, int statusCode) {
     }
 
     public boolean wasSuccess() {
-        return statusCode == 200;
+        return statusCode >= 200 && statusCode < 300;
     }
 }

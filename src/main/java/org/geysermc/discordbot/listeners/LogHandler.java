@@ -35,13 +35,10 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
-import net.dv8tion.jda.api.events.guild.GuildTimeoutEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
@@ -316,40 +313,28 @@ public class LogHandler extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent event) {
-        try {
-            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                    .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
-                    .setDescription(event.getMember().getAsMention() + " **joined voice channel " + event.getChannelJoined().getAsMention() + "**")
-                    .setFooter("ID: " + event.getMember().getId())
-                    .setTimestamp(Instant.now())
-                    .setColor(BotColors.SUCCESS.getColor())
-                    .build()).queue();
-        } catch (IllegalArgumentException ignored) { }
-    }
+    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
+        boolean isJoin = event.getOldValue() == null && event.getNewValue() != null;
+        boolean isLeave = event.getOldValue() != null && event.getNewValue() == null;
+        boolean isMove = !isJoin && !isLeave;
 
-    @Override
-    public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent event) {
-        try {
-            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                    .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
-                    .setDescription(event.getMember().getAsMention() + " **switched voice channel " + event.getChannelLeft().getAsMention() + " -> " + event.getChannelJoined().getAsMention() + "**")
-                    .setFooter("ID: " + event.getMember().getId())
-                    .setTimestamp(Instant.now())
-                    .setColor(BotColors.SUCCESS.getColor())
-                    .build()).queue();
-        } catch (IllegalArgumentException ignored) { }
-    }
 
-    @Override
-    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent event) {
+        String description = "";
+        if (isJoin) {
+            description = event.getMember().getAsMention() + " **joined voice channel " + event.getChannelJoined().getAsMention() + "**";
+        } else if (isMove) {
+            description = event.getMember().getAsMention() + " **switched voice channel " + event.getChannelLeft().getAsMention() + " -> " + event.getChannelJoined().getAsMention() + "**";
+        } else if (isLeave) {
+            description = event.getMember().getAsMention() + " **left voice channel " + event.getChannelLeft().getAsMention() + "**";
+        }
+
         try {
             ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                     .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
-                    .setDescription(event.getMember().getAsMention() + " **left voice channel " + event.getChannelLeft().getAsMention() + "**")
+                    .setDescription(description)
                     .setFooter("ID: " + event.getMember().getId())
                     .setTimestamp(Instant.now())
-                    .setColor(BotColors.FAILURE.getColor())
+                    .setColor((isJoin || isMove) ? BotColors.SUCCESS.getColor() : BotColors.FAILURE.getColor())
                     .build()).queue();
         } catch (IllegalArgumentException ignored) { }
     }

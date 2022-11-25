@@ -42,6 +42,7 @@ public class TagsManager {
     private static final List<Command> TAGS = new ArrayList<>();
     private static final List<SlashTag> SLASH_TAGS = new ArrayList<>();
     private static final Map<String, String> ISSUE_RESPONSES = new HashMap<>();
+    private static final Map<String, String> SELF_HELP = new HashMap<>();
     private static boolean tagsLoaded = false;
 
     public static List<Command> getTags() {
@@ -73,6 +74,14 @@ public class TagsManager {
         return ISSUE_RESPONSES;
     }
 
+    public static Map<String, String> getSelfHelp() {
+        if (!tagsLoaded) {
+            loadTags();
+        }
+
+        return SELF_HELP;
+    }
+
     private static void loadTags() {
         TAGS.add(new TagAliasCommand());
 
@@ -92,6 +101,7 @@ public class TagsManager {
                             String[] lines = new String(BotHelpers.bytesFromResource("tags/" + folderName + "/" + fileName)).split("\n");
                             Map<String, String> tagData = new HashMap<>();
                             String[] issueTriggers = null;
+                            String[] selfHelpTrigger = null;
                             StringBuilder content = new StringBuilder();
                             List<Button> buttons = new ArrayList<>();
 
@@ -121,6 +131,7 @@ public class TagsManager {
                                     case "type", "aliases" -> tagData.put(lineParts[0], lineParts[1].trim().toLowerCase());
                                     case "image" -> tagData.put(lineParts[0], lineParts[1].trim());
                                     case "issues" -> issueTriggers = lineParts[1].split("\\|\\|");
+                                    case "help" -> selfHelpTrigger = lineParts[1].split("\\|\\|");
                                     case "button" -> {
                                         String[] data = lineParts[1].trim().replace("[", "").replace(")", "").split("]\\(");
                                         buttons.add(Button.link(data[1], data[0]));
@@ -174,6 +185,12 @@ public class TagsManager {
                                 // allow any tag with issues listed to be an issue response
                                 for (String issue : issueTriggers) {
                                     ISSUE_RESPONSES.put(issue.trim(), content.toString().trim());
+                                }
+                            }
+
+                            if (selfHelpTrigger != null) {
+                                for (String help : selfHelpTrigger) {
+                                    SELF_HELP.put(help.trim(), content.toString().trim());
                                 }
                             }
                         }
