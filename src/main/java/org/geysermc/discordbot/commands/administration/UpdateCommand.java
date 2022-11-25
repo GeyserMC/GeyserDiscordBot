@@ -57,14 +57,16 @@ public class UpdateCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        event.reply("Please check below for the log").queue();
+        event.reply("See below message for the log").queue();
         handle(event.getTextChannel().sendMessage("```\n```").complete());
     }
 
     @Override
     protected void execute(CommandEvent event) {
-        event.getMessage().reply("Please check below for the log").queue();
-        handle(event.getTextChannel().sendMessage("```\n```").complete());
+        event.getMessage().reply("```\n```").queue(message -> {
+            handle(message);
+        });
+
     }
 
     private void handle(Message message) {

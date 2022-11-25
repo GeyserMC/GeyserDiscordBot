@@ -51,16 +51,16 @@ public class SettingsCommand extends SlashCommand {
         this.help = "Customize the bot's settings";
         this.guildOnly = true;
 
-        this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
-        this.botPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
+        this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
+        this.botPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
 
         this.options = Arrays.asList(
-                new OptionData(OptionType.STRING, "action", "The action to perform").setRequired(true)
+                new OptionData(OptionType.STRING, "action", "The action to perform", true)
                         .addChoice("add","add")
                         .addChoice("get", "get")
                         .addChoice("set", "set")
                         .addChoice("remove","remove"),
-                new OptionData(OptionType.STRING, "key", "The setting name").setRequired(true)
+                new OptionData(OptionType.STRING, "key", "The setting name", true)
                         .addChoice("Allowed Invites", "allowed-invites")
                         .addChoice("Banned domains","banned-domains")
                         .addChoice("Banned IPs", "banned-ips")
@@ -75,7 +75,7 @@ public class SettingsCommand extends SlashCommand {
                         .addChoice("RSS Feeds", "rss-feeds")
                         .addChoice("Update channel", "update-channel")
                         .addChoice("Voice Role", "voice-role"),
-                new OptionData(OptionType.STRING, "value", "The value to set").setRequired(false)
+                new OptionData(OptionType.STRING, "value", "The value to set")
         );
     }
 

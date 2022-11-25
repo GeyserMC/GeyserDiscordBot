@@ -44,6 +44,7 @@ import org.geysermc.discordbot.util.BotHelpers;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class RenameCommand extends SlashCommand {
@@ -54,12 +55,12 @@ public class RenameCommand extends SlashCommand {
         this.aliases = new String[] { "nick", "nickname" };
         this.hidden = true;
 
-        this.userPermissions = new Permission[] { Permission.NICKNAME_MANAGE };
-        this.botPermissions = new Permission[] { Permission.NICKNAME_MANAGE };
+        this.userPermissions = new Permission[]{Permission.NICKNAME_MANAGE};
+        this.botPermissions = new Permission[]{Permission.NICKNAME_MANAGE};
 
         this.guildOnly = true;
-        this.options = List.of(
-                new OptionData(OptionType.USER, "member", "The member to rename").setRequired(true)
+        this.options = Collections.singletonList(
+                new OptionData(OptionType.USER, "member", "The member to rename", true)
         );
     }
 

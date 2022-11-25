@@ -50,14 +50,14 @@ public class MuteCommand extends SlashCommand {
         this.hidden = true;
         this.help = "Mute a user.";
 
-        this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
-        this.botPermissions = new Permission[] {Permission.KICK_MEMBERS};
+        this.userPermissions = new Permission[]{Permission.KICK_MEMBERS};
+        this.botPermissions = new Permission[]{Permission.KICK_MEMBERS};
         this.guildOnly = true;
 
         this.options = Arrays.asList(
-                new OptionData(OptionType.USER, "member", "The member to mute").setRequired(true),
-                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user on mute").setRequired(false),
-                new OptionData(OptionType.STRING, "reason", "Specify a reason for the mute").setRequired(false)
+                new OptionData(OptionType.USER, "member", "The member to mute", true),
+                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user on mute"),
+                new OptionData(OptionType.STRING, "reason", "Specify a reason for the mute")
         );
     }
 

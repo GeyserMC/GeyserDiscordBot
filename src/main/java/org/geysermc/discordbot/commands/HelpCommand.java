@@ -56,7 +56,7 @@ public class HelpCommand extends SlashCommand {
 
     @Override
     protected void execute(CommandEvent event) {
-        event.getMessage().replyEmbeds(handle(event.getPrefix())).queue();
+        event.getMessage().replyEmbeds(handle(PropertiesManager.getPrefix())).queue();
     }
 
     private MessageEmbed handle(String prefix) {
@@ -69,8 +69,6 @@ public class HelpCommand extends SlashCommand {
                 helpEmbed.addField("`" + prefix + command.getName() + (command.getArguments() != null ? " " + command.getArguments() : "") + "`", command.getHelp(), true);
             }
         }
-
-        helpEmbed.addField("`" + PropertiesManager.getPrefix() + "tag <name>`", "Display a tag for the given name", true);
 
         return helpEmbed.build();
     }

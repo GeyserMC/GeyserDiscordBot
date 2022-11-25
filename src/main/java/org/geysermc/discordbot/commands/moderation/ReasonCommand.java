@@ -54,13 +54,13 @@ public class ReasonCommand extends SlashCommand {
         this.help = "Get info on a moderation event";
         this.hidden = true;
 
-        this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
-        this.botPermissions = new Permission[] { Permission.KICK_MEMBERS };
+        this.userPermissions = new Permission[]{Permission.KICK_MEMBERS};
+        this.botPermissions = new Permission[]{Permission.KICK_MEMBERS};
 
         this.guildOnly = true;
         this.options = Arrays.asList(
-                new OptionData(OptionType.INTEGER, "id", "The event ID to fetch").setRequired(true),
-                new OptionData(OptionType.STRING, "reason", "Set the reason").setRequired(false)
+                new OptionData(OptionType.INTEGER, "id", "The event ID to fetch", true),
+                new OptionData(OptionType.STRING, "reason", "Set the reason")
         );
     }
 

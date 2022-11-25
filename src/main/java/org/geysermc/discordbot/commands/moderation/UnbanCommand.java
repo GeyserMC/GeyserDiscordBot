@@ -56,9 +56,9 @@ public class UnbanCommand extends SlashCommand {
 
         this.guildOnly = true;
         this.options = Arrays.asList(
-                new OptionData(OptionType.USER, "member", "The member to unban").setRequired(true),
-                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user upon unbanning").setRequired(false),
-                new OptionData(OptionType.STRING, "reason", "Specify a reason for unbanning").setRequired(false)
+                new OptionData(OptionType.USER, "member", "The member to unban", true),
+                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user upon unbanning"),
+                new OptionData(OptionType.STRING, "reason", "Specify a reason for unbanning")
         );
     }
 

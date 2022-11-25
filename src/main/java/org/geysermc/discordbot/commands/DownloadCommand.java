@@ -68,9 +68,7 @@ public class DownloadCommand extends SlashCommand {
         }
 
         this.options = Collections.singletonList( // Future thing: add branch??
-                new OptionData(OptionType.STRING, "program", "The program to download from.")
-                        .setRequired(false)
-                        .addChoices(choices)
+                new OptionData(OptionType.STRING, "program", "The program to download from.").addChoices(choices)
         );
     }
 

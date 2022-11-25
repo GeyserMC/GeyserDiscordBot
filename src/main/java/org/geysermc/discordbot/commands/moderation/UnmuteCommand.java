@@ -55,17 +55,16 @@ public class UnmuteCommand extends SlashCommand {
 
         this.guildOnly = true;
         this.options = Arrays.asList(
-                new OptionData(OptionType.USER, "member", "The member to unmute").setRequired(true),
-                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user on unmute").setRequired(false),
-                new OptionData(OptionType.STRING, "reason", "Specify a reason for unmuting").setRequired(false)
+                new OptionData(OptionType.USER, "member", "The member to unmute", true),
+                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user on unmute"),
+                new OptionData(OptionType.STRING, "reason", "Specify a reason for unmuting")
         );
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        // Fetch users
+        // Fetch user
         Member member = event.getOption("member").getAsMember();
-        Member moderator = event.getMember();
 
         // Fetch args
         boolean silent = event.optBoolean("silent", false);
@@ -81,7 +80,7 @@ public class UnmuteCommand extends SlashCommand {
             return;
         }
 
-        event.replyEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
+        event.replyEmbeds(handle(member, event.getMember(), event.getGuild(), silent, reason)).queue();
     }
 
     @Override
@@ -90,9 +89,6 @@ public class UnmuteCommand extends SlashCommand {
 
         // Fetch the user
         Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
-
-        //Fetch the user that issued the command
-        Member moderator = event.getMember();
 
         // Check user is valid
         if (member == null) {
@@ -146,7 +142,7 @@ public class UnmuteCommand extends SlashCommand {
             reason = reasonParts;
         }
 
-        event.getMessage().replyEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
+        event.getMessage().replyEmbeds(handle(member, event.getMember(), event.getGuild(), silent, reason)).queue();
     }
 
     private MessageEmbed handle(Member member, Member mod, Guild guild, boolean silent, String reason) {

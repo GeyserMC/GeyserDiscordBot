@@ -60,10 +60,10 @@ public class BanCommand extends SlashCommand {
 
         this.guildOnly = true;
         this.options = Arrays.asList(
-                new OptionData(OptionType.USER, "member", "The member to ban").setRequired(true),
-                new OptionData(OptionType.INTEGER, "days", "How many days worth of messages should we purge").setRequired(false),
-                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user upon banning").setRequired(false),
-                new OptionData(OptionType.STRING, "reason", "Specify a reason for banning").setRequired(false)
+                new OptionData(OptionType.USER, "member", "The member to ban", true),
+                new OptionData(OptionType.INTEGER, "days", "How many days worth of messages should we purge"),
+                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user upon banning"),
+                new OptionData(OptionType.STRING, "reason", "Specify a reason for banning")
         );
     }
 

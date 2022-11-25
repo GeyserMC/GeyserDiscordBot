@@ -64,7 +64,7 @@ public class LogCommand extends SlashCommand {
 
         this.guildOnly = true;
         this.options = Collections.singletonList(
-                new OptionData(OptionType.USER, "member", "Member to fetch").setRequired(true)
+                new OptionData(OptionType.USER, "member", "Member to fetch", true)
         );
     }
 

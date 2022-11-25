@@ -62,6 +62,7 @@ public class LevelCommand extends SlashCommand {
         this.name = "level";
         this.arguments = "[member]";
         this.help = "Show the level for a member";
+        this.guildOnly = true;
 
         this.options = Collections.singletonList(
                 new OptionData(OptionType.USER, "member", "The member you want to get the level for")

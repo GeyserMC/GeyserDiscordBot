@@ -58,9 +58,9 @@ public class KickCommand extends SlashCommand {
 
         this.guildOnly = true;
         this.options = Arrays.asList(
-                new OptionData(OptionType.USER, "member", "The member to kick").setRequired(true),
-                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user on kick").setRequired(false),
-                new OptionData(OptionType.STRING, "reason", "Specify a reason for kicking").setRequired(false)
+                new OptionData(OptionType.USER, "member", "The member to kick", true),
+                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user on kick"),
+                new OptionData(OptionType.STRING, "reason", "Specify a reason for kicking")
         );
     }
 
@@ -175,7 +175,7 @@ public class KickCommand extends SlashCommand {
         }
 
         // Kick user
-        guild.kick(user, reason).queue();
+        guild.kick(user).reason(reason).queue();
 
         // Log the change
         int id = GeyserBot.storageManager.addLog(mod, "kick", user, reason);

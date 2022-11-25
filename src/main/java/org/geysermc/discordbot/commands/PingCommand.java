@@ -63,7 +63,7 @@ public class PingCommand extends SlashCommand {
         this.guildOnly = false;
 
         this.options = Collections.singletonList(
-            new OptionData(OptionType.STRING, "server", "The IP Address of the server you want to ping").setRequired(true)
+            new OptionData(OptionType.STRING, "server", "The IP Address of the server you want to ping", true)
         );
     }
 

@@ -41,6 +41,7 @@ public class TagCommand extends SlashCommand {
     public TagCommand() {
         this.name = "tag";
         this.help = "Fetch a tag";
+        this.arguments = "<name>";
         this.guildOnly = false;
 
         this.options = Collections.singletonList(

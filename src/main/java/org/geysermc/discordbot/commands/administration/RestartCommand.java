@@ -40,8 +40,8 @@ public class RestartCommand extends SlashCommand {
         this.userMissingPermMessage = "";
         this.guildOnly = false;
 
-        this.userPermissions = new Permission[] { Permission.MANAGE_ROLES };
-        this.botPermissions = new Permission[] { Permission.MANAGE_ROLES };
+        this.userPermissions = new Permission[]{Permission.MANAGE_ROLES};
+        this.botPermissions = new Permission[]{Permission.MANAGE_ROLES};
     }
 
     @Override
