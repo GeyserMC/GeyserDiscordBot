@@ -78,7 +78,7 @@ public class HelpHandler extends ListenerAdapter {
         // Split discord message so we can compare keywords.
         String[] discordMessageSplit = discordMessage.split(" ");
         String[] keywordsToCheck = {"pls", "please", "help", "me", "need", "how", "install", "setup", "to", "can"};
-        String[] tagKeywords = {"help", "floodgate", "geyser", "setup", "update", "reload", "portforward", "1.8"};
+        String[] tagKeywords = {"help", "floodgate", "geyser", "update", "reload", "portforward", "1.8"};
         List<String> commonKeywords = new ArrayList<>();
         // Check for keywords in the discord message.
         for (String s : discordMessageSplit) {
