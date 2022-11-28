@@ -272,8 +272,10 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     for (StackLine line : exception.getLines()) {
                         if (line.getStackPackage() != null && line.getStackPackage().startsWith("org.geysermc") && !line.getStackPackage().contains("shaded")) {
                             // Get the file url
+                            if(line.getLine()!=null){
                             String lineUrl = fileFinder.getFileUrl(line.getSource(), Integer.parseInt(line.getLine()));
-
+                                continue;
+                            }
                             // Build the description
                             String details = "Unknown fix!\nClass: `" + line.getJavaClass() + "`\nMethod: `" + line.getMethod() + "`\nLine: `" + line.getLine() + "`\nLink: " + (!lineUrl.isEmpty() ? "[" + line.getSource() + "#L" + line.getLine() + "](" + lineUrl + ")" : "Unknown");
 
