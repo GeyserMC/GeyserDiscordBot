@@ -14,6 +14,6 @@ More information is available on their [website](https://www.geyserconnect.net)
 [Switch Users](https://www.geyserconnect.net/pages/guides/switch)
 [PlayStation Users](https://www.geyserconnect.net/pages/guides/playstation)
 
-You can also join the [Discord](https://www.geyserconnect.net/pages/redirects/discord/demi lo)
+You can also join the [Discord](https://www.geyserconnect.net/pages/redirects/discord)
 
 **Warning:** Due to Geyser handling certain things different to a vanilla Java client you may get banned using this (see `!tag anticheat` for more info). As well as this, if you use online mode you are sending your Java account credentials to a third party.
