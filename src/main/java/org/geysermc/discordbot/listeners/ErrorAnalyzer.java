@@ -270,7 +270,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     // The error was not already listed and no fix was found. Add some info about the error
 
                     for (StackLine line : exception.getLines()) {
-                        if (line.getStackPackage() != null && line.getStackPackage().startsWith("org.geysermc") && !line.getStackPackage().contains("shaded")) {
+                        if (line.getStackPackage() != null && line.getLine() != null && line.getStackPackage().startsWith("org.geysermc") && !line.getStackPackage().contains("shaded")) {
                             // Get the file url
                             String lineUrl = fileFinder.getFileUrl(line.getSource(), Integer.parseInt(line.getLine()));
 
