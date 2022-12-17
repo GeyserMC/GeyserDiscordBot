@@ -4,8 +4,7 @@ aliases: xuid, floodgateuuid, bedrockuuid
 ---
 Automatic method:
 Use https://uuid.kejona.dev/ to convert any Bedrock Player username into a Floodgate UUID.
-Alternatively, the "/UUID" command in the #botspam can work if the player has joined a Geyser+Floodgate server before.
-
+Alternatively, run the "/UUID" command in #botspam.
 Manual method:
 You can manually find out a UUID using this method:
 Step 1: Visit https://www.cxkes.me/xbox/xuid and enter the bedrock username (without the period that is added by Geyser)
