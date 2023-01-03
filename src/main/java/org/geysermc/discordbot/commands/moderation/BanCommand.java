@@ -183,7 +183,7 @@ public class BanCommand extends SlashCommand {
         event.getMessage().replyEmbeds(handle(user, moderator, event.getGuild(),delDays, silent, reason)).queue();
     }
 
-    private MessageEmbed handle(User user, Member mod, Guild guild,int days, boolean silent, String reason) {
+    private MessageEmbed handle(User user, Member mod, Guild guild, int days, boolean silent, String reason) {
         // Let the user know they're banned if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) -> {

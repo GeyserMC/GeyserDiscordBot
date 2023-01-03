@@ -70,8 +70,8 @@ public class SettingsCommand extends SlashCommand {
                         .addChoice("Don't log","dont-log")
                         .addChoice("Health Checks", "health-checks")
                         .addChoice("Log channel", "log-channel")
-                        .addChoice("Punishment Message","punishment-message")
-                        .addChoice("Roles","roles")
+                        .addChoice("Punishment Message", "punishment-message")
+                        .addChoice("Roles", "roles")
                         .addChoice("RSS Feeds", "rss-feeds")
                         .addChoice("Update channel", "update-channel")
                         .addChoice("Voice Role", "voice-role"),
