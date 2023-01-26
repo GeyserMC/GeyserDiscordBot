@@ -42,6 +42,7 @@ import pw.chew.chewbotcca.util.RestClient;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -82,7 +83,7 @@ public class FileHandler extends ListenerAdapter {
 //                }
 
                 try {
-                    File attachmentFile = attachment.downloadToFile().get();
+                    File attachmentFile = attachment.getProxy().downloadToFile(Paths.get(System.getProperty("java.io.tmpdir"), attachment.getId()).toFile()).get();
 
                     RequestBody body = RequestBody.create("{" +
                                 "\"name\":" + JSONObject.quote(attachment.getFileName()) + "," +
