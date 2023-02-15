@@ -31,6 +31,7 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.geysermc.discordbot.http.Server;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -44,12 +45,16 @@ public class LeaderboardCommand extends SlashCommand {
 
     @Override
     protected void execute(CommandEvent event) {
-        event.getMessage().replyEmbeds(getEmbed(event.getGuild())).queue();
+        event.getMessage().replyEmbeds(getEmbed(event.getGuild()))
+            .addActionRow(Button.link(Server.getUrl(event.getGuild().getIdLong()), "Leaderboard"))
+            .queue();
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        event.replyEmbeds(getEmbed(event.getGuild())).queue();
+        event.replyEmbeds(getEmbed(event.getGuild()))
+            .addActionRow(Button.link(Server.getUrl(event.getGuild().getIdLong()), "Leaderboard"))
+            .queue();
     }
 
     private MessageEmbed getEmbed(Guild guild) {
@@ -62,8 +67,8 @@ public class LeaderboardCommand extends SlashCommand {
         }
 
         return new EmbedBuilder()
-                .setTitle("Leaderboard for " + guild.getName(), Server.getUrl(guild.getIdLong()))
-                .setDescription("Click the above for the leaderboard")
+                .setTitle("Level leaderboard for " + guild.getName(), Server.getUrl(guild.getIdLong()))
+                .setDescription("Click the button below for the level leaderboard!")
                 .setThumbnail(guild.getIconUrl())
                 .setColor(BotColors.SUCCESS.getColor())
                 .build();
