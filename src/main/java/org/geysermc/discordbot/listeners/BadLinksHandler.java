@@ -83,6 +83,7 @@ public class BadLinksHandler extends ListenerAdapter {
                     if (domain.endsWith("." + checkDomain) || domain.equals(checkDomain)) {
                         // If the domain is a good domain or a subdomain of a good domain, don't compare
                         compareDomainNeeded = false;
+                        break;
                     }
                 }
                 if (compareDomainNeeded) {
