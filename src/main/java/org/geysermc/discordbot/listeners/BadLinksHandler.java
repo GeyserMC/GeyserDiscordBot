@@ -78,8 +78,8 @@ public class BadLinksHandler extends ListenerAdapter {
             }
 
             if (!foundMatch) {
+                boolean compareDomainNeeded = true;
                 for (String checkDomain : checkDomains) {
-                    boolean compareDomainNeeded = true;
                     if (domain.endsWith("." + checkDomain) || domain.equals(checkDomain)) {
                         // If the domain is a good domain or a subdomain of a good domain, don't compare
                         compareDomainNeeded = false;
