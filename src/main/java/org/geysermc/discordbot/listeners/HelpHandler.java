@@ -58,7 +58,7 @@ public class HelpHandler extends ListenerAdapter {
         if (event.getAuthor().isBot()) return;
         // Check if member has joined within 10 days from current date.
         Member member = event.getMember();
-        assert member != null;
+        if (member == null) return;
 
         if (member.getTimeJoined().toLocalDate().plusDays(12).isBefore(LocalDate.now())) {
             return;
@@ -80,6 +80,10 @@ public class HelpHandler extends ListenerAdapter {
         String[] keywordsToCheck = {"pls", "please", "help", "me", "need", "how", "install", "setup", "to", "can"};
         String[] tagKeywords = {"help", "floodgate", "geyser", "update", "reload", "portforward", "1.8"};
         List<String> commonKeywords = new ArrayList<>();
+        // Higher chance of having false trigger on big messages.
+        if (discordMessageSplit.length < 5) {
+            return;
+        }
         // Check for keywords in the discord message.
         for (String s : discordMessageSplit) {
             for (String word : keywordsToCheck) {

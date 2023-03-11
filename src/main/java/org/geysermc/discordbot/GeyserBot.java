@@ -282,8 +282,13 @@ public class GeyserBot {
     }
 
     public static void shutdown() {
+        GeyserBot.LOGGER.info("Shutting down storage...");
         storageManager.closeStorage();
+        GeyserBot.LOGGER.info("Shutting down thread pool...");
         generalThreadPool.shutdown();
+        GeyserBot.LOGGER.info("Shutting http server...");
         httpServer.stop();
+        GeyserBot.LOGGER.info("Finished shutdown, exiting!");
+        System.exit(0);
     }
 }
