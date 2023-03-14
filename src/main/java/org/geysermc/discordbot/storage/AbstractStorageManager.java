@@ -38,7 +38,7 @@ public abstract class AbstractStorageManager {
     /**
      * Do any initial setup for the storage when the bot starts
      */
-    public abstract void setupStorage();
+    public abstract void setupStorage() throws Exception;
 
     /**
      * Close any connections or do clean-up
