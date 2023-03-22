@@ -156,8 +156,8 @@ public class GeyserBot {
         try {
             storageManager = storageType.getStorageManager().getDeclaredConstructor().newInstance();
             storageManager.setupStorage();
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            LOGGER.error("Unable to create database link!");
+        } catch (Exception e) {
+            LOGGER.error("Unable to create database link!", e);
             System.exit(1);
         }
 
