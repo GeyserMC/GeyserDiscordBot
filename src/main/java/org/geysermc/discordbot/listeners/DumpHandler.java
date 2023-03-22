@@ -213,7 +213,7 @@ public class DumpHandler extends ListenerAdapter {
             // Set the latest info based on the returned comparison
             if (compare.getBehindBy() != 0 || compare.getAheadBy() != 0) {
                 gitData.append("**Latest:** No\n");
-                problems.add("- You aren't on the latest Geyser version! Please [download](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/) the latest version.");
+                problems.add("- You aren't on the latest Geyser version! Please [download](https://geysermc.org/download) the latest version.");
             } else {
                 gitData.append("**Latest:** Yes\n");
             }
