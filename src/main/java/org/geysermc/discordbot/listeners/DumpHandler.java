@@ -51,8 +51,6 @@ import pw.chew.chewbotcca.util.RestClient;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -213,7 +211,7 @@ public class DumpHandler extends ListenerAdapter {
             // Set the latest info based on the returned comparison
             if (compare.getBehindBy() != 0 || compare.getAheadBy() != 0) {
                 gitData.append("**Latest:** No\n");
-                problems.add("- You aren't on the latest Geyser version! Please [download](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/) the latest version.");
+                problems.add("- You aren't on the latest Geyser version! Please [download](https://geysermc.org/download) the latest version.");
             } else {
                 gitData.append("**Latest:** Yes\n");
             }
@@ -237,20 +235,19 @@ public class DumpHandler extends ListenerAdapter {
         if (!isFork && gitInfo.has("git.build.number")) {
             try {
                 // Attempt to see how far behind they are not based on commits but CI builds
-                String buildXML = RestClient.simpleGetString("https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/" +
-                        URLEncoder.encode(gitInfo.getString("git.branch"), StandardCharsets.UTF_8.toString()) + "/lastSuccessfulBuild/api/xml?xpath=//buildNumber");
-                if (buildXML.startsWith("<buildNumber>")) {
-                    int latestBuildNum = Integer.parseInt(buildXML.replaceAll("<(\\\\)?(/)?buildNumber>", "").trim());
+                JSONObject response = new JSONObject("https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest");
+                if (response.get("build") != null) {
+                    int latestBuildNum = Integer.parseInt(String.valueOf(response.get("build")));
                     int buildNum = Integer.parseInt(gitInfo.getString("git.build.number"));
 
                     int buildNumDiff = latestBuildNum - buildNum;
                     if (buildNumDiff > 0) {
                         compareByBuildNumber = true;
                         String compareUrl = gitUrl + "/compare/" + gitInfo.getString("git.commit.id.abbrev") + "..." + gitInfo.getString("git.branch");
-                        gitData.append("Behind by [").append(buildNumDiff).append(" CI build").append(buildNumDiff == 1 ? "" : "s").append("](").append(compareUrl).append(")\n");
+                        gitData.append("Behind by [").append(buildNumDiff).append(" Run build").append(buildNumDiff == 1 ? "" : "s").append("](").append(compareUrl).append(")\n");
                     }
                 }
-            } catch (IOException | NumberFormatException ignored) {
+            } catch (NumberFormatException ignored) {
             }
         }
 
