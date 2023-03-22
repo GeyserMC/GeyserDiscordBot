@@ -235,7 +235,8 @@ public class DumpHandler extends ListenerAdapter {
         if (!isFork && gitInfo.has("git.build.number")) {
             try {
                 // Attempt to see how far behind they are not based on commits but CI builds
-                JSONObject response = new JSONObject("https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest");
+                RestClient.RestResponse<JSONObject> restResponse = RestClient.getJsonObject("https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest");
+                JSONObject response = restResponse.body();
                 if (response.get("build") != null) {
                     int latestBuildNum = Integer.parseInt(String.valueOf(response.get("build")));
                     int buildNum = Integer.parseInt(gitInfo.getString("git.build.number"));
