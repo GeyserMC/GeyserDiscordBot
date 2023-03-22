@@ -237,16 +237,15 @@ public class DumpHandler extends ListenerAdapter {
                 // Attempt to see how far behind they are not based on commits but CI builds
                 RestClient.RestResponse<JSONObject> restResponse = RestClient.getJsonObject("https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest");
                 JSONObject response = restResponse.body();
-                if (response.get("build") != null) {
-                    int latestBuildNum = Integer.parseInt(String.valueOf(response.get("build")));
-                    int buildNum = Integer.parseInt(gitInfo.getString("git.build.number"));
 
-                    int buildNumDiff = latestBuildNum - buildNum;
-                    if (buildNumDiff > 0) {
-                        compareByBuildNumber = true;
-                        String compareUrl = gitUrl + "/compare/" + gitInfo.getString("git.commit.id.abbrev") + "..." + gitInfo.getString("git.branch");
-                        gitData.append("Behind by [").append(buildNumDiff).append(" Run build").append(buildNumDiff == 1 ? "" : "s").append("](").append(compareUrl).append(")\n");
-                    }
+                int latestBuildNum = response.getInt("build");
+                int buildNum = Integer.parseInt(gitInfo.getString("git.build.number"));
+                int buildNumDiff = latestBuildNum - buildNum;
+                if (buildNumDiff > 0) {
+                    compareByBuildNumber = true;
+                    String compareUrl = gitUrl + "/compare/" + gitInfo.getString("git.commit.id.abbrev") + "..." + gitInfo.getString("git.branch");
+                    gitData.append("Behind by [").append(buildNumDiff).append(" Run build").append(buildNumDiff == 1 ? "" : "s").append("](").append(compareUrl).append(")\n");
+
                 }
             } catch (NumberFormatException ignored) {
             }
