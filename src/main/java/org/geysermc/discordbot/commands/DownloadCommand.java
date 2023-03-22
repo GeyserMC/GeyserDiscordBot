@@ -55,11 +55,19 @@ public class DownloadCommand extends SlashCommand {
         this.defaultDownloadOption = new GeyserDownloadOption("Geyser", "https://geysermc.org/download");
         this.optionsToRepository = ImmutableMap.<String, DownloadOption>builder()
                 .put("geyser", this.defaultDownloadOption)
-                .put("floodgate", new GeyserDownloadOption("Floodgate", "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/"))
+                .put("geyser-fabric",      new GeyserDownloadOption("Geyser-Fabric",      "https://geysermc.org/download#fabric"))
+                .put("geyser-spigot",      new GeyserDownloadOption("Geyser-Spigot",      "https://geysermc.org/download#spigot"))
+                .put("geyser-paper",       new GeyserDownloadOption("Geyser-Paper",       "https://geysermc.org/download#spigot"))
+                .put("geyser-velocity",    new GeyserDownloadOption("Geyser-Velocity",    "https://geysermc.org/download#velocity"))
+                .put("geyser-bungeecord",  new GeyserDownloadOption("Geyser-Bungeecord",  "https://geysermc.org/download#bungeecord"))
+                .put("geyser-waterfall",   new GeyserDownloadOption("Geyser-Waterfall",   "https://geysermc.org/download#bungeecord"))
+                .put("geyser-sponge",      new GeyserDownloadOption("Geyser-Sponge",      "https://geysermc.org/download#sponge"))
+                .put("geyser-standalone",  new GeyserDownloadOption("Geyser-Standalone",  "https://geysermc.org/download#standalone"))
                 .put("geyseroptionalpack", new GeyserDownloadOption("GeyserOptionalPack", "https://ci.opencollab.dev/job/GeyserMC/job/GeyserOptionalPack/job/master/"))
-                .put("floodgate-fabric", new FabricDownloadOption("Floodgate-Fabric", "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate-Fabric/job/master/"))
-                .put("paper", new DownloadOption("Paper", "https://papermc.io/downloads", "https://github.com/PaperMC.png"))
-                .put("viaversion", new DownloadOption("ViaVersion", "https://ci.viaversion.com/job/ViaVersion/", "https://github.com/ViaVersion.png"))
+                .put("floodgate",          new GeyserDownloadOption("Floodgate",          "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/"))
+                .put("floodgate-fabric",   new FabricDownloadOption("Floodgate-Fabric",   "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate-Fabric/job/master/"))
+                .put("paper",              new DownloadOption("Paper", "https://papermc.io/downloads", "https://github.com/PaperMC.png"))
+                .put("viaversion",         new DownloadOption("ViaVersion", "https://ci.viaversion.com/job/ViaVersion/", "https://github.com/ViaVersion.png"))
                 .build();
 
         List<Command.Choice> choices = new ArrayList<>();
