@@ -81,7 +81,7 @@ public class HelpHandler extends ListenerAdapter {
         String[] tagKeywords = {"help", "floodgate", "geyser", "update", "reload", "portforward", "1.8"};
         List<String> commonKeywords = new ArrayList<>();
         // Higher chance of having false trigger on big messages.
-        if (discordMessageSplit.length < 5) {
+        if (discordMessageSplit.length > 5) {
             return;
         }
         // Check for keywords in the discord message.
