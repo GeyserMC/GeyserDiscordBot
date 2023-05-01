@@ -1,0 +1,58 @@
+name: Build Docker Image
+
+on: [push]
+
+env:
+  DOCKER_CONTAINER: discord-bot
+  DOCKER_TAG: ${{ github.ref_name }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # jar file build
+      - uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: submodules-init
+        uses: snickerbockers/submodules-init@v4
+
+      - name: Build with Maven
+        run: mvn -B package -T 2C
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          name: GeyserBot
+          path: target/GeyserBot.jar
+
+      # Docker image build
+      - name: Fix Docker tag
+        run: echo "DOCKER_TAG=$(echo $DOCKER_TAG | sed -e 's/\//_/g')" >> $GITHUB_ENV
+
+      - name: Build the Docker image
+        run: |
+          docker build . --file Dockerfile --tag $DOCKER_CONTAINER:$DOCKER_TAG
+          [[ "${{ github.ref }}" == "refs/heads/master" ]] && docker tag ghcr.io/${{ github.repository_owner }}/$DOCKER_CONTAINER:latest
+          docker tag $DOCKER_CONTAINER:$DOCKER_TAG ghcr.io/${{ github.repository_owner }}/$DOCKER_CONTAINER:$DOCKER_TAG
+
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+      - name: Push to GHCR
+        run: |
+          [[ "${{ github.ref }}" == "refs/heads/master" ]] && docker push ghcr.io/${{ github.repository_owner }}/$DOCKER_CONTAINER:latest
+          docker push ghcr.io/${{ github.repository_owner }}/$DOCKER_CONTAINER:$DOCKER_TAG

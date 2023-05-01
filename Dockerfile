@@ -11,6 +11,8 @@ USER app:app
 
 WORKDIR /opt/app
 
+COPY target/GeyserBot.jar GeyserBot.jar
+
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=10s \
