@@ -46,7 +46,7 @@ jobs:
       - name: Build the Docker image
         run: |
           docker build . --file Dockerfile --tag $DOCKER_CONTAINER:$DOCKER_TAG
-          [[ "${{ github.ref }}" == "refs/heads/master" ]] && docker tag ghcr.io/${{ github.repository_owner }}/$DOCKER_CONTAINER:latest
+          [[ "${{ github.ref }}" == "refs/heads/master" ]] && docker tag $DOCKER_CONTAINER:$DOCKER_TAG ghcr.io/${{ github.repository_owner }}/$DOCKER_CONTAINER:latest
           docker tag $DOCKER_CONTAINER:$DOCKER_TAG ghcr.io/${{ github.repository_owner }}/$DOCKER_CONTAINER:$DOCKER_TAG
 
       - name: Log in to registry
