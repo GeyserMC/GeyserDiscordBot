@@ -44,9 +44,9 @@ jobs:
       - name: Fix Docker environment variables
         run: |
           # Make lowercase
-          echo "DOCKER_OWNER=$(echo DOCKER_OWNER | tr '[A-Z]' '[a-z]')" >> $GITHUB_ENV
-          echo "DOCKER_CONTAINER=$(echo DOCKER_CONTAINER | tr '[A-Z]' '[a-z]')" >> $GITHUB_ENV
-          echo "DOCKER_TAG=$(echo DOCKER_TAG | tr '[A-Z]' '[a-z]')" >> $GITHUB_ENV
+          echo "DOCKER_OWNER=$(echo $DOCKER_OWNER | tr '[A-Z]' '[a-z]')" >> $GITHUB_ENV
+          echo "DOCKER_CONTAINER=$(echo $DOCKER_CONTAINER | tr '[A-Z]' '[a-z]')" >> $GITHUB_ENV
+          echo "DOCKER_TAG=$(echo $DOCKER_TAG | tr '[A-Z]' '[a-z]')" >> $GITHUB_ENV
 
           # Replace / with _
           echo "DOCKER_TAG=$(echo $DOCKER_TAG | sed -e 's/\//_/g')" >> $GITHUB_ENV
