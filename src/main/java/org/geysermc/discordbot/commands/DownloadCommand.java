@@ -52,12 +52,12 @@ public class DownloadCommand extends SlashCommand {
         this.help = "Sends a link to download the latest version of Geyser or another program";
         this.guildOnly = false;
 
-        this.defaultDownloadOption = new GeyserDownloadOption("Geyser", "https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/");
+        this.defaultDownloadOption = new GeyserDownloadOption("Geyser", "https://geysermc.org/download");
         this.optionsToRepository = ImmutableMap.<String, DownloadOption>builder()
                 .put("geyser", this.defaultDownloadOption)
-                .put("floodgate", new GeyserDownloadOption("Floodgate", "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/"))
+                .put("floodgate", new GeyserDownloadOption("Floodgate", this.defaultDownloadOption))
                 .put("geyseroptionalpack", new GeyserDownloadOption("GeyserOptionalPack", "https://ci.opencollab.dev/job/GeyserMC/job/GeyserOptionalPack/job/master/"))
-                .put("floodgate-fabric", new FabricDownloadOption("Floodgate-Fabric", "https://ci.opencollab.dev/job/GeyserMC/job/Floodgate-Fabric/job/master/"))
+                .put("floodgate-fabric", new FabricDownloadOption("Floodgate-Fabric", "https://modrinth.com/mod/floodgate"))
                 .put("paper", new DownloadOption("Paper", "https://papermc.io/downloads", "https://github.com/PaperMC.png"))
                 .put("viaversion", new DownloadOption("ViaVersion", "https://ci.viaversion.com/job/ViaVersion/", "https://github.com/ViaVersion.png"))
                 .build();
