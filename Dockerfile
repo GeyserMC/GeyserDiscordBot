@@ -11,7 +11,7 @@ USER app:app
 
 WORKDIR /opt/app
 
-COPY target/GeyserBot.jar GeyserBot.jar
+COPY build/libs/GeyserBot.jar GeyserBot.jar
 
 EXPOSE 8000
 

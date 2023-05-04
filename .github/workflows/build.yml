@@ -1,6 +1,13 @@
-name: Build Docker Image
+name: Build
 
-on: [push]
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - '.idea/copyright/*.xml'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'README.md'
 
 env:
   DOCKER_OWNER: ${{ github.repository_owner }}
@@ -12,33 +19,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-
-      # jar file build
-      - uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
       - name: Set up JDK 17
         uses: actions/setup-java@v1
         with:
           java-version: 17
+          distribution: temurin
 
-      - name: submodules-init
-        uses: snickerbockers/submodules-init@v4
+      - name: Checkout repository
+        uses: actions/checkout@v1
 
-      - name: Build with Maven
-        run: mvn -B package -T 2C
+      - name: Build GeyserBot
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v1
         if: success()
         with:
           name: GeyserBot
-          path: target/GeyserBot.jar
+          path: build/libs/GeyserBot.jar
 
       # Docker image build
       - name: Fix Docker environment variables

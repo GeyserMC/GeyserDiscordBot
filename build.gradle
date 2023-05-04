@@ -1,0 +1,107 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+group 'org.geysermc.discordbot'
+version '3.0'
+
+repositories {
+//    mavenLocal()
+    mavenCentral()
+
+    maven {
+        url'https://jitpack.io'
+    }
+
+    maven {
+        url 'https://repo.opencollab.dev/main'
+    }
+
+    maven {
+        url 'https://m2.chew.pro/snapshots/'
+    }
+
+    maven {
+        url 'https://repo.rtm516.co.uk/releases/'
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+
+    // JDA
+    implementation 'net.dv8tion:JDA:5.0.0-beta.2'
+    implementation 'pw.chew:jda-chewtils:2.0-SNAPSHOT'
+
+    // Logging
+    implementation 'ch.qos.logback:logback-classic:1.4.5'
+    implementation 'org.slf4j:slf4j-api:2.0.6'
+
+    // Error logging
+    implementation 'io.sentry:sentry-logback:6.15.0'
+
+    // Web requests and json
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    implementation 'org.json:json:20230227'
+
+    // Database implementations
+    implementation 'com.mysql:mysql-connector-j:8.0.32'
+    implementation 'org.xerial:sqlite-jdbc:3.41.0.0'
+
+    // Pinging java and bedrock servers
+    implementation 'com.github.rtm516:minecraft-server-ping:c61c496104'
+    implementation 'com.nukkitx.protocol:bedrock-common:2.9.17-SNAPSHOT'
+
+    implementation 'org.reflections:reflections:0.10.2'
+    implementation 'org.ocpsoft.prettytime:prettytime:5.0.6.Final'
+    implementation 'commons-net:commons-net:3.9.0'
+
+    // Parsing HTML
+    implementation 'org.jsoup:jsoup:1.15.4'
+
+    // Github API
+    implementation 'org.kohsuke:github-api:1.314'
+
+    // Basic HTML templating engine
+    implementation 'org.freemarker:freemarker:2.3.32'
+
+    // SVG parsing
+    implementation 'org.apache.xmlgraphics:batik-util:1.16'
+    implementation 'org.apache.xmlgraphics:batik-anim:1.16'
+    implementation 'org.apache.xmlgraphics:batik-transcoder:1.16'
+    implementation 'org.apache.xmlgraphics:batik-rasterizer:1.16'
+
+    // Parses stack traces from text
+    implementation 'com.rtm516:StackParser:1.0.0'
+
+    // For adding users to the user cache in JDA
+    implementation 'net.sf.trove4j:trove4j:3.0.3'
+
+    // Reading RSS feeds
+    implementation 'com.rometools:rome:2.1.0'
+
+    // Image processing and OCR
+    implementation 'net.sourceforge.tess4j:tess4j:5.6.0'
+    implementation 'org.imgscalr:imgscalr-lib:4.2'
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    archiveFileName = "${project.name}.jar"
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
