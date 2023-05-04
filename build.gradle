@@ -1,6 +1,5 @@
 plugins {
     id 'java-library'
-    id 'maven-publish'
 }
 
 group 'org.geysermc.discordbot'
@@ -94,6 +93,13 @@ jar {
 
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    manifest {
+        attributes (
+            'Class-Path': configurations.runtimeClasspath.files.collect { it.getName() }.join(' '),
+            'Main-Class': 'org.geysermc.discordbot.GeyserBot'
+        )
     }
 }
 
