@@ -11,7 +11,7 @@ repositories {
     mavenCentral()
 
     maven {
-        url'https://jitpack.io'
+        url 'https://jitpack.io'
     }
 
     maven {
@@ -23,32 +23,32 @@ repositories {
     }
 
     maven {
-        url 'https://repo.rtm516.co.uk/releases/'
+        url 'https://repo.rtm516.co.uk/main/'
     }
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
 
     // JDA
-    implementation 'net.dv8tion:JDA:5.0.0-beta.2'
+    implementation 'net.dv8tion:JDA:5.0.0-beta.9'
     implementation 'pw.chew:jda-chewtils:2.0-SNAPSHOT'
 
     // Logging
-    implementation 'ch.qos.logback:logback-classic:1.4.5'
-    implementation 'org.slf4j:slf4j-api:2.0.6'
+    implementation 'ch.qos.logback:logback-classic:1.4.7'
+    implementation 'org.slf4j:slf4j-api:2.0.7'
 
     // Error logging
-    implementation 'io.sentry:sentry-logback:6.15.0'
+    implementation 'io.sentry:sentry-logback:6.18.1'
 
     // Web requests and json
-    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
     implementation 'org.json:json:20230227'
 
     // Database implementations
-    implementation 'com.mysql:mysql-connector-j:8.0.32'
-    implementation 'org.xerial:sqlite-jdbc:3.41.0.0'
+    implementation 'com.mysql:mysql-connector-j:8.0.33'
+    implementation 'org.xerial:sqlite-jdbc:3.41.2.1'
 
     // Pinging java and bedrock servers
     implementation 'com.github.rtm516:minecraft-server-ping:c61c496104'
@@ -59,7 +59,7 @@ dependencies {
     implementation 'commons-net:commons-net:3.9.0'
 
     // Parsing HTML
-    implementation 'org.jsoup:jsoup:1.15.4'
+    implementation 'org.jsoup:jsoup:1.16.1'
 
     // Github API
     implementation 'org.kohsuke:github-api:1.314'
@@ -83,7 +83,7 @@ dependencies {
     implementation 'com.rometools:rome:2.1.0'
 
     // Image processing and OCR
-    implementation 'net.sourceforge.tess4j:tess4j:5.6.0'
+    implementation 'net.sourceforge.tess4j:tess4j:5.7.0'
     implementation 'org.imgscalr:imgscalr-lib:4.2'
 }
 
