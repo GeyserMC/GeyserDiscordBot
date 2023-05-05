@@ -3,7 +3,7 @@ aliases: xuid, floodgateuuid, bedrockuuid
 
 ---
 Automatic method:
-Use https://uuid.kejona.dev/ to convert any Bedrock Player username into a Floodgate UUID.
+Use https://mcprofile.io to lookup your Floodgate UUID with your Gamertag.
 Alternatively, use the "/UUID" command in <#613194762249437245>.
 
 Manual method:
