@@ -27,7 +27,10 @@ package org.geysermc.discordbot.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.PropertiesManager;
@@ -38,7 +41,7 @@ import java.util.stream.Collectors;
 /**
  * Handle the help command
  */
-public class HelpCommand extends Command {
+public class HelpCommand extends SlashCommand {
 
     public HelpCommand() {
         this.name = "help";
@@ -47,19 +50,26 @@ public class HelpCommand extends Command {
     }
 
     @Override
+    protected void execute(SlashCommandEvent event) {
+        event.replyEmbeds(handle("/")).queue();
+    }
+
+    @Override
     protected void execute(CommandEvent event) {
+        event.getMessage().replyEmbeds(handle(PropertiesManager.getPrefix())).queue();
+    }
+
+    private MessageEmbed handle(String prefix) {
         EmbedBuilder helpEmbed = new EmbedBuilder()
-            .setColor(BotColors.SUCCESS.getColor())
-            .setTitle("Geyser Bot Help");
+                .setColor(BotColors.SUCCESS.getColor())
+                .setTitle("Geyser Bot Help");
 
         for (Command command : GeyserBot.COMMANDS.stream().sorted(Comparator.comparing(Command::getName)).collect(Collectors.toList())) {
             if (!command.isHidden()) {
-                helpEmbed.addField("`" + PropertiesManager.getPrefix() + command.getName() + (command.getArguments() != null ? " " + command.getArguments() : "") + "`", command.getHelp(), true);
+                helpEmbed.addField("`" + prefix + command.getName() + (command.getArguments() != null ? " " + command.getArguments() : "") + "`", command.getHelp(), true);
             }
         }
 
-        helpEmbed.addField("`" + PropertiesManager.getPrefix() + "tag <name>`", "Display a tag for the given name", true);
-
-        event.getMessage().replyEmbeds(helpEmbed.build()).queue();
+        return helpEmbed.build();
     }
 }

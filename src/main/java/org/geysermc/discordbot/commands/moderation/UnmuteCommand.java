@@ -25,14 +25,14 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -43,12 +43,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class UnmuteCommand extends Command {
+public class UnmuteCommand extends SlashCommand {
 
     public UnmuteCommand() {
         this.name = "unmute";
         this.hidden = true;
+        this.help = "Unmute a user";
+
         this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
+        this.botPermissions = new Permission[] { Permission.MANAGE_ROLES };
+
+        this.options = Arrays.asList(
+                new OptionData(OptionType.USER, "member", "The member to unmute", true),
+                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user on unmute"),
+                new OptionData(OptionType.STRING, "reason", "Specify a reason for unmuting")
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        // Fetch user
+        Member member = event.getOption("member").getAsMember();
+
+        // Fetch args
+        boolean silent = event.optBoolean("silent", false);
+        String reason = event.optString("reason", "*None*");
+
+        event.replyEmbeds(handle(member, event.getMember(), event.getGuild(), silent, reason)).queue();
     }
 
     @Override
@@ -68,18 +89,6 @@ public class UnmuteCommand extends Command {
             return;
         }
 
-        // Check we can target the user
-        if (!event.getSelfMember().canInteract(member) || !event.getMember().canInteract(member)) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Higher role")
-                    .setDescription("Either the bot or you cannot target that user.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
-        // Get the user from the member
-        User user = member.getUser();
         boolean silent = false;
 
         // Handle all the option args
@@ -112,6 +121,22 @@ public class UnmuteCommand extends Command {
             reason = reasonParts;
         }
 
+        event.getMessage().replyEmbeds(handle(member, event.getMember(), event.getGuild(), silent, reason)).queue();
+    }
+
+    private MessageEmbed handle(Member member, Member moderator, Guild guild, boolean silent, String reason) {
+        // Check we can target the user
+        if (!BotHelpers.canTarget(moderator, member)) {
+            return new EmbedBuilder()
+                    .setTitle("Higher role")
+                    .setDescription("Either the bot or you cannot target that user.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
+        // Get the user from the member
+        User user = member.getUser();
+
         // Let the user know they're muted if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) ->
@@ -120,23 +145,25 @@ public class UnmuteCommand extends Command {
                             .addField("Reason", reason, false)
                             .setTimestamp(Instant.now())
                             .setColor(BotColors.FAILURE.getColor())
-                            .build()).queue(message -> {}, throwable -> {}), throwable -> {});
+                            .build()).queue(message -> {
+                    }, throwable -> {
+                    }), throwable -> {
+            });
         }
-
         // Find and remove the 'muted' role
-        Role muteRole = event.getGuild().getRolesByName("muted", true).get(0);
-        event.getGuild().removeRoleFromMember(member, muteRole).queue();
+        Role muteRole = guild.getRolesByName("muted", true).get(0);
+        guild.removeRoleFromMember(member, muteRole).queue();
 
         // UnPersist the role
         GeyserBot.storageManager.removePersistentRole(member, muteRole);
 
         // Log the change
-        int id = GeyserBot.storageManager.addLog(event.getMember(), "unmute", user, reason);
+        int id = GeyserBot.storageManager.addLog(member, "unmute", user, reason);
 
-        MessageEmbed mutedEmbed = new EmbedBuilder()
+        MessageEmbed unmutedEmbed = new EmbedBuilder()
                 .setTitle("Unmuted user")
                 .addField("User", user.getAsMention(), false)
-                .addField("Staff member", event.getAuthor().getAsMention(), false)
+                .addField("Staff member", moderator.getAsMention(), false)
                 .addField("Reason", reason, false)
                 .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())
@@ -144,7 +171,7 @@ public class UnmuteCommand extends Command {
                 .build();
 
         // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(mutedEmbed).queue();
-        event.getMessage().replyEmbeds(mutedEmbed).queue();
+        ServerSettings.getLogChannel(guild).sendMessageEmbeds(unmutedEmbed).queue();
+        return unmutedEmbed;
     }
 }

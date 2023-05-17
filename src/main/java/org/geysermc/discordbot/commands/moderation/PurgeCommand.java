@@ -25,15 +25,14 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.ISnowflake;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.MessageHistory;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.listeners.LogHandler;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -46,13 +45,60 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PurgeCommand extends Command {
+public class PurgeCommand extends SlashCommand {
 
     public PurgeCommand() {
         this.name = "purge";
         this.aliases = new String[] { "prune" };
         this.hidden = true;
+        this.help = "Delete specified number of messages";
+
         this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
+        this.botPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
+
+        this.options = Arrays.asList(
+                new OptionData(OptionType.INTEGER, "count", "Number of messages to purge", true).setMinValue(1),
+                new OptionData(OptionType.USER, "member", "Remove only this user's messages")
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        User user = null;
+        MessageHistory history = event.getChannel().getHistory();
+        Member moderator = event.getMember();
+        int count = event.getOption("count").getAsInt();
+
+        // Make sure we don't have a invalid number
+        if (count <= 0) {
+            event.reply("Invalid count, Please specify a positive integer for the number of messages to delete!").setEphemeral(true).queue();
+            return;
+        }
+
+        if (event.hasOption("user")) {
+            user = event.getOption("member").getAsUser();
+
+            if (user == null) {
+                event.reply("Invalid user, The user ID specified doesn't link with any valid user in this server.").setEphemeral(true).queue();
+                return;
+            }
+        }
+
+        List<String> delList = handle(user, moderator, event.getGuild(), history, count, true);
+
+        if (delList == null) {
+            // Should only return null when it's a single entry
+            event.reply("Purged 1/1 messages!").setEphemeral(true).queue();
+            return;
+        }
+
+        // Remove the extra purge line at the end, so it doesn't interfere
+        String purged = delList.get(delList.size()-1);
+        delList.remove(delList.size()-1);
+
+        event.getTextChannel().deleteMessagesByIds(delList).queue();
+        event.reply("Purged " + purged + " messages!").setEphemeral(true).queue();
+
     }
 
     @Override
@@ -89,8 +135,17 @@ public class PurgeCommand extends Command {
         LogHandler.PURGED_MESSAGES.add(event.getMessage().getId());
         event.getMessage().delete().queue();
 
-        int totalMessages = 0;
         MessageHistory history = event.getChannel().getHistory();
+
+        List<String> delList = handle(user, event.getMember(), event.getGuild(), history, count, false);
+
+        if (delList != null) {
+            event.getTextChannel().deleteMessagesByIds(delList).queue();
+        }
+    }
+
+    private List<String> handle(User user, Member mod, Guild guild, MessageHistory history, int count, boolean isSlash) {
+        int totalMessages = 0;
         while (totalMessages < count) {
             List<Message> messagesToDelete = new ArrayList<>();
 
@@ -100,9 +155,11 @@ public class PurgeCommand extends Command {
                     continue;
                 }
 
+/*
                 if (message.getIdLong() == event.getMessage().getIdLong()) {
                     continue;
                 }
+*/
 
                 messagesToDelete.add(message);
                 totalMessages++;
@@ -114,29 +171,38 @@ public class PurgeCommand extends Command {
 
             // Remove the message(s)
             List<String> messagesToDeleteIds = messagesToDelete.stream().map(ISnowflake::getId).collect(Collectors.toList());
-            LogHandler.PURGED_MESSAGES.addAll(messagesToDeleteIds);
+
             if (messagesToDelete.size() > 1) {
-                event.getTextChannel().deleteMessagesByIds(messagesToDeleteIds).queue();
+                // Tell the log handler to ignore the messages
+                LogHandler.PURGED_MESSAGES.addAll(messagesToDeleteIds);
+
+                // TODO: Store the contents of removed messages and upload along side the log
+                // Log the change
+                MessageEmbed bannedEmbed = new EmbedBuilder()
+                        .setTitle("Purged channel")
+                        .addField("Channel", history.getChannel().getAsMention(), false)
+                        .addField("Target", user != null ? user.getAsMention() : "None", false)
+                        .addField("Staff member", mod.getAsMention(), false)
+                        .addField("Count", totalMessages + "/" + count, false)
+                        .setTimestamp(Instant.now())
+                        .setColor(BotColors.FAILURE.getColor())
+                        .build();
+
+                // Send the embed as a reply and to the log
+                ServerSettings.getLogChannel(guild).sendMessageEmbeds(bannedEmbed).queue();
+
+                if (isSlash) {
+                    // If slash command, add purge message count
+                    messagesToDeleteIds.add(totalMessages+"/"+count);
+                }
+
+                // Return to the main event
+                return messagesToDeleteIds;
             } else if (messagesToDelete.size() == 1) {
                 messagesToDelete.get(0).delete().queue();
                 break;
             }
         }
-
-        // TODO: Store the contents of removed messages and upload along side the log
-
-        // Log the change
-        MessageEmbed bannedEmbed = new EmbedBuilder()
-                .setTitle("Purged channel")
-                .addField("Channel", event.getTextChannel().getAsMention(), false)
-                .addField("Target", user != null ? user.getAsMention() : "None", false)
-                .addField("Staff member", event.getAuthor().getAsMention(), false)
-                .addField("Count", totalMessages + "/" + count, false)
-                .setTimestamp(Instant.now())
-                .setColor(BotColors.FAILURE.getColor())
-                .build();
-
-        // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(bannedEmbed).queue();
+        return null;
     }
 }

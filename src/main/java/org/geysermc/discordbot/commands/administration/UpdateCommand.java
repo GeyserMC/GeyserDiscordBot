@@ -25,9 +25,12 @@
 
 package org.geysermc.discordbot.commands.administration;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
+import org.geysermc.discordbot.GeyserBot;
 import pw.chew.chewbotcca.util.RestClient;
 
 import java.io.IOException;
@@ -40,18 +43,34 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 
-public class UpdateCommand extends Command {
+public class UpdateCommand extends SlashCommand {
 
     public UpdateCommand() {
         this.name = "update";
         this.hidden = true;
+        this.help = "Update the discord bot";
         this.userMissingPermMessage = "";
+
         this.userPermissions = new Permission[] { Permission.MANAGE_ROLES };
     }
 
     @Override
+    protected void execute(SlashCommandEvent event) {
+        event.reply("See below message for the log").queue();
+        event.getTextChannel().sendMessage("```\n```").queue(message -> {
+            handle(message);
+        });
+    }
+
+    @Override
     protected void execute(CommandEvent event) {
-        event.getMessage().reply("```\nChecking for updates...\n```").queue(message -> {
+        event.getMessage().reply("```\n```").queue(message -> {
+            handle(message);
+        });
+    }
+
+    private void handle(Message message) {
+        message.editMessage("```\nChecking for updates...\n```").queue(log -> {
             StringBuilder logText = new StringBuilder("Checking for updates...");
             logText.append("\n");
 
@@ -65,20 +84,20 @@ public class UpdateCommand extends Command {
                     int buildNum = Integer.parseInt(gitProp.getProperty("git.build.number"));
                     if (latestBuildNum == buildNum) {
                         logText.append("\n").append("No updates available!");
-                        message.editMessage("```\n" + logText + "\n```").queue();
+                        log.editMessage("```\n" + logText + "\n```").queue();
                         return;
                     } else {
                         logText.append("\n").append(latestBuildNum - buildNum).append(" version(s) behind, updating...");
-                        message.editMessage("```\n" + logText + "\n```").queue();
+                        log.editMessage("```\n" + logText + "\n```").queue();
                     }
                 } else {
                     logText.append("\n").append("Buildnumber missing from Jenkins!");
-                    message.editMessage("```\n" + logText + "\n```").queue();
+                    log.editMessage("```\n" + logText + "\n```").queue();
                     return;
                 }
             } catch (IOException | AssertionError | NumberFormatException e) {
                 logText.append("\n").append("Not in production, can't update!");
-                message.editMessage("```\n" + logText + "\n```").queue();
+                log.editMessage("```\n" + logText + "\n```").queue();
                 return;
             }
 
@@ -88,17 +107,18 @@ public class UpdateCommand extends Command {
                     fileName = "GeyserBot.upd.jar";
 
                     logText.append("\n").append("Warning! Windows detected please rename the ").append(fileName).append(" when the update has finished.");
-                    message.editMessage("```\n" + logText + "\n```").queue();
+                    log.editMessage("```\n" + logText + "\n```").queue();
                 }
 
                 InputStream in = new URL("https://ci.opencollab.dev/job/GeyserMC/job/GeyserDiscordBot/job/" + URLEncoder.encode(gitProp.getProperty("git.branch"), StandardCharsets.UTF_8.toString()) + "/lastSuccessfulBuild/artifact/target/GeyserBot.jar").openStream();
                 Files.copy(in, Paths.get(fileName), StandardCopyOption.REPLACE_EXISTING);
                 logText.append("\n").append("Updated!").append("\n\n").append("Restarting...");
-                message.editMessage("```\n" + logText + "\n```").queue(ignored -> event.getJDA().shutdown());
+                log.editMessage("```\n" + logText + "\n```").queue(ignored -> GeyserBot.getJDA().shutdown());
             } catch (IOException e) {
                 logText.append("\n").append("Unable to download updated jar!").append("\n").append(e);
-                message.editMessage("```\n" + logText + "\n```").queue();
+                log.editMessage("```\n" + logText + "\n```").queue();
             }
         });
+
     }
 }

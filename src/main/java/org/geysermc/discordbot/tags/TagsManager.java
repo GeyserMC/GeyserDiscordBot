@@ -40,6 +40,7 @@ import java.util.Map;
 public class TagsManager {
 
     private static final List<Command> TAGS = new ArrayList<>();
+    private static final List<SlashTag> SLASH_TAGS = new ArrayList<>(); // TODO Remove this to save memory
     private static final Map<String, String> ISSUE_RESPONSES = new HashMap<>();
     private static final Map<String, String> SELF_HELP = new HashMap<>();
     private static boolean tagsLoaded = false;
@@ -50,6 +51,14 @@ public class TagsManager {
         }
 
         return TAGS;
+    }
+
+    public static List<SlashTag> getEmbedTags() {
+        if (!tagsLoaded) {
+            loadTags();
+        }
+
+        return SLASH_TAGS;
     }
 
     /**
@@ -136,6 +145,7 @@ public class TagsManager {
                                 case "text":
                                     try {
                                         TAGS.add(new EmbedTag(tagName, content.toString().trim(), tagData.get("image"), tagData.get("aliases"), buttons));
+                                        SLASH_TAGS.add(new SlashTag(tagName, content.toString().trim(), tagData.get("image"), tagData.get("aliases"), buttons, 0));
                                     } catch (IllegalArgumentException e) {
                                         GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
                                         continue;
@@ -145,6 +155,7 @@ public class TagsManager {
                                 case "text-raw":
                                     try {
                                         TAGS.add(new RawTag(tagName, content.toString().trim(), tagData.get("aliases"), buttons));
+                                        SLASH_TAGS.add(new SlashTag(tagName, content.toString().trim(), null,  tagData.get("aliases"), buttons, 1));
                                     } catch (IllegalArgumentException e) {
                                         GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
                                         continue;

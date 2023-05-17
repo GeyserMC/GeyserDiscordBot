@@ -83,7 +83,7 @@ public class FileHandler extends ListenerAdapter {
 //                }
 
                 try {
-                    File attachmentFile = attachment.getProxy().downloadToFile(Paths.get(System.getProperty("java.io.tmpdir"), attachment.getId()).toFile()).get();
+                    File attachmentFile = attachment.getProxy().downloadToFile(File.createTempFile("GeyserBotTempFile", ".temp")).get();
 
                     RequestBody body = RequestBody.create("{" +
                                 "\"name\":" + JSONObject.quote(attachment.getFileName()) + "," +

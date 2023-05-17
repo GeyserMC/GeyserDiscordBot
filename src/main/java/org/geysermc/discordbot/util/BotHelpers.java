@@ -371,4 +371,17 @@ public class BotHelpers {
 
         return repo;
     }
+
+    /**
+     * Check if a moderator can target a member
+     * Also covered the bots permissions
+     *
+     * @param moderator The moderator performing the action
+     * @param member The member to target
+     * @return If the moderator (and bot) can target the member
+     */
+    public static boolean canTarget(Member moderator, Member member) {
+        Member botMember = moderator.getGuild().getMember(GeyserBot.getJDA().getSelfUser());
+        return moderator.canInteract(member) && botMember.canInteract(member) && !member.equals(botMember);
+    }
 }

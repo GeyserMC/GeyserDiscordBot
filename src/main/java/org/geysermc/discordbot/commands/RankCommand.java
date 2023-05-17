@@ -55,7 +55,7 @@ public class RankCommand extends SlashCommand {
         this.help = "Give yourself a role";
 
         this.options = Collections.singletonList(
-                new OptionData(OptionType.STRING, "role", "The role you want to get").setRequired(true)
+                new OptionData(OptionType.STRING, "role", "The role you want to get", true)
         );
     }
 
