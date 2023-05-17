@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 public class ShutdownHandler extends ListenerAdapter {
     @Override
     public void onShutdown(@NotNull ShutdownEvent event) {
+        GeyserBot.LOGGER.info("JDA shutdown!");
         GeyserBot.shutdown();
     }
 }

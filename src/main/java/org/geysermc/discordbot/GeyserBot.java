@@ -156,8 +156,8 @@ public class GeyserBot {
         try {
             storageManager = storageType.getStorageManager().getDeclaredConstructor().newInstance();
             storageManager.setupStorage();
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            LOGGER.error("Unable to create database link!");
+        } catch (Exception e) {
+            LOGGER.error("Unable to create database link!", e);
             System.exit(1);
         }
 
@@ -215,6 +215,7 @@ public class GeyserBot {
                             new VoiceGroupHandler(),
                             new BadLinksHandler(),
                             new HelpHandler(),
+                            new SupportHandler(),
                             client.build(),
                             tagClient.build())
                     .build();
@@ -282,8 +283,13 @@ public class GeyserBot {
     }
 
     public static void shutdown() {
+        GeyserBot.LOGGER.info("Shutting down storage...");
         storageManager.closeStorage();
+        GeyserBot.LOGGER.info("Shutting down thread pool...");
         generalThreadPool.shutdown();
+        GeyserBot.LOGGER.info("Shutting http server...");
         httpServer.stop();
+        GeyserBot.LOGGER.info("Finished shutdown, exiting!");
+        System.exit(0);
     }
 }

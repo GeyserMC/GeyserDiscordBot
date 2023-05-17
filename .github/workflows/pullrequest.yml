@@ -1,35 +1,37 @@
 name: Build Pull Request
 
-on: [pull_request]
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths-ignore:
+      - '.idea/copyright/*.xml'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'README.md'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Set up JDK 16
+      - name: Set up JDK 17
         uses: actions/setup-java@v1
         with:
-          java-version: 16
+          java-version: 17
+          distribution: temurin
 
-      - name: submodules-init
-        uses: snickerbockers/submodules-init@v4
+      - name: Checkout repository
+        uses: actions/checkout@v1
 
-      - name: Build with Maven
-        run: mvn -B package -T 2C
+      - name: Build GeyserBot
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v1
         if: success()
         with:
           name: GeyserBot
-          path: target/GeyserBot.jar
+          path: build/libs/GeyserBot.jar
