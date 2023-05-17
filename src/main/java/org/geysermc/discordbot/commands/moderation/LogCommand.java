@@ -59,10 +59,8 @@ public class LogCommand extends SlashCommand {
         this.hidden = true;
         this.help = "Fetch a user's moderation logs.";
 
-        this.userPermissions = new Permission[]{Permission.KICK_MEMBERS};
-        this.botPermissions = new Permission[]{Permission.KICK_MEMBERS};
+        this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
 
-        this.guildOnly = true;
         this.options = Collections.singletonList(
                 new OptionData(OptionType.USER, "member", "Member to fetch", true)
         );

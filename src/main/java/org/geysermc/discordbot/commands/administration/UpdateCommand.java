@@ -51,8 +51,7 @@ public class UpdateCommand extends SlashCommand {
         this.help = "Update the discord bot";
         this.userMissingPermMessage = "";
 
-        this.userPermissions = new Permission[]{Permission.MANAGE_ROLES};
-        this.botPermissions = new Permission[]{Permission.MANAGE_ROLES};
+        this.userPermissions = new Permission[] { Permission.MANAGE_ROLES };
     }
 
     @Override

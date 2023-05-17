@@ -53,10 +53,9 @@ public class KickCommand extends SlashCommand {
         this.hidden = true;
         this.help = "Kick a user";
 
-        this.userPermissions = new Permission[]{Permission.KICK_MEMBERS};
-        this.botPermissions = new Permission[]{Permission.KICK_MEMBERS};
+        this.userPermissions = new Permission[]{ Permission.KICK_MEMBERS };
+        this.botPermissions = new Permission[] { Permission.KICK_MEMBERS };
 
-        this.guildOnly = true;
         this.options = Arrays.asList(
                 new OptionData(OptionType.USER, "member", "The member to kick", true),
                 new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user on kick"),

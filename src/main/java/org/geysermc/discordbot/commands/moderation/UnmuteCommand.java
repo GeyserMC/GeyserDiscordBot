@@ -50,10 +50,9 @@ public class UnmuteCommand extends SlashCommand {
         this.hidden = true;
         this.help = "Unmute a user";
 
-        this.userPermissions = new Permission[]{Permission.KICK_MEMBERS};
-        this.botPermissions = new Permission[]{Permission.KICK_MEMBERS};
+        this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
+        this.botPermissions = new Permission[] { Permission.MANAGE_ROLES };
 
-        this.guildOnly = true;
         this.options = Arrays.asList(
                 new OptionData(OptionType.USER, "member", "The member to unmute", true),
                 new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user on unmute"),

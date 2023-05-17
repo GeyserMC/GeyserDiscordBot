@@ -53,11 +53,9 @@ public class PurgeCommand extends SlashCommand {
         this.hidden = true;
         this.help = "Delete specified number of messages";
 
-        this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
-        this.botPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
+        this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
+        this.botPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
 
-
-        this.guildOnly = true;
         this.options = Arrays.asList(
                 new OptionData(OptionType.INTEGER, "count", "Number of messages to purge", true).setMinValue(1),
                 new OptionData(OptionType.USER, "member", "Remove only this user's messages")

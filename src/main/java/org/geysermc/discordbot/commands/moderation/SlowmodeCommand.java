@@ -56,10 +56,9 @@ public class SlowmodeCommand extends SlashCommand {
         this.hidden = true;
         this.help = "Set a custom slowmode for a channel";
 
-        this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
-        this.botPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
+        this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
+        this.botPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
 
-        this.guildOnly = true;
         this.options = Collections.singletonList(
                 new OptionData(OptionType.STRING, "args", "Set length or turn off slowmode", true)
         );

@@ -49,10 +49,8 @@ public class SettingsCommand extends SlashCommand {
         this.name = "settings";
         this.hidden = true;
         this.help = "Customize the bot's settings";
-        this.guildOnly = true;
 
-        this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
-        this.botPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
+        this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
 
         this.options = Arrays.asList(
                 new OptionData(OptionType.STRING, "action", "The action to perform", true)

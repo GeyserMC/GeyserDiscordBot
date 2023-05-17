@@ -55,10 +55,8 @@ public class BanCommand extends SlashCommand {
         this.hidden = true;
         this.help = "Ban a user";
 
-        this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
-        this.botPermissions = new Permission[]{Permission.BAN_MEMBERS};
+        this.userPermissions = new Permission[] { Permission.BAN_MEMBERS };
 
-        this.guildOnly = true;
         this.options = Arrays.asList(
                 new OptionData(OptionType.USER, "member", "The member to ban", true),
                 new OptionData(OptionType.INTEGER, "days", "How many days worth of messages should we purge"),

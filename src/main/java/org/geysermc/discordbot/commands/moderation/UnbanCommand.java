@@ -51,10 +51,9 @@ public class UnbanCommand extends SlashCommand {
         this.hidden = true;
         this.help = "Unban a user";
 
-        this.userPermissions = new Permission[]{Permission.BAN_MEMBERS};
-        this.botPermissions = new Permission[]{Permission.BAN_MEMBERS};
+        this.userPermissions = new Permission[] { Permission.BAN_MEMBERS };
+        this.botPermissions = new Permission[] { Permission.BAN_MEMBERS };
 
-        this.guildOnly = true;
         this.options = Arrays.asList(
                 new OptionData(OptionType.USER, "member", "The member to unban", true),
                 new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user upon unbanning"),
