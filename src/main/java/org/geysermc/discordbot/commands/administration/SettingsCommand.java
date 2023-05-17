@@ -58,7 +58,7 @@ public class SettingsCommand extends SlashCommand {
                         .addChoice("get", "get")
                         .addChoice("set", "set")
                         .addChoice("remove","remove"),
-                new OptionData(OptionType.STRING, "key", "The setting name", true)
+                new OptionData(OptionType.STRING, "key", "The setting name", true) // TODO Make this an ENUM? to make it easier to access
                         .addChoice("Allowed Invites", "allowed-invites")
                         .addChoice("Banned domains","banned-domains")
                         .addChoice("Banned IPs", "banned-ips")

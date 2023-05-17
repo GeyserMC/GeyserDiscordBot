@@ -40,7 +40,7 @@ import java.util.Map;
 public class TagsManager {
 
     private static final List<Command> TAGS = new ArrayList<>();
-    private static final List<SlashTag> SLASH_TAGS = new ArrayList<>();
+    private static final List<SlashTag> SLASH_TAGS = new ArrayList<>(); // TODO Remove this to save memory
     private static final Map<String, String> ISSUE_RESPONSES = new HashMap<>();
     private static final Map<String, String> SELF_HELP = new HashMap<>();
     private static boolean tagsLoaded = false;
