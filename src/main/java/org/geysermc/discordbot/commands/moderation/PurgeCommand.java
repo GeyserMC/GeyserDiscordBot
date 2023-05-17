@@ -171,9 +171,11 @@ public class PurgeCommand extends SlashCommand {
 
             // Remove the message(s)
             List<String> messagesToDeleteIds = messagesToDelete.stream().map(ISnowflake::getId).collect(Collectors.toList());
-            LogHandler.PURGED_MESSAGES.addAll(messagesToDeleteIds);
 
             if (messagesToDelete.size() > 1) {
+                // Tell the log handler to ignore the messages
+                LogHandler.PURGED_MESSAGES.addAll(messagesToDeleteIds);
+
                 // TODO: Store the contents of removed messages and upload along side the log
                 // Log the change
                 MessageEmbed bannedEmbed = new EmbedBuilder()

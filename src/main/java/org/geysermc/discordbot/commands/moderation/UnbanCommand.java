@@ -71,26 +71,6 @@ public class UnbanCommand extends SlashCommand {
         boolean silent = event.optBoolean("silent", false);
         String reason = event.optString("reason", "*None*");
 
-        if (user == null) {
-            event.replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
-        try {
-            event.getGuild().retrieveBan(user).complete();
-        } catch (ErrorResponseException ignored) {
-            event.replyEmbeds(new EmbedBuilder()
-                    .setTitle("User not banned")
-                    .setDescription("The user ID specified doesn't have a ban on this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
         event.replyEmbeds(handle(user, moderator, event.getGuild(), silent, reason)).queue();
     }
 
@@ -100,28 +80,6 @@ public class UnbanCommand extends SlashCommand {
 
         // Fetch the user
         User user = BotHelpers.getUser(args.remove(0));
-
-        // Check user is valid
-        if (user == null) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
-        // Check if the user is banned
-        try {
-            event.getGuild().retrieveBan(user).complete();
-        } catch (ErrorResponseException ignored) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("User not banned")
-                    .setDescription("The user ID specified doesn't have a ban on this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
 
         boolean silent = false;
 
@@ -159,6 +117,26 @@ public class UnbanCommand extends SlashCommand {
     }
 
     private MessageEmbed handle(User user, Member mod, Guild guild, boolean silent, String reason) {
+        // Check user is valid
+        if (user == null) {
+            return new EmbedBuilder()
+                    .setTitle("Invalid user")
+                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
+        // Check if the user is banned
+        try {
+            guild.retrieveBan(user).complete();
+        } catch (ErrorResponseException ignored) {
+            return new EmbedBuilder()
+                    .setTitle("User not banned")
+                    .setDescription("The user ID specified doesn't have a ban on this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
         // Let the user know they're unbanned if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) ->

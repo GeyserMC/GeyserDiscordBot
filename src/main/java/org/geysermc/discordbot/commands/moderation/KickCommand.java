@@ -72,7 +72,7 @@ public class KickCommand extends SlashCommand {
 
 
         // Check we can target the user
-        if (!event.getMember().canInteract(member) || member.getIdLong() == GeyserBot.getJDA().getSelfUser().getIdLong()) {
+        if (BotHelpers.canTarget(moderator, member)) {
             event.replyEmbeds(new EmbedBuilder()
                     .setTitle("Higher role")
                     .setDescription("Either the bot or you cannot target that user.")
@@ -81,10 +81,8 @@ public class KickCommand extends SlashCommand {
             return;
         }
 
-        // Get the user from the member
-        User user = member.getUser();
 
-        event.replyEmbeds(handle(user, moderator, event.getGuild(), silent, reason)).queue();
+        event.replyEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
     }
 
     @Override
@@ -97,28 +95,7 @@ public class KickCommand extends SlashCommand {
         //Fetch the user that issued the command
         Member moderator = event.getMember();
 
-        // Check user is valid
-        if (member == null) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
-        // Check we can target the user
-        if (!event.getSelfMember().canInteract(member) || !moderator.canInteract(member)) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Higher role")
-                    .setDescription("Either the bot or you cannot target that user.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
         // Maybe worth getting rid of this depends on how many times its used
-        User user = member.getUser();
         boolean silent = false;
 
         // Handle all the option args
@@ -151,10 +128,31 @@ public class KickCommand extends SlashCommand {
             reason = reasonParts;
         }
 
-        event.getMessage().replyEmbeds(handle(user, moderator, event.getGuild(), silent, reason)).queue();
+        event.getMessage().replyEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
     }
 
-    private MessageEmbed handle(User user, Member mod, Guild guild, boolean silent, String reason) {
+    private MessageEmbed handle(Member member, Member moderator, Guild guild, boolean silent, String reason) {
+        // Check user is valid
+        if (member == null) {
+            return new EmbedBuilder()
+                    .setTitle("Invalid user")
+                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
+        // Check we can target the user
+        if (BotHelpers.canTarget(moderator, member)) {
+            return new EmbedBuilder()
+                    .setTitle("Higher role")
+                    .setDescription("Either the bot or you cannot target that user.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
+        // Get the user from the member
+        User user = member.getUser();
+
         // Let the user know they're banned if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) -> {
@@ -177,12 +175,12 @@ public class KickCommand extends SlashCommand {
         guild.kick(user).reason(reason).queue();
 
         // Log the change
-        int id = GeyserBot.storageManager.addLog(mod, "kick", user, reason);
+        int id = GeyserBot.storageManager.addLog(moderator, "kick", user, reason);
 
         MessageEmbed kickEmbed = new EmbedBuilder()
                 .setTitle("Kicked user")
                 .addField("User", user.getAsMention(), false)
-                .addField("Staff member", mod.getAsMention(), false)
+                .addField("Staff member", moderator.getAsMention(), false)
                 .addField("Reason", reason, false)
                 .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())

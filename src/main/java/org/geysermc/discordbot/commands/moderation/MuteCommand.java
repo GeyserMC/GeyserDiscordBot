@@ -70,25 +70,6 @@ public class MuteCommand extends SlashCommand {
         boolean silent = event.optBoolean("silent", false);
         String reason = event.optString("reason", "*None*");
 
-        if (member == null) {
-            event.replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
-        // Check we can target the user
-        if (!event.getMember().canInteract(member) || member.getIdLong() == GeyserBot.getJDA().getSelfUser().getIdLong()) {
-            event.replyEmbeds(new EmbedBuilder()
-                    .setTitle("Higher role")
-                    .setDescription("Either the bot or you cannot target that user.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
         event.replyEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
     }
 
@@ -101,26 +82,6 @@ public class MuteCommand extends SlashCommand {
 
         //Fetch the user that issued the command
         Member moderator = event.getMember();
-
-        // Check user is valid
-        if (member == null) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
-        // Check we can target the user
-        if (!event.getSelfMember().canInteract(member) || !moderator.canInteract(member)) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Higher role")
-                    .setDescription("Either the bot or you cannot target that user.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
 
         boolean silent = false;
 
@@ -157,7 +118,25 @@ public class MuteCommand extends SlashCommand {
         event.getMessage().replyEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
     }
 
-    private MessageEmbed handle(Member member, Member mod, Guild guild, boolean silent, String reason) {
+    private MessageEmbed handle(Member member, Member moderator, Guild guild, boolean silent, String reason) {
+        // Check user is valid
+        if (member == null) {
+            return new EmbedBuilder()
+                    .setTitle("Invalid user")
+                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
+        // Check we can target the user
+        if (BotHelpers.canTarget(moderator, member)) {
+            return new EmbedBuilder()
+                    .setTitle("Higher role")
+                    .setDescription("Either the bot or you cannot target that user.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
         // Get the user from the member
         User user = member.getUser();
 
@@ -192,7 +171,7 @@ public class MuteCommand extends SlashCommand {
         MessageEmbed mutedEmbed = new EmbedBuilder()
                 .setTitle("Muted user")
                 .addField("User", user.getAsMention(), false)
-                .addField("Staff member", mod.getAsMention(), false)
+                .addField("Staff member", moderator.getAsMention(), false)
                 .addField("Reason", reason, false)
                 .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())

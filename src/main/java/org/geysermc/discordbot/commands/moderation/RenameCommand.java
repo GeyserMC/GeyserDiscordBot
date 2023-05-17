@@ -67,25 +67,6 @@ public class RenameCommand extends SlashCommand {
     protected void execute(SlashCommandEvent event) {
         Member member = event.getOption("member").getAsMember();
 
-        if (member == null) {
-            event.replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        } else {
-            // Check we can target the user
-            if (!event.getMember().canInteract(member) || member.getIdLong() == GeyserBot.getJDA().getSelfUser().getIdLong()) {
-                event.replyEmbeds(new EmbedBuilder()
-                        .setTitle("Higher role")
-                        .setDescription("Either the bot or you cannot target that user.")
-                        .setColor(BotColors.FAILURE.getColor())
-                        .build()).queue();
-                return;
-            }
-        }
-
         // Send the embed when done
         event.replyEmbeds(handle(member, event.getMember(), event.getGuild())).queue();
     }
@@ -97,30 +78,28 @@ public class RenameCommand extends SlashCommand {
         // Fetch the user
         Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
 
-        // Check user is valid
-        if (member == null) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
-        // Check we can target the user
-        if (!event.getSelfMember().canInteract(member) || !event.getMember().canInteract(member)) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Higher role")
-                    .setDescription("Either the bot or you cannot target that user.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
         event.getMessage().replyEmbeds(handle(member, event.getMember(), event.getGuild())).queue();
     }
 
     private MessageEmbed handle(Member member, Member moderator, Guild guild) {
+        // Check the user exists
+        if (member == null) {
+            return new EmbedBuilder()
+                    .setTitle("Invalid user")
+                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
+        // Check we can target the user
+        if (BotHelpers.canTarget(moderator, member)) {
+            return new EmbedBuilder()
+                    .setTitle("Higher role")
+                    .setDescription("Either the bot or you cannot target that user.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
         String oldNick = member.getEffectiveName();
 
         // Rename user

@@ -71,15 +71,6 @@ public class LogCommand extends SlashCommand {
         // Fetch user
         User user = event.getOption("member").getAsUser();
 
-        if (user == null) {
-            event.replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
         event.replyEmbeds(handle(user, event.getGuild())).queue();
     }
 
@@ -90,21 +81,21 @@ public class LogCommand extends SlashCommand {
         // Fetch the user
         User user = BotHelpers.getUser(args.remove(0));
 
-        // Check user is valid
-        if (user == null) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
         // Send the embed as a reply
         event.getMessage().replyEmbeds(handle(user, event.getGuild())).queue();
     }
 
     private MessageEmbed handle(User user, Guild guild) {
+        // Check user is valid
+        if (user == null) {
+            return new EmbedBuilder()
+                    .setTitle("Invalid user")
+                    .setDescription("The user ID specified doesn't link with any valid user.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
+
         EmbedBuilder logEmbedBuilder = new EmbedBuilder()
                 .setTitle("Mod log for: " + user.getId())
                 .setTimestamp(Instant.now())

@@ -69,7 +69,6 @@ public class BanCommand extends SlashCommand {
     protected void execute(SlashCommandEvent event) {
         // Fetch members
         Member member = event.getOption("member").getAsMember();
-        User user = event.getOption("member").getAsUser();
         Member moderator = event.getMember();
 
         // Fetch ban args
@@ -77,27 +76,7 @@ public class BanCommand extends SlashCommand {
         boolean silent = event.optBoolean("silent", false);
         String reason = event.optString("reason", "*None*");
 
-        if (member != null) {
-            // Check we can target the user
-            if (!event.getMember().canInteract(member) || member.getIdLong() == GeyserBot.getJDA().getSelfUser().getIdLong()) {
-                event.replyEmbeds(new EmbedBuilder()
-                        .setTitle("Higher role")
-                        .setDescription("Either the bot or you cannot target that user.")
-                        .setColor(BotColors.FAILURE.getColor())
-                        .build()).queue();
-                return;
-            }
-        } else {
-            event.replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-
-        }
-
-        event.replyEmbeds(handle(user, moderator, event.getGuild(), days, silent, reason)).queue();
+        event.replyEmbeds(handle(member, moderator, event.getGuild(), days, silent, reason)).queue();
     }
 
     @Override
@@ -106,29 +85,8 @@ public class BanCommand extends SlashCommand {
 
         // Fetch the user
         String selectorString = args.remove(0);
-        User user = BotHelpers.getUser(selectorString);
         Member member = BotHelpers.getMember(event.getGuild(), selectorString);
         Member moderator = event.getMember();
-
-        // Check user is valid
-        if (user == null) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
-        // Check we can target the user
-        if (member != null && (!event.getSelfMember().canInteract(member) || !moderator.canInteract(member))) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Higher role")
-                    .setDescription("Either the bot or you cannot target that user.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
 
         // Maybe worth getting rid of this depends on how many times its used
         int delDays = 0;
@@ -178,10 +136,30 @@ public class BanCommand extends SlashCommand {
             reason = reasonParts;
         }
 
-        event.getMessage().replyEmbeds(handle(user, moderator, event.getGuild(),delDays, silent, reason)).queue();
+        event.getMessage().replyEmbeds(handle(member, moderator, event.getGuild(),delDays, silent, reason)).queue();
     }
 
-    private MessageEmbed handle(User user, Member mod, Guild guild, int days, boolean silent, String reason) {
+    private MessageEmbed handle(Member member, Member moderator, Guild guild, int days, boolean silent, String reason) {
+        // Check the user exists
+        if (member == null) {
+            return new EmbedBuilder()
+                    .setTitle("Invalid user")
+                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
+        // Check we can target the user
+        if (BotHelpers.canTarget(moderator, member)) {
+            return new EmbedBuilder()
+                    .setTitle("Higher role")
+                    .setDescription("Either the bot or you cannot target that user.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
+        User user = member.getUser();
+
         // Let the user know they're banned if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) -> {
@@ -204,12 +182,12 @@ public class BanCommand extends SlashCommand {
         guild.ban(user, days, TimeUnit.DAYS).reason(reason).queue();
 
         // Log the change
-        int id = GeyserBot.storageManager.addLog(mod, "ban", user, reason);
+        int id = GeyserBot.storageManager.addLog(moderator, "ban", user, reason);
 
         MessageEmbed bannedEmbed = new EmbedBuilder()
                 .setTitle("Banned user")
                 .addField("User", user.getAsMention(), false)
-                .addField("Staff member", mod.getAsMention(), false)
+                .addField("Staff member", moderator.getAsMention(), false)
                 .addField("Reason", reason, false)
                 .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())

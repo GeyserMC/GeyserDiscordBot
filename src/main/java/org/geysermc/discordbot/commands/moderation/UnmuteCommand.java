@@ -69,16 +69,6 @@ public class UnmuteCommand extends SlashCommand {
         boolean silent = event.optBoolean("silent", false);
         String reason = event.optString("reason", "*None*");
 
-        // Check we can target the user
-        if (!event.getMember().canInteract(member) || member.getIdLong() == GeyserBot.getJDA().getSelfUser().getIdLong()) {
-            event.replyEmbeds(new EmbedBuilder()
-                    .setTitle("Higher role")
-                    .setDescription("Either the bot or you cannot target that user.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
         event.replyEmbeds(handle(member, event.getMember(), event.getGuild(), silent, reason)).queue();
     }
 
@@ -94,16 +84,6 @@ public class UnmuteCommand extends SlashCommand {
             event.getMessage().replyEmbeds(new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
-        // Check we can target the user
-        if (!event.getSelfMember().canInteract(member) || !event.getMember().canInteract(member)) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Higher role")
-                    .setDescription("Either the bot or you cannot target that user.")
                     .setColor(BotColors.FAILURE.getColor())
                     .build()).queue();
             return;
@@ -144,7 +124,16 @@ public class UnmuteCommand extends SlashCommand {
         event.getMessage().replyEmbeds(handle(member, event.getMember(), event.getGuild(), silent, reason)).queue();
     }
 
-    private MessageEmbed handle(Member member, Member mod, Guild guild, boolean silent, String reason) {
+    private MessageEmbed handle(Member member, Member moderator, Guild guild, boolean silent, String reason) {
+        // Check we can target the user
+        if (!BotHelpers.canTarget(moderator, member)) {
+            return new EmbedBuilder()
+                    .setTitle("Higher role")
+                    .setDescription("Either the bot or you cannot target that user.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
         // Get the user from the member
         User user = member.getUser();
 
@@ -174,7 +163,7 @@ public class UnmuteCommand extends SlashCommand {
         MessageEmbed unmutedEmbed = new EmbedBuilder()
                 .setTitle("Unmuted user")
                 .addField("User", user.getAsMention(), false)
-                .addField("Staff member", mod.getAsMention(), false)
+                .addField("Staff member", moderator.getAsMention(), false)
                 .addField("Reason", reason, false)
                 .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())
