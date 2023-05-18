@@ -150,7 +150,7 @@ public class BanCommand extends SlashCommand {
         }
 
         // Check we can target the user
-        if (BotHelpers.canTarget(moderator, member)) {
+        if (!BotHelpers.canTarget(moderator, member)) {
             return new EmbedBuilder()
                     .setTitle("Higher role")
                     .setDescription("Either the bot or you cannot target that user.")
