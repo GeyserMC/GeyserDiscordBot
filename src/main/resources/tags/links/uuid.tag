@@ -3,7 +3,7 @@ aliases: xuid, floodgateuuid, bedrockuuid
 
 ---
 Automatic method:
-Use https://mcprofile.io to lookup your Floodgate UUID with your Gamertag.
+Use https://mcprofile.io to look up your Floodgate UUID with your Xbox Gamertag.
 Alternatively, use the "/UUID" command in <#613194762249437245>.
 
 Manual method:
