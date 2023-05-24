@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ForumCommand extends SlashCommand {
 
-    public static final String FORUM_CHANNEL_ID = "1110548194141675571";
+    public static final String FORUM_CHANNEL_ID = "1038995448100306964";
     public static final String TAG_SNOWFLAKE = "1110557119591235654";
 
     public ForumCommand() {
