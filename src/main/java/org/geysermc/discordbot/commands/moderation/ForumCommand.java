@@ -45,8 +45,8 @@ import java.util.concurrent.TimeUnit;
 
 public class ForumCommand extends SlashCommand {
 
-    public static final String FORUM_CHANNEL_ID = "1038995448100306964";
-    public static final String TAG_SNOWFLAKE = "TAG_ID_HERE";
+    public static final String FORUM_CHANNEL_ID = "1110548194141675571";
+    public static final String TAG_SNOWFLAKE = "1110557119591235654";
 
     public ForumCommand() {
         this.name = "post";
@@ -182,9 +182,7 @@ public class ForumCommand extends SlashCommand {
                     .setArchived(true)
                     .setAppliedTags(ForumTagSnowflake.fromId(TAG_SNOWFLAKE));
 
-            event.reply("Post is closed.").queueAfter(1, TimeUnit.SECONDS, success -> {
-                manager.queue();
-            });
+            event.reply("Post is closed.").queueAfter(1, TimeUnit.SECONDS, success -> manager.queue());
         }
     }
 
@@ -226,9 +224,7 @@ public class ForumCommand extends SlashCommand {
 
             ThreadChannelManager manager = channel.getManager().setName(title);
 
-            event.reply("Post is renamed.").queueAfter(1, TimeUnit.SECONDS, success -> {
-                manager.queue();
-            });
+            event.reply("Post is renamed.").queueAfter(1, TimeUnit.SECONDS, success -> manager.queue());
         }
     }
 }
