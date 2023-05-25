@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class ForumCommand extends SlashCommand {
-    public static final String FORUM_CHANNEL_ID = "1026497075359264871";
+    public static final String FORUM_CHANNEL_ID = "1038995448100306964";
     public ForumCommand() {
         this.name = "post";
         this.hidden = true;
@@ -60,10 +60,12 @@ public class ForumCommand extends SlashCommand {
                 new removeTagPostCommand()
         };
     }
+
     @Override
     protected void execute(SlashCommandEvent event) {
         // unused
     }
+
     public static class createPostSubCommand extends SlashCommand {
         public createPostSubCommand() {
             this.name = "create";
@@ -77,6 +79,7 @@ public class ForumCommand extends SlashCommand {
                     new OptionData(OptionType.USER, "member", "The member to ping in the post", false)
             );
         }
+
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             String title = Objects.requireNonNull(event.getOption("title")).getAsString();
@@ -99,6 +102,7 @@ public class ForumCommand extends SlashCommand {
                     .queue(unused -> event.reply("Post is created").queue(), error -> event.reply("Could not create post").queue());
         }
     }
+
     public static class CloseOldPostSubCommand extends SlashCommand {
         public CloseOldPostSubCommand() {
             this.name = "close-old";
@@ -110,6 +114,7 @@ public class ForumCommand extends SlashCommand {
                     new OptionData(OptionType.INTEGER, "days", "Enter the max age of bulk post closing.", true)
             );
         }
+
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             int days = Objects.requireNonNull(event.getOption("days")).getAsInt();
@@ -146,6 +151,7 @@ public class ForumCommand extends SlashCommand {
                     Permission.CREATE_PUBLIC_THREADS
             };
         }
+
         @Override
         protected void execute(SlashCommandEvent event) {
             if (!(event.getChannel() instanceof ThreadChannel) || !event.getChannel().asThreadChannel().getParentChannel().getId().equals(FORUM_CHANNEL_ID)) {
@@ -169,6 +175,7 @@ public class ForumCommand extends SlashCommand {
             });
         }
     }
+
     public static class renamePostSubCommand extends SlashCommand {
         public renamePostSubCommand() {
             this.name = "rename";
@@ -180,6 +187,7 @@ public class ForumCommand extends SlashCommand {
                     new OptionData(OptionType.STRING, "title", "change the forum title", true)
             );
         }
+
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             if (!(event.getChannel() instanceof ThreadChannel) || !event.getChannel().asThreadChannel().getParentChannel().getId().equals(FORUM_CHANNEL_ID)) {
@@ -191,6 +199,7 @@ public class ForumCommand extends SlashCommand {
             manager.queue(unused -> event.reply("Post is renamed!").queue(), error -> event.reply("Could not rename post").queue());
         }
     }
+
     public static class addTagPostCommand extends SlashCommand {
         public addTagPostCommand() {
             this.name = "add-tag";
@@ -200,6 +209,7 @@ public class ForumCommand extends SlashCommand {
             };
             this.options = getTags();
         }
+
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             if (!(event.getChannel() instanceof ThreadChannel) || !event.getChannel().asThreadChannel().getParentChannel().getId().equals(FORUM_CHANNEL_ID)) {
@@ -231,6 +241,7 @@ public class ForumCommand extends SlashCommand {
             }
         }
     }
+
     public static class removeTagPostCommand extends SlashCommand {
         public removeTagPostCommand() {
             this.name = "remove-tag";
@@ -240,6 +251,7 @@ public class ForumCommand extends SlashCommand {
             };
             this.options = getTags();
         }
+
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             if (!(event.getChannel() instanceof ThreadChannel) || !event.getChannel().asThreadChannel().getParentChannel().getId().equals(FORUM_CHANNEL_ID)) {
@@ -267,6 +279,7 @@ public class ForumCommand extends SlashCommand {
             }
         }
     }
+
     @NotNull
     public static List < OptionData > getTags() {
         return List.of(
