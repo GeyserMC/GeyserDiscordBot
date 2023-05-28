@@ -32,10 +32,12 @@ import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTagSnowflake;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.managers.channel.concrete.ThreadChannelManager;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import net.dv8tion.jda.internal.utils.Checks;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
@@ -45,13 +47,14 @@ import java.util.List;
 import java.util.Objects;
 
 public class ForumCommand extends SlashCommand {
-    public static final String FORUM_CHANNEL_ID = "1038995448100306964";
+    public static final String FORUM_CHANNEL_ID = "1026497075359264871";
+
     public ForumCommand() {
         this.name = "post";
         this.hidden = true;
         this.help = "help tool to manage forum posts.";
         this.guildOnly = true;
-        this.children = new SlashCommand[] {
+        this.children = new SlashCommand[]{
                 new createPostSubCommand(),
                 new CloseOldPostSubCommand(),
                 new ClosePostSubCommand(),
@@ -70,7 +73,7 @@ public class ForumCommand extends SlashCommand {
         public createPostSubCommand() {
             this.name = "create";
             this.help = "create post";
-            this.userPermissions = new Permission[] {
+            this.userPermissions = new Permission[]{
                     Permission.CREATE_PUBLIC_THREADS
             };
             this.options = Arrays.asList(
@@ -82,17 +85,14 @@ public class ForumCommand extends SlashCommand {
 
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
-            String title = Objects.requireNonNull(event.getOption("title")).getAsString();
-            String targetUser = event.getOption("member") != null ? Objects.requireNonNull(event.getOption("member")).getAsUser().getAsMention() : "";
-            String issue = Objects.requireNonNull(event.getOption("issue")).getAsString();
+            String title = event.optString("title", "");
+            OptionMapping memberMapping = event.getOption("member");
+            String targetUser = memberMapping == null ? "" : memberMapping.getAsUser().getAsMention();
+            String issue = event.optString("issue", "");
             if (!targetUser.isEmpty()) {
                 issue += " " + targetUser;
             }
-            Guild guild = event.getGuild();
-            if (guild == null) {
-                event.reply("Guild not found.").queue();
-                return;
-            }
+            Checks.notNull(event.getGuild(), "server");
             ForumChannel forumChannel = event.getGuild().getForumChannelById(FORUM_CHANNEL_ID);
             if (forumChannel == null) {
                 event.reply("Forum channel not found.").queue();
@@ -107,7 +107,7 @@ public class ForumCommand extends SlashCommand {
         public CloseOldPostSubCommand() {
             this.name = "close-old";
             this.help = "close old posts";
-            this.userPermissions = new Permission[] {
+            this.userPermissions = new Permission[]{
                     Permission.MESSAGE_MANAGE
             };
             this.options = List.of(
@@ -118,17 +118,14 @@ public class ForumCommand extends SlashCommand {
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             int days = Objects.requireNonNull(event.getOption("days")).getAsInt();
+            Checks.notNull(event.getGuild(), "server");
             Guild guild = event.getGuild();
-            if (guild == null) {
-                event.reply("Guild not found.").queue();
-                return;
-            }
             ForumChannel forumChannel = guild.getForumChannelById(FORUM_CHANNEL_ID);
             if (forumChannel == null) {
                 event.reply("Forum channel not found.").queue();
                 return;
             }
-            for (ThreadChannel channel: forumChannel.getThreadChannels()) {
+            for (ThreadChannel channel : forumChannel.getThreadChannels()) {
                 if (channel.isArchived() || channel.isLocked() || channel.isPinned()) {
                     continue;
                 }
@@ -143,17 +140,18 @@ public class ForumCommand extends SlashCommand {
             event.reply("All forum post older then " + days + " day's have been closed!").queue();
         }
     }
+
     public static class ClosePostSubCommand extends SlashCommand {
         public ClosePostSubCommand() {
             this.name = "close";
             this.help = "Close post";
-            this.userPermissions = new Permission[] {
+            this.userPermissions = new Permission[]{
                     Permission.CREATE_PUBLIC_THREADS
             };
         }
 
         @Override
-        protected void execute(SlashCommandEvent event) {
+        protected void execute(@NotNull SlashCommandEvent event) {
             if (!(event.getChannel() instanceof ThreadChannel) || !event.getChannel().asThreadChannel().getParentChannel().getId().equals(FORUM_CHANNEL_ID)) {
                 event.reply("Command can only be used in forum channels.").queue();
                 return;
@@ -163,16 +161,11 @@ public class ForumCommand extends SlashCommand {
                 return;
             }
             ThreadChannelManager manager = event.getChannel().asThreadChannel().getManager();
-            event.reply("Closing post...").queue(reply -> {
-                    manager.setArchived(true).queue(
-                            unused -> {
-                                    reply.editOriginal("Post is closed.").queue();
-                    },
-            error -> {
-                    reply.editOriginal("Could not close post.").queue();
-                    }
-                );
-            });
+            event.reply("Closing post...").queue(reply ->
+                    manager.setArchived(true).queue(unused ->
+                                    reply.editOriginal("Post is closed.").queue(), error ->
+                                    reply.editOriginal("Could not close post.").queue()
+                            ));
         }
     }
 
