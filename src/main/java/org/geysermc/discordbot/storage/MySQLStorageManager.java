@@ -149,7 +149,7 @@ public class MySQLStorageManager extends AbstractStorageManager {
     }
 
     @Override
-    public int addLog(Member user, String action, User target, String reason) {
+    public int addLog(Member user, String action, UserSnowflake target, String reason) {
         checkConnection();
         try {
             Statement addLogEntry = connection.createStatement();
@@ -171,7 +171,7 @@ public class MySQLStorageManager extends AbstractStorageManager {
     }
 
     @Override
-    public List<ModLog> getLogs(Guild guild, User target, int limit) {
+    public List<ModLog> getLogs(Guild guild, UserSnowflake target, int limit) {
         checkConnection();
         List<ModLog> logs = new ArrayList<>();
 
