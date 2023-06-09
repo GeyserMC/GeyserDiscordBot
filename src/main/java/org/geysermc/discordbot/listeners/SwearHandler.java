@@ -63,7 +63,7 @@ public class SwearHandler extends ListenerAdapter {
     static {
         // Add some standard replacement tokens
         // TODO: Find a better way of doing this if we get duplicate chars
-        REPLACE_TOKENS.put("а", "a");
+        REPLACE_TOKENS.put("\u0430", "a");
         REPLACE_TOKENS.put("\u043A", "k");
         REPLACE_TOKENS.put("\u0441", "c");
         REPLACE_TOKENS.put("\u0443", "y");
