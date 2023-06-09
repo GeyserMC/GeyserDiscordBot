@@ -67,19 +67,6 @@ public class ProviderCommand extends SlashCommand {
         event.replyEmbeds(handle(event.optString("provider", ""))).queue();
     }
 
-    @Override
-    protected void execute(CommandEvent event) {
-        String query = event.getArgs();
-
-        // Check to make sure we have a provider
-        if (query.isEmpty()) {
-            MessageHelper.errorResponse(event, "Invalid usage", "Missing provider to check. `" + event.getPrefix() + name + " <provider>`");
-            return;
-        }
-
-        event.getMessage().replyEmbeds(handle(query)).queue();
-    }
-
     /**
      * Returns a list of potential providers based on a few factors:
      * <ul>

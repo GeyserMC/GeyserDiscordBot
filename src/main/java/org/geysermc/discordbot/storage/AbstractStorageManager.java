@@ -28,7 +28,6 @@ package org.geysermc.discordbot.storage;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
@@ -150,13 +149,6 @@ public abstract class AbstractStorageManager {
      * @param levelInfo The data to set
      */
     public abstract void setLevel(Member user, LevelInfo levelInfo);
-
-    /**
-     * @see AbstractStorageManager#getLevels(long)
-     */
-    public List<LevelInfo> getLevels(Guild guild) {
-        return getLevels(guild.getIdLong());
-    }
 
     /**
      * Get the top 100 levels for a given guild id

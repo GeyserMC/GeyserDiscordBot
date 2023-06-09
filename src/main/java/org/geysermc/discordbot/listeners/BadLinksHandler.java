@@ -116,7 +116,7 @@ public class BadLinksHandler extends ListenerAdapter {
 
             if (foundMatch) {
                 ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                        .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
+                        .setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl())
                         .setDescription("**Link removed, sent by** " + event.getAuthor().getAsMention() + " **deleted in** " + event.getChannel().getAsMention() + "\n" + event.getMessage().getContentRaw())
                         .addField("Link", link, false)
                         .addField("Matched domain", foundDomain, false)

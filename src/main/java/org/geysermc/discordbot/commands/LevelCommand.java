@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.entities.Member;
@@ -44,17 +43,13 @@ import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.LevelInfo;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.InkscapeCssParser;
-import org.geysermc.discordbot.util.MessageHelper;
 import org.w3c.dom.Document;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 public class LevelCommand extends SlashCommand {
 
@@ -79,27 +74,6 @@ public class LevelCommand extends SlashCommand {
         interactionHook.editOriginalAttachments(FileUpload.fromData(levelFile)).queue(message -> levelFile.delete());
     }
 
-    @Override
-    protected void execute(CommandEvent event) {
-        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
-
-        Member member;
-        if (args.size() == 0 || args.get(0).isEmpty()) {
-            member = event.getMember();
-        } else {
-            member = BotHelpers.getMember(event.getGuild(), args.remove(0));
-        }
-
-        // Check user is valid
-        if (member == null) {
-            MessageHelper.errorResponse(event, "Invalid user", "The user ID specified doesn't link with any valid user in this server.");
-            return;
-        }
-
-        File levelFile = handle(member);
-        event.getMessage().replyFiles(FileUpload.fromData(levelFile)).queue(message -> levelFile.delete());
-    }
-
     protected File handle(Member member) {
         // Get the user from the member
         User user = member.getUser();
@@ -117,7 +91,6 @@ public class LevelCommand extends SlashCommand {
             // Set the text for the svg fields
             doc.getElementById("level").getFirstChild().setTextContent(String.valueOf(levelInfo.getLevel()));
             doc.getElementById("name").getFirstChild().setTextContent(user.getName());
-            doc.getElementById("discriminator").getFirstChild().setTextContent("#" + user.getDiscriminator());
             doc.getElementById("xp").getFirstChild().setTextContent(BotHelpers.coolFormat(levelInfo.getXp()));
             doc.getElementById("xpnext").getFirstChild().setTextContent(BotHelpers.coolFormat(levelInfo.getXpForNextLevel()));
             doc.getElementById("avatar").setAttributeNS("http://www.w3.org/1999/xlink", "href", user.getAvatarUrl().replace(".gif", ".png"));

@@ -44,13 +44,6 @@ public class LeaderboardCommand extends SlashCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        event.getMessage().replyEmbeds(getEmbed(event.getGuild()))
-            .addActionRow(Button.link(Server.getUrl(event.getGuild().getIdLong()), "Leaderboard"))
-            .queue();
-    }
-
-    @Override
     protected void execute(SlashCommandEvent event) {
         event.replyEmbeds(getEmbed(event.getGuild()))
             .addActionRow(Button.link(Server.getUrl(event.getGuild().getIdLong()), "Leaderboard"))

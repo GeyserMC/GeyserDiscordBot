@@ -29,16 +29,12 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.audit.ActionType;
-import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
-import net.dv8tion.jda.api.events.guild.GuildBanEvent;
-import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
@@ -164,7 +160,7 @@ public class LogHandler extends ListenerAdapter {
         try {
             ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                     .setAuthor("Member Joined", null, event.getUser().getAvatarUrl())
-                    .setDescription(event.getUser().getAsMention() + " " + event.getUser().getAsTag())
+                    .setDescription(event.getUser().getAsMention())
                     .addField("Account Created", TimeFormat.RELATIVE.format(event.getUser().getTimeCreated().toInstant()), false)
                     .setThumbnail(event.getUser().getAvatarUrl())
                     .setFooter("ID: " + event.getUser().getId())
@@ -179,7 +175,7 @@ public class LogHandler extends ListenerAdapter {
         try {
             ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                     .setAuthor("Member Left", null, event.getUser().getAvatarUrl())
-                    .setDescription(event.getUser().getAsMention() + " " + event.getUser().getAsTag())
+                    .setDescription(event.getUser().getName())
                     .setFooter("ID: " + event.getUser().getId())
                     .setTimestamp(Instant.now())
                     .setColor(BotColors.WARNING.getColor())
@@ -207,7 +203,7 @@ public class LogHandler extends ListenerAdapter {
 
         try {
             ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                    .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
+                    .setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl())
                     .setDescription("**Message edited in **" + event.getChannel().getAsMention() + " [Jump to Message](" + event.getMessage().getJumpUrl() + ")")
                     .addField("Before", cachedMessage != null ? BotHelpers.trim(cachedMessage.getContentRaw(), 450) : "*Old message not cached*", false)
                     .addField("After", BotHelpers.trim(event.getMessage().getContentRaw(), 450), false)
@@ -239,9 +235,9 @@ public class LogHandler extends ListenerAdapter {
 
                 try {
                     ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                            .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
+                            .setAuthor(event.getAuthor().getName(), null, event.getAuthor().getAvatarUrl())
                             .setDescription("**Invite posted for " + invite.getGuild().getName() + "** " + event.getChannel().getAsMention() + "\n" + invite.getUrl())
-                            .addField("Inviter", invite.getInviter() != null ? invite.getInviter().getAsTag() : "Unknown", true)
+                            .addField("Inviter", invite.getInviter() != null ? invite.getInviter().getName() : "Unknown", true)
                             .addField("Channel", invite.getChannel() != null ? invite.getChannel().getName() : "Group", true)
                             .addField("Members", invite.getGuild().getOnlineCount() + "/" + invite.getGuild().getMemberCount(), true)
                             .setFooter("ID: " + event.getAuthor().getId())
@@ -283,7 +279,7 @@ public class LogHandler extends ListenerAdapter {
                 return;
             }
 
-            authorTag = cachedMessage.getAuthor().getAsTag();
+            authorTag = cachedMessage.getAuthor().getName();
             authorMention = cachedMessage.getAuthor().getAsMention();
             authorAvatar = cachedMessage.getAuthor().getAvatarUrl();
             authorId = cachedMessage.getAuthor().getId();
@@ -321,7 +317,7 @@ public class LogHandler extends ListenerAdapter {
 
         try {
             ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                    .setAuthor(event.getMember().getUser().getAsTag(), null, event.getMember().getUser().getAvatarUrl())
+                    .setAuthor(event.getMember().getUser().getName(), null, event.getMember().getUser().getAvatarUrl())
                     .setDescription(description)
                     .setFooter("ID: " + event.getMember().getId())
                     .setTimestamp(Instant.now())

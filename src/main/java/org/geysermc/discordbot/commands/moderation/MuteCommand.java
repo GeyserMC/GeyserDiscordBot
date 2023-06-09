@@ -73,51 +73,6 @@ public class MuteCommand extends SlashCommand {
         event.replyEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
     }
 
-    @Override
-    protected void execute(CommandEvent event) {
-        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
-
-        // Fetch the user
-        Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
-
-        //Fetch the user that issued the command
-        Member moderator = event.getMember();
-
-        boolean silent = false;
-
-        // Handle all the option args
-        // We clone the args here to prevent a CME
-        for (String arg : args.toArray(new String[0])) {
-            if (!arg.startsWith("-") || arg.length() < 2) {
-                break;
-            }
-
-            // Check for silent flag
-            if (arg.toCharArray()[1] == 's') {
-                silent = true;
-            } else {
-                event.getMessage().replyEmbeds(new EmbedBuilder()
-                        .setTitle("Invalid option")
-                        .setDescription("The option `" + arg + "` is invalid")
-                        .setColor(BotColors.FAILURE.getColor())
-                        .build()).queue();
-            }
-
-            args.remove(0);
-        }
-
-        // Get the reason or use None
-        String reasonParts = String.join(" ", args);
-        String reason;
-        if (reasonParts.trim().isEmpty()) {
-            reason = "*None*";
-        } else {
-            reason = reasonParts;
-        }
-
-        event.getMessage().replyEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
-    }
-
     private MessageEmbed handle(Member member, Member moderator, Guild guild, boolean silent, String reason) {
         // Check user is valid
         if (member == null) {

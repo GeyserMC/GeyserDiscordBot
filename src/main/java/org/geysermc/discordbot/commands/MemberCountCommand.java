@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -35,7 +34,6 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.BotHelpers;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -59,11 +57,6 @@ public class MemberCountCommand extends SlashCommand {
         Role role = event.optRole("role", null);
 
         event.replyEmbeds(handle(event.getGuild(), role)).queue();
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-        event.getMessage().replyEmbeds(handle(event.getGuild(), BotHelpers.getRole(event.getGuild(), event.getArgs()))).queue();
     }
 
     protected MessageEmbed handle(Guild guild, Role role) {

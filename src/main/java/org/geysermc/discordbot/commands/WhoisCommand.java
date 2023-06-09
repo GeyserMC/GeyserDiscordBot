@@ -68,26 +68,6 @@ public class WhoisCommand extends SlashCommand {
         event.replyEmbeds(handle(member)).queue();
     }
 
-    @Override
-    protected void execute(CommandEvent event) {
-        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
-
-        Member member;
-        if (args.size() == 0 || args.get(0).isEmpty()) {
-            member = event.getMember();
-        } else {
-            member = BotHelpers.getMember(event.getGuild(), args.remove(0));
-        }
-
-        // Check user is valid
-        if (member == null) {
-            MessageHelper.errorResponse(event, "Invalid user", "The user ID specified doesn't link with any valid user in this server.");
-            return;
-        }
-
-        event.getMessage().replyEmbeds(handle(member)).queue();
-    }
-
     protected MessageEmbed handle(Member member) {
         // Get the user from the member
         User user = member.getUser();
@@ -99,7 +79,7 @@ public class WhoisCommand extends SlashCommand {
         }
 
         return new EmbedBuilder()
-                .setAuthor(user.getAsTag(), null, user.getAvatarUrl())
+                .setAuthor(user.getName(), null, user.getAvatarUrl())
                 .setDescription(user.getAsMention())
                 .addField("Joined", TimeFormat.DATE_TIME_LONG.format(member.getTimeJoined()), true)
                 .addField("Registered", TimeFormat.DATE_TIME_LONG.format(member.getTimeCreated()), true)

@@ -27,14 +27,10 @@ package org.geysermc.discordbot.util;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.geysermc.discordbot.GeyserBot;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.PagedSearchIterable;
 
-import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +41,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -56,105 +51,6 @@ public class BotHelpers {
 
     private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w.\\-]+/)?([\\w.\\-]+)( |$)", Pattern.CASE_INSENSITIVE);
 
-
-    /**
-     * Get a guild member from a given id string
-     *
-     * @param guild Guild to get the member for
-     * @param userTag The tag to use to find the member
-     * @return The found Member or null
-     */
-    @Nullable
-    public static Member getMember(Guild guild, String userTag) {
-        try {
-            User user = getUser(userTag);
-
-            if (user == null) {
-                // Try and find a member by name using the passed string
-                List<Member> members = guild.getMembersByEffectiveName(userTag, true);
-                if (!members.isEmpty()) {
-                    return members.get(0);
-                }
-            } else {
-                return guild.getMember(user);
-            }
-        } catch (IllegalArgumentException ignored) { }
-
-        return null;
-    }
-
-    /**
-     * Get a discord user from a given id string
-     * Input examples:
-     *  <@!1234>
-     *  1234
-     *  abc#1234
-     *
-     * @param userTag The tag to use to find the member
-     * @return The found User or null
-     */
-    @Nullable
-    public static User getUser(String userTag) {
-        if (userTag.isEmpty()) return null;
-
-        // If it's a mention of a non-user then ignore
-        if (userTag.startsWith("<") && !userTag.startsWith("<@")) {
-            return null;
-        }
-
-        try {
-            // Check for a mention (<@!1234>)
-            if (userTag.startsWith("<@") && userTag.endsWith(">")) {
-                userTag = userTag.replace("!", "");
-                userTag = userTag.substring(2, userTag.length() - 1);
-            } else {
-                // Check for a user tag (example#1234)
-                Matcher m = User.USER_TAG.matcher(userTag);
-                if (m.matches()) {
-                    return GeyserBot.getJDA().getUserByTag(m.group(1), m.group(2));
-                }
-            }
-
-            // Try to get the member by ID
-            return GeyserBot.getJDA().retrieveUserById(userTag).complete();
-        } catch (NumberFormatException | ErrorResponseException ignored) {
-            return null;
-        }
-    }
-
-    /**
-     * Get a discord role from a given id string
-     * Input examples:
-     *  <@&1234>
-     *  1234
-     *  admin
-     *
-     * @param guild The guild to find the role in
-     * @param roleTag The tag to use to find the member
-     * @return The found User or null
-     */
-    @Nullable
-    public static Role getRole(Guild guild, String roleTag) {
-        if (roleTag.isEmpty()) return null;
-
-        try {
-            // Check for a mention (<@&1234>)
-            if (roleTag.startsWith("<@&") && roleTag.endsWith(">")) {
-                roleTag = roleTag.substring(3, roleTag.length() - 1);
-            } else {
-                // Find the role by name
-                List<Role> foundRole = guild.getRolesByName(roleTag, false);
-                if (!foundRole.isEmpty()) {
-                    return foundRole.get(0);
-                }
-            }
-
-            // Try to get the role by ID
-            return guild.getRoleById(roleTag);
-        } catch (NumberFormatException | ErrorResponseException ignored) {
-            return null;
-        }
-    }
 
     private static final char[] FORMAT_CHARS = new char[]{'k', 'm', 'b', 't'};
 

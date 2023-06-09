@@ -25,61 +25,134 @@
 
 package org.geysermc.discordbot.commands;
 
+import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.tags.SlashTag;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
+import org.geysermc.discordbot.util.PropertiesManager;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class TagCommand extends SlashCommand {
 
     public TagCommand() {
         this.name = "tag";
-        this.help = "Fetch a tag";
-        this.arguments = "<name>";
-        this.guildOnly = false;
-
-        this.options = Collections.singletonList(
-            new OptionData(OptionType.STRING, "name", "The tag to get (Supports aliases)", true)
-        );
+        this.help = "Tags";
+        this.hidden = true;
+        this.guildOnly = true;
+        this.children = new SlashCommand[]{
+                new FetchTag(),
+                new TagsList()
+        };
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        String tagName = event.getOption("name").getAsString();
-        SlashTag tag = null;
+        // unused
+    }
 
-        for (SlashTag slashTag : TagsManager.getEmbedTags()) {
-            if (slashTag.getName().equalsIgnoreCase(tagName)) {
-                tag = slashTag;
-                break;
-            }
+    public static class FetchTag extends SlashCommand {
+        public FetchTag() {
+            this.name = "fetch";
+            this.help = "Fetch a tag";
+            this.arguments = "<name>";
+            this.guildOnly = false;
 
-            if (slashTag.getAliases() != null && !slashTag.getAliases().isEmpty()) {
-                for (String alias : slashTag.getAliases().split(",")) {
-                    if (alias.equalsIgnoreCase(tagName)) {
-                        tag = slashTag;
-                        break;
+            this.options = Collections.singletonList(
+                    new OptionData(OptionType.STRING, "name", "The tag to get (Supports aliases)", true)
+            );
+        }
+
+
+        @Override
+        protected void execute(SlashCommandEvent event) {
+            String tagName = event.getOption("name").getAsString();
+            SlashTag tag = null;
+
+            for (SlashTag slashTag : TagsManager.getEmbedTags()) {
+                if (slashTag.getName().equalsIgnoreCase(tagName)) {
+                    tag = slashTag;
+                    break;
+                }
+
+                if (slashTag.getAliases() != null && !slashTag.getAliases().isEmpty()) {
+                    for (String alias : slashTag.getAliases().split(",")) {
+                        if (alias.equalsIgnoreCase(tagName)) {
+                            tag = slashTag;
+                            break;
+                        }
                     }
                 }
             }
+
+            if (tag != null) {
+                tag.replyWithTag(event);
+            } else {
+                event.replyEmbeds(new EmbedBuilder()
+                        .setColor(BotColors.FAILURE.getColor())
+                        .setTitle("Invalid tag")
+                        .setDescription("Missing requested tag")
+                        .build()).queue();
+            }
+
+
+        }
+    }
+
+    public static class TagsList extends SlashCommand {
+        public TagsList() {
+            this.name = "list";
+            this.arguments = "[search]";
+            this.help = "List all the known (non-alias) tags";
+            this.guildOnly = false;
+
+            this.options = Collections.singletonList(
+                    new OptionData(OptionType.STRING, "search", "The term you want to search for")
+            );
         }
 
-        if (tag != null) {
-            tag.replyWithTag(event);
-        } else {
-            event.replyEmbeds(new EmbedBuilder()
-                    .setColor(BotColors.FAILURE.getColor())
-                    .setTitle("Invalid tag")
-                    .setDescription("Missing requested tag")
-                    .build()).queue();
+        @Override
+        protected void execute(SlashCommandEvent event) {
+            String search = event.optString("search", "");
+
+            event.replyEmbeds(handle(search)).queue();
         }
 
+        protected MessageEmbed handle(String search) {
+            EmbedBuilder embed = new EmbedBuilder();
 
+            // Get tag names based on search
+            List<String> tagNames = new ArrayList<>();
+            for (Command tag : TagsManager.getTags()) {
+                if (!tag.getName().equals("alias") && tag.getName().contains(search)) {
+                    tagNames.add(tag.getName());
+                }
+            }
+
+            // Sort the tag names
+            Collections.sort(tagNames);
+
+            if (tagNames.isEmpty()) {
+                embed.setColor(BotColors.FAILURE.getColor());
+                embed.setTitle("No tags found");
+                embed.setDescription("No tags were found for your search.");
+                embed.setFooter("Use `" + PropertiesManager.getPrefix() + "tag aliases <name>` to see all the aliases for a certain tag");
+            } else {
+                embed.setColor(BotColors.SUCCESS.getColor());
+                embed.setTitle("Tags (" + tagNames.size() + ")");
+                embed.setDescription("`" + String.join("`, `", tagNames) + "`");
+                embed.setFooter("Use `" + PropertiesManager.getPrefix() + "tag <name>` to show a tag");
+            }
+
+            return embed.build();
+        }
     }
 }

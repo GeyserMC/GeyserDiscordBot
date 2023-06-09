@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -36,8 +35,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.listeners.LogHandler;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.BotHelpers;
-import org.geysermc.discordbot.util.MessageHelper;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -84,7 +81,7 @@ public class PurgeCommand extends SlashCommand {
             }
         }
 
-        List<String> delList = handle(user, moderator, event.getGuild(), history, count, true);
+        List<String> delList = handle(user, moderator, event.getGuild(), history, count);
 
         if (delList == null) {
             // Should only return null when it's a single entry
@@ -101,50 +98,7 @@ public class PurgeCommand extends SlashCommand {
 
     }
 
-    @Override
-    protected void execute(CommandEvent event) {
-        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
-
-        // Get the count and validate it
-        int count;
-        try {
-            count = Integer.parseInt(args.get(0));
-        } catch (NumberFormatException e) {
-            MessageHelper.errorResponse(event, "Invalid count", "Please specify a positive integer for the number of messages to delete!");
-            return;
-        }
-
-        // Make sure we dont have a invalid number
-        if (count <= 0) {
-            MessageHelper.errorResponse(event, "Invalid count", "Please specify a positive integer for the number of messages to delete!");
-            return;
-        }
-
-        // Fetch the user
-        User user = null;
-        if (args.size() >= 2) {
-            user = BotHelpers.getUser(args.get(1));
-
-            // Check user is valid
-            if (user == null) {
-                MessageHelper.errorResponse(event, "Invalid user", "The user ID specified doesn't link with any valid user in this server.");
-                return;
-            }
-        }
-
-        LogHandler.PURGED_MESSAGES.add(event.getMessage().getId());
-        event.getMessage().delete().queue();
-
-        MessageHistory history = event.getChannel().getHistory();
-
-        List<String> delList = handle(user, event.getMember(), event.getGuild(), history, count, false);
-
-        if (delList != null) {
-            event.getTextChannel().deleteMessagesByIds(delList).queue();
-        }
-    }
-
-    private List<String> handle(User user, Member mod, Guild guild, MessageHistory history, int count, boolean isSlash) {
+    private List<String> handle(User user, Member mod, Guild guild, MessageHistory history, int count) {
         int totalMessages = 0;
         while (totalMessages < count) {
             List<Message> messagesToDelete = new ArrayList<>();
@@ -154,12 +108,6 @@ public class PurgeCommand extends SlashCommand {
                 if (user != null && message.getAuthor() != user) {
                     continue;
                 }
-
-/*
-                if (message.getIdLong() == event.getMessage().getIdLong()) {
-                    continue;
-                }
-*/
 
                 messagesToDelete.add(message);
                 totalMessages++;
@@ -191,7 +139,7 @@ public class PurgeCommand extends SlashCommand {
                 // Send the embed as a reply and to the log
                 ServerSettings.getLogChannel(guild).sendMessageEmbeds(bannedEmbed).queue();
 
-                if (isSlash) {
+                if (true) {
                     // If slash command, add purge message count
                     messagesToDeleteIds.add(totalMessages+"/"+count);
                 }

@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -39,13 +38,10 @@ import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ModLog;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.BotHelpers;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,17 +68,6 @@ public class LogCommand extends SlashCommand {
         User user = event.getOption("member").getAsUser();
 
         event.replyEmbeds(handle(user, event.getGuild())).queue();
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
-
-        // Fetch the user
-        User user = BotHelpers.getUser(args.remove(0));
-
-        // Send the embed as a reply
-        event.getMessage().replyEmbeds(handle(user, event.getGuild())).queue();
     }
 
     private MessageEmbed handle(User user, Guild guild) {
