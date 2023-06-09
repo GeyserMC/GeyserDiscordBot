@@ -33,7 +33,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
-import org.geysermc.discordbot.util.PropertiesManager;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -74,7 +73,7 @@ public class WikiCommand extends SlashCommand {
 
         // Check to make sure we have a search term
         if (query.isEmpty()) {
-            return MessageHelper.errorResponse(null, "Invalid usage", "Missing search term. `" + PropertiesManager.getPrefix() + name + " <search>`");
+            return MessageHelper.errorResponse(null, "Invalid usage", "Missing search term. `/" + name + " <search>`");
         }
 
         if (query.length() > 128) {

@@ -30,7 +30,6 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.util.Arrays;
 
@@ -55,7 +54,7 @@ public class TagAliasCommand extends Command {
 
         if (args.length == 0) {
             embed.setTitle("Invalid usage");
-            embed.setDescription("Missing tag name. `" + PropertiesManager .getPrefix() + "tag alias <name>`");
+            embed.setDescription("Missing tag name. `/tag alias <name>`");
             embed.setColor(BotColors.FAILURE.getColor());
 
             event.getMessage().replyEmbeds(embed.build()).queue();
@@ -72,7 +71,7 @@ public class TagAliasCommand extends Command {
 
         if (foundTag == null) {
             embed.setTitle("Missing tag");
-            embed.setDescription("No tag with the name `" + args[0] + "`, do `" + PropertiesManager.getPrefix() + "tags` for the full list.");
+            embed.setDescription("No tag with the name `" + args[0] + "`, do `/tags` for the full list.");
             embed.setColor(BotColors.FAILURE.getColor());
             event.getMessage().replyEmbeds(embed.build()).queue();
             return;
@@ -81,7 +80,7 @@ public class TagAliasCommand extends Command {
         if (foundTag.getAliases().length > 0) {
             embed.setTitle("Aliases for " + foundTag.getName() + " (" + foundTag.getAliases().length + ")");
             embed.setDescription("`" + String.join("`, `", foundTag.getAliases()) + "`");
-            embed.setFooter("Use `" + PropertiesManager.getPrefix() + "tag <name>` to show a tag");
+            embed.setFooter("Use `/tag <name>` to show a tag");
             embed.setColor(BotColors.SUCCESS.getColor());
         } else {
             embed.setTitle("No aliases for " + foundTag.getName());
