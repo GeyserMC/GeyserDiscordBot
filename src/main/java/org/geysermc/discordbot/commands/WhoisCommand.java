@@ -99,7 +99,7 @@ public class WhoisCommand extends SlashCommand {
         }
 
         return new EmbedBuilder()
-                .setAuthor(user.getAsTag(), null, user.getAvatarUrl())
+                .setAuthor(user.getName(), null, user.getAvatarUrl())
                 .setDescription(user.getAsMention())
                 .addField("Joined", TimeFormat.DATE_TIME_LONG.format(member.getTimeJoined()), true)
                 .addField("Registered", TimeFormat.DATE_TIME_LONG.format(member.getTimeCreated()), true)
