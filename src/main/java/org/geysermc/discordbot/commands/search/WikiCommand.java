@@ -93,7 +93,7 @@ public class WikiCommand extends SlashCommand {
         if (results.size() >= 1) {
             // Replace the results with the identical title match
             for (WikiResult result : results) {
-                if (result.title().equalsIgnoreCase(query)) {
+                if (result.getTitle().equalsIgnoreCase(query)) {
                     results = new ArrayList<>();
                     results.add(result);
                 }
@@ -101,12 +101,12 @@ public class WikiCommand extends SlashCommand {
 
             for (WikiResult result : results) {
                 // Ignore pages starting with `_` which are usually meta pages
-                if (result.title().startsWith("_")) {
+                if (result.getTitle().startsWith("_")) {
                     continue;
                 }
 
                 // Add the result as a field
-                embed.addField(result.title(), result.url() + "\n" + result.description(), false);
+                embed.addField(result.getTitle(), result.getUrl() + "\n" + result.getDescription(), false);
             }
         } else {
             // We found no results
@@ -155,17 +155,35 @@ public class WikiCommand extends SlashCommand {
         return results;
     }
 
-    private record WikiResult(String title, String description, String updated, String url) {
-            private WikiResult(String title, String description, String updated, String url) {
-                this.title = title;
-                this.description = description;
-                this.updated = updated;
+    private static class WikiResult {
+        private final String title, description, updated, url;
 
-                // Fix last character breaking urls
-                String lastChar = url.substring(url.length() - 1);
-                lastChar = URLEncoder.encode(lastChar, StandardCharsets.UTF_8);
+        public WikiResult(String title, String description, String updated, String url) {
+            this.title = title;
+            this.description = description;
+            this.updated = updated;
 
-                this.url = url.substring(0, url.length() - 1) + lastChar;
-            }
+            // Fix last character breaking urls
+            String lastChar = url.substring(url.length() - 1);
+            lastChar = URLEncoder.encode(lastChar, StandardCharsets.UTF_8);
+
+            this.url = url.substring(0, url.length() - 1) + lastChar;
         }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getUpdated() {
+            return updated;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+    }
 }

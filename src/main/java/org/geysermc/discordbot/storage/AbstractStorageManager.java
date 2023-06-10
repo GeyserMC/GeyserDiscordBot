@@ -151,6 +151,13 @@ public abstract class AbstractStorageManager {
     public abstract void setLevel(Member user, LevelInfo levelInfo);
 
     /**
+     * @see AbstractStorageManager#getLevels(long)
+     */
+    public List<LevelInfo> getLevels(Guild guild) {
+        return getLevels(guild.getIdLong());
+    }
+
+    /**
      * Get the top 100 levels for a given guild id
      *
      * @param guildId The guild to get the levels for
