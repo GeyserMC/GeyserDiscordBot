@@ -70,7 +70,6 @@ public class TagCommand extends SlashCommand {
             );
         }
 
-
         @Override
         protected void execute(SlashCommandEvent event) {
             String tagName = event.getOption("name").getAsString();
@@ -101,8 +100,6 @@ public class TagCommand extends SlashCommand {
                         .setDescription("Missing requested tag")
                         .build()).queue();
             }
-
-
         }
     }
 
