@@ -179,7 +179,7 @@ public class LogHandler extends ListenerAdapter {
         try {
             ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                     .setAuthor("Member Left", null, event.getUser().getAvatarUrl())
-                    .setDescription(event.getUser().getAsMention() + " " + event.getUser().getAsTag())
+                    .setDescription(event.getUser().getAsMention() + " " + event.getUser().getName())
                     .setFooter("ID: " + event.getUser().getId())
                     .setTimestamp(Instant.now())
                     .setColor(BotColors.WARNING.getColor())
