@@ -175,7 +175,13 @@ public class DumpHandler extends ListenerAdapter {
             return;
         }
 
-        String platform = bootstrapInfo.getString("platform");
+        Object platformObj = bootstrapInfo.get("platform");
+        String platform = "";
+        if (platformObj instanceof String) {
+            platform = (String) platformObj;
+        } else {
+            platform = ((JSONObject) platformObj).getString("platformName").toUpperCase();
+        }
         List<String> problems = new ArrayList<>();
 
         // Check plugins and stuff for potential issues
