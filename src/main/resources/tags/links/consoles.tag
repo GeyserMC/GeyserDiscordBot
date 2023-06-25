@@ -1,5 +1,5 @@
 type: text
-aliases: bedrockconnect, ps4, xbox, switch
+aliases: bedrockconnect, ps4, ps5, xbox, switch
 
 ---
 
