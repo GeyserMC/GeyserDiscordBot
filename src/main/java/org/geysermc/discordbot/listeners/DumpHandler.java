@@ -51,8 +51,6 @@ import pw.chew.chewbotcca.util.RestClient;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -219,7 +217,7 @@ public class DumpHandler extends ListenerAdapter {
             // Set the latest info based on the returned comparison
             if (compare.getBehindBy() != 0 || compare.getAheadBy() != 0) {
                 gitData.append("**Latest:** No\n");
-                problems.add("- You aren't on the latest Geyser version! Please [download](https://geysermc.org/download#" + bootstrapInfo.getString("platform").toLowerCase() + ") the latest version.");
+                problems.add("- You aren't on the latest Geyser version! Please [download](https://geysermc.org/download#" + platform.toLowerCase() + ") the latest version.");
             } else {
                 gitData.append("**Latest:** Yes\n");
             }
