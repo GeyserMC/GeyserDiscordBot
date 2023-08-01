@@ -59,8 +59,8 @@ public class ForumCommand extends SlashCommand {
                 new CloseOldPostSubCommand(),
                 new ClosePostSubCommand(),
                 new renamePostSubCommand(),
-                new addTagPostCommand(),
-                new removeTagPostCommand()
+                new addTagPostSubCommand(),
+                new removeTagPostSubCommand()
         };
     }
 
@@ -193,8 +193,8 @@ public class ForumCommand extends SlashCommand {
         }
     }
 
-    public static class addTagPostCommand extends SlashCommand {
-        public addTagPostCommand() {
+    public static class addTagPostSubCommand extends SlashCommand {
+        public addTagPostSubCommand() {
             this.name = "add-tag";
             this.help = "add a tag to post";
             this.userPermissions = new Permission[] {
@@ -235,8 +235,8 @@ public class ForumCommand extends SlashCommand {
         }
     }
 
-    public static class removeTagPostCommand extends SlashCommand {
-        public removeTagPostCommand() {
+    public static class removeTagPostSubCommand extends SlashCommand {
+        public removeTagPostSubCommand() {
             this.name = "remove-tag";
             this.help = "remove a tag from post";
             this.userPermissions = new Permission[] {
