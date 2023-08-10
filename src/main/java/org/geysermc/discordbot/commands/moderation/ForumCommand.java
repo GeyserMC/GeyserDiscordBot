@@ -73,7 +73,7 @@ public class ForumCommand extends SlashCommand {
         public CreatePostSubCommand() {
             this.name = "create";
             this.help = "Create post";
-            this.userPermissions = new Permission[]{ Permission.CREATE_PUBLIC_THREADS };
+            this.userPermissions = new Permission[]{Permission.CREATE_PUBLIC_THREADS};
             this.options = Arrays.asList(
                     new OptionData(OptionType.STRING, "title", "Add the post title", true),
                     new OptionData(OptionType.STRING, "issue", "Add the post message/issue", true),
@@ -112,7 +112,7 @@ public class ForumCommand extends SlashCommand {
         public CloseOldPostSubCommand() {
             this.name = "close-old";
             this.help = "Close old posts";
-            this.userPermissions = new Permission[]{ Permission.MESSAGE_MANAGE };
+            this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
             this.options = List.of(new OptionData(OptionType.INTEGER, "days", "The minimum age in days of posts that will be closed in bulk", true));
         }
 
@@ -148,7 +148,7 @@ public class ForumCommand extends SlashCommand {
         public ClosePostSubCommand() {
             this.name = "close";
             this.help = "Close post";
-            this.userPermissions = new Permission[]{ Permission.CREATE_PUBLIC_THREADS };
+            this.userPermissions = new Permission[]{Permission.CREATE_PUBLIC_THREADS};
         }
 
         @Override
@@ -175,7 +175,7 @@ public class ForumCommand extends SlashCommand {
         public RenamePostSubCommand() {
             this.name = "rename";
             this.help = "Rename post";
-            this.userPermissions = new Permission[] { Permission.CREATE_PUBLIC_THREADS };
+            this.userPermissions = new Permission[]{Permission.CREATE_PUBLIC_THREADS};
             this.options = List.of(
                     new OptionData(OptionType.STRING, "title", "change the forum title", true)
             );
@@ -200,7 +200,7 @@ public class ForumCommand extends SlashCommand {
         public AddTagPostSubCommand() {
             this.name = "add-tag";
             this.help = "Add a tag to post";
-            this.userPermissions = new Permission[] { Permission.CREATE_PUBLIC_THREADS };
+            this.userPermissions = new Permission[]{Permission.CREATE_PUBLIC_THREADS};
             this.options = getTags();
         }
 
@@ -212,7 +212,7 @@ public class ForumCommand extends SlashCommand {
             }
 
             String tag = event.optString("tag");
-            List < ForumTag > tags = event.getChannel().asThreadChannel().getParentChannel().asForumChannel().getAvailableTags();
+            List<ForumTag> tags = event.getChannel().asThreadChannel().getParentChannel().asForumChannel().getAvailableTags();
             int index = -1;
             boolean matchFound = false;
             for (int i = 0; i < tags.size(); i++) {
@@ -226,9 +226,9 @@ public class ForumCommand extends SlashCommand {
             }
 
             if (matchFound) {
-                List < ForumTag > currentTags = event.getChannel().asThreadChannel().getAppliedTags();
+                List<ForumTag> currentTags = event.getChannel().asThreadChannel().getAppliedTags();
                 ForumTagSnowflake newTag = ForumTagSnowflake.fromId(tags.get(index).getId());
-                List < ForumTagSnowflake > updatedTags = new ArrayList < > (currentTags);
+                List<ForumTagSnowflake> updatedTags = new ArrayList<>(currentTags);
                 updatedTags.add(newTag);
                 ThreadChannelManager manager = event.getChannel().asThreadChannel().getManager().setAppliedTags(updatedTags);
                 manager.queue(
@@ -246,7 +246,7 @@ public class ForumCommand extends SlashCommand {
         public removeTagPostSubCommand() {
             this.name = "remove-tag";
             this.help = "Remove a tag from post";
-            this.userPermissions = new Permission[] { Permission.CREATE_PUBLIC_THREADS };
+            this.userPermissions = new Permission[]{Permission.CREATE_PUBLIC_THREADS};
             this.options = getTags();
         }
 
@@ -257,9 +257,9 @@ public class ForumCommand extends SlashCommand {
                 return;
             }
 
-            String tagToRemove = Objects.requireNonNull(event.getOption("tag")).getAsString();
+            String tagToRemove = event.optString("tag");
             int indexToRemove = -1;
-            List < ForumTag > currentTags = event.getChannel().asThreadChannel().getAppliedTags();
+            List<ForumTag> currentTags = event.getChannel().asThreadChannel().getAppliedTags();
             for (int i = 0; i < currentTags.size(); i++) {
                 ForumTag currentTag = currentTags.get(i);
                 if (currentTag.getName().equalsIgnoreCase(tagToRemove)) {
@@ -269,7 +269,7 @@ public class ForumCommand extends SlashCommand {
             }
 
             if (indexToRemove != -1) {
-                List < ForumTagSnowflake > updatedTags = new ArrayList < > (currentTags);
+                List<ForumTagSnowflake> updatedTags = new ArrayList<>(currentTags);
                 updatedTags.remove(indexToRemove);
                 ThreadChannelManager manager = event.getChannel().asThreadChannel().getManager().setAppliedTags(updatedTags);
                 manager.queue(
@@ -284,7 +284,7 @@ public class ForumCommand extends SlashCommand {
     }
 
     @NotNull
-    public static List < OptionData > getTags() {
+    public static List<OptionData> getTags() {
         return List.of(
                 new OptionData(OptionType.STRING, "tag", "name of the tag")
                         .addChoice("Error On Startup", "Error On Startup")
