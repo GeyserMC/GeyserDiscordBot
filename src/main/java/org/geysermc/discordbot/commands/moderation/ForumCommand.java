@@ -113,9 +113,7 @@ public class ForumCommand extends SlashCommand {
             this.name = "close-old";
             this.help = "close old posts";
             this.userPermissions = new Permission[]{ Permission.MESSAGE_MANAGE };
-            this.options = List.of(
-                    new OptionData(OptionType.INTEGER, "days", "Enter the max age of bulk post closing.", true)
-            );
+            this.options = List.of(new OptionData(OptionType.INTEGER, "days", "The minimum age in days of posts that will be closed in bulk", true));
         }
 
         @Override
