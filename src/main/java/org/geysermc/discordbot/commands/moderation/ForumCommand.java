@@ -52,7 +52,7 @@ public class ForumCommand extends SlashCommand {
     public ForumCommand() {
         this.name = "post";
         this.hidden = true;
-        this.help = "help tool to manage forum posts.";
+        this.help = "Help tool to manage forum posts.";
         this.guildOnly = true;
         this.children = new SlashCommand[]{
                 new CreatePostSubCommand(),
@@ -72,11 +72,11 @@ public class ForumCommand extends SlashCommand {
     public static class CreatePostSubCommand extends SlashCommand {
         public CreatePostSubCommand() {
             this.name = "create";
-            this.help = "create post";
+            this.help = "Create post";
             this.userPermissions = new Permission[]{ Permission.CREATE_PUBLIC_THREADS };
             this.options = Arrays.asList(
-                    new OptionData(OptionType.STRING, "title", "add the post title", true),
-                    new OptionData(OptionType.STRING, "issue", "add the post message/issue", true),
+                    new OptionData(OptionType.STRING, "title", "Add the post title", true),
+                    new OptionData(OptionType.STRING, "issue", "Add the post message/issue", true),
                     new OptionData(OptionType.USER, "member", "The member to ping in the post", false)
             );
         }
@@ -111,7 +111,7 @@ public class ForumCommand extends SlashCommand {
     public static class CloseOldPostSubCommand extends SlashCommand {
         public CloseOldPostSubCommand() {
             this.name = "close-old";
-            this.help = "close old posts";
+            this.help = "Close old posts";
             this.userPermissions = new Permission[]{ Permission.MESSAGE_MANAGE };
             this.options = List.of(new OptionData(OptionType.INTEGER, "days", "The minimum age in days of posts that will be closed in bulk", true));
         }
@@ -174,7 +174,7 @@ public class ForumCommand extends SlashCommand {
     public static class RenamePostSubCommand extends SlashCommand {
         public RenamePostSubCommand() {
             this.name = "rename";
-            this.help = "rename post";
+            this.help = "Rename post";
             this.userPermissions = new Permission[] { Permission.CREATE_PUBLIC_THREADS };
             this.options = List.of(
                     new OptionData(OptionType.STRING, "title", "change the forum title", true)
@@ -199,7 +199,7 @@ public class ForumCommand extends SlashCommand {
     public static class AddTagPostSubCommand extends SlashCommand {
         public AddTagPostSubCommand() {
             this.name = "add-tag";
-            this.help = "add a tag to post";
+            this.help = "Add a tag to post";
             this.userPermissions = new Permission[] { Permission.CREATE_PUBLIC_THREADS };
             this.options = getTags();
         }
@@ -245,7 +245,7 @@ public class ForumCommand extends SlashCommand {
     public static class removeTagPostSubCommand extends SlashCommand {
         public removeTagPostSubCommand() {
             this.name = "remove-tag";
-            this.help = "remove a tag from post";
+            this.help = "Remove a tag from post";
             this.userPermissions = new Permission[] { Permission.CREATE_PUBLIC_THREADS };
             this.options = getTags();
         }
