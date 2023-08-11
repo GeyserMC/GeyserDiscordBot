@@ -148,7 +148,7 @@ public class ForumCommand extends SlashCommand {
 
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
-            if (isForumChannel(event)) {
+            if (!isForumChannel(event)) {
                 return;
             }
 
@@ -176,7 +176,7 @@ public class ForumCommand extends SlashCommand {
 
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
-            if (isForumChannel(event)) {
+            if (!isForumChannel(event)) {
                 return;
             }
 
@@ -198,7 +198,7 @@ public class ForumCommand extends SlashCommand {
 
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
-            if (isForumChannel(event)) {
+            if (!isForumChannel(event)) {
                 return;
             }
 
@@ -243,7 +243,7 @@ public class ForumCommand extends SlashCommand {
 
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
-            if (isForumChannel(event)) {
+            if (!isForumChannel(event)) {
                 return;
             }
 
