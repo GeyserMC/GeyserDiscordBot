@@ -27,7 +27,6 @@ package org.geysermc.discordbot.commands.moderation;
 
 import com.jagrosh.jdautilities.command.*;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
@@ -38,16 +37,13 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.managers.channel.concrete.ThreadChannelManager;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.internal.utils.Checks;
+import org.geysermc.discordbot.storage.ServerSettings;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class ForumCommand extends SlashCommand {
-    public static final String FORUM_CHANNEL_ID = "1026497075359264871";
 
     public ForumCommand() {
         this.name = "post";
@@ -94,7 +90,7 @@ public class ForumCommand extends SlashCommand {
                 issue += " " + targetUser;
             }
 
-            ForumChannel forumChannel = event.getGuild().getForumChannelById(FORUM_CHANNEL_ID);
+            ForumChannel forumChannel = ServerSettings.getForumChannel(event.getGuild());
             if (forumChannel == null) {
                 event.reply("Forum channel not found.").queue();
                 return;
@@ -113,16 +109,15 @@ public class ForumCommand extends SlashCommand {
             this.name = "close-old";
             this.help = "Close old posts";
             this.userPermissions = new Permission[]{Permission.MESSAGE_MANAGE};
-            this.options = List.of(new OptionData(OptionType.INTEGER, "days", "The minimum age in days of posts that will be closed in bulk", true));
+            this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "days", "The minimum age in days of posts that will be closed in bulk", true));
         }
 
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             int days = Objects.requireNonNull(event.getOption("days")).getAsInt();
             Checks.notNull(event.getGuild(), "server");
-            Guild guild = event.getGuild();
 
-            ForumChannel forumChannel = guild.getForumChannelById(FORUM_CHANNEL_ID);
+            ForumChannel forumChannel = ServerSettings.getForumChannel(event.getGuild());
             if (forumChannel == null) {
                 event.reply("Forum channel not found.").queue();
                 return;
@@ -153,10 +148,10 @@ public class ForumCommand extends SlashCommand {
 
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
-            if (!(event.getChannel() instanceof ThreadChannel) || !event.getChannel().asThreadChannel().getParentChannel().getId().equals(FORUM_CHANNEL_ID)) {
-                event.reply("Command can only be used in forum channels.").queue();
+            if (isForumChannel(event)) {
                 return;
             }
+
             if (event.getChannel().asThreadChannel().isArchived()) {
                 event.reply("Post is already closed.").queue();
                 return;
@@ -176,15 +171,12 @@ public class ForumCommand extends SlashCommand {
             this.name = "rename";
             this.help = "Rename post";
             this.userPermissions = new Permission[]{Permission.CREATE_PUBLIC_THREADS};
-            this.options = List.of(
-                    new OptionData(OptionType.STRING, "title", "change the forum title", true)
-            );
+            this.options = Collections.singletonList(new OptionData(OptionType.STRING, "title", "change the forum title", true));
         }
 
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
-            if (!(event.getChannel() instanceof ThreadChannel) || !event.getChannel().asThreadChannel().getParentChannel().getId().equals(FORUM_CHANNEL_ID)) {
-                event.reply("Command can only be used in forum channels.").queue();
+            if (isForumChannel(event)) {
                 return;
             }
 
@@ -206,8 +198,7 @@ public class ForumCommand extends SlashCommand {
 
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
-            if (!(event.getChannel() instanceof ThreadChannel) || !event.getChannel().asThreadChannel().getParentChannel().getId().equals(FORUM_CHANNEL_ID)) {
-                event.reply("Command can only be used in forum channels.").queue();
+            if (isForumChannel(event)) {
                 return;
             }
 
@@ -252,8 +243,7 @@ public class ForumCommand extends SlashCommand {
 
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
-            if (!(event.getChannel() instanceof ThreadChannel) || !event.getChannel().asThreadChannel().getParentChannel().getId().equals(FORUM_CHANNEL_ID)) {
-                event.reply("Command can only be used in forum channels.").queue();
+            if (isForumChannel(event)) {
                 return;
             }
 
@@ -285,7 +275,7 @@ public class ForumCommand extends SlashCommand {
 
     @NotNull
     public static List<OptionData> getTags() {
-        return List.of(
+        return Collections.singletonList(
                 new OptionData(OptionType.STRING, "tag", "name of the tag")
                         .addChoice("Error On Startup", "Error On Startup")
                         .addChoice("Closed", "Closed")
@@ -300,5 +290,13 @@ public class ForumCommand extends SlashCommand {
                         .addChoice("Resource Packs", "Resource Packs")
                         .setRequired(true)
         );
+    }
+
+    private static boolean isForumChannel(@NotNull SlashCommandEvent event) {
+        if (event.getChannel().asThreadChannel().getParentChannel().getId().equals(Objects.requireNonNull(ServerSettings.getForumChannel(Objects.requireNonNull(event.getGuild()))).getId())) {
+            return true;
+        }
+        event.reply("Command can only be used in forum channels").queue();
+        return false;
     }
 }
