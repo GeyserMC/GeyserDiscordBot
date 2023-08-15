@@ -43,7 +43,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class DownloadCommand extends SlashCommand {
-    private final String defaultDownloadOption;
+    private final DownloadOption defaultDownloadOption;
     private final Map<String, DownloadOption> optionsToRepository;
 
     public DownloadCommand() {
@@ -52,10 +52,10 @@ public class DownloadCommand extends SlashCommand {
         this.help = "Sends a link to download the latest version of Geyser or another program";
         this.guildOnly = false;
 
-        this.defaultDownloadOption = "https://geysermc.org/download";
+        this.defaultDownloadOption = new GeyserDownloadOption("Geyser", "https://geysermc.org/download");
         this.optionsToRepository = ImmutableMap.<String, DownloadOption>builder()
-                .put("geyser", new GeyserDownloadOption("Geyser", this.defaultDownloadOption))
-                .put("floodgate", new GeyserDownloadOption("Floodgate", this.defaultDownloadOption))
+                .put("geyser", new GeyserDownloadOption("Geyser", this.defaultDownloadOption.downloadUrl))
+                .put("floodgate", new GeyserDownloadOption("Floodgate", this.defaultDownloadOption.downloadUrl))
                 .put("geyseroptionalpack", new GeyserDownloadOption("GeyserOptionalPack", "https://ci.opencollab.dev/job/GeyserMC/job/GeyserOptionalPack/job/master/"))
                 .put("floodgate-fabric", new FabricDownloadOption("Floodgate-Fabric", "https://modrinth.com/mod/floodgate"))
                 .put("paper", new DownloadOption("Paper", "https://papermc.io/downloads", "https://github.com/PaperMC.png"))
