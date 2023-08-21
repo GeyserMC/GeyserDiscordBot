@@ -2,12 +2,12 @@ type: text
 
 ---
 
-**General Resource Packs**
+**Converting general resource packs**
 Use this tool to convert your Java resource pack into a Bedrock resource pack to use in Geyser's `packs` folder.
 https://rtm516.github.io/ConvertJavaTextureToBedrock/
 Unfortunately, this tool is not updated to support packs for versions newer than 1.17.
 
-An updated alternative is this Windows program https://github.com/TheAlienDoctor/minecraft-resource-pack-converter.
+An updated alternative is this [Windows program](https://github.com/TheAlienDoctor/minecraft-resource-pack-converter).
 
 **Packs with CustomModelData**
 To convert a resource pack with CustomModelData, use the following converter: https://github.com/Kas-tle/java2bedrock.sh 
