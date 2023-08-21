@@ -1,4 +1,5 @@
 type: text
+aliases: chat
 issues: This server requires secure profiles || multiplayer.disconnect.missing_public_key || Invalid signature for profile public key || Chat disabled due to missing profile public key
 
 ---
