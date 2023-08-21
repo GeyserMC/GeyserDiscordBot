@@ -30,9 +30,11 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.tags.SlashTag;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
+import org.geysermc.discordbot.util.MessageHelper;
 
 import java.util.Collections;
 
@@ -51,6 +53,10 @@ public class TagCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getMessageChannel(), event.getMember()) && event.getGuild() != null) {
+            event.deferReply(true).addContent(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong())).submit();
+            return;
+        }
         String tagName = event.getOption("name").getAsString();
         SlashTag tag = null;
 

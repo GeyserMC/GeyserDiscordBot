@@ -39,6 +39,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.util.NetworkUtils;
@@ -69,6 +70,10 @@ public class PingCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getMessageChannel(), event.getMember()) && event.getGuild() != null) {
+            event.deferReply(true).addContent(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong())).submit();
+            return;
+        }
         // Defer to wait for us to load a response and allows for files to be uploaded
         InteractionHook interactionHook = event.deferReply().complete();
 
@@ -79,6 +84,10 @@ public class PingCommand extends SlashCommand {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getChannel(), event.getMember())) {
+            event.reply(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong()));
+            return;
+        }
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
         // Check they specified an ip

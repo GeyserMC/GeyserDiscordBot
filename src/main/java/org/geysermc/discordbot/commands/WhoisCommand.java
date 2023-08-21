@@ -37,6 +37,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.TimeFormat;
+import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
 
@@ -63,6 +64,10 @@ public class WhoisCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getMessageChannel(), event.getMember()) && event.getGuild() != null) {
+            event.deferReply(true).addContent(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong())).submit();
+            return;
+        }
         Member member = event.optMember("member", event.getMember());
 
         event.replyEmbeds(handle(member)).queue();
@@ -70,6 +75,10 @@ public class WhoisCommand extends SlashCommand {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getChannel(), event.getMember())) {
+            event.reply(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong()));
+            return;
+        }
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
         Member member;

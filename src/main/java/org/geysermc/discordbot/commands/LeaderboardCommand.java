@@ -35,6 +35,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.geysermc.discordbot.http.Server;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
+import org.geysermc.discordbot.util.MessageHelper;
 
 public class LeaderboardCommand extends SlashCommand {
 
@@ -45,6 +46,10 @@ public class LeaderboardCommand extends SlashCommand {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getChannel(), event.getMember())) {
+            event.reply(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong()));
+            return;
+        }
         event.getMessage().replyEmbeds(getEmbed(event.getGuild()))
             .addActionRow(Button.link(Server.getUrl(event.getGuild().getIdLong()), "Leaderboard"))
             .queue();
@@ -52,6 +57,10 @@ public class LeaderboardCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getMessageChannel(), event.getMember()) && event.getGuild() != null) {
+            event.deferReply(true).addContent(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong())).submit();
+            return;
+        }
         event.replyEmbeds(getEmbed(event.getGuild()))
             .addActionRow(Button.link(Server.getUrl(event.getGuild().getIdLong()), "Leaderboard"))
             .queue();

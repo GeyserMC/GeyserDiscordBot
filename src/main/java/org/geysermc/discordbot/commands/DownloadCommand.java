@@ -33,7 +33,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
+import org.geysermc.discordbot.util.MessageHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +77,10 @@ public class DownloadCommand extends SlashCommand {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getChannel(), event.getMember())) {
+            event.reply(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong()));
+            return;
+        }
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
         String program = "geyser";
@@ -93,6 +100,11 @@ public class DownloadCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getMessageChannel(), event.getMember()) && event.getGuild() != null) {
+            event.deferReply(true).addContent(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong())).submit();
+            return;
+        }
+
         String program = event.optString("program", "geyser");
 
         DownloadOption downloadOption = optionsToRepository.getOrDefault(program.toLowerCase(Locale.ROOT), this.defaultDownloadOption);
