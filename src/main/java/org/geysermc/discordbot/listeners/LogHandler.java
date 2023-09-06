@@ -34,6 +34,9 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
+import net.dv8tion.jda.api.events.guild.GuildAuditLogEntryCreateEvent;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -51,6 +54,7 @@ import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.Color;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,69 +107,56 @@ public class LogHandler extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildBan(@NotNull GuildBanEvent event) {
-        Guild.Ban ban = event.getGuild().retrieveBan(event.getUser()).complete();
+    public void onGuildAuditLogEntryCreate(@NotNull GuildAuditLogEntryCreateEvent event) {
+        if (event.getEntry().getUserIdLong() == event.getJDA().getSelfUser().getIdLong()) return;
 
-        // Get the ban from the audit log to get the user that created it
-        AuditLogEntry banLog = event.getGuild().retrieveAuditLogs().type(ActionType.BAN).stream().filter(auditLogEntry -> auditLogEntry.getTargetIdLong() == ban.getUser().getIdLong()).findFirst().orElse(null);
+        String action;
+        String actionTitle;
+        UserSnowflake staffUser = User.fromId(event.getEntry().getUserId());
+        UserSnowflake targetUser = User.fromId(event.getEntry().getTargetId());
+        String reason = event.getEntry().getReason();
+        Color color;
 
-        GeyserBot.getGeneralThreadPool().schedule(() -> {
-            AuditLogEntry newBanLog;
-            if (banLog == null) {
-                newBanLog = event.getGuild().retrieveAuditLogs().type(ActionType.BAN).stream().filter(auditLogEntry -> auditLogEntry.getTargetIdLong() == ban.getUser().getIdLong()).findFirst().orElse(null);
-
-                // Still null, shouldn't happen but just quietly fail
-                if (newBanLog == null) {
-                    return;
-                }
-            } else {
-                newBanLog = banLog;
-            }
-
-            // Don't log bans by the bot (they are handled separately)
-            if (newBanLog.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong()) {
-                // Log the change
-                int id = GeyserBot.storageManager.addLog(event.getGuild().getMember(newBanLog.getUser()), "ban", event.getUser(), ban.getReason());
-
-                // Send the embed as a reply and to the log
-                try {
-                    ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                            .setTitle("Banned user")
-                            .addField("User", event.getUser().getAsMention(), false)
-                            .addField("Staff member", newBanLog.getUser().getAsMention(), false)
-                            .addField("Reason", ban.getReason(), false)
-                            .setFooter("ID: " + id)
-                            .setTimestamp(Instant.now())
-                            .setColor(BotColors.FAILURE.getColor())
-                            .build()).queue();
-                } catch (IllegalArgumentException ignored) { }
-            }
-        }, banLog == null ? 5 : 0, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public void onGuildUnban(@NotNull GuildUnbanEvent event) {
-        // Get the unban from the audit log to get the user that created it
-        AuditLogEntry banLog = event.getGuild().retrieveAuditLogs().type(ActionType.UNBAN).stream().filter(auditLogEntry -> auditLogEntry.getTargetIdLong() == event.getUser().getIdLong()).findFirst().orElse(null);
-
-        // Don't log bans by the bot (they are handled separately)
-        if (banLog.getUser().getIdLong() != event.getJDA().getSelfUser().getIdLong()) {
-            // Log the change
-            int id = GeyserBot.storageManager.addLog(event.getGuild().getMember(banLog.getUser()), "unban", event.getUser(), "");
-
-            // Send the embed as a reply and to the log
-            try {
-                ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                        .setTitle("Unbanned user")
-                        .addField("User", event.getUser().getAsMention(), false)
-                        .addField("Staff member", banLog.getUser().getAsMention(), false)
-                        .addField("Reason", "", false)
-                        .setFooter("ID: " + id)
-                        .setTimestamp(Instant.now())
-                        .setColor(BotColors.SUCCESS.getColor())
-                        .build()).queue();
-            } catch (IllegalArgumentException ignored) { }
+        if (reason == null) {
+            reason = "";
         }
+
+        switch (event.getEntry().getType()) {
+            case BAN -> {
+                action = "ban";
+                actionTitle = "Banned user";
+                color = BotColors.FAILURE.getColor();
+            }
+            case UNBAN -> {
+                action = "unban";
+                actionTitle = "Unbanned user";
+                color = BotColors.SUCCESS.getColor();
+            }
+            case KICK -> {
+                action = "kick";
+                actionTitle = "Kicked user";
+                color = BotColors.SUCCESS.getColor();
+            }
+            default -> {
+                return;
+            }
+        }
+
+        // Log the change
+        int id = GeyserBot.storageManager.addLog(event.getGuild().getMember(staffUser), action, targetUser, reason);
+
+        // Send the embed as a reply and to the log
+        try {
+            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                    .setTitle(actionTitle)
+                    .addField("User", targetUser.getAsMention(), false)
+                    .addField("Staff member", staffUser.getAsMention(), false)
+                    .addField("Reason", reason, false)
+                    .setFooter("ID: " + id)
+                    .setTimestamp(Instant.now())
+                    .setColor(color)
+                    .build()).queue();
+        } catch (IllegalArgumentException ignored) { }
     }
 
     @Override

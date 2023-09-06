@@ -26,12 +26,10 @@
 package org.geysermc.discordbot.dump_issues;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 public class DockerDumpIssueCheck extends AbstractDumpIssueCheck {
 
