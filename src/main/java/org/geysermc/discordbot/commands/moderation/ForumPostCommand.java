@@ -27,6 +27,8 @@ package org.geysermc.discordbot.commands.moderation;
 
 import com.jagrosh.jdautilities.command.*;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.entities.channel.forums.ForumTag;
@@ -112,20 +114,22 @@ public class ForumPostCommand extends SlashCommand {
             this.name = "rename";
             this.help = "Rename post";
             this.userPermissions = new Permission[] { Permission.CREATE_PUBLIC_THREADS };
-            this.options = Collections.singletonList(new OptionData(OptionType.STRING, "title", "change the forum title", true));
+            this.options = Collections.singletonList(new OptionData(OptionType.STRING, "title", "change the forum title", true).setMaxLength(Channel.MAX_NAME_LENGTH));
         }
 
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             if (!isForumChannel(event)) {
+                event.reply("Command can only be used in the forum channel").queue();
                 return;
             }
 
-            ThreadChannelManager manager = event.getChannel().asThreadChannel().getManager().setName(Objects.requireNonNull(event.optString("title")));
-            manager.queue(
+            event.getChannel().asThreadChannel().getManager()
+                .setName(event.optString("title", event.getChannel().getName()))
+                .queue(
                     unused -> event.reply("Post is renamed!").queue(),
                     error -> event.reply("Could not rename post").queue()
-            );
+                );
         }
     }
 
@@ -215,7 +219,10 @@ public class ForumPostCommand extends SlashCommand {
             String query = event.getFocusedOption().getValue();
 
             // Get the tags
-            List<ForumTag> tags = potentialTags(event.getChannel().asThreadChannel().getParentChannel().asForumChannel().getAvailableTags(), query);
+            ThreadChannel threadChannel = event.getChannel().asThreadChannel();
+            List<ForumTag> unappliedTags = new ArrayList<>(threadChannel.getParentChannel().asForumChannel().getAvailableTags());
+            unappliedTags.removeAll(threadChannel.getAppliedTags());
+            List<ForumTag> tags = potentialTags(unappliedTags, query);
 
             event.replyChoices(tags.stream()
                     .distinct()
@@ -314,8 +321,7 @@ public class ForumPostCommand extends SlashCommand {
                 OffsetDateTime channelCreated = channel.getTimeCreated();
                 OffsetDateTime closeTime = OffsetDateTime.now().minusDays(days);
                 if (channelCreated.isBefore(closeTime)) {
-                    ThreadChannelManager manager = channel.getManager().setArchived(true);
-                    manager.queue();
+                    channel.getManager().setArchived(true).queue();
                 }
             }
 
@@ -346,7 +352,11 @@ public class ForumPostCommand extends SlashCommand {
     }
 
     private static boolean isForumChannel(@NotNull SlashCommandEvent event) {
-        if (event.getChannel().asThreadChannel().getParentChannel().getId().equals(Objects.requireNonNull(ServerSettings.getForumChannel(Objects.requireNonNull(event.getGuild()))).getId())) {
+        Guild server = event.getGuild();
+        if (server == null) return false;
+        ForumChannel forumChannel = ServerSettings.getForumChannel(server);
+        if (forumChannel == null) return false;
+        if (event.getChannel().asThreadChannel().getParentChannel().getId().equals(forumChannel.getId())) {
             return true;
         }
         event.reply("Command can only be used in forum channels").queue();
