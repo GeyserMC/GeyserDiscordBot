@@ -100,10 +100,10 @@ public class ForumPostCommand extends SlashCommand {
             }
 
             forumChannel.createForumPost(title, MessageCreateData.fromContent(issue))
-                    .queue(
-                            unused -> event.reply("Post is created").queue(),
-                            error -> event.reply("Could not create post").queue()
-                    );
+                .queue(
+                    unused -> event.reply("Post is created").queue(),
+                    error -> event.reply("Could not create post").queue()
+                );
         }
     }
 
@@ -159,7 +159,7 @@ public class ForumPostCommand extends SlashCommand {
     public static class AddPostTagSubCommand extends SlashCommand {
         public AddPostTagSubCommand() {
             this.name = "add-tag";
-            this.help = "Add a tag to post";
+            this.help = "Add a tag to a post";
             this.userPermissions = new Permission[] { Permission.CREATE_PUBLIC_THREADS };
             this.options = Collections.singletonList(
                 new OptionData(OptionType.STRING, "tag", "The tag to add", true)
@@ -229,7 +229,7 @@ public class ForumPostCommand extends SlashCommand {
     public static class RemovePostTagSubCommand extends SlashCommand {
         public RemovePostTagSubCommand() {
             this.name = "remove-tag";
-            this.help = "Remove a tag from post";
+            this.help = "Remove a tag from a post";
             this.userPermissions = new Permission[] { Permission.CREATE_PUBLIC_THREADS };
             this.options = Collections.singletonList(
                 new OptionData(OptionType.STRING, "tag", "The tag to remove", true)
