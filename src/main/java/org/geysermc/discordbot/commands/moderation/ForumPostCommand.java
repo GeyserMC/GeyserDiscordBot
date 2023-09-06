@@ -143,6 +143,7 @@ public class ForumPostCommand extends SlashCommand {
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             if (!isForumChannel(event)) {
+                event.reply("Command can only be used in the forum channel").queue();
                 return;
             }
 
@@ -174,6 +175,7 @@ public class ForumPostCommand extends SlashCommand {
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             if (!isForumChannel(event)) {
+                event.reply("Command can only be used in the forum channel").queue();
                 return;
             }
 
@@ -247,6 +249,7 @@ public class ForumPostCommand extends SlashCommand {
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             if (!isForumChannel(event)) {
+                event.reply("Command can only be used in the forum channel").queue();
                 return;
             }
 
