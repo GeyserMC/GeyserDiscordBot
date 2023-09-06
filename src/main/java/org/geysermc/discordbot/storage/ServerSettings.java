@@ -211,11 +211,10 @@ public class ServerSettings {
      * Get the forum channel for the selected guild
      *
      * @param guild ID of the guild to get the channel for
-     * @return The {@link ForumChannel} for forum
-     * @throws IllegalArgumentException If the channel is null or invalid
+     * @return The {@link ForumChannel} for the guild
      */
     @Nullable
-    public static ForumChannel getForumChannel(@NotNull Guild guild) throws IllegalArgumentException {
+    public static ForumChannel getForumChannel(@NotNull Guild guild) {
         String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "forum-channel");
 
         if (channel == null) {
