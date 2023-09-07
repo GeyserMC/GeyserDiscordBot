@@ -25,9 +25,12 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.*;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
@@ -42,9 +45,11 @@ import net.dv8tion.jda.api.managers.channel.concrete.ThreadChannelManager;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.dv8tion.jda.internal.utils.Checks;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.DicesCoefficient;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.*;
 
@@ -220,10 +225,15 @@ public class ForumPostCommand extends SlashCommand {
             String query = event.getFocusedOption().getValue();
 
             // Get the tags
-            ThreadChannel threadChannel = event.getChannel().asThreadChannel();
-            List<ForumTag> unappliedTags = new ArrayList<>(threadChannel.getParentChannel().asForumChannel().getAvailableTags());
-            unappliedTags.removeAll(threadChannel.getAppliedTags());
-            List<ForumTag> tags = potentialTags(unappliedTags, query);
+            List<ForumTag> tags;
+            try {
+                ThreadChannel threadChannel = event.getChannel().asThreadChannel();
+                List<ForumTag> unappliedTags = new ArrayList<>(threadChannel.getParentChannel().asForumChannel().getAvailableTags());
+                unappliedTags.removeAll(threadChannel.getAppliedTags());
+                tags = potentialTags(unappliedTags, query);
+            } catch ( IllegalStateException ignored) {
+                tags = new ArrayList<>();
+            }
 
             event.replyChoices(tags.stream()
                     .distinct()
@@ -286,7 +296,12 @@ public class ForumPostCommand extends SlashCommand {
             String query = event.getFocusedOption().getValue();
 
             // Get the tags
-            List<ForumTag> tags = potentialTags(event.getChannel().asThreadChannel().getAppliedTags(), query);
+            List<ForumTag> tags;
+            try {
+                tags = potentialTags(event.getChannel().asThreadChannel().getAppliedTags(), query);
+            } catch ( IllegalStateException ignored) {
+                tags = new ArrayList<>();
+            }
 
             event.replyChoices(tags.stream()
                     .distinct()
@@ -301,7 +316,7 @@ public class ForumPostCommand extends SlashCommand {
         public CloseOldPostSubCommand() {
             this.name = "close-old";
             this.help = "Close old posts";
-            this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
+            this.userPermissions = new Permission[] { Permission.MANAGE_THREADS };
             this.options = Collections.singletonList(new OptionData(OptionType.INTEGER, "days", "The minimum age in days of posts that will be closed in bulk", true));
         }
 
@@ -316,6 +331,7 @@ public class ForumPostCommand extends SlashCommand {
                 return;
             }
 
+            int count = 0;
             for (ThreadChannel channel : forumChannel.getThreadChannels()) {
                 if (channel.isArchived() || channel.isPinned()) {
                     continue;
@@ -324,10 +340,25 @@ public class ForumPostCommand extends SlashCommand {
                 OffsetDateTime closeTime = OffsetDateTime.now().minusDays(days);
                 if (channelCreated.isBefore(closeTime)) {
                     channel.getManager().setArchived(true).queue();
+                    count++;
                 }
             }
 
-            event.reply("All forum posts older than " + days + " days have been closed!").queue();
+            MessageEmbed closeEmbed = new EmbedBuilder()
+                    .setTitle("Closed old posts")
+                    .addField("Staff member", event.getMember().getAsMention(), false)
+                    .addField("Post count", String.valueOf(count), false)
+                    .addField("Older than (days)", String.valueOf(days), false)
+                    .setTimestamp(Instant.now())
+                    .setColor((count == 0 ? BotColors.FAILURE : BotColors.SUCCESS).getColor())
+                    .build();
+
+            if (count == 0) {
+                event.replyEmbeds(closeEmbed).queue();
+                return;
+            }
+
+            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(closeEmbed).queue();
         }
     }
 
@@ -358,9 +389,11 @@ public class ForumPostCommand extends SlashCommand {
         if (server == null) return false;
         ForumChannel forumChannel = ServerSettings.getForumChannel(server);
         if (forumChannel == null) return false;
-        if (event.getChannel().asThreadChannel().getParentChannel().getId().equals(forumChannel.getId())) {
-            return true;
-        }
+        try {
+            if (event.getChannel().asThreadChannel().getParentChannel().getId().equals(forumChannel.getId())) {
+                return true;
+            }
+        } catch (IllegalStateException ignored) {}
         return false;
     }
 }
