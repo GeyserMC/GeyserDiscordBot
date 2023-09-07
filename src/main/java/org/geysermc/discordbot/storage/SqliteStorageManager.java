@@ -31,7 +31,6 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.sql.DriverManager;
@@ -103,7 +102,7 @@ public class SqliteStorageManager extends MySQLStorageManager {
     public void removePersistentRole(Member member, Role role) {
         try {
             Statement removePersistentRole = connection.createStatement();
-            removePersistentRole.executeUpdate("DELETE FROM `persistent_roles` WHERE `server`=" + member.getGuild().getId() + " AND `user`=" + member.getId() + " AND `role`=" + role.getId() + ");");
+            removePersistentRole.executeUpdate("DELETE FROM `persistent_roles` WHERE `server`=" + member.getGuild().getId() + " AND `user`=" + member.getId() + " AND `role`=" + role.getId() + ";");
             removePersistentRole.close();
         } catch (SQLException ignored) { }
     }
@@ -127,7 +126,7 @@ public class SqliteStorageManager extends MySQLStorageManager {
     }
 
     @Override
-    public int addLog(Member user, String action, User target, String reason) {
+    public int addLog(Member user, String action, UserSnowflake target, String reason) {
         try {
             Statement addLogEntry = connection.createStatement();
             long time = Instant.now().getEpochSecond();
@@ -148,7 +147,7 @@ public class SqliteStorageManager extends MySQLStorageManager {
     }
 
     @Override
-    public List<ModLog> getLogs(Guild guild, User target, int limit) {
+    public List<ModLog> getLogs(Guild guild, UserSnowflake target, int limit) {
         List<ModLog> logs = new ArrayList<>();
 
         try {

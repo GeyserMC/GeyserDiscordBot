@@ -25,13 +25,15 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -42,12 +44,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class UnbanCommand extends Command {
+public class UnbanCommand extends SlashCommand {
 
     public UnbanCommand() {
         this.name = "unban";
         this.hidden = true;
+        this.help = "Unban a user";
+
         this.userPermissions = new Permission[] { Permission.BAN_MEMBERS };
+        this.botPermissions = new Permission[] { Permission.BAN_MEMBERS };
+
+        this.options = Arrays.asList(
+                new OptionData(OptionType.USER, "member", "The member to unban", true),
+                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user upon unbanning"),
+                new OptionData(OptionType.STRING, "reason", "Specify a reason for unbanning")
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        // Fetch users
+        User user = BotHelpers.getUser(event.getOption("member").getAsString());
+        Member moderator = event.getMember();
+
+        // Fetch args
+        boolean silent = event.optBoolean("silent", false);
+        String reason = event.optString("reason", "*None*");
+
+        event.replyEmbeds(handle(user, moderator, event.getGuild(), silent, reason)).queue();
     }
 
     @Override
@@ -56,28 +80,6 @@ public class UnbanCommand extends Command {
 
         // Fetch the user
         User user = BotHelpers.getUser(args.remove(0));
-
-        // Check user is valid
-        if (user == null) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
-        // Check if the user is banned
-        try {
-            event.getGuild().retrieveBan(user).complete();
-        } catch (ErrorResponseException ignored) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("User not banned")
-                    .setDescription("The user ID specified doesn't have a ban on this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
 
         boolean silent = false;
 
@@ -111,6 +113,30 @@ public class UnbanCommand extends Command {
             reason = reasonParts;
         }
 
+        event.getMessage().replyEmbeds(handle(user, event.getMember(), event.getGuild(), silent, reason)).queue();
+    }
+
+    private MessageEmbed handle(User user, Member mod, Guild guild, boolean silent, String reason) {
+        // Check user is valid
+        if (user == null) {
+            return new EmbedBuilder()
+                    .setTitle("Invalid user")
+                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
+        // Check if the user is banned
+        try {
+            guild.retrieveBan(user).complete();
+        } catch (ErrorResponseException ignored) {
+            return new EmbedBuilder()
+                    .setTitle("User not banned")
+                    .setDescription("The user ID specified doesn't have a ban on this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
         // Let the user know they're unbanned if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) ->
@@ -123,15 +149,15 @@ public class UnbanCommand extends Command {
         }
 
         // Unban user
-        event.getGuild().unban(user).queue();
+        guild.unban(user).queue();
 
         // Log the change
-        int id = GeyserBot.storageManager.addLog(event.getMember(), "unban", user, reason);
+        int id = GeyserBot.storageManager.addLog(mod, "unban", user, reason);
 
         MessageEmbed unbannedEmbed = new EmbedBuilder()
                 .setTitle("Unbanned user")
                 .addField("User", user.getAsMention(), false)
-                .addField("Staff member", event.getAuthor().getAsMention(), false)
+                .addField("Staff member", mod.getAsMention(), false)
                 .addField("Reason", reason, false)
                 .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())
@@ -139,7 +165,7 @@ public class UnbanCommand extends Command {
                 .build();
 
         // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(unbannedEmbed).queue();
-        event.getMessage().replyEmbeds(unbannedEmbed).queue();
+        ServerSettings.getLogChannel(guild).sendMessageEmbeds(unbannedEmbed).queue();
+        return unbannedEmbed;
     }
 }

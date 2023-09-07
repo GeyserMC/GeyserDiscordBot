@@ -25,10 +25,15 @@
 
 package org.geysermc.discordbot.commands.administration;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -38,70 +43,129 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SettingsCommand extends Command {
+public class SettingsCommand extends SlashCommand {
 
     public SettingsCommand() {
         this.name = "settings";
         this.hidden = true;
+        this.help = "Customize the bot's settings";
+
         this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
+
+        this.options = Arrays.asList(
+                new OptionData(OptionType.STRING, "action", "The action to perform", true)
+                        .addChoice("add","add")
+                        .addChoice("get", "get")
+                        .addChoice("set", "set")
+                        .addChoice("remove","remove"),
+                new OptionData(OptionType.STRING, "key", "The setting name", true) // TODO Make this an ENUM? to make it easier to access
+                        .addChoice("Allowed Invites", "allowed-invites")
+                        .addChoice("Banned domains","banned-domains")
+                        .addChoice("Banned IPs", "banned-ips")
+                        .addChoice("Check domains", "check-domains")
+                        .addChoice("Convert Extensions", "convert-extensions")
+                        .addChoice("Don't level", "dont-level")
+                        .addChoice("Don't log","dont-log")
+                        .addChoice("Health Checks", "health-checks")
+                        .addChoice("Log channel", "log-channel")
+                        .addChoice("Punishment Message", "punishment-message")
+                        .addChoice("Roles", "roles")
+                        .addChoice("RSS Feeds", "rss-feeds")
+                        .addChoice("Update channel", "update-channel")
+                        .addChoice("Voice Role", "voice-role"),
+                new OptionData(OptionType.STRING, "value", "The value to set")
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        // Fetch values
+        String action = event.getOption("action").getAsString();
+        String key = event.getOption("key").getAsString();
+        String value = event.optString("value", null);
+
+        event.replyEmbeds(handle(event.getGuild(), action, key, value)).queue();
     }
 
     @Override
     protected void execute(CommandEvent event) {
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
-        String title;
-        String key = args.remove(1);
+        // Warn the user that they haven't given enough arguments
+        if (args.size() <= 1) {
+            event.getMessage().replyEmbeds(new EmbedBuilder()
+                    .setTitle("Invalid usage")
+                    .setDescription("Please specify an action and a value!")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build()).queue();
+            return;
+        }
+
+        String action = args.get(0);
+        String key = args.get(1);
         String value;
 
-        String action = args.remove(0);
+        if (args.size() >= 3 && (args.get(0).equals("set") || args.get(0).equals("add"))) {
+            args.remove(1);
+            args.remove(0);
+            value = String.join(" ", args);
+        } else {
+            value = null;
+        }
+
+        event.getMessage().replyEmbeds(handle(event.getGuild(), action, key, value)).queue();
+    }
+
+    private MessageEmbed handle(Guild guild, String action, String key, String updatedValue) {
+        String title;
+        String value;
+
         switch (action) {
             case "get" -> {
                 title = "Setting value";
-                value = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), key);
+                value = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), key);
             }
             case "set" -> {
                 title = "Updated setting";
-                value = String.join(" ", args);
-                GeyserBot.storageManager.setServerPreference(event.getGuild().getIdLong(), key, value);
+                value = String.join(" ", updatedValue);
+                GeyserBot.storageManager.setServerPreference(guild.getIdLong(), key, value);
             }
             case "add" -> {
                 title = "Updated setting";
 
-                List<String> list = ServerSettings.getList(event.getGuild().getIdLong(), key);
-                list.add(String.join(" ", args));
+                List<String> list = ServerSettings.getList(guild.getIdLong(), key);
+                list.add(String.join(" ", updatedValue));
 
-                ServerSettings.setList(event.getGuild().getIdLong(), key, list);
+                ServerSettings.setList(guild.getIdLong(), key, list);
 
-                value = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), key);
+                value = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), key);
             }
             case "remove" -> {
                 title = "Updated setting";
 
-                List<String> list = ServerSettings.getList(event.getGuild().getIdLong(), key);
-                list.remove(String.join(" ", args));
+                List<String> list = ServerSettings.getList(guild.getIdLong(), key);
+                list.remove(String.join(" ", updatedValue));
 
-                ServerSettings.setList(event.getGuild().getIdLong(), key, list);
+                ServerSettings.setList(guild.getIdLong(), key, list);
 
-                value = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), key);
+                value = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), key);
             }
             default -> {
-                event.getChannel().sendMessageEmbeds(new EmbedBuilder()
+                return new EmbedBuilder()
                         .setTitle("Invalid action specified")
-                        .setDescription("Unknown action `" + args.get(0) + "`, it can be one of: `get`, `set`")
+                        .setDescription("Unknown action `" + action + "`, it can be one of: `get`, `set`, `add`, `remove`")
                         .setTimestamp(Instant.now())
                         .setColor(BotColors.FAILURE.getColor())
-                        .build()).queue();
-                return;
+                        .build();
             }
         }
 
-        event.getChannel().sendMessageEmbeds(new EmbedBuilder()
+        return new EmbedBuilder()
                 .setTitle(title)
                 .addField("Key", "`" + key + "`", false)
                 .addField("Value", "`" + value + "`", false)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor())
-                .build()).queue();
+                .build();
     }
 }

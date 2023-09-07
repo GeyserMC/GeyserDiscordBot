@@ -57,7 +57,7 @@ public class WikiCommand extends SlashCommand {
 
         // OptionData for Slash command
         this.options = Collections.singletonList(
-            new OptionData(OptionType.STRING, "search", "The query to search.").setRequired(true)
+            new OptionData(OptionType.STRING, "search", "The query to search.", true)
         );
     }
 

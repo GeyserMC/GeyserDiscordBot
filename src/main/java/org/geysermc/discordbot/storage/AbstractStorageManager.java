@@ -29,6 +29,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.util.List;
@@ -92,28 +93,28 @@ public abstract class AbstractStorageManager {
      *
      * @param user Guild {@link Member} that created the event
      * @param action The action that was done
-     * @param target The {@link User} that was targeted
+     * @param target The {@link UserSnowflake} that was targeted
      * @param reason The reason for this if specified
      * @return The ID of the inserted moderation log
      */
-    public abstract int addLog(Member user, String action, User target, String reason);
+    public abstract int addLog(Member user, String action, UserSnowflake target, String reason);
 
     /**
      * Get the moderation log for a user
      *
      * @param guild Guild to get the log for
-     * @param target The {@link User} that was targeted
+     * @param target The {@link UserSnowflake} that was targeted
      * @param limit The limit of results to get
      * @return List of {@link ModLog} returned
      */
-    public abstract List<ModLog> getLogs(Guild guild, User target, int limit);
+    public abstract List<ModLog> getLogs(Guild guild, UserSnowflake target, int limit);
 
     /**
-     * Calls {@link AbstractStorageManager#getLogs(Guild, User, int)} with the default limit of 5
+     * Calls {@link AbstractStorageManager#getLogs(Guild, UserSnowflake, int)} with the default limit of 5
      *
-     * @see AbstractStorageManager#getLogs(Guild, User, int)
+     * @see AbstractStorageManager#getLogs(Guild, UserSnowflake, int)
      */
-    public List<ModLog> getLogs(Guild guild, User target) {
+    public List<ModLog> getLogs(Guild guild, UserSnowflake target) {
         return getLogs(guild, target, 5);
     }
 

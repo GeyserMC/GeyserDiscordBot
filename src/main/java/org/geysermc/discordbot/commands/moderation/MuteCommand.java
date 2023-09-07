@@ -25,14 +25,14 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -43,12 +43,34 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MuteCommand extends Command {
+public class MuteCommand extends SlashCommand {
 
     public MuteCommand() {
         this.name = "mute";
         this.hidden = true;
+        this.help = "Mute a user.";
+
         this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
+        this.botPermissions = new Permission[] { Permission.MANAGE_ROLES };
+
+        this.options = Arrays.asList(
+                new OptionData(OptionType.USER, "member", "The member to mute", true),
+                new OptionData(OptionType.BOOLEAN, "silent", "Toggle notifying the user on mute"),
+                new OptionData(OptionType.STRING, "reason", "Specify a reason for the mute")
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        // Fetch users
+        Member member = event.getOption("member").getAsMember();
+        Member moderator = event.getMember();
+
+        //Fetch kick args
+        boolean silent = event.optBoolean("silent", false);
+        String reason = event.optString("reason", "*None*");
+
+        event.replyEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
     }
 
     @Override
@@ -58,28 +80,9 @@ public class MuteCommand extends Command {
         // Fetch the user
         Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
 
-        // Check user is valid
-        if (member == null) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
+        //Fetch the user that issued the command
+        Member moderator = event.getMember();
 
-        // Check we can target the user
-        if (!event.getSelfMember().canInteract(member) || !event.getMember().canInteract(member)) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Higher role")
-                    .setDescription("Either the bot or you cannot target that user.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
-        // Get the user from the member
-        User user = member.getUser();
         boolean silent = false;
 
         // Handle all the option args
@@ -112,6 +115,31 @@ public class MuteCommand extends Command {
             reason = reasonParts;
         }
 
+        event.getMessage().replyEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
+    }
+
+    private MessageEmbed handle(Member member, Member moderator, Guild guild, boolean silent, String reason) {
+        // Check user is valid
+        if (member == null) {
+            return new EmbedBuilder()
+                    .setTitle("Invalid user")
+                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
+        // Check we can target the user
+        if (!BotHelpers.canTarget(moderator, member)) {
+            return new EmbedBuilder()
+                    .setTitle("Higher role")
+                    .setDescription("Either the bot or you cannot target that user.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+        }
+
+        // Get the user from the member
+        User user = member.getUser();
+
         // Let the user know they're muted if we are not being silent
         if (!silent) {
             user.openPrivateChannel().queue((channel) -> {
@@ -121,7 +149,7 @@ public class MuteCommand extends Command {
                         .setTimestamp(Instant.now())
                         .setColor(BotColors.FAILURE.getColor());
 
-                String punishmentMessage = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), "punishment-message");
+                String punishmentMessage = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "punishment-message");
                 if (!punishmentMessage.isEmpty()) {
                     embedBuilder.addField("Additional Info", punishmentMessage, false);
                 }
@@ -131,19 +159,19 @@ public class MuteCommand extends Command {
         }
 
         // Find and add the 'muted' role
-        Role muteRole = event.getGuild().getRolesByName("muted", true).get(0);
-        event.getGuild().addRoleToMember(member, muteRole).queue();
+        Role muteRole = guild.getRolesByName("muted", true).get(0);
+        guild.addRoleToMember(member, muteRole).queue();
 
         // Persist the role
         GeyserBot.storageManager.addPersistentRole(member, muteRole);
 
         // Log the change
-        int id = GeyserBot.storageManager.addLog(event.getMember(), "mute", user, reason);
+        int id = GeyserBot.storageManager.addLog(member, "mute", user, reason);
 
         MessageEmbed mutedEmbed = new EmbedBuilder()
                 .setTitle("Muted user")
                 .addField("User", user.getAsMention(), false)
-                .addField("Staff member", event.getAuthor().getAsMention(), false)
+                .addField("Staff member", moderator.getAsMention(), false)
                 .addField("Reason", reason, false)
                 .setFooter("ID: " + id)
                 .setTimestamp(Instant.now())
@@ -151,7 +179,7 @@ public class MuteCommand extends Command {
                 .build();
 
         // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(mutedEmbed).queue();
-        event.getMessage().replyEmbeds(mutedEmbed).queue();
+        ServerSettings.getLogChannel(guild).sendMessageEmbeds(mutedEmbed).queue();
+        return mutedEmbed;
     }
 }

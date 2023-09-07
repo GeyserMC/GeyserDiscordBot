@@ -25,11 +25,17 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.listeners.SlowmodeHandler;
 import org.geysermc.discordbot.storage.ServerSettings;
@@ -39,15 +45,39 @@ import org.geysermc.discordbot.util.BotHelpers;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class SlowmodeCommand extends Command {
+public class SlowmodeCommand extends SlashCommand {
 
     public SlowmodeCommand() {
         this.name = "slowmode";
         this.aliases = new String[] { "slow" };
         this.hidden = true;
+        this.help = "Set a custom slowmode for a channel";
+
         this.userPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
+        this.botPermissions = new Permission[] { Permission.MESSAGE_MANAGE };
+
+        this.options = Collections.singletonList(
+                new OptionData(OptionType.STRING, "args", "Set length or turn off slowmode", true)
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        String arg = event.getOption("args").getAsString();
+
+        if (arg.isBlank()) {
+            event.replyEmbeds(new EmbedBuilder()
+                    .setTitle("Invalid usage")
+                    .setDescription("Please specify a time in the correct format `1h2m3s`.")
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build()).queue();
+            return;
+        }
+
+        event.replyEmbeds(handle(event.getMember(), event.getGuild(), event.getTextChannel(), arg)).queue();
     }
 
     @Override
@@ -64,51 +94,54 @@ public class SlowmodeCommand extends Command {
             return;
         }
 
+        event.getMessage().replyEmbeds(handle(event.getMember(), event.getGuild(), event.getTextChannel(), args.get(0))).queue();
+    }
+
+    private MessageEmbed handle(Member mod, Guild guild, TextChannel channel, String string) {
         MessageEmbed slowmodeEmbed;
 
-        if (args.get(0).trim().equals("off")) {
-            for (Object listener : event.getJDA().getEventManager().getRegisteredListeners()) {
+        if (string.equals("off")) {
+            for (Object listener : GeyserBot.getJDA().getEventManager().getRegisteredListeners()) {
                 if (listener instanceof SlowmodeHandler) {
-                    if (((SlowmodeHandler) listener).getChannelId() == event.getTextChannel().getIdLong()) {
-                        event.getJDA().getEventManager().unregister(listener);
+                    if (((SlowmodeHandler) listener).getChannelId() == channel.getIdLong()) {
+                        GeyserBot.getJDA().getEventManager().unregister(listener);
                         break;
                     }
                 }
             }
 
-            GeyserBot.storageManager.setSlowModeChannel(event.getTextChannel(), 0);
+            GeyserBot.storageManager.setSlowModeChannel(channel, 0);
 
             slowmodeEmbed = new EmbedBuilder()
                     .setTitle("Slowmode")
-                    .setDescription("Slowmode disabled for " + event.getTextChannel().getAsMention() + " by " + event.getAuthor().getAsMention())
+                    .setDescription("Slowmode disabled for " + channel.getAsMention() + " by " + mod.getAsMention())
                     .setTimestamp(Instant.now())
                     .setColor(BotColors.SUCCESS.getColor())
                     .build();
         } else {
             // Get the time
-            int delay = BotHelpers.parseTimeString(args.get(0));
+            int delay = BotHelpers.parseTimeString(string);
 
             // Check if time is valid
             if (delay == 0) {
-                event.getMessage().replyEmbeds(new EmbedBuilder()
+                return new EmbedBuilder()
                         .setTitle("Invalid usage")
                         .setDescription("Please specify a time in the correct format `1h2m3s`.")
                         .setColor(BotColors.FAILURE.getColor())
-                        .build()).queue();
-                return;
+                        .build();
             }
 
             slowmodeEmbed = new EmbedBuilder()
                     .setTitle("Slowmode")
-                    .setDescription("Slowmode updated for " + event.getTextChannel().getAsMention() + " set to `" + args.get(0) + "` (" + delay + "s) by " + event.getAuthor().getAsMention())
+                    .setDescription("Slowmode updated for " + channel.getAsMention() + " set to `" + string + "` (" + delay + "s) by " + mod.getAsMention())
                     .setTimestamp(Instant.now())
                     .setColor(BotColors.SUCCESS.getColor())
                     .build();
 
             boolean found = false;
-            for (Object listener : event.getJDA().getEventManager().getRegisteredListeners()) {
+            for (Object listener : GeyserBot.getJDA().getEventManager().getRegisteredListeners()) {
                 if (listener instanceof SlowmodeHandler) {
-                    if (((SlowmodeHandler) listener).getChannelId() == event.getTextChannel().getIdLong()) {
+                    if (((SlowmodeHandler) listener).getChannelId() == channel.getIdLong()) {
                         ((SlowmodeHandler) listener).setSeconds(delay);
                         found = true;
                         break;
@@ -117,15 +150,15 @@ public class SlowmodeCommand extends Command {
             }
 
             if (!found) {
-                event.getJDA().addEventListener(new SlowmodeHandler(event.getTextChannel().getIdLong(), delay));
+                GeyserBot.getJDA().addEventListener(new SlowmodeHandler(channel.getIdLong(), delay));
             }
 
             // Update the db
-            GeyserBot.storageManager.setSlowModeChannel(event.getTextChannel(), delay);
+            GeyserBot.storageManager.setSlowModeChannel(channel, delay);
         }
 
-        // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(slowmodeEmbed).queue();
-        event.getMessage().replyEmbeds(slowmodeEmbed).queue();
+        // Return the embed and send to the log
+        ServerSettings.getLogChannel(guild).sendMessageEmbeds(slowmodeEmbed).queue();
+        return slowmodeEmbed;
     }
 }

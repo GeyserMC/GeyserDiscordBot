@@ -25,11 +25,16 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.command.SlashCommand;
+import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.utils.TimeFormat;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ModLog;
@@ -41,17 +46,32 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * TODO: Add pagination
  */
-public class LogCommand extends Command {
+public class LogCommand extends SlashCommand {
 
     public LogCommand() {
         this.name = "modlog";
         this.hidden = true;
+        this.help = "Fetch a user's moderation logs.";
+
         this.userPermissions = new Permission[] { Permission.KICK_MEMBERS };
+
+        this.options = Collections.singletonList(
+                new OptionData(OptionType.USER, "member", "Member to fetch", true)
+        );
+    }
+
+    @Override
+    protected void execute(SlashCommandEvent event) {
+        // Fetch user
+        User user = event.getOption("member").getAsUser();
+
+        event.replyEmbeds(handle(user, event.getGuild())).queue();
     }
 
     @Override
@@ -61,22 +81,27 @@ public class LogCommand extends Command {
         // Fetch the user
         User user = BotHelpers.getUser(args.remove(0));
 
+        // Send the embed as a reply
+        event.getMessage().replyEmbeds(handle(user, event.getGuild())).queue();
+    }
+
+    private MessageEmbed handle(User user, Guild guild) {
         // Check user is valid
         if (user == null) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
+            return new EmbedBuilder()
                     .setTitle("Invalid user")
                     .setDescription("The user ID specified doesn't link with any valid user.")
                     .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
+                    .build();
         }
+
 
         EmbedBuilder logEmbedBuilder = new EmbedBuilder()
                 .setTitle("Mod log for: " + user.getId())
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor());
 
-        List<ModLog> logs = GeyserBot.storageManager.getLogs(event.getGuild(), user);
+        List<ModLog> logs = GeyserBot.storageManager.getLogs(guild, user);
 
         if (logs.isEmpty()) {
             logEmbedBuilder.setDescription("No logs for the selected user");
@@ -87,7 +112,6 @@ public class LogCommand extends Command {
             }
         }
 
-        // Send the embed as a reply
-        event.getMessage().replyEmbeds(logEmbedBuilder.build()).queue();
+        return logEmbedBuilder.build();
     }
 }

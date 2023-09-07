@@ -103,7 +103,7 @@ public class DumpHandler extends ListenerAdapter {
             return;
         }
 
-        String cleanURL = "https://dump.geysermc.org/" + matcher.group(2);
+        String cleanURL = "https://geysermc.org/utilities/dump_viewer#" + matcher.group(2);
         String rawURL = "https://dump.geysermc.org/raw/" + matcher.group(2);
 
         parseDump(event, cleanURL, RestClient.simpleGetString(rawURL));
@@ -173,7 +173,13 @@ public class DumpHandler extends ListenerAdapter {
             return;
         }
 
-        String platform = bootstrapInfo.getString("platform");
+        Object platformObj = bootstrapInfo.get("platform");
+        String platform = "";
+        if (platformObj instanceof String) {
+            platform = (String) platformObj;
+        } else {
+            platform = ((JSONObject) platformObj).getString("platformName").toUpperCase();
+        }
         List<String> problems = new ArrayList<>();
 
         // Check plugins and stuff for potential issues
@@ -211,7 +217,7 @@ public class DumpHandler extends ListenerAdapter {
             // Set the latest info based on the returned comparison
             if (compare.getBehindBy() != 0 || compare.getAheadBy() != 0) {
                 gitData.append("**Latest:** No\n");
-                problems.add("- You aren't on the latest Geyser version! Please [download](https://geysermc.org/download) the latest version.");
+                problems.add("- You aren't on the latest Geyser version! Please [download](https://geysermc.org/download#" + platform.toLowerCase() + ") the latest version.");
             } else {
                 gitData.append("**Latest:** Yes\n");
             }

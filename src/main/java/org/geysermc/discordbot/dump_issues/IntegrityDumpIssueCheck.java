@@ -33,8 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IntegrityDumpIssueCheck extends AbstractDumpIssueCheck {
-    //https://ci.opencollab.dev/fingerprint/d614e47bdf2914bf8c037497c7733090/api/json
-
 
     @NotNull
     @Override
@@ -51,7 +49,7 @@ public class IntegrityDumpIssueCheck extends AbstractDumpIssueCheck {
 
         // Check if 404
         if (response.startsWith("<html>")) {
-            issues.add("- Your Geyser jar is corrupt or has been tampered with. Please redownload it [from the CI](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/).");
+            issues.add("- Your Geyser jar is corrupt or has been tampered with. Please re-download it [from the CI](https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/).");
         }
 
         return issues;

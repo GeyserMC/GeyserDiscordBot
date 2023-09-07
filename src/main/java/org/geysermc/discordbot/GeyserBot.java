@@ -215,6 +215,7 @@ public class GeyserBot {
                             new VoiceGroupHandler(),
                             new BadLinksHandler(),
                             new HelpHandler(),
+                            new SupportHandler(),
                             client.build(),
                             tagClient.build())
                     .build();
