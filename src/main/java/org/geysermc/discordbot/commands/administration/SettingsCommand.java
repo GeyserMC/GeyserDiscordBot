@@ -66,14 +66,14 @@ public class SettingsCommand extends SlashCommand {
                         .addChoice("Convert Extensions", "convert-extensions")
                         .addChoice("Don't level", "dont-level")
                         .addChoice("Don't log","dont-log")
+                        .addChoice("Forum Channel", "forum-channel")
                         .addChoice("Health Checks", "health-checks")
                         .addChoice("Log channel", "log-channel")
                         .addChoice("Punishment Message", "punishment-message")
                         .addChoice("Roles", "roles")
                         .addChoice("RSS Feeds", "rss-feeds")
                         .addChoice("Update channel", "update-channel")
-                        .addChoice("Voice Role", "voice-role")
-                        .addChoice("Forum Channel", "forum-channel"),
+                        .addChoice("Voice Role", "voice-role"),
                 new OptionData(OptionType.STRING, "value", "The value to set")
         );
     }
