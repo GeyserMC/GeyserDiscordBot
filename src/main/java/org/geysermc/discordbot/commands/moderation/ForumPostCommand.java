@@ -87,12 +87,11 @@ public class ForumPostCommand extends SlashCommand {
             Checks.notNull(event.getGuild(), "server");
 
             String title = event.optString("title", "");
-            OptionMapping memberMapping = event.getOption("member");
-            String targetUser = memberMapping == null ? "" : memberMapping.getAsUser().getAsMention();
             String issue = event.optString("issue", "");
 
-            if (!targetUser.isEmpty()) {
-                issue += " " + targetUser;
+            OptionMapping memberMapping = event.getOption("member");
+            if (memberMapping != null) {
+                issue += " " + memberMapping.getAsUser().getAsMention();
             }
 
             ForumChannel forumChannel = ServerSettings.getForumChannel(event.getGuild());
@@ -103,7 +102,7 @@ public class ForumPostCommand extends SlashCommand {
 
             forumChannel.createForumPost(title, MessageCreateData.fromContent(issue))
                 .queue(
-                    unused -> event.reply("Post is created").queue(),
+                    unused -> event.reply("Post was created").queue(),
                     error -> event.reply("Could not create post").queue()
                 );
         }
@@ -114,7 +113,7 @@ public class ForumPostCommand extends SlashCommand {
             this.name = "rename";
             this.help = "Rename post";
             this.userPermissions = new Permission[] { Permission.CREATE_PUBLIC_THREADS };
-            this.options = Collections.singletonList(new OptionData(OptionType.STRING, "title", "change the forum title", true).setMaxLength(Channel.MAX_NAME_LENGTH));
+            this.options = Collections.singletonList(new OptionData(OptionType.STRING, "title", "The new forum title", true).setMaxLength(Channel.MAX_NAME_LENGTH));
         }
 
         @Override
@@ -127,7 +126,7 @@ public class ForumPostCommand extends SlashCommand {
             event.getChannel().asThreadChannel().getManager()
                 .setName(event.optString("title", event.getChannel().getName()))
                 .queue(
-                    unused -> event.reply("Post is renamed!").queue(),
+                    unused -> event.reply("Post was renamed").queue(),
                     error -> event.reply("Could not rename post").queue()
                 );
         }
@@ -148,15 +147,15 @@ public class ForumPostCommand extends SlashCommand {
             }
 
             if (event.getChannel().asThreadChannel().isArchived()) {
-                event.reply("Post is already closed.").queue();
+                event.reply("Post is already closed").queue();
                 return;
             }
 
             ThreadChannelManager manager = event.getChannel().asThreadChannel().getManager();
             event.reply("Closing post...").queue(
                     reply -> manager.setArchived(true).queue(
-                            unused -> reply.editOriginal("Post is closed.").queue(),
-                            error -> reply.editOriginal("Could not close post.").queue()
+                            unused -> reply.editOriginal("Post is closed").queue(),
+                            error -> reply.editOriginal("Could not close post").queue()
                     ));
         }
     }
@@ -198,7 +197,7 @@ public class ForumPostCommand extends SlashCommand {
                 // Make sure we don't add the same tag twice
                 ForumTagSnowflake newTag = ForumTagSnowflake.fromId(tagFound.getId());
                 if (updatedTags.contains(newTag)) {
-                    event.reply("Post is already tagged with " + tag + ".").queue();
+                    event.reply("Post is already tagged with " + tag).queue();
                     return;
                 }
 
@@ -207,11 +206,11 @@ public class ForumPostCommand extends SlashCommand {
                 threadChannel.getManager()
                     .setAppliedTags(updatedTags)
                     .queue(
-                        unused -> event.reply("Post is tagged with " + tag + ".").queue(),
+                        unused -> event.reply("Post is tagged with " + tag).queue(),
                         error -> event.reply("Could not tag post").queue()
                     );
             } else {
-                event.reply("No matching tag found for " + tag + ".").queue();
+                event.reply("No matching tag found for " + tag).queue();
             }
         }
 
@@ -272,12 +271,12 @@ public class ForumPostCommand extends SlashCommand {
                 threadChannel.getManager()
                     .setAppliedTags(updatedTags)
                     .queue(
-                        unused -> event.reply("Tag " + tag + " removed.").queue(),
+                        unused -> event.reply("Tag " + tag + " removed").queue(),
                         error -> event.reply("Could not remove tag from post").queue()
                     );
 
             } else {
-                event.reply("Post was not tagged with " + tag + ".").queue();
+                event.reply("Post was not tagged with " + tag).queue();
             }
         }
 
@@ -313,7 +312,7 @@ public class ForumPostCommand extends SlashCommand {
 
             ForumChannel forumChannel = ServerSettings.getForumChannel(event.getGuild());
             if (forumChannel == null) {
-                event.reply("Forum channel not found.").queue();
+                event.reply("Forum channel not found").queue();
                 return;
             }
 
@@ -362,7 +361,6 @@ public class ForumPostCommand extends SlashCommand {
         if (event.getChannel().asThreadChannel().getParentChannel().getId().equals(forumChannel.getId())) {
             return true;
         }
-        event.reply("Command can only be used in forum channels").queue();
         return false;
     }
 }
