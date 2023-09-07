@@ -86,18 +86,18 @@ public class ForumPostCommand extends SlashCommand {
         protected void execute(@NotNull SlashCommandEvent event) {
             Checks.notNull(event.getGuild(), "server");
 
+            ForumChannel forumChannel = ServerSettings.getForumChannel(event.getGuild());
+            if (forumChannel == null) {
+                event.reply("Forum channel not found.").queue();
+                return;
+            }
+
             String title = event.optString("title", "");
             String issue = event.optString("issue", "");
 
             OptionMapping memberMapping = event.getOption("member");
             if (memberMapping != null) {
                 issue += " " + memberMapping.getAsUser().getAsMention();
-            }
-
-            ForumChannel forumChannel = ServerSettings.getForumChannel(event.getGuild());
-            if (forumChannel == null) {
-                event.reply("Forum channel not found.").queue();
-                return;
             }
 
             forumChannel.createForumPost(title, MessageCreateData.fromContent(issue))
@@ -317,7 +317,7 @@ public class ForumPostCommand extends SlashCommand {
             }
 
             for (ThreadChannel channel : forumChannel.getThreadChannels()) {
-                if (channel.isArchived() || channel.isLocked() || channel.isPinned()) {
+                if (channel.isArchived() || channel.isPinned()) {
                     continue;
                 }
                 OffsetDateTime channelCreated = channel.getTimeCreated();
