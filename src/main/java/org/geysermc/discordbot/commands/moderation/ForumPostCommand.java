@@ -365,7 +365,7 @@ public class ForumPostCommand extends SlashCommand {
     private static List<ForumTag> potentialTags(List<ForumTag> tags, String query) {
         List<ForumTag> potential = new ArrayList<>();
 
-        // Search the providers by an exact starting match
+        // Search the tags by an exact starting match
         for (ForumTag tag : tags) {
             if (tag.getName().toLowerCase().startsWith(query.toLowerCase())) {
                 potential.add(tag);
@@ -380,7 +380,6 @@ public class ForumPostCommand extends SlashCommand {
             }
         }
 
-        // Send a message if we don't know what provider
         return potential;
     }
 
@@ -390,9 +389,7 @@ public class ForumPostCommand extends SlashCommand {
         ForumChannel forumChannel = ServerSettings.getForumChannel(server);
         if (forumChannel == null) return false;
         try {
-            if (event.getChannel().asThreadChannel().getParentChannel().getId().equals(forumChannel.getId())) {
-                return true;
-            }
+            return event.getChannel().asThreadChannel().getParentChannel().getId().equals(forumChannel.getId());
         } catch (IllegalStateException ignored) {}
         return false;
     }
