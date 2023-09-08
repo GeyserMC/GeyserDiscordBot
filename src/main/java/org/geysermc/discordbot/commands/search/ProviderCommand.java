@@ -34,6 +34,7 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.DicesCoefficient;
 import org.geysermc.discordbot.util.MessageHelper;
@@ -64,11 +65,19 @@ public class ProviderCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getMessageChannel(), event.getMember()) && event.getGuild() != null) {
+            event.deferReply(true).addContent(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong())).submit();
+            return;
+        }
         event.replyEmbeds(handle(event.optString("provider", ""))).queue();
     }
 
     @Override
     protected void execute(CommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getChannel(), event.getMember())) {
+            event.reply(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong()));
+            return;
+        }
         String query = event.getArgs();
 
         // Check to make sure we have a provider

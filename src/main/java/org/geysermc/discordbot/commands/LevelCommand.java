@@ -42,6 +42,7 @@ import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.LevelInfo;
+import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.InkscapeCssParser;
 import org.geysermc.discordbot.util.MessageHelper;
@@ -70,6 +71,10 @@ public class LevelCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getMessageChannel(), event.getMember()) && event.getGuild() != null) {
+            event.deferReply(true).addContent(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong())).submit();
+            return;
+        }
         Member member = event.optMember("member", event.getMember());
 
         // Defer to wait for us to load a response and allows for files to be uploaded
@@ -81,6 +86,10 @@ public class LevelCommand extends SlashCommand {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getChannel(), event.getMember())) {
+            event.reply(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong()));
+            return;
+        }
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
         Member member;

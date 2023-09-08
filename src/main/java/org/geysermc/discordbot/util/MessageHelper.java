@@ -31,6 +31,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.storage.ServerSettings;
 
 import java.util.List;
 
@@ -123,5 +124,13 @@ public class MessageHelper {
         for (int i = embedBuilder.getFields().size() - 1; i > 0 && !embedBuilder.isValidLength(); i--) {
             embedBuilder.getFields().remove(i);
         }
+    }
+
+    /**
+     * Returns the content for a message to send if a command cannot be used in a channel
+     * @return message to display
+     */
+    public static String getForbiddenMessage(long guildId) {
+        return "Commands cannot be used in this channel. Please use <#" + ServerSettings.getBotChannelId(guildId) + "> instead. ";
     }
 }

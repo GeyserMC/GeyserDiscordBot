@@ -25,7 +25,9 @@
 
 package org.geysermc.discordbot.storage;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
@@ -40,6 +42,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class gives easy methods for accessing stored data about a server
@@ -201,5 +204,34 @@ public class ServerSettings {
     public static boolean serverLevelsDisabled(Guild guild) {
         List<String> dontLevel = getList(guild.getIdLong(), "dont-level");
         return dontLevel.size() > 0 && dontLevel.get(0).equals("0");
+    }
+
+    /**
+     * Checks if the given channel is channel where user-facing
+     * slash commands are disabled.
+     *
+     * @param channel The {@link MessageChannel} to check
+     * @return If the channel is disabled
+     */
+    public static boolean shouldProhibitUserCommands(MessageChannel channel, Member member) {
+
+        // Case: Likely DMs
+        if (getGuild(channel) == null || member == null) {
+            return false;
+        }
+
+        // Case: Member has permissions
+        if (member.hasPermission(Permission.MESSAGE_MANAGE)) {
+            return false;
+        }
+
+        return getList(Objects.requireNonNull(getGuild(channel)).getIdLong(), "bot-free-channels").contains(channel.getId());
+    }
+
+    /**
+     * Returns the bot channel id
+     */
+    public static String getBotChannelId(long serverId) {
+        return GeyserBot.storageManager.getServerPreference(serverId, "bot-channel");
     }
 }

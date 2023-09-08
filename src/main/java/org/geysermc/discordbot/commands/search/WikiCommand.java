@@ -32,6 +32,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.util.PropertiesManager;
@@ -64,6 +65,10 @@ public class WikiCommand extends SlashCommand {
     // /wiki
     @Override
     protected void execute(SlashCommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getMessageChannel(), event.getMember()) && event.getGuild() != null) {
+            event.deferReply(true).addContent(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong())).submit();
+            return;
+        }
         // Get arguments
         String args = event.optString("search", "");
         MessageEmbed response = handle(args);
@@ -73,6 +78,10 @@ public class WikiCommand extends SlashCommand {
     // !wiki
     @Override
     protected void execute(CommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getChannel(), event.getMember())) {
+            event.reply(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong()));
+            return;
+        }
         MessageEmbed response = handle(event.getArgs());
         if (response != null) event.getMessage().replyEmbeds(response).queue();
     }

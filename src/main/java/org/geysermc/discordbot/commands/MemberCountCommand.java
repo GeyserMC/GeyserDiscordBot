@@ -34,8 +34,10 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
+import org.geysermc.discordbot.util.MessageHelper;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -56,6 +58,10 @@ public class MemberCountCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getMessageChannel(), event.getMember()) && event.getGuild() != null) {
+            event.deferReply(true).addContent(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong())).submit();
+            return;
+        }
         Role role = event.optRole("role", null);
 
         event.replyEmbeds(handle(event.getGuild(), role)).queue();
@@ -63,6 +69,10 @@ public class MemberCountCommand extends SlashCommand {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (ServerSettings.shouldProhibitUserCommands(event.getChannel(), event.getMember())) {
+            event.reply(MessageHelper.getForbiddenMessage(event.getGuild().getIdLong()));
+            return;
+        }
         event.getMessage().replyEmbeds(handle(event.getGuild(), BotHelpers.getRole(event.getGuild(), event.getArgs()))).queue();
     }
 
