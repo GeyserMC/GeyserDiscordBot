@@ -356,6 +356,7 @@ public class ForumPostCommand extends SlashCommand {
 
     /**
      * Calculates which suggestions should be shown for a command autocompletion given the currently typed query.
+     *
      * @param tags a mutable list of all potential tags, whose elements will be removed if they do not match the query
      * @param query the current command query
      */
