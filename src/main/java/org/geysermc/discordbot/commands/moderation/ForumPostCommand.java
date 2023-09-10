@@ -233,15 +233,10 @@ public class ForumPostCommand extends SlashCommand {
                 tags.removeAll(threadChannel.getAppliedTags());
                 filterPotentialTags(tags, query);
             } catch (IllegalStateException ignored) {
-                tags = new ArrayList<>();
+                tags = Collections.emptyList();
             }
 
-            event.replyChoices(tags.stream()
-                    .distinct()
-                    .map(tag -> new Command.Choice(tag.getName(), tag.getName()))
-                    .limit(25)
-                    .toArray(Command.Choice[]::new))
-                .queue();
+            event.replyChoices(createTagChoices(tags)).queue();
         }
     }
 
@@ -302,15 +297,10 @@ public class ForumPostCommand extends SlashCommand {
                 tags = new ArrayList<>(event.getChannel().asThreadChannel().getAppliedTags());
                 filterPotentialTags(tags, query);
             } catch (IllegalStateException ignored) {
-                tags = new ArrayList<>();
+                tags = Collections.emptyList();
             }
 
-            event.replyChoices(tags.stream()
-                    .distinct()
-                    .map(tag -> new Command.Choice(tag.getName(), tag.getName()))
-                    .limit(25)
-                    .toArray(Command.Choice[]::new))
-                .queue();
+            event.replyChoices(createTagChoices(tags)).queue();
         }
     }
 
@@ -392,6 +382,14 @@ public class ForumPostCommand extends SlashCommand {
 
             tagIterator.remove(); // no match
         }
+    }
+
+    private static Command.Choice[] createTagChoices(List<ForumTag> tags) {
+        return tags.stream()
+            .distinct()
+            .map(tag -> new Command.Choice(tag.getName(), tag.getName()))
+            .limit(25) // max amount of choices
+            .toArray(Command.Choice[]::new);
     }
 
     private static boolean isForumChannel(@NotNull SlashCommandEvent event) {
