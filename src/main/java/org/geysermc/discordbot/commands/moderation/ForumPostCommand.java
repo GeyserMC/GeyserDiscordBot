@@ -345,10 +345,10 @@ public class ForumPostCommand extends SlashCommand {
             }
 
             MessageEmbed closeEmbed = new EmbedBuilder()
-                    .setTitle("Closed old posts")
-                    .addField("Staff member", event.getMember().getAsMention(), false)
-                    .addField("Post count", String.valueOf(count), false)
-                    .addField("Older than (days)", String.valueOf(days), false)
+                    .setTitle("Closed Old Posts")
+                    .addField("Staff Member", event.getMember().getAsMention(), true)
+                    .addField("Posts", String.valueOf(count), true)
+                    .addField("Older Than (Days)", String.valueOf(days), true)
                     .setTimestamp(Instant.now())
                     .setColor((count == 0 ? BotColors.FAILURE : BotColors.SUCCESS).getColor())
                     .build();
