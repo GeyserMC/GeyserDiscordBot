@@ -345,12 +345,11 @@ public class ForumPostCommand extends SlashCommand {
                     .setColor((count == 0 ? BotColors.FAILURE : BotColors.SUCCESS).getColor())
                     .build();
 
-            if (count == 0) {
-                event.replyEmbeds(closeEmbed).queue();
-                return;
+            if (!(count == 0)) {
+                ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(closeEmbed).queue();
             }
 
-            ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(closeEmbed).queue();
+            event.replyEmbeds(closeEmbed).queue();
         }
     }
 
