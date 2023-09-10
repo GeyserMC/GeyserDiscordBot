@@ -195,28 +195,29 @@ public class ForumPostCommand extends SlashCommand {
                 }
             }
 
-            if (tagFound != null) {
-                // Create the new tag list
-                List<ForumTagSnowflake> updatedTags = new ArrayList<>(threadChannel.getAppliedTags());
-
-                // Make sure we don't add the same tag twice
-                ForumTagSnowflake newTag = ForumTagSnowflake.fromId(tagFound.getId());
-                if (updatedTags.contains(newTag)) {
-                    event.reply("Post is already tagged with " + tag).queue();
-                    return;
-                }
-
-                updatedTags.add(newTag);
-
-                threadChannel.getManager()
-                    .setAppliedTags(updatedTags)
-                    .queue(
-                        unused -> event.reply("Post is tagged with " + tag).queue(),
-                        error -> event.reply("Could not tag post").queue()
-                    );
-            } else {
+            if (tagFound == null) {
                 event.reply("No matching tag found for " + tag).queue();
+                return;
             }
+
+            // Create the new tag list
+            List<ForumTagSnowflake> updatedTags = new ArrayList<>(threadChannel.getAppliedTags());
+
+            // Make sure we don't add the same tag twice
+            ForumTagSnowflake newTag = ForumTagSnowflake.fromId(tagFound.getId());
+            if (updatedTags.contains(newTag)) {
+                event.reply("Post is already tagged with " + tag).queue();
+                return;
+            }
+
+            updatedTags.add(newTag);
+
+            threadChannel.getManager()
+                .setAppliedTags(updatedTags)
+                .queue(
+                    unused -> event.reply("Post is tagged with " + tag).queue(),
+                    error -> event.reply("Could not tag post").queue()
+                );
         }
 
         @Override
@@ -275,19 +276,19 @@ public class ForumPostCommand extends SlashCommand {
                 }
             }
 
-            if (tagFound != null) {
-                List<ForumTagSnowflake> updatedTags = new ArrayList<>(currentTags);
-                updatedTags.remove(ForumTagSnowflake.fromId(tagFound.getId()));
-                threadChannel.getManager()
-                    .setAppliedTags(updatedTags)
-                    .queue(
-                        unused -> event.reply("Tag " + tag + " removed").queue(),
-                        error -> event.reply("Could not remove tag from post").queue()
-                    );
-
-            } else {
+            if (tagFound == null) {
                 event.reply("Post was not tagged with " + tag).queue();
+                return;
             }
+
+            List<ForumTagSnowflake> updatedTags = new ArrayList<>(currentTags);
+            updatedTags.remove(ForumTagSnowflake.fromId(tagFound.getId()));
+            threadChannel.getManager()
+                .setAppliedTags(updatedTags)
+                .queue(
+                    unused -> event.reply("Tag " + tag + " removed").queue(),
+                    error -> event.reply("Could not remove tag from post").queue()
+                );
         }
 
         @Override
