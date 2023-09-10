@@ -229,10 +229,10 @@ public class ForumPostCommand extends SlashCommand {
             List<ForumTag> tags;
             try {
                 ThreadChannel threadChannel = event.getChannel().asThreadChannel();
-                List<ForumTag> unappliedTags = new ArrayList<>(threadChannel.getParentChannel().asForumChannel().getAvailableTags());
-                unappliedTags.removeAll(threadChannel.getAppliedTags());
-                tags = potentialTags(unappliedTags, query);
-            } catch ( IllegalStateException ignored) {
+                tags = new ArrayList<>(threadChannel.getParentChannel().asForumChannel().getAvailableTags());
+                tags.removeAll(threadChannel.getAppliedTags());
+                filterPotentialTags(tags, query);
+            } catch (IllegalStateException ignored) {
                 tags = new ArrayList<>();
             }
 
@@ -299,8 +299,9 @@ public class ForumPostCommand extends SlashCommand {
             // Get the tags
             List<ForumTag> tags;
             try {
-                tags = potentialTags(event.getChannel().asThreadChannel().getAppliedTags(), query);
-            } catch ( IllegalStateException ignored) {
+                tags = new ArrayList<>(event.getChannel().asThreadChannel().getAppliedTags());
+                filterPotentialTags(tags, query);
+            } catch (IllegalStateException ignored) {
                 tags = new ArrayList<>();
             }
 
@@ -363,25 +364,34 @@ public class ForumPostCommand extends SlashCommand {
         }
     }
 
-    private static List<ForumTag> potentialTags(List<ForumTag> tags, String query) {
-        List<ForumTag> potential = new ArrayList<>();
-
-        // Search the tags by an exact starting match
-        for (ForumTag tag : tags) {
-            if (tag.getName().toLowerCase().startsWith(query.toLowerCase())) {
-                potential.add(tag);
-            }
+    /**
+     * Calculates which suggestions should be shown for a command autocompletion given the currently typed query.
+     * @param tags a mutable list of all potential tags, whose elements will be removed if they do not match the query
+     * @param query the current command query
+     */
+    static void filterPotentialTags(List<ForumTag> tags, String query) {
+        if (query.isBlank()) {
+            return;
         }
+        query = query.toLowerCase(Locale.ROOT);
 
-        // Find the best similarity
-        for (ForumTag tag : tags) {
-            double similar = DicesCoefficient.diceCoefficientOptimized(query.toLowerCase(), tag.getName().toLowerCase());
-            if (similar > 0.2d) {
-                potential.add(tag);
+        Iterator<? extends ForumTag> tagIterator = tags.iterator();
+        while (tagIterator.hasNext()) {
+            ForumTag tag = tagIterator.next();
+            String name = tag.getName().toLowerCase(Locale.ROOT);
+
+            // start with a cheap check
+            if (name.startsWith(query)) {
+                continue;
             }
-        }
 
-        return potential;
+            double similar = DicesCoefficient.diceCoefficientOptimized(query, name);
+            if (similar > 0.4d) {
+                continue; // similar enough
+            }
+
+            tagIterator.remove(); // no match
+        }
     }
 
     private static boolean isForumChannel(@NotNull SlashCommandEvent event) {
