@@ -345,7 +345,7 @@ public class ForumPostCommand extends SlashCommand {
                     .setColor((count == 0 ? BotColors.FAILURE : BotColors.SUCCESS).getColor())
                     .build();
 
-            if (!(count == 0)) {
+            if (count != 0) {
                 ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(closeEmbed).queue();
             }
 
