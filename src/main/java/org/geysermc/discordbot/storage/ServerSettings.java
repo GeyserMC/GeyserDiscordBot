@@ -27,11 +27,13 @@ package org.geysermc.discordbot.storage;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.geysermc.discordbot.GeyserBot;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -54,6 +56,7 @@ public class ServerSettings {
      * @param key The preference key to get
      * @return The list of strings or null if it doesn't exist
      */
+    @NotNull
     public static List<String> getList(long serverID, String key) {
         String listData = GeyserBot.storageManager.getServerPreference(serverID, key);
 
@@ -75,6 +78,7 @@ public class ServerSettings {
      * @param key The preference key to get
      * @return The map of strings or empty if it doesn't exist
      */
+    @NotNull
     public static Map<String, String> getMap(long serverID, String key) {
         String mapData = GeyserBot.storageManager.getServerPreference(serverID, key);
         Map<String, String> map = new HashMap<>();
@@ -96,7 +100,7 @@ public class ServerSettings {
      * @return The {@link TextChannel} for logs
      * @throws IllegalArgumentException If the channel is null or invalid
      */
-    public static TextChannel getLogChannel(Guild guild) throws IllegalArgumentException {
+    public static TextChannel getLogChannel(@NotNull Guild guild) throws IllegalArgumentException {
         String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "log-channel");
         return guild.getTextChannelById(channel);
     }
@@ -108,7 +112,7 @@ public class ServerSettings {
      * @return The {@link TextChannel} for updates
      * @throws IllegalArgumentException If the channel is null or invalid
      */
-    public static TextChannel getUpdateChannel(Guild guild) throws IllegalArgumentException {
+    public static TextChannel getUpdateChannel(@NotNull Guild guild) throws IllegalArgumentException {
         String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "update-channel");
         return guild.getTextChannelById(channel);
     }
@@ -120,7 +124,7 @@ public class ServerSettings {
      * @return The {@link Role} for users in the voice channel
      * @throws IllegalArgumentException If the role is null or invalid
      */
-    public static Role getVoiceRole(Guild guild) throws IllegalArgumentException {
+    public static Role getVoiceRole(@NotNull Guild guild) throws IllegalArgumentException {
         String role = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "voice-role");
         return guild.getRoleById(role);
     }
@@ -198,8 +202,24 @@ public class ServerSettings {
      * @param guild The {@link Guild} to check
      * @return If levels are disabled
      */
-    public static boolean serverLevelsDisabled(Guild guild) {
+    public static boolean serverLevelsDisabled(@NotNull Guild guild) {
         List<String> dontLevel = getList(guild.getIdLong(), "dont-level");
         return dontLevel.size() > 0 && dontLevel.get(0).equals("0");
+    }
+
+    /**
+     * Get the forum channel for the selected guild
+     *
+     * @param guild ID of the guild to get the channel for
+     * @return The {@link ForumChannel} for the guild
+     */
+    @Nullable
+    public static ForumChannel getForumChannel(@NotNull Guild guild) {
+        String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "forum-channel");
+
+        if (channel == null) {
+            return null;
+        }
+        return guild.getForumChannelById(channel);
     }
 }

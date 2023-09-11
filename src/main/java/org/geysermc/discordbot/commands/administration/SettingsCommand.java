@@ -66,6 +66,7 @@ public class SettingsCommand extends SlashCommand {
                         .addChoice("Convert Extensions", "convert-extensions")
                         .addChoice("Don't level", "dont-level")
                         .addChoice("Don't log","dont-log")
+                        .addChoice("Forum Channel", "forum-channel")
                         .addChoice("Health Checks", "health-checks")
                         .addChoice("Log channel", "log-channel")
                         .addChoice("Punishment Message", "punishment-message")
