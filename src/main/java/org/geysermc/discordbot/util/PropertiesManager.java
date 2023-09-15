@@ -43,13 +43,6 @@ public class PropertiesManager {
     }
 
     /**
-     * @return Bot prefix
-     */
-    public static String getPrefix() {
-        return properties.getProperty("prefix");
-    }
-
-    /**
      * @return Database connection type
      */
     public static String getDatabaseType() {

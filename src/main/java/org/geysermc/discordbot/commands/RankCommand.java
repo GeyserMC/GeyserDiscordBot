@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -35,15 +34,12 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.internal.utils.Checks;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.MessageHelper;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public class RankCommand extends SlashCommand {
@@ -62,21 +58,8 @@ public class RankCommand extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         String role = event.optString("role", "");
-
+        Checks.notNull(event.getGuild(), "server");
         event.replyEmbeds(handle(event.getGuild(), event.getMember(), role)).queue();
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
-
-        // Check they specified an role
-        if (args.get(0).isEmpty()) {
-            MessageHelper.errorResponse(event, "Missing role", "Please specify an role to get.");
-            return;
-        }
-
-        event.getMessage().replyEmbeds(handle(event.getGuild(), event.getMember(), args.get(0))).queue();
     }
 
     protected MessageEmbed handle(Guild guild, Member member, String wantedRole) {

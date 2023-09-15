@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -76,18 +75,6 @@ public class IssueCommand extends SlashCommand {
         String repo = event.optString("repo", "GeyserMC/Geyser");
 
         event.replyEmbeds(handle(issue, repo)).queue();
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-        Matcher matcherIssue = ISSUE_PATTERN.matcher(event.getArgs());
-
-        if (!matcherIssue.find()) {
-            MessageHelper.errorResponse(event, "Invalid Issue Format", "Please specify the issue you wish to locate.\nEG: `#100` or `100`");
-            return;
-        }
-
-        event.getMessage().replyEmbeds(handle(Integer.parseInt(matcherIssue.group(2)), event.getArgs().replace(matcherIssue.group(0), ""))).queue();
     }
 
     private MessageEmbed handle(int issueNumber, String repoString) {

@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -42,9 +41,7 @@ import org.geysermc.discordbot.util.BotColors;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class ReasonCommand extends SlashCommand {
 
@@ -69,24 +66,6 @@ public class ReasonCommand extends SlashCommand {
         String updatedReason = event.optString("reason", null);
 
         event.replyEmbeds(handle(logID, updatedReason, event.getGuild())).queue();
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-        MessageEmbed embed;
-        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
-
-        // Fetch the entry
-        int logId = Integer.parseInt(args.remove(0));
-        String newReason = String.join(" ", args);
-
-        if (newReason.trim().isEmpty()) {
-            embed = handle(logId, null, event.getGuild());
-        } else {
-            embed = handle(logId, newReason, event.getGuild());
-        }
-
-        event.getMessage().replyEmbeds(embed).queue();
     }
 
     private MessageEmbed handle(int logId, String updatedReason, Guild guild) {

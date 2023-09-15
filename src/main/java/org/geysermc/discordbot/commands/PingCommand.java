@@ -29,7 +29,6 @@ import br.com.azalim.mcserverping.MCPing;
 import br.com.azalim.mcserverping.MCPingOptions;
 import br.com.azalim.mcserverping.MCPingResponse;
 import br.com.azalim.mcserverping.MCPingUtil;
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.nukkitx.protocol.bedrock.BedrockClient;
@@ -46,10 +45,7 @@ import org.geysermc.discordbot.util.NetworkUtils;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -75,19 +71,6 @@ public class PingCommand extends SlashCommand {
         String ip = event.getOption("server").getAsString();
 
         interactionHook.editOriginalEmbeds(handle(ip)).queue();
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
-
-        // Check they specified an ip
-        if (args.get(0).isEmpty()) {
-            MessageHelper.errorResponse(event, "Missing IP", "Please specify an IP to ping.");
-            return;
-        }
-
-        event.getMessage().replyEmbeds(handle(args.get(0))).queue();
     }
 
     private MessageEmbed handle(String ip) {

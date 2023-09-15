@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -43,10 +42,7 @@ import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 public class SlowmodeCommand extends SlashCommand {
 
@@ -78,23 +74,6 @@ public class SlowmodeCommand extends SlashCommand {
         }
 
         event.replyEmbeds(handle(event.getMember(), event.getGuild(), event.getTextChannel(), arg)).queue();
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
-
-        // Check if a time string was specified
-        if (args.size() >= 1 && args.get(0).trim().isEmpty()) {
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Invalid usage")
-                    .setDescription("Please specify a time in the correct format `1h2m3s`.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build()).queue();
-            return;
-        }
-
-        event.getMessage().replyEmbeds(handle(event.getMember(), event.getGuild(), event.getTextChannel(), args.get(0))).queue();
     }
 
     private MessageEmbed handle(Member mod, Guild guild, TextChannel channel, String string) {

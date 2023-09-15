@@ -165,7 +165,6 @@ public class GeyserBot {
         CommandClientBuilder client = new CommandClientBuilder();
         client.setActivity(null);
         client.setOwnerId("0"); // No owner
-        client.setPrefix(PropertiesManager.getPrefix());
         client.useHelpBuilder(false);
         client.addCommands(COMMANDS.toArray(new Command[0]));
         client.addSlashCommands(SLASH_COMMANDS.toArray(new SlashCommand[0]));
@@ -176,9 +175,6 @@ public class GeyserBot {
         CommandClientBuilder tagClient = new CommandClientBuilder();
         tagClient.setActivity(null);
         tagClient.setOwnerId("0"); // No owner
-        String tagPrefix = PropertiesManager.getPrefix() + PropertiesManager.getPrefix();
-        tagClient.setPrefix(tagPrefix);
-        tagClient.setPrefixes(new String[] {"!tag "});
         tagClient.useHelpBuilder(false);
         tagClient.addCommands(TagsManager.getTags().toArray(new Command[0]));
         tagClient.setListener(new TagsListener());

@@ -131,7 +131,7 @@ public class SwearHandler extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        handleMessageEvent(event.getMessage(), true);
+        handleMessageEvent(event.getMessage());
     }
 
 //    Disabled for now
@@ -140,7 +140,7 @@ public class SwearHandler extends ListenerAdapter {
 //        handleMessageEvent(event.getMessage(), false);
 //    }
 
-    private void handleMessageEvent(Message message, boolean notifyUser) {
+    private void handleMessageEvent(Message message) {
         if (message.getAuthor().isBot() || !message.isFromGuild()) {
             return;
         }
@@ -156,7 +156,7 @@ public class SwearHandler extends ListenerAdapter {
 
             // Delete message
             message.delete().queue(unused -> {
-                if (notifyUser) {
+                if (true) {
                     // Alert the user message
                     message.getChannel().sendMessage(message.getAuthor().getAsMention() +
                             " your message has been removed because it contains profanity! Please read our rules for more information.").queue();

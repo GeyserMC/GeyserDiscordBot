@@ -73,7 +73,7 @@ public class MySQLStorageManager extends AbstractStorageManager {
     private void checkConnection() {
         try {
             if (connection.isValid(0)) return;
-        } catch (SQLException e) { }
+        } catch (SQLException ignored) { }
 
         try {
             setupStorage();

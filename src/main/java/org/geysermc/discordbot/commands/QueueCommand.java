@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -53,11 +52,6 @@ public class QueueCommand extends SlashCommand {
         // Defer to wait for us to load a response and allows for files to be uploaded
         InteractionHook interactionHook = event.deferReply().complete();
         interactionHook.editOriginalEmbeds(handle()).queue();
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-        event.getMessage().replyEmbeds(handle()).queue();
     }
 
     protected MessageEmbed handle() {

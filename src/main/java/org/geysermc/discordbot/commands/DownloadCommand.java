@@ -73,25 +73,6 @@ public class DownloadCommand extends SlashCommand {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
-
-        String program = "geyser";
-        if (!args.get(0).isEmpty()) {
-            program = args.get(0);
-        }
-
-        DownloadOption downloadOption = optionsToRepository.getOrDefault(program.toLowerCase(Locale.ROOT), this.defaultDownloadOption);
-
-        event.getMessage().replyEmbeds(new EmbedBuilder()
-                .setTitle("Download " + downloadOption.friendlyName)
-                .setDescription("Download at " + downloadOption.downloadUrl)
-                .setThumbnail(downloadOption.imageUrl)
-                .setColor(BotColors.SUCCESS.getColor())
-                .build()).queue();
-    }
-
-    @Override
     protected void execute(SlashCommandEvent event) {
         String program = event.optString("program", "geyser");
 

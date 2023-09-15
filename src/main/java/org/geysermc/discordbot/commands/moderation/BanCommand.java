@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -43,9 +42,7 @@ import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class BanCommand extends SlashCommand {
@@ -77,66 +74,6 @@ public class BanCommand extends SlashCommand {
         String reason = event.optString("reason", "*None*");
 
         event.replyEmbeds(handle(member, moderator, event.getGuild(), days, silent, reason)).queue();
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
-
-        // Fetch the user
-        String selectorString = args.remove(0);
-        Member member = BotHelpers.getMember(event.getGuild(), selectorString);
-        Member moderator = event.getMember();
-
-        // Maybe worth getting rid of this depends on how many times its used
-        int delDays = 0;
-        boolean silent = false;
-
-        // Handle all the option args
-        // We clone the args here to prevent a CME
-        for (String arg : args.toArray(new String[0])) {
-            if (!arg.startsWith("-") || arg.length() < 2) {
-                break;
-            }
-
-            switch (arg.toCharArray()[1]) {
-                // Check for silent flag
-                case 's':
-                    silent = true;
-                    break;
-
-                // Check the delete days flag
-                case 'd':
-                    try {
-                        delDays = Integer.parseInt(arg.replace("-d", ""));
-                    } catch (NumberFormatException ignored) {
-                        event.getMessage().reply("Please specify an integer for days to delete messages!").queue();
-                        return;
-                    }
-                    break;
-
-                default:
-                    event.getMessage().replyEmbeds(new EmbedBuilder()
-                            .setTitle("Invalid option")
-                            .setDescription("The option `" + arg + "` is invalid")
-                            .setColor(BotColors.FAILURE.getColor())
-                            .build()).queue();
-                    break;
-            }
-
-            args.remove(0);
-        }
-
-        // Get the reason or use None
-        String reasonParts = String.join(" ", args);
-        String reason;
-        if (reasonParts.trim().isEmpty()) {
-            reason = "*None*";
-        } else {
-            reason = reasonParts;
-        }
-
-        event.getMessage().replyEmbeds(handle(member, moderator, event.getGuild(),delDays, silent, reason)).queue();
     }
 
     private MessageEmbed handle(Member member, Member moderator, Guild guild, int days, boolean silent, String reason) {

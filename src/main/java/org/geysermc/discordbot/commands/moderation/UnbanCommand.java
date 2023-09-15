@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -37,12 +36,9 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.BotHelpers;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class UnbanCommand extends SlashCommand {
 
@@ -64,7 +60,7 @@ public class UnbanCommand extends SlashCommand {
     @Override
     protected void execute(SlashCommandEvent event) {
         // Fetch users
-        User user = BotHelpers.getUser(event.getOption("member").getAsString());
+        User user = event.getOption("member").getAsUser();
         Member moderator = event.getMember();
 
         // Fetch args
@@ -72,48 +68,6 @@ public class UnbanCommand extends SlashCommand {
         String reason = event.optString("reason", "*None*");
 
         event.replyEmbeds(handle(user, moderator, event.getGuild(), silent, reason)).queue();
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
-
-        // Fetch the user
-        User user = BotHelpers.getUser(args.remove(0));
-
-        boolean silent = false;
-
-        // Handle all the option args
-        // We clone the args here to prevent a CME
-        for (String arg : args.toArray(new String[0])) {
-            if (!arg.startsWith("-") || arg.length() < 2) {
-                break;
-            }
-
-            if (arg.toCharArray()[1] == 's') {
-                // Check for silent flag
-                silent = true;
-            } else {
-                event.getMessage().replyEmbeds(new EmbedBuilder()
-                        .setTitle("Invalid option")
-                        .setDescription("The option `" + arg + "` is invalid")
-                        .setColor(BotColors.FAILURE.getColor())
-                        .build()).queue();
-            }
-
-            args.remove(0);
-        }
-
-        // Get the reason or use None
-        String reasonParts = String.join(" ", args);
-        String reason;
-        if (reasonParts.trim().isEmpty()) {
-            reason = "*None*";
-        } else {
-            reason = reasonParts;
-        }
-
-        event.getMessage().replyEmbeds(handle(user, event.getMember(), event.getGuild(), silent, reason)).queue();
     }
 
     private MessageEmbed handle(User user, Member mod, Guild guild, boolean silent, String reason) {

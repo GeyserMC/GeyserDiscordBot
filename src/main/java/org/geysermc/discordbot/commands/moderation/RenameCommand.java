@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands.moderation;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -42,10 +41,7 @@ import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 public class RenameCommand extends SlashCommand {
 
@@ -69,16 +65,6 @@ public class RenameCommand extends SlashCommand {
 
         // Send the embed when done
         event.replyEmbeds(handle(member, event.getMember(), event.getGuild())).queue();
-    }
-
-    @Override
-    protected void execute(CommandEvent event) {
-        List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
-
-        // Fetch the user
-        Member member = BotHelpers.getMember(event.getGuild(), args.remove(0));
-
-        event.getMessage().replyEmbeds(handle(member, event.getMember(), event.getGuild())).queue();
     }
 
     private MessageEmbed handle(Member member, Member moderator, Guild guild) {

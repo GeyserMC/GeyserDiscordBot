@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.commands.search;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -34,7 +33,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
-import org.geysermc.discordbot.util.PropertiesManager;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -70,19 +68,12 @@ public class WikiCommand extends SlashCommand {
         if (response != null) event.replyEmbeds(response).queue();
     }
 
-    // !wiki
-    @Override
-    protected void execute(CommandEvent event) {
-        MessageEmbed response = handle(event.getArgs());
-        if (response != null) event.getMessage().replyEmbeds(response).queue();
-    }
-
     public MessageEmbed handle(String query) {
         EmbedBuilder embed = new EmbedBuilder();
 
         // Check to make sure we have a search term
         if (query.isEmpty()) {
-            return MessageHelper.errorResponse(null, "Invalid usage", "Missing search term. `" + PropertiesManager.getPrefix() + name + " <search>`");
+            return MessageHelper.errorResponse(null, "Invalid usage", "Missing search term. `/" + name + " <search>`");
         }
 
         if (query.length() > 128) {

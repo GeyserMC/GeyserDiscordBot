@@ -142,7 +142,7 @@ public class TagsManager {
 
                             // Create the tag from the stored data
                             switch (tagData.get("type")) {
-                                case "text":
+                                case "text" -> {
                                     try {
                                         TAGS.add(new EmbedTag(tagName, content.toString().trim(), tagData.get("image"), tagData.get("aliases"), buttons));
                                         SLASH_TAGS.add(new SlashTag(tagName, content.toString().trim(), tagData.get("image"), tagData.get("aliases"), buttons, 0));
@@ -150,35 +150,31 @@ public class TagsManager {
                                         GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
                                         continue;
                                     }
-                                    break;
-
-                                case "text-raw":
+                                }
+                                case "text-raw" -> {
                                     try {
                                         TAGS.add(new RawTag(tagName, content.toString().trim(), tagData.get("aliases"), buttons));
-                                        SLASH_TAGS.add(new SlashTag(tagName, content.toString().trim(), null,  tagData.get("aliases"), buttons, 1));
+                                        SLASH_TAGS.add(new SlashTag(tagName, content.toString().trim(), null, tagData.get("aliases"), buttons, 1));
                                     } catch (IllegalArgumentException e) {
                                         GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
                                         continue;
                                     }
-                                    break;
-
-                                case "issue-only":
+                                }
+                                case "issue-only" -> {
                                     if (tagData.containsKey("aliases")) {
                                         GeyserBot.LOGGER.warn("Tag '" + tagName + "' has aliases listed but is of type 'issue-only'. Ignoring aliases.");
                                     }
-
                                     if (tagData.containsKey("image")) {
                                         GeyserBot.LOGGER.warn("Tag '" + tagName + "' has image listed but is of type 'issue-only'. Ignoring image.");
                                     }
-
                                     if (issueTriggers == null) {
                                         GeyserBot.LOGGER.warn("Tag '" + tagName + "' has no issues listed but is of type 'issue-only'.");
                                     }
-                                    break;
-
-                                default:
+                                }
+                                default -> {
                                     GeyserBot.LOGGER.warn("Invalid tag type '" + tagData.get("type") + "' for tag '" + tagName + "'! Ignoring tag.");
                                     continue;
+                                }
                             }
 
                             if (issueTriggers != null) {
