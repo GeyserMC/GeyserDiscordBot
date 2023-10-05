@@ -43,8 +43,8 @@
                     <div class='row'>
                         <div class='col d-flex flex-row align-items-center'>
                             <div class='place place-${row_index + 1}'>${row_index + 1}</div>
-                            <img src='${row.user.effectiveAvatarUrl!}' class='avatar'  alt="${row.user.name}#${row.user.discriminator}' avatar"/>
-                            <span class='p-2 text-break'>${row.user.name}#${row.user.discriminator}</span>
+                            <img src='${row.user.effectiveAvatarUrl!}' class='avatar'  alt="${row.user.name}<#if row.user.discriminator != "0000">#${row.user.discriminator}</#if>' avatar"/>
+                            <span class='p-2 text-break'>${row.user.name}<#if row.user.discriminator != "0000">#${row.user.discriminator}</#if></span>
                         </div>
                         <div class='col-xl-4 text-center justify-content-center justify-content-xl-end d-flex flex-row'>
                             <div class='p-2'>
