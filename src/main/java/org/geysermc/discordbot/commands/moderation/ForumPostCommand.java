@@ -94,7 +94,7 @@ public class ForumPostCommand extends SlashCommand {
 
             ForumChannel forumChannel = ServerSettings.getForumChannel(event.getGuild());
             if (forumChannel == null) {
-                event.reply("Forum channel not found.").queue();
+                event.reply("Forum channel not found.").setEphemeral(true).queue();
                 return;
             }
 
@@ -117,7 +117,7 @@ public class ForumPostCommand extends SlashCommand {
             }
 
             if (tagFound == null) {
-                event.reply("No matching tag found for " + tag).queue();
+                event.reply("No matching tag found for " + tag).setEphemeral(true).queue();
                 return;
             }
 
@@ -147,6 +147,7 @@ public class ForumPostCommand extends SlashCommand {
             List<ForumTag> tags;
             try {
                 ForumChannel forumChannel = ServerSettings.getForumChannel(Objects.requireNonNull(event.getGuild()));
+                Checks.check(forumChannel != null, "Forum channel not found");
                 tags = new ArrayList<>(forumChannel.getAvailableTags());
                 filterPotentialTags(tags, query);
             } catch (IllegalStateException ignored) {
@@ -168,7 +169,7 @@ public class ForumPostCommand extends SlashCommand {
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             if (!isForumChannel(event)) {
-                event.reply("Command can only be used in the forum channel").queue();
+                event.reply("Command can only be used in the forum channel").setEphemeral(true).queue();
                 return;
             }
 
@@ -191,12 +192,12 @@ public class ForumPostCommand extends SlashCommand {
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             if (!isForumChannel(event)) {
-                event.reply("Command can only be used in the forum channel").queue();
+                event.reply("Command can only be used in the forum channel").setEphemeral(true).queue();
                 return;
             }
 
             if (event.getChannel().asThreadChannel().isArchived()) {
-                event.reply("Post is already closed").queue();
+                event.reply("Post is already closed").setEphemeral(true).queue();
                 return;
             }
 
@@ -223,7 +224,7 @@ public class ForumPostCommand extends SlashCommand {
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             if (!isForumChannel(event)) {
-                event.reply("Command can only be used in the forum channel").queue();
+                event.reply("Command can only be used in the forum channel").setEphemeral(true).queue();
                 return;
             }
 
@@ -240,7 +241,7 @@ public class ForumPostCommand extends SlashCommand {
             }
 
             if (tagFound == null) {
-                event.reply("No matching tag found for " + tag).queue();
+                event.reply("No matching tag found for " + tag).setEphemeral(true).queue();
                 return;
             }
 
@@ -250,7 +251,7 @@ public class ForumPostCommand extends SlashCommand {
             // Make sure we don't add the same tag twice
             ForumTagSnowflake newTag = ForumTagSnowflake.fromId(tagFound.getId());
             if (updatedTags.contains(newTag)) {
-                event.reply("Post is already tagged with " + tag).queue();
+                event.reply("Post is already tagged with " + tag).setEphemeral(true).queue();
                 return;
             }
 
@@ -298,7 +299,7 @@ public class ForumPostCommand extends SlashCommand {
         @Override
         protected void execute(@NotNull SlashCommandEvent event) {
             if (!isForumChannel(event)) {
-                event.reply("Command can only be used in the forum channel").queue();
+                event.reply("Command can only be used in the forum channel").setEphemeral(true).queue();
                 return;
             }
 
@@ -316,7 +317,7 @@ public class ForumPostCommand extends SlashCommand {
             }
 
             if (tagFound == null) {
-                event.reply("Post was not tagged with " + tag).queue();
+                event.reply("Post was not tagged with " + tag).setEphemeral(true).queue();
                 return;
             }
 
@@ -363,7 +364,7 @@ public class ForumPostCommand extends SlashCommand {
 
             ForumChannel forumChannel = ServerSettings.getForumChannel(event.getGuild());
             if (forumChannel == null) {
-                event.reply("Forum channel not found").queue();
+                event.reply("Forum channel not found").setEphemeral(true).queue();
                 return;
             }
 
