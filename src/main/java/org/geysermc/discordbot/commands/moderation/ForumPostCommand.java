@@ -83,7 +83,7 @@ public class ForumPostCommand extends SlashCommand {
             this.options = Arrays.asList(
                     new OptionData(OptionType.STRING, "title", "Add the post title", true),
                     new OptionData(OptionType.STRING, "issue", "Add the post message/issue", true),
-                    new OptionData(OptionType.STRING, "tag", "The tag to initially add to the post", true),
+                    new OptionData(OptionType.STRING, "tag", "The tag to initially add to the post", true).setAutoComplete(true),
                     new OptionData(OptionType.USER, "member", "The member to ping in the post", false)
             );
         }
@@ -137,7 +137,6 @@ public class ForumPostCommand extends SlashCommand {
 
             // Only auto-complete if we are looking for a tag
             if (!field.equals("tag")) {
-                super.onAutoComplete(event);
                 return;
             }
 
