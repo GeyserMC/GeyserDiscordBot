@@ -32,6 +32,8 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
