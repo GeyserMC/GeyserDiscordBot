@@ -150,7 +150,7 @@ public class ForumPostCommand extends SlashCommand {
                 Checks.check(forumChannel != null, "Forum channel not found");
                 tags = new ArrayList<>(forumChannel.getAvailableTags());
                 filterPotentialTags(tags, query);
-            } catch (IllegalStateException ignored) {
+            } catch (IllegalStateException | IllegalArgumentException ignored) {
                 tags = Collections.emptyList();
             }
 
