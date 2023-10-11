@@ -83,6 +83,7 @@ public class ForumPostCommand extends SlashCommand {
             this.options = Arrays.asList(
                     new OptionData(OptionType.STRING, "title", "Add the post title", true),
                     new OptionData(OptionType.STRING, "issue", "Add the post message/issue", true),
+                    new OptionData(OptionType.STRING, "tag", "The tag to initially add to the post", true).setAutoComplete(true),
                     new OptionData(OptionType.USER, "member", "The member to ping in the post", false)
             );
         }
@@ -105,11 +106,54 @@ public class ForumPostCommand extends SlashCommand {
                 issue += " " + memberMapping.getAsUser().getAsMention();
             }
 
-            forumChannel.createForumPost(title, MessageCreateData.fromContent(issue))
+            // Find the tag from the users input
+            String tag = event.optString("tag");
+            ForumTag tagFound = null;
+            for (ForumTag forumTag : forumChannel.getAvailableTags()) {
+                if (forumTag.getName().equalsIgnoreCase(tag)) {
+                    tagFound = forumTag;
+                    break;
+                }
+            }
+
+            if (tagFound == null) {
+                event.reply("No matching tag found for " + tag).queue();
+                return;
+            }
+
+            ForumTagSnowflake newTag = ForumTagSnowflake.fromId(tagFound.getId());
+
+            forumChannel.createForumPost(title, MessageCreateData.fromContent(issue)).setTags(newTag)
                 .queue(
                     unused -> event.reply("Post was created").queue(),
                     error -> event.reply("Could not create post").queue()
                 );
+        }
+
+        @Override
+        public void onAutoComplete(CommandAutoCompleteInteractionEvent event) {
+            // Get the field name that we are auto-completing
+            String field = event.getFocusedOption().getName();
+
+            // Only auto-complete if we are looking for a tag
+            if (!field.equals("tag")) {
+                return;
+            }
+
+            // Get the query
+            String query = event.getFocusedOption().getValue();
+
+            // Get the tags
+            List<ForumTag> tags;
+            try {
+                ForumChannel forumChannel = ServerSettings.getForumChannel(Objects.requireNonNull(event.getGuild()));
+                tags = new ArrayList<>(forumChannel.getAvailableTags());
+                filterPotentialTags(tags, query);
+            } catch (IllegalStateException ignored) {
+                tags = Collections.emptyList();
+            }
+
+            event.replyChoices(createTagChoices(tags)).queue();
         }
     }
 
