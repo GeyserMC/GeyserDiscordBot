@@ -251,7 +251,7 @@ public class LogHandler extends ListenerAdapter {
                 } catch (IllegalArgumentException ignored) { }
 
                 // Bypass for users with MESSAGE_MANAGE permission
-                if (!event.getMember().hasPermission(Permission.MESSAGE_MANAGE) && !ServerSettings.getList(event.getGuild().getIdLong(), "allowed-invites").contains(invite.getGuild().getId())) {
+                if (event.getMember() != null && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE) && !ServerSettings.getList(event.getGuild().getIdLong(), "allowed-invites").contains(invite.getGuild().getId())) {
                     event.getMessage().delete().complete();
                 }
             } catch (ErrorResponseException ignored) { }
