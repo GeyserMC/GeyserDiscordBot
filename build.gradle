@@ -32,7 +32,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
 
     // JDA
-    implementation 'net.dv8tion:JDA:5.0.0-beta.10'
+    implementation 'net.dv8tion:JDA:5.0.0-beta.15'
     implementation 'pw.chew:jda-chewtils:2.0-SNAPSHOT'
 
     // Logging

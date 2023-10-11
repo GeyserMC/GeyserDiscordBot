@@ -30,7 +30,9 @@ import com.google.common.cache.CacheBuilder;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.audit.ActionType;
+import net.dv8tion.jda.api.audit.AuditLogChange;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
+import net.dv8tion.jda.api.audit.AuditLogKey;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.entities.Message;
@@ -136,6 +138,16 @@ public class LogHandler extends ListenerAdapter {
                 action = "kick";
                 actionTitle = "Kicked user";
                 color = BotColors.SUCCESS.getColor();
+            }
+            case MEMBER_UPDATE -> {
+                AuditLogChange timeoutChange = event.getEntry().getChangeByKey(AuditLogKey.MEMBER_TIME_OUT);
+                if (timeoutChange != null && timeoutChange.getNewValue() != null) {
+                    action = "timeout";
+                    actionTitle = "Timed out user until " + TimeFormat.DATE_TIME_SHORT.atInstant(Instant.parse(timeoutChange.getNewValue()));
+                    color = BotColors.SUCCESS.getColor();
+                } else {
+                    return;
+                }
             }
             default -> {
                 return;
