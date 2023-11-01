@@ -65,6 +65,9 @@ public class PingCommand extends SlashCommand {
         this.options = List.of(
             new OptionData(OptionType.STRING, "ip", "The IP Address of the server you want to ping", true),
             new OptionData(OptionType.INTEGER, "port", "The port of the server you want to ping", false)
+                    .setMinValue(1)
+                    .setMaxValue(65535)
+                    .setMaxLength(5)
         );
     }
 
@@ -169,10 +172,9 @@ public class PingCommand extends SlashCommand {
         }
 
         return new EmbedBuilder()
-                .setTitle("Pinging server: " + ip + (port != null ? " with the port " + port : ""))
+                .setTitle("Pinging server " + ip + (port != null ? " - " + port : ""))
                 .addField("Java", javaInfo, false)
                 .addField("Bedrock", bedrockInfo, false)
-                .setTimestamp(Instant.now())
                 .setColor(success ? BotColors.SUCCESS.getColor() : BotColors.FAILURE.getColor())
                 .build();
     }
