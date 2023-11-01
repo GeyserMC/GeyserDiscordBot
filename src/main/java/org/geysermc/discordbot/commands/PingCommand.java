@@ -58,12 +58,13 @@ public class PingCommand extends SlashCommand {
     public PingCommand() {
         this.name = "ping";
         this.aliases = new String[] { "status" };
-        this.arguments = "<server>";
+        this.arguments = "<ip> [port]";
         this.help = "Ping a server to check if its accessible";
         this.guildOnly = false;
 
-        this.options = Collections.singletonList(
-            new OptionData(OptionType.STRING, "server", "The IP Address of the server you want to ping", true)
+        this.options = List.of(
+            new OptionData(OptionType.STRING, "ip", "The IP Address of the server you want to ping", true),
+            new OptionData(OptionType.INTEGER, "port", "The port of the server you want to ping", false)
         );
     }
 
@@ -72,8 +73,10 @@ public class PingCommand extends SlashCommand {
         // Defer to wait for us to load a response and allows for files to be uploaded
         InteractionHook interactionHook = event.deferReply().complete();
 
-        String ip = event.getOption("server").getAsString();
-
+        String ip = event.getOption("ip").getAsString();
+        if (event.getOption("port") != null) {
+            ip += ":" + event.getOption("port").getAsInt();
+        }
         interactionHook.editOriginalEmbeds(handle(ip)).queue();
     }
 
@@ -87,7 +90,12 @@ public class PingCommand extends SlashCommand {
             return;
         }
 
-        event.getMessage().replyEmbeds(handle(args.get(0))).queue();
+        String ip = args.get(0);
+        if (args.size() > 1) {
+            ip += ":" + args.get(1);
+        }
+
+        event.getMessage().replyEmbeds(handle(ip)).queue();
     }
 
     private MessageEmbed handle(String ip) {
