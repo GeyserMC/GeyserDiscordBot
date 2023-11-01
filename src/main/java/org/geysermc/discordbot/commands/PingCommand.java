@@ -74,10 +74,9 @@ public class PingCommand extends SlashCommand {
         InteractionHook interactionHook = event.deferReply().complete();
 
         String ip = event.getOption("ip").getAsString();
-        if (event.getOption("port") != null) {
-            ip += ":" + event.getOption("port").getAsInt();
-        }
-        interactionHook.editOriginalEmbeds(handle(ip)).queue();
+        Integer port = event.getOption("port") != null ? event.getOption("port").getAsInt() : null;
+
+        interactionHook.editOriginalEmbeds(handle(ip, port)).queue();
     }
 
     @Override
@@ -91,14 +90,12 @@ public class PingCommand extends SlashCommand {
         }
 
         String ip = args.get(0);
-        if (args.size() > 1) {
-            ip += ":" + args.get(1);
-        }
+        Integer port = args.size() > 1 ? Integer.parseInt(args.get(1)) : null;
 
-        event.getMessage().replyEmbeds(handle(ip)).queue();
+        event.getMessage().replyEmbeds(handle(ip, port)).queue();
     }
 
-    private MessageEmbed handle(String ip) {
+    private MessageEmbed handle(String ip, Integer port) {
         // Check we were given a valid IP/domain
         if (!ip.matches("[\\w.\\-:]+")) {
             return MessageHelper.errorResponse(null, "IP invalid", "The given IP appears to be invalid and won't be queried. If you believe this is incorrect please contact an admin.");
@@ -114,24 +111,16 @@ public class PingCommand extends SlashCommand {
             ip = ip.replaceAll("https?://", "").split("/")[0];
         }
 
-        String[] ipParts = ip.split(":");
-
-        String hostname = ipParts[0];
-
-        if (NetworkUtils.isInternalIP(hostname)) {
+        if (NetworkUtils.isInternalIP(ip)) {
             return MessageHelper.errorResponse(null, "IP invalid", "The given IP appears to be an internal address and won't be queried.");
         }
 
         int jePort = 25565;
         int bePort = 19132;
 
-        if (ipParts.length > 1) {
-            try {
-                jePort = Integer.parseInt(ipParts[1]);
-                bePort = jePort;
-            } catch (NumberFormatException ignored) {
-                return MessageHelper.errorResponse(null, "Invalid port", "The port you specified is not a valid number.");
-            }
+        if (port != null) {
+            jePort = port;
+            bePort = jePort;
         }
 
         if (jePort < 1 || jePort > 65535) {
@@ -144,7 +133,7 @@ public class PingCommand extends SlashCommand {
 
         try {
             MCPingOptions options = MCPingOptions.builder()
-                    .hostname(hostname)
+                    .hostname(ip)
                     .port(jePort)
                     .timeout(1500)
                     .build();
@@ -165,7 +154,7 @@ public class PingCommand extends SlashCommand {
 
             client.bind().join();
 
-            InetSocketAddress addressToPing = new InetSocketAddress(hostname, bePort);
+            InetSocketAddress addressToPing = new InetSocketAddress(ip, bePort);
             BedrockPong pong = client.ping(addressToPing, 1500, TimeUnit.MILLISECONDS).get();
 
             bedrockInfo = "**MOTD:** \n```\n" + MCPingUtil.stripColors(pong.getMotd()) + (pong.getSubMotd() != null ? "\n" + MCPingUtil.stripColors(pong.getSubMotd()) : "") + "\n```\n" +
@@ -180,7 +169,7 @@ public class PingCommand extends SlashCommand {
         }
 
         return new EmbedBuilder()
-                .setTitle("Pinging server: " + ip)
+                .setTitle("Pinging server: " + ip + (port != null ? " with the port " + port : ""))
                 .addField("Java", javaInfo, false)
                 .addField("Bedrock", bedrockInfo, false)
                 .setTimestamp(Instant.now())
