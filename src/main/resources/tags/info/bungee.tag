@@ -1,5 +1,5 @@
 type: text
-aliases: bungeecord, velocity
+aliases: bungeecord, velocity, proxies
 
 ---
 
