@@ -1,5 +1,5 @@
 type: text
-aliases: j17, java17, j16, java16, latestjava, unsupportedclassversion, updatejava, openjdk, javadownload
+aliases: j17, java17, latestjava, unsupportedclassversion, updatejava, openjdk, javadownload
 issues: java.lang.UnsupportedClassVersionError
 
 ---
