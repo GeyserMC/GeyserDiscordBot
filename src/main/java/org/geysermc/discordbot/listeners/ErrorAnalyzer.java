@@ -232,7 +232,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 break;
             }
 
-            if (error.contains(issue)) {
+            if (error.toLowerCase().contains(issue.toLowerCase())) {
                 String title = BotHelpers.trim(issue, MessageEmbed.TITLE_MAX_LENGTH);
 
                 if (MessageHelper.similarFieldExists(embedBuilder.getFields(), title)) {
@@ -246,7 +246,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         }
 
         // Add any errors from stacktraces
-        if (exceptions.size() != 0) {
+        if (!exceptions.isEmpty()) {
             // Get the github trees for fetching the file paths
             String branch = "master";
             Matcher branchMatcher = BRANCH_PATTERN.matcher(error);
