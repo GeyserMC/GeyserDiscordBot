@@ -74,7 +74,7 @@ public class FloodgateDumpIssueCheck extends AbstractDumpIssueCheck {
 
             // Add any problem messages relates to floodgate
             if (needsFloodgate) {
-                problems.add("- `auth-type` is set to `floodgate`, but you don't have Floodgate installed! Download it [here](https://geysermc.org/download#" + bootstrapInfo.getString("platform").toLowerCase() + ").");
+                problems.add("- `auth-type` is set to `floodgate`, but you don't have Floodgate installed! Download it [here](https://geysermc.org/download#floodgate).");
             } else if (needsFloodgateAuthType && !configRemote.getString("auth-type").equalsIgnoreCase("floodgate")) {
                 problems.add("- You have Floodgate installed, but `auth-type` is set to `" + configRemote.getString("auth-type") + "`! Set it to `floodgate` if you want to use Floodgate.");
             }
