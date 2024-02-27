@@ -29,10 +29,14 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import okhttp3.RequestBody;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.DicesCoefficient;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import pw.chew.chewbotcca.util.RestClient;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -42,7 +46,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BadLinksHandler extends ListenerAdapter {
-    private static final Pattern HTTP_PATTERN = Pattern.compile("https?://[^\\s<]+[^<.,:;\"')\\]\\s]", Pattern.CASE_INSENSITIVE);
+    private static final Pattern DOMAIN_PATTERN = Pattern.compile("(?:[A-z0-9](?:[A-z0-9-]{0,61}[A-z0-9])?\\.)+[A-z0-9][A-z0-9-]{0,61}[A-z0-9]");
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
@@ -51,27 +55,26 @@ public class BadLinksHandler extends ListenerAdapter {
 
         // Ignore users with the manage message perms
         if (event.getMember() == null || event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
-            return;
+//            return;
         }
 
         // Find URLs
-        Matcher m = HTTP_PATTERN.matcher(event.getMessage().getContentRaw());
+        Matcher m = DOMAIN_PATTERN.matcher(event.getMessage().getContentRaw());
 
         List<String> checkDomains = ServerSettings.getList(event.getGuild().getIdLong(), "check-domains");
         List<String> bannedDomains = ServerSettings.getList(event.getGuild().getIdLong(), "banned-domains");
         List<String> bannedIPs = ServerSettings.getList(event.getGuild().getIdLong(), "banned-ips");
 
         boolean foundMatch = false;
-        String foundDomain = "";
 
         while (m.find()) {
-            String link = m.group();
-            String domain = link.split("//")[1].split("/")[0];
+            String domain = m.group();
+            String reason = "";
 
             for (String bannedDomain : bannedDomains) {
                 if (domain.equals(bannedDomain)) {
                     foundMatch = true;
-                    foundDomain = bannedDomain;
+                    reason = "Banned domain";
 
                     break;
                 }
@@ -91,7 +94,7 @@ public class BadLinksHandler extends ListenerAdapter {
                         // Is the domain not exact but still close
                         if (compareDomain(domain, checkDomain)) {
                             foundMatch = true;
-                            foundDomain = checkDomain;
+                            reason = "Similar to safe domain (" + checkDomain + ")";
                             break;
                         }
                     }
@@ -106,7 +109,7 @@ public class BadLinksHandler extends ListenerAdapter {
                         // Check if the ip is banned
                         if (address.equals(checkIP)) {
                             foundMatch = true;
-                            foundDomain = checkIP + " (DNS lookup)";
+                            reason = "Domain resolves to banned IP (" + checkIP + ")";
 
                             break;
                         }
@@ -114,12 +117,30 @@ public class BadLinksHandler extends ListenerAdapter {
                 } catch (UnknownHostException ignored) { }
             }
 
+            if (!foundMatch) {
+                // Make request to https://anti-fish.bitflow.dev/check
+                RequestBody body = RequestBody.create("{\"message\":" + JSONObject.quote(event.getMessage().getContentRaw()) + "}", RestClient.JSON);
+                JSONObject response = RestClient.simplePost("https://anti-fish.bitflow.dev/check", body);
+                if (response.getBoolean("match")) {
+                    JSONArray matches = response.getJSONArray("matches");
+                    for (int i = 0; i < matches.length(); i++) {
+                        JSONObject match = matches.getJSONObject(i);
+                        if (match.getFloat("trust_rating") >= 0.5f) {
+                            foundMatch = true;
+                            domain = match.getString("domain");
+                            reason = "`anti-fish.bitflow.dev` flagged as `" + match.getString("type") + "` from `" + match.getString("source") + "` with a trust rating of " + match.getFloat("trust_rating");
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (foundMatch) {
                 ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
                         .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
                         .setDescription("**Link removed, sent by** " + event.getAuthor().getAsMention() + " **deleted in** " + event.getChannel().getAsMention() + "\n" + event.getMessage().getContentRaw())
-                        .addField("Link", link, false)
-                        .addField("Matched domain", foundDomain, false)
+                        .addField("Block reason", reason, false)
+                        .addField("Matched domain", "`" + domain + "`", false)
                         .setFooter("Author: " + event.getAuthor().getId() + " | Message ID: " + event.getMessageId())
                         .setTimestamp(Instant.now())
                         .setColor(BotColors.FAILURE.getColor())
