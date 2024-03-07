@@ -75,7 +75,7 @@ public class PurgeCommand extends SlashCommand {
             return;
         }
 
-        if (event.hasOption("user")) {
+        if (event.hasOption("member")) {
             user = event.getOption("member").getAsUser();
 
             if (user == null) {
