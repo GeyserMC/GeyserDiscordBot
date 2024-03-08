@@ -216,6 +216,7 @@ public class GeyserBot {
                             new BadLinksHandler(),
                             new HelpHandler(),
                             new SupportHandler(),
+                            new DeleteHandler(),
                             client.build(),
                             tagClient.build())
                     .build();
