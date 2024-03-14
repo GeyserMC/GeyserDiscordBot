@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ package org.geysermc.discordbot;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.jagrosh.jdautilities.command.ContextMenu;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import io.sentry.Sentry;
@@ -78,6 +79,7 @@ public class GeyserBot {
     public static final Logger LOGGER = LoggerFactory.getLogger(GeyserBot.class);
     public static final List<Command> COMMANDS;
     public static final List<SlashCommand> SLASH_COMMANDS;
+    public static final List<ContextMenu> CONTEXT_MENUS;
 
     public static AbstractStorageManager storageManager;
 
@@ -96,8 +98,9 @@ public class GeyserBot {
             Set<Class<? extends Command>> subTypes = reflections.getSubTypesOf(Command.class);
             for (Class<? extends Command> theClass : subTypes) {
                 // Don't load SubCommands
-                if (theClass.getName().contains("SubCommand"))
+                if (theClass.getName().contains("SubCommand")) {
                     continue;
+                }
                 try {
                     commands.add(theClass.getDeclaredConstructor().newInstance());
                     LoggerFactory.getLogger(theClass).debug("Loaded Command Successfully!");
@@ -109,8 +112,9 @@ public class GeyserBot {
             Set<Class<? extends SlashCommand>> slashSubTypes = reflections.getSubTypesOf(SlashCommand.class);
             for (Class<? extends SlashCommand> theClass : slashSubTypes) {
                 // Don't load SubCommands
-                if (theClass.getName().contains("SubCommand"))
+                if (theClass.getName().contains("SubCommand")) {
                     continue;
+                }
                 slashCommands.add(theClass.getDeclaredConstructor().newInstance());
                 LoggerFactory.getLogger(theClass).debug("Loaded SlashCommand Successfully!");
             }
@@ -119,9 +123,26 @@ public class GeyserBot {
         }
         COMMANDS = commands;
         SLASH_COMMANDS = slashCommands;
+
+        // Gathers all context menu items from "context_menu" package.
+        List<ContextMenu> contextMenus = new ArrayList<>();
+        try {
+            Reflections reflections = new Reflections("org.geysermc.discordbot.context_menus");
+            Set<Class<? extends ContextMenu>> subTypes = reflections.getSubTypesOf(ContextMenu.class);
+            for (Class<? extends ContextMenu> theClass : subTypes) {
+                if (!theClass.getPackageName().startsWith("org.geysermc.discordbot.context_menus")) {
+                    continue;
+                }
+                contextMenus.add(theClass.getDeclaredConstructor().newInstance());
+                LoggerFactory.getLogger(theClass).debug("Loaded ContextMenu Successfully!");
+            }
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            LOGGER.error("Unable to load context menus", e);
+        }
+        CONTEXT_MENUS = contextMenus;
     }
 
-    public static void main(String[] args) throws IOException, LoginException {
+    public static void main(String[] args) throws IOException {
         // Load properties into the PropertiesManager
         Properties prop = new Properties();
         prop.load(new FileInputStream("bot.properties"));
@@ -169,6 +190,7 @@ public class GeyserBot {
         client.useHelpBuilder(false);
         client.addCommands(COMMANDS.toArray(new Command[0]));
         client.addSlashCommands(SLASH_COMMANDS.toArray(new SlashCommand[0]));
+        client.addContextMenus(CONTEXT_MENUS.toArray(new ContextMenu[0]));
         client.setListener(new CommandErrorHandler());
         client.setCommandPreProcessBiFunction((event, command) -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
 
