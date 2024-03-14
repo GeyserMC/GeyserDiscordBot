@@ -154,6 +154,7 @@ public class GeyserBot {
             Sentry.init(options -> {
                 options.setDsn(PropertiesManager.getSentryDsn());
                 options.setEnvironment(PropertiesManager.getSentryEnv());
+                options.setEnabled(true);
                 LOGGER.info("Sentry.io loaded");
             });
         }
