@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -174,12 +174,21 @@ public class BanCommand extends SlashCommand {
                     embedBuilder.addField("Additional Info", punishmentMessage, false);
                 }
 
-                channel.sendMessageEmbeds(embedBuilder.build()).queue(message -> {}, throwable -> {});
-            }, throwable -> {});
+                channel.sendMessageEmbeds(embedBuilder.build()).queue(message -> {
+                    // Ban user
+                    guild.ban(user, days, TimeUnit.DAYS).reason(reason).queue();
+                }, throwable -> {
+                    // Ban user
+                    guild.ban(user, days, TimeUnit.DAYS).reason(reason).queue();
+                });
+            }, throwable -> {
+                // Ban user
+                guild.ban(user, days, TimeUnit.DAYS).reason(reason).queue();
+            });
+        } else {
+            // Ban user
+            guild.ban(user, days, TimeUnit.DAYS).reason(reason).queue();
         }
-
-        // Ban user
-        guild.ban(user, days, TimeUnit.DAYS).reason(reason).queue();
 
         // Log the change
         int id = GeyserBot.storageManager.addLog(moderator, "ban", user, reason);
