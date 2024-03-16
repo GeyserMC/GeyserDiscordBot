@@ -139,7 +139,7 @@ public class BanCommand extends SlashCommand {
         event.getMessage().replyEmbeds(handle(member, moderator, event.getGuild(),delDays, silent, reason)).queue();
     }
 
-    private MessageEmbed handle(Member member, Member moderator, Guild guild, int days, boolean silent, String reason) {
+    public static MessageEmbed handle(Member member, Member moderator, Guild guild, int days, boolean silent, String reason) {
         // Check the user exists
         if (member == null) {
             return new EmbedBuilder()
