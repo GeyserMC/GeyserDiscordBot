@@ -35,6 +35,7 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.jagrosh.jdautilities.command.UserContextMenu;
 import com.jagrosh.jdautilities.command.UserContextMenuEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.geysermc.discordbot.util.BotColors;
 import pw.chew.chewbotcca.listeners.BotCommandListener;
 
@@ -47,7 +48,7 @@ public class CommandErrorHandler extends BotCommandListener implements CommandLi
     public void onSlashCommandException(SlashCommandEvent event, SlashCommand command, Throwable throwable) {
         String errorMessage = getErrorMessage(throwable);
 
-        event.replyEmbeds(new EmbedBuilder()
+        MessageEmbed errorEmbed = new EmbedBuilder()
                 .setTitle("Error handling command")
                 .setDescription("An error occurred while handling the command")
                 .addField("Command usage", "/" + command.getName() + (command.getArguments() != null ? " " + command.getArguments() : ""), false)
@@ -55,7 +56,11 @@ public class CommandErrorHandler extends BotCommandListener implements CommandLi
                 .addField("Error", errorMessage, false)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.FAILURE.getColor())
-                .build()).setEphemeral(true).queue();
+                .build();
+
+        event.replyEmbeds(errorEmbed).setEphemeral(true).queue(message -> {}, throwable1 -> {
+            event.getInteraction().getHook().editOriginalEmbeds(errorEmbed).queue();
+        });
 
         super.onSlashCommandException(event, command, throwable);
     }
@@ -81,14 +86,18 @@ public class CommandErrorHandler extends BotCommandListener implements CommandLi
     public void onMessageContextMenuException(MessageContextMenuEvent event, MessageContextMenu menu, Throwable throwable) {
         String errorMessage = getErrorMessage(throwable);
 
-        event.replyEmbeds(new EmbedBuilder()
+        MessageEmbed errorEmbed = new EmbedBuilder()
                 .setTitle("Error handling context menu option")
                 .setDescription("An error occurred while handling the message context menu option")
                 .addField("Menu option", menu.getName(), false)
                 .addField("Error", errorMessage, false)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.FAILURE.getColor())
-                .build()).setEphemeral(true).queue();
+                .build();
+
+        event.replyEmbeds(errorEmbed).setEphemeral(true).queue(message -> {}, throwable1 -> {
+            event.getInteraction().getHook().editOriginalEmbeds(errorEmbed).queue();
+        });
 
         super.onMessageContextMenuException(event, menu, throwable);
     }
@@ -97,14 +106,18 @@ public class CommandErrorHandler extends BotCommandListener implements CommandLi
     public void onUserContextMenuException(UserContextMenuEvent event, UserContextMenu menu, Throwable throwable) {
         String errorMessage = getErrorMessage(throwable);
 
-        event.replyEmbeds(new EmbedBuilder()
+        MessageEmbed errorEmbed = new EmbedBuilder()
                 .setTitle("Error handling context menu option")
                 .setDescription("An error occurred while handling the user context menu option")
                 .addField("Menu option", menu.getName(), false)
                 .addField("Error", errorMessage, false)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.FAILURE.getColor())
-                .build()).setEphemeral(true).queue();
+                .build();
+
+        event.replyEmbeds(errorEmbed).setEphemeral(true).queue(message -> {}, throwable1 -> {
+            event.getInteraction().getHook().editOriginalEmbeds(errorEmbed).queue();
+        });
 
         super.onUserContextMenuException(event, menu, throwable);
     }
