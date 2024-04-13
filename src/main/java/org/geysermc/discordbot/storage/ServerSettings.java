@@ -28,6 +28,7 @@ package org.geysermc.discordbot.storage;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
@@ -220,6 +221,38 @@ public class ServerSettings {
         if (channel == null) {
             return null;
         }
+        return guild.getForumChannelById(channel);
+    }
+
+    /**
+     * Get the preview feeds channel for the selected guild
+     *
+     * @param guild ID of the guild to get the channel for
+     * @return The preview feeds channel for the guild
+     */
+    public static NewsChannel getPreviewFeedsChannel(@NotNull Guild guild) {
+        String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "preview-feeds-channel");
+
+        if (channel == null) {
+            return null;
+        }
+
+        return guild.getNewsChannelById(channel);
+    }
+
+    /**
+     * Get the preview channel for the selected guild
+     *
+     * @param guild ID of the guild to get the channel for
+     * @return The preview channel for the guild
+     */
+    public static ForumChannel getPreviewChannel(@NotNull Guild guild) {
+        String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "preview-channel");
+
+        if (channel == null) {
+            return null;
+        }
+
         return guild.getForumChannelById(channel);
     }
 }

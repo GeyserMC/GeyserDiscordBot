@@ -62,7 +62,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pw.chew.chewbotcca.util.RestClient;
 
-import javax.security.auth.login.LoginException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -240,6 +239,7 @@ public class GeyserBot {
                             new HelpHandler(),
                             new SupportHandler(),
                             new DeleteHandler(),
+                            new PreviewHandler(),
                             client.build(),
                             tagClient.build())
                     .build();
