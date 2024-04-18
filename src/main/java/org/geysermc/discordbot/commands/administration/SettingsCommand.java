@@ -69,6 +69,8 @@ public class SettingsCommand extends SlashCommand {
                         .addChoice("Forum Channel", "forum-channel")
                         .addChoice("Health Checks", "health-checks")
                         .addChoice("Log channel", "log-channel")
+                        .addChoice("Preview Channel", "preview-channel")
+                        .addChoice("Preview Feeds Channel", "preview-feeds-channel")
                         .addChoice("Punishment Message", "punishment-message")
                         .addChoice("Roles", "roles")
                         .addChoice("RSS Feeds", "rss-feeds")

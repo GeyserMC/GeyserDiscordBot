@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'application'
     id 'io.sentry.jvm.gradle' version '3.13.0'
 }
 
@@ -102,6 +103,11 @@ jar {
             'Main-Class': 'org.geysermc.discordbot.GeyserBot'
         )
     }
+}
+
+// Allow running with `./gradlew run` task
+application {
+    mainClass = 'org.geysermc.discordbot.GeyserBot'
 }
 
 test {
