@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,7 +46,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BadLinksHandler extends ListenerAdapter {
-    private static final Pattern DOMAIN_PATTERN = Pattern.compile("(?:[A-z0-9](?:[A-z0-9-]{0,61}[A-z0-9])?\\.)+[A-z0-9][A-z0-9-]{0,61}[A-z0-9]");
+    private static final Pattern DOMAIN_PATTERN = Pattern.compile("(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9]");
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
@@ -55,7 +55,7 @@ public class BadLinksHandler extends ListenerAdapter {
 
         // Ignore users with the manage message perms
         if (event.getMember() == null || event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
-//            return;
+            return;
         }
 
         // Find URLs
