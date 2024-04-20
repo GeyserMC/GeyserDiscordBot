@@ -50,19 +50,16 @@ public class PreviewHandler extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
-        if (event.getAuthor().isBot())
-            return;
+        if (event.getAuthor().isBot()) return;
+        if (!event.isFromGuild()) return;
 
         NewsChannel previewFeedsChannel = ServerSettings.getPreviewFeedsChannel(event.getGuild());
-        if (previewFeedsChannel == null)
-            return;
-        if (event.getChannel().getIdLong() != previewFeedsChannel.getIdLong())
-            return;
+        if (previewFeedsChannel == null) return;
+        if (event.getChannel().getIdLong() != previewFeedsChannel.getIdLong()) return;
 
         // Create a post in the preview forum channel with this content
         ForumChannel previewChannel = ServerSettings.getPreviewChannel(event.getGuild());
-        if (previewChannel == null)
-            return;
+        if (previewChannel == null) return;
 
         // Check if the message contains a GitHub PR link and extract the repo and PR
         // number via matcher
