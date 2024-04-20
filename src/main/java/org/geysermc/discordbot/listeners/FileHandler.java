@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -77,10 +77,10 @@ public class FileHandler extends ListenerAdapter {
             if (extensions.contains(attachment.getFileExtension())) {
                 EmbedBuilder embed = new EmbedBuilder();
 
-//                // Handled by Discord's new display feature
-//                if (attachment.getSize() < 50000) {
-//                    continue;
-//                }
+                // Handled by Discord's new display feature
+                if (attachment.getSize() < 50000) {
+                    continue;
+                }
 
                 try {
                     File attachmentFile = attachment.getProxy().downloadToFile(File.createTempFile("GeyserBotTempFile", ".temp")).get();
