@@ -55,6 +55,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class PingCommand extends SlashCommand {
+    private static final int TIMEOUT = 1250; // in ms, has to stay below 1500 (1.5s for each platform, total of 3s)
 
     public PingCommand() {
         this.name = "ping";
@@ -139,7 +140,7 @@ public class PingCommand extends SlashCommand {
             MCPingOptions options = MCPingOptions.builder()
                     .hostname(hostname)
                     .port(jePort)
-                    .timeout(1500)
+                    .timeout(TIMEOUT)
                     .build();
 
             MCPingResponse data = MCPing.getPing(options);
@@ -159,7 +160,7 @@ public class PingCommand extends SlashCommand {
             client.bind().join();
 
             InetSocketAddress addressToPing = new InetSocketAddress(hostname, bePort);
-            BedrockPong pong = client.ping(addressToPing, 1500, TimeUnit.MILLISECONDS).get();
+            BedrockPong pong = client.ping(addressToPing, TIMEOUT, TimeUnit.MILLISECONDS).get();
 
             bedrockInfo = "**MOTD:** \n```\n" + BotHelpers.trim(MCPingUtil.stripColors(pong.getMotd()), 100) + (pong.getSubMotd() != null ? "\n" + BotHelpers.trim(MCPingUtil.stripColors(pong.getSubMotd()), 100) : "") + "\n```\n" +
                     "**Players:** " + pong.getPlayerCount() + "/" + pong.getMaximumPlayerCount() + "\n" +
