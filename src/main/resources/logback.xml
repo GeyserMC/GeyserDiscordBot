@@ -8,6 +8,9 @@
 
     <!-- Configure the Sentry appender, overriding the logging threshold to the WARN level -->
     <appender name="Sentry" class="io.sentry.logback.SentryAppender">
+        <options>
+            <enabled>false</enabled>
+        </options>
     </appender>
 
     <!-- Enable the Console and Sentry appenders, Console is provided as an example

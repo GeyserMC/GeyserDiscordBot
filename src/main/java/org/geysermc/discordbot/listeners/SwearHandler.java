@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,7 +81,7 @@ public class SwearHandler extends ListenerAdapter {
                 if (fileName.endsWith(".wlist")) {
                     fileCount++;
                     // Load the lines
-                    String[] lines = new String(BotHelpers.bytesFromResource("filters/" + fileName)).split("\n");
+                    String[] lines = new String(BotHelpers.bytesFromResource("filters/" + fileName), StandardCharsets.UTF_8).split("\n");
                     for (String line : lines) {
                         filterPatterns.add(Pattern.compile("(^| )" + line.trim() + "( |$)", Pattern.CASE_INSENSITIVE));
                     }
@@ -92,7 +93,7 @@ public class SwearHandler extends ListenerAdapter {
 
         GeyserBot.LOGGER.info("Loaded " + filterPatterns.size() + " filter patterns from " + fileCount + " files");
 
-        nicknames = new String(BotHelpers.bytesFromResource("nicknames.wlist")).trim().split("\n");
+        nicknames = new String(BotHelpers.bytesFromResource("nicknames.wlist"), StandardCharsets.UTF_8).trim().split("\n");
 
         GeyserBot.LOGGER.info("Loaded " + nicknames.length + " nicknames");
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,6 +40,7 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
+import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.util.NetworkUtils;
 
@@ -52,6 +53,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class PingCommand extends SlashCommand {
+    private static final int TIMEOUT = 1250; // in ms, has to stay below 1500 (1.5s for each platform, total of 3s)
 
     public PingCommand() {
         this.name = "ping";
@@ -136,12 +138,12 @@ public class PingCommand extends SlashCommand {
             MCPingOptions options = MCPingOptions.builder()
                     .hostname(ip)
                     .port(jePort)
-                    .timeout(1500)
+                    .timeout(TIMEOUT)
                     .build();
 
             MCPingResponse data = MCPing.getPing(options);
 
-            javaInfo = "**MOTD:** \n```\n" + data.getDescription().getStrippedText() + "\n```\n" +
+            javaInfo = "**MOTD:** \n```\n" + BotHelpers.trim(data.getDescription().getStrippedText(), 100) + "\n```\n" +
                     "**Players:** " + (data.getPlayers() == null ? "Unknown" : data.getPlayers().getOnline() + "/" + data.getPlayers().getMax()) + "\n" +
                     "**Version:** " + data.getVersion().getName() + " (" + data.getVersion().getProtocol() + ")";
             success = true;
@@ -156,9 +158,9 @@ public class PingCommand extends SlashCommand {
             client.bind().join();
 
             InetSocketAddress addressToPing = new InetSocketAddress(ip, bePort);
-            BedrockPong pong = client.ping(addressToPing, 1500, TimeUnit.MILLISECONDS).get();
+            BedrockPong pong = client.ping(addressToPing, TIMEOUT, TimeUnit.MILLISECONDS).get();
 
-            bedrockInfo = "**MOTD:** \n```\n" + MCPingUtil.stripColors(pong.getMotd()) + (pong.getSubMotd() != null ? "\n" + MCPingUtil.stripColors(pong.getSubMotd()) : "") + "\n```\n" +
+            bedrockInfo = "**MOTD:** \n```\n" + BotHelpers.trim(MCPingUtil.stripColors(pong.getMotd()), 100) + (pong.getSubMotd() != null ? "\n" + BotHelpers.trim(MCPingUtil.stripColors(pong.getSubMotd()), 100) : "") + "\n```\n" +
                     "**Players:** " + pong.getPlayerCount() + "/" + pong.getMaximumPlayerCount() + "\n" +
                     "**Version:** " + pong.getVersion() + " (" + pong.getProtocolVersion() + ")";
             success = true;
