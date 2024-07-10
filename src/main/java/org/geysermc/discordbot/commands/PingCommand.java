@@ -67,7 +67,6 @@ public class PingCommand extends SlashCommand {
             new OptionData(OptionType.INTEGER, "port", "The port of the server you want to ping", false)
                     .setMinValue(1)
                     .setMaxValue(65535)
-                    .setMaxLength(5)
         );
     }
 
