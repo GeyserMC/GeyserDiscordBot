@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,7 @@ public class IntegrityDumpIssueCheck extends AbstractDumpIssueCheck {
         }
 
         String md5Hash = dump.getJSONObject("hashInfo").getString("md5Hash");
-        String response = RestClient.simpleGetString("https://ci.opencollab.dev/fingerprint/" + md5Hash + "/api/json");
+        String response = RestClient.get("https://ci.opencollab.dev/fingerprint/" + md5Hash + "/api/json").asString();
 
         // Check if 404
         if (response.startsWith("<html>")) {

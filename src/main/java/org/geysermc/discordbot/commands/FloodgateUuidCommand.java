@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.util.BotColors;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
-import pw.chew.chewbotcca.util.RestClient.RestResponse;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -59,10 +58,9 @@ public class FloodgateUuidCommand extends SlashCommand {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Floodgate Player UUID");
 
-        RestResponse<JSONObject> restResponse =
-                RestClient.getJsonObject("https://api.geysermc.org/v2/xbox/xuid/" + username);
-        int serverCode = restResponse.statusCode();
-        JSONObject response = restResponse.body();
+        RestClient.Response restResponse = RestClient.get("https://api.geysermc.org/v2/xbox/xuid/" + username);
+        int serverCode = restResponse.code();
+        JSONObject response = restResponse.asJSONObject();
 
         // Check what code the server returns and send the corresponding embed to author.
         switch (serverCode) {

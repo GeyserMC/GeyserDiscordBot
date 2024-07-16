@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ public class JiraUpdateCheck extends AbstractUpdateCheck {
 
     @Override
     public void populate() throws JSONException {
-        JSONArray versions = RestClient.simpleGetJsonArray(CHECK_URL + project + "/versions");
+        JSONArray versions = RestClient.get(CHECK_URL + project + "/versions").asJSONArray();
 
         for (int i = 0; i < versions.length(); i++) {
             String name = versions.getJSONObject(i).getString("name");
@@ -63,7 +63,7 @@ public class JiraUpdateCheck extends AbstractUpdateCheck {
 
     @Override
     public void check() {
-        String versionsText = RestClient.simpleGetString(CHECK_URL + project + "/versions");
+        String versionsText = RestClient.get(CHECK_URL + project + "/versions").asString();
 
         try {
             JSONArray versions = new JSONArray(versionsText);

@@ -119,8 +119,8 @@ public class BadLinksHandler extends ListenerAdapter {
 
             if (!foundMatch) {
                 // Make request to https://anti-fish.bitflow.dev/check
-                RequestBody body = RequestBody.create("{\"message\":" + JSONObject.quote(event.getMessage().getContentRaw()) + "}", RestClient.JSON);
-                JSONObject response = RestClient.simplePost("https://anti-fish.bitflow.dev/check", body);
+                JSONObject body = new JSONObject().put("message", event.getMessage().getContentRaw());
+                JSONObject response = RestClient.post("https://anti-fish.bitflow.dev/check", body).asJSONObject();
                 if (response.getBoolean("match")) {
                     JSONArray matches = response.getJSONArray("matches");
                     for (int i = 0; i < matches.length(); i++) {

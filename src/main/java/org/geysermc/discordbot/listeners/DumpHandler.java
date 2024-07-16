@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -92,7 +92,7 @@ public class DumpHandler extends ListenerAdapter {
             // Check attached files
             for (Message.Attachment attachment : event.getMessage().getAttachments()) {
                 if (attachment.getFileName().equals("dump.json")) {
-                    String contents = RestClient.simpleGetString(attachment.getUrl());
+                    String contents = RestClient.get(attachment.getUrl()).asString();
 
                     if (isDump(contents)) {
                         parseDump(event, null, contents);
@@ -106,7 +106,7 @@ public class DumpHandler extends ListenerAdapter {
         String cleanURL = "https://geysermc.org/utilities/dump_viewer#" + matcher.group(2);
         String rawURL = "https://dump.geysermc.org/raw/" + matcher.group(2);
 
-        parseDump(event, cleanURL, RestClient.simpleGetString(rawURL));
+        parseDump(event, cleanURL, RestClient.get(rawURL).asString());
     }
 
     /**

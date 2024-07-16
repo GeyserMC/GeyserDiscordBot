@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -172,7 +172,7 @@ public class ProviderCommand extends SlashCommand {
         }
 
         // Fetch the search page
-        JSONObject contents = RestClient.simpleGetJsonObject("https://raw.githubusercontent.com/GeyserMC/GeyserWiki/master/_data/providers.json");
+        JSONObject contents = RestClient.get("https://raw.githubusercontent.com/GeyserMC/GeyserWiki/master/_data/providers.json").asJSONObject();
         Map<String, Object> descriptionTemplates = contents.getJSONObject("description_templates").toMap();
 
         List<Provider> providers = new ArrayList<>();

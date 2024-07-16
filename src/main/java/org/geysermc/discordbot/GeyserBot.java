@@ -237,7 +237,6 @@ public class GeyserBot {
                             new VoiceGroupHandler(),
                             new BadLinksHandler(),
                             new HelpHandler(),
-                            new SupportHandler(),
                             new DeleteHandler(),
                             new PreviewHandler(),
                             client.build(),
@@ -282,8 +281,8 @@ public class GeyserBot {
 
         // Start the bStats tracking thread
         generalThreadPool.scheduleAtFixedRate(() -> {
-            JSONArray servers = RestClient.simpleGetJsonArray("https://bstats.org/api/v1/plugins/5273/charts/servers/data");
-            JSONArray players = RestClient.simpleGetJsonArray("https://bstats.org/api/v1/plugins/5273/charts/players/data");
+            JSONArray servers = RestClient.get("https://bstats.org/api/v1/plugins/5273/charts/servers/data").asJSONArray();
+            JSONArray players = RestClient.get("https://bstats.org/api/v1/plugins/5273/charts/players/data").asJSONArray();
             int serverCount = servers.getJSONArray(servers.length() - 1).getInt(1);
             int playerCount = players.getJSONArray(players.length() - 1).getInt(1);
             jda.getPresence().setActivity(Activity.playing(BotHelpers.coolFormat(serverCount) + " servers, " + BotHelpers.coolFormat(playerCount) + " players"));

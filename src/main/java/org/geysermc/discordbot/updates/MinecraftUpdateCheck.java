@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@ public class MinecraftUpdateCheck extends AbstractUpdateCheck {
 
     @Override
     public void populate() throws JSONException {
-        JSONObject versionsData = RestClient.simpleGetJsonObject(CHECK_URL);
+        JSONObject versionsData = RestClient.get(CHECK_URL).asJSONObject();
         JSONArray versions = versionsData.getJSONArray("versions");
 
         for (int i = 0; i < versions.length(); i++) {
@@ -53,7 +53,7 @@ public class MinecraftUpdateCheck extends AbstractUpdateCheck {
 
     @Override
     public void check() {
-        JSONObject versionsData = RestClient.simpleGetJsonObject(CHECK_URL);
+        JSONObject versionsData = RestClient.get(CHECK_URL).asJSONObject();
         if (versionsData.has("error")) {
             GeyserBot.LOGGER.warn("Error while checking '" + CHECK_URL + "': " + versionsData.getString("error"));
             return;

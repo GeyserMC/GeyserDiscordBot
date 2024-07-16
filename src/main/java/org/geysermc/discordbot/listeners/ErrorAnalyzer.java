@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -162,7 +162,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                     extensions.add("0");
                 }
                 if (extensions.contains(attachment.getFileExtension())) {
-                    handleLog(event, RestClient.simpleGetString(attachment.getUrl()), false);
+                    handleLog(event, RestClient.get(attachment.getUrl()).asString(), false);
                 }
             }
         }
@@ -192,7 +192,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
             content = rawContent;
         } else {
             // We didn't find a url so use the message content
-            content = RestClient.simpleGetString(url);
+            content = RestClient.get(url).asString();
         }
 
         handleLog(event, content, false);

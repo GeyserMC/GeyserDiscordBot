@@ -27,6 +27,7 @@ package org.geysermc.discordbot.listeners;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.nimbusds.jose.shaded.json.JSONArray;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
@@ -85,21 +86,24 @@ public class FileHandler extends ListenerAdapter {
                 try {
                     File attachmentFile = attachment.getProxy().downloadToFile(File.createTempFile("GeyserBotTempFile", ".temp")).get();
 
-                    RequestBody body = RequestBody.create("{" +
-                                "\"name\":" + JSONObject.quote(attachment.getFileName()) + "," +
-                                "\"expires\":\"" + event.getMessage().getTimeCreated().plusDays(1) + "\"," +
-                                "\"files\": [" +
-                                    "{" +
-                                        "\"name\":" + JSONObject.quote(attachment.getFileName()) + "," +
-                                        "\"content\": {" +
-                                            "\"format\": \"text\"," +
-                                            "\"value\": " + JSONObject.quote(new String(Files.readAllBytes(attachmentFile.toPath()))) +
-                                        "}" +
-                                    "}" +
-                                "]" +
-                            "}", RestClient.JSON);
+                    JSONObject body = new JSONObject();
+                    body.put("name", attachment.getFileName());
+                    body.put("expires", event.getMessage().getTimeCreated().plusDays(1));
 
-                    JSONObject response = RestClient.simplePost("https://api.paste.gg/v1/pastes", body);
+                    JSONObject file = new JSONObject();
+                    file.put("name", attachment.getFileName());
+
+                    JSONObject content = new JSONObject();
+                    content.put("format", "text");
+                    content.put("value", new String(Files.readAllBytes(attachmentFile.toPath())));
+
+                    file.put("content", content);
+
+                    JSONArray files = new JSONArray();
+                    files.add(file);
+                    body.put("files", files);
+
+                    JSONObject response = RestClient.post("https://api.paste.gg/v1/pastes", body).asJSONObject();
 
                     // Cleanup the file
                     attachmentFile.delete();

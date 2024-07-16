@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,7 @@ public class QueueCommand extends SlashCommand {
     }
 
     protected MessageEmbed handle() {
-        JSONObject stats = RestClient.simpleGetJsonObject("https://api.geysermc.org/v2/stats");
+        JSONObject stats = RestClient.get("https://api.geysermc.org/v2/stats").asJSONObject();
         if (stats.has("error")) {
             return MessageHelper.errorResponse(
                     null,
