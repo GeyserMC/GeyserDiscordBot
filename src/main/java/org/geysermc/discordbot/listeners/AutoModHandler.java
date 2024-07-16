@@ -75,10 +75,10 @@ public class AutoModHandler extends ListenerAdapter {
         User user = member.getUser();
         user.openPrivateChannel().queue((channel) -> {
             MessageEmbed embed = new EmbedBuilder()
-                .setTitle("You have been automatically timed out of GeyserMC!")
+                .setTitle("You have been automatically timed out in GeyserMC!")
                 .addField("Reason", "Suspected account compromise", false)
                 .addField("Duration", "7 days", false)
-                .addField("Reccomended actions", "Change your Discord password, enable 2FA, and scan your computer for malware. See https://support.discord.com/hc/en-us/articles/24160905919511-My-Discord-Account-was-Hacked-or-Compromised for more info.", false)
+                .addField("Recommended Actions", "Change your Discord password, enable 2FA, and scan your computer for malware. See [Discord's article](https://support.discord.com/hc/en-us/articles/24160905919511-My-Discord-Account-was-Hacked-or-Compromised) for more info.", false)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.WARNING.getColor())
                 .build();
