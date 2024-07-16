@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 
 package org.geysermc.discordbot.util;
 
-import io.sentry.Scope;
+import io.sentry.IScope;
 import io.sentry.Sentry;
 import io.sentry.protocol.User;
 import net.dv8tion.jda.api.entities.Guild;
@@ -45,7 +45,7 @@ public class SentryEventManager extends InterfacedEventManager {
         super.handle(event);
     }
 
-    private void buildMessageScope(Scope scope, net.dv8tion.jda.api.entities.User author, Guild server, MessageChannel channel, String messageId) {
+    private void buildMessageScope(IScope scope, net.dv8tion.jda.api.entities.User author, Guild server, MessageChannel channel, String messageId) {
         User user = new User();
         user.setId(author.getId());
         user.setUsername(author.getAsTag());

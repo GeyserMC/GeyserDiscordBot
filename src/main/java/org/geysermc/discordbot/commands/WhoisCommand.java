@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 
 public class WhoisCommand extends SlashCommand {
 
-    private static final List<Permission> PRIVILEGED_PERMISSIONS = Arrays.asList(Permission.ADMINISTRATOR, Permission.MANAGE_SERVER, Permission.MANAGE_ROLES, Permission.MANAGE_CHANNEL, Permission.MESSAGE_MANAGE, Permission.MANAGE_WEBHOOKS, Permission.NICKNAME_MANAGE, Permission.MANAGE_EMOJIS_AND_STICKERS, Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.MESSAGE_MENTION_EVERYONE);
+    private static final List<Permission> PRIVILEGED_PERMISSIONS = Arrays.asList(Permission.ADMINISTRATOR, Permission.MANAGE_SERVER, Permission.MANAGE_ROLES, Permission.MANAGE_CHANNEL, Permission.MESSAGE_MANAGE, Permission.MANAGE_WEBHOOKS, Permission.NICKNAME_MANAGE, Permission.MANAGE_GUILD_EXPRESSIONS, Permission.KICK_MEMBERS, Permission.BAN_MEMBERS, Permission.MESSAGE_MENTION_EVERYONE, Permission.MODERATE_MEMBERS);
 
     public WhoisCommand() {
         this.name = "whois";
