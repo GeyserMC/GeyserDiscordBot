@@ -239,6 +239,7 @@ public class GeyserBot {
                             new HelpHandler(),
                             new DeleteHandler(),
                             new PreviewHandler(),
+                            new AutoModHandler(),
                             client.build(),
                             tagClient.build())
                     .build();
