@@ -46,10 +46,14 @@ import java.util.concurrent.TimeUnit;
 
 public class AutoModHandler extends ListenerAdapter {
     private final Cache<Long, Integer> executionCache;
+    private final Cache<Long, Boolean> kickCache;
 
     public AutoModHandler() {
         this.executionCache = CacheBuilder.newBuilder()
             .expireAfterWrite(5, TimeUnit.MINUTES)
+            .build();
+        this.kickCache = CacheBuilder.newBuilder()
+            .expireAfterWrite(10, TimeUnit.SECONDS)
             .build();
     }
 
@@ -67,6 +71,10 @@ public class AutoModHandler extends ListenerAdapter {
         this.executionCache.put(userId, ++executions);
 
         if (executions < 3) return;
+
+        // Prevent trying to kick the user multiple times
+        if (this.kickCache.getIfPresent(userId) != null) return;
+        this.kickCache.put(userId, true);
 
         Member member = event.getGuild().getMemberById(userId);
         if (member == null) return;
