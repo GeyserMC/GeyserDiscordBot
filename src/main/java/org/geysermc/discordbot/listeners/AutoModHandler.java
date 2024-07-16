@@ -69,7 +69,7 @@ public class AutoModHandler extends ListenerAdapter {
         if (executions < 3) return;
 
         Member member = event.getGuild().getMemberById(userId);
-        if (member == null || member.isTimedOut()) return;
+        if (member == null) return;
 
         Guild guild = event.getGuild();
         String reason = "Suspected account compromise";
