@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,13 +28,18 @@ package org.geysermc.discordbot.commands;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.tags.SlashTag;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
+import org.geysermc.discordbot.util.DicesCoefficient;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class TagCommand extends SlashCommand {
 
@@ -46,6 +51,7 @@ public class TagCommand extends SlashCommand {
 
         this.options = Collections.singletonList(
             new OptionData(OptionType.STRING, "name", "The tag to get (Supports aliases)", true)
+                    .setAutoComplete(true)
         );
     }
 
@@ -79,7 +85,60 @@ public class TagCommand extends SlashCommand {
                     .setDescription("Missing requested tag")
                     .build()).queue();
         }
+    }
 
+    @Override
+    public void onAutoComplete(CommandAutoCompleteInteractionEvent event) {
+        // Get the query
+        String query = event.getFocusedOption().getValue();
 
+        // Get the providers
+        List<String> tags = potentialTags(query);
+
+        event.replyChoices(tags.stream()
+                        .distinct()
+                        .map(tag -> new Command.Choice(tag, tag))
+                        .limit(25)
+                        .toArray(Command.Choice[]::new))
+                .queue();
+    }
+
+    List<String> potentialTags(String query) {
+        List<String> potential = new ArrayList<>();
+
+        for (SlashTag slashTag : TagsManager.getEmbedTags()) {
+            // Check if the name starts with the query
+            if (slashTag.getName().toLowerCase().startsWith(query.toLowerCase())) {
+                potential.add(slashTag.getName());
+                continue;
+            }
+
+            // Check if the name is similar
+            double similar = DicesCoefficient.diceCoefficientOptimized(query.toLowerCase(), slashTag.getName().toLowerCase());
+            if (similar > 0.2d) {
+                potential.add(slashTag.getName());
+                continue;
+            }
+
+            // Check the aliases
+            if (slashTag.getAliases() != null && !slashTag.getAliases().isEmpty()) {
+                for (String alias : slashTag.getAliases().split(",")) {
+                    // Check if the alias starts with the query
+                    if (alias.toLowerCase().startsWith(query.toLowerCase())) {
+                        potential.add(alias);
+                        break;
+                    }
+
+                    // Check if the alias is similar
+                    double aliasSimilar = DicesCoefficient.diceCoefficientOptimized(query.toLowerCase(), alias.toLowerCase());
+                    if (aliasSimilar > 0.2d) {
+                        potential.add(alias);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return potential;
     }
 }
