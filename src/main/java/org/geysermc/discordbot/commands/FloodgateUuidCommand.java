@@ -34,6 +34,8 @@ import org.geysermc.discordbot.util.BotColors;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -58,7 +60,7 @@ public class FloodgateUuidCommand extends SlashCommand {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Floodgate Player UUID");
 
-        RestClient.Response restResponse = RestClient.get("https://api.geysermc.org/v2/xbox/xuid/" + username);
+        RestClient.Response restResponse = RestClient.get("https://api.geysermc.org/v2/xbox/xuid/" + URLEncoder.encode(username, StandardCharsets.UTF_8));
         int serverCode = restResponse.code();
         JSONObject response = restResponse.asJSONObject();
 
