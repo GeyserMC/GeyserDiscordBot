@@ -46,10 +46,8 @@ import org.geysermc.discordbot.util.NetworkUtils;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -60,12 +58,15 @@ public class PingCommand extends SlashCommand {
     public PingCommand() {
         this.name = "ping";
         this.aliases = new String[] { "status" };
-        this.arguments = "<server>";
+        this.arguments = "<ip> [port]";
         this.help = "Ping a server to check if its accessible";
         this.guildOnly = false;
 
-        this.options = Collections.singletonList(
-            new OptionData(OptionType.STRING, "server", "The IP Address of the server you want to ping", true)
+        this.options = List.of(
+            new OptionData(OptionType.STRING, "ip", "The IP Address of the server you want to ping", true),
+            new OptionData(OptionType.INTEGER, "port", "The port of the server you want to ping", false)
+                    .setMinValue(1)
+                    .setMaxValue(65535)
         );
     }
 
@@ -74,9 +75,10 @@ public class PingCommand extends SlashCommand {
         // Defer to wait for us to load a response and allows for files to be uploaded
         InteractionHook interactionHook = event.deferReply().complete();
 
-        String ip = event.getOption("server").getAsString();
+        String ip = event.getOption("ip").getAsString();
+        Integer port = event.getOption("port") != null ? event.getOption("port").getAsInt() : null;
 
-        interactionHook.editOriginalEmbeds(handle(ip)).queue();
+        interactionHook.editOriginalEmbeds(handle(ip, port)).queue();
     }
 
     @Override
@@ -89,10 +91,13 @@ public class PingCommand extends SlashCommand {
             return;
         }
 
-        event.getMessage().replyEmbeds(handle(args.get(0))).queue();
+        String ip = args.get(0);
+        Integer port = args.size() > 1 ? Integer.parseInt(args.get(1)) : null;
+
+        event.getMessage().replyEmbeds(handle(ip, port)).queue();
     }
 
-    private MessageEmbed handle(String ip) {
+    private MessageEmbed handle(String ip, Integer port) {
         // Check we were given a valid IP/domain
         if (!ip.matches("[\\w.\\-:]+")) {
             return MessageHelper.errorResponse(null, "IP invalid", "The given IP appears to be invalid and won't be queried. If you believe this is incorrect please contact an admin.");
@@ -108,24 +113,16 @@ public class PingCommand extends SlashCommand {
             ip = ip.replaceAll("https?://", "").split("/")[0];
         }
 
-        String[] ipParts = ip.split(":");
-
-        String hostname = ipParts[0];
-
-        if (NetworkUtils.isInternalIP(hostname)) {
+        if (NetworkUtils.isInternalIP(ip)) {
             return MessageHelper.errorResponse(null, "IP invalid", "The given IP appears to be an internal address and won't be queried.");
         }
 
         int jePort = 25565;
         int bePort = 19132;
 
-        if (ipParts.length > 1) {
-            try {
-                jePort = Integer.parseInt(ipParts[1]);
-                bePort = jePort;
-            } catch (NumberFormatException ignored) {
-                return MessageHelper.errorResponse(null, "Invalid port", "The port you specified is not a valid number.");
-            }
+        if (port != null) {
+            jePort = port;
+            bePort = jePort;
         }
 
         if (jePort < 1 || jePort > 65535) {
@@ -138,7 +135,7 @@ public class PingCommand extends SlashCommand {
 
         try {
             MCPingOptions options = MCPingOptions.builder()
-                    .hostname(hostname)
+                    .hostname(ip)
                     .port(jePort)
                     .timeout(TIMEOUT)
                     .build();
@@ -159,7 +156,7 @@ public class PingCommand extends SlashCommand {
 
             client.bind().join();
 
-            InetSocketAddress addressToPing = new InetSocketAddress(hostname, bePort);
+            InetSocketAddress addressToPing = new InetSocketAddress(ip, bePort);
             BedrockPong pong = client.ping(addressToPing, TIMEOUT, TimeUnit.MILLISECONDS).get();
 
             bedrockInfo = "**MOTD:** \n```\n" + BotHelpers.trim(MCPingUtil.stripColors(pong.getMotd()), 100) + (pong.getSubMotd() != null ? "\n" + BotHelpers.trim(MCPingUtil.stripColors(pong.getSubMotd()), 100) : "") + "\n```\n" +
@@ -174,10 +171,9 @@ public class PingCommand extends SlashCommand {
         }
 
         return new EmbedBuilder()
-                .setTitle("Pinging server: " + ip)
-                .addField("Java", javaInfo, false)
-                .addField("Bedrock", bedrockInfo, false)
-                .setTimestamp(Instant.now())
+                .setTitle("Pinging server " + ip)
+                .addField("Java (" + jePort + ")", javaInfo, false)
+                .addField("Bedrock (" + bePort + ")", bedrockInfo, false)
                 .setColor(success ? BotColors.SUCCESS.getColor() : BotColors.FAILURE.getColor())
                 .build();
     }
