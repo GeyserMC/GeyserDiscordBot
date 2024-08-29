@@ -103,7 +103,7 @@ public class DumpHandler extends ListenerAdapter {
             return;
         }
 
-        String cleanURL = "https://geysermc.org/utilities/dump_viewer#" + matcher.group(2);
+        String cleanURL = "https://geysermc.org/utilities/dump-viewer#" + matcher.group(2);
         String rawURL = "https://dump.geysermc.org/raw/" + matcher.group(2);
 
         parseDump(event, cleanURL, RestClient.get(rawURL).asString());
