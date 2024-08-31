@@ -172,20 +172,16 @@ public class ProviderCommand extends SlashCommand {
         }
 
         // Fetch the search page
-        JSONObject contents = RestClient.get("https://raw.githubusercontent.com/GeyserMC/GeyserWiki/master/_data/providers.json").asJSONObject();
-        Map<String, Object> descriptionTemplates = contents.getJSONObject("description_templates").toMap();
+        JSONObject contents = RestClient.get("https://geysermc.org/data/providers.json").asJSONObject();
 
         List<Provider> providers = new ArrayList<>();
 
         for (String category : contents.keySet()) {
-            if (category.equals("description_templates")) continue;
-
             JSONArray categoryProviders = contents.getJSONArray(category);
             for (Object providerObj : categoryProviders) {
                 JSONObject provider = (JSONObject) providerObj;
 
-                String template = provider.has("description_template") ? descriptionTemplates.get(provider.getString("description_template")).toString() : "";
-                String description = String.format("%s %s", template, provider.optString("description", "")).trim();
+                String description = provider.getString("description").trim();
 
                 providers.add(new Provider(
                     provider.getString("name"),
