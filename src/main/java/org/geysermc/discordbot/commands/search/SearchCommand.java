@@ -264,6 +264,12 @@ public class SearchCommand extends SlashCommand {
                 }
             }
 
+            if (includedLines.isEmpty()) {
+                for (int i = 0; i < Math.min(lines.size(), 9); i++) {
+                    includedLines.add(i);
+                }
+            }
+
             int lastLine = -1;
             for (int i : includedLines) {
                 if (lastLine != -1 && i - lastLine > 1) {
