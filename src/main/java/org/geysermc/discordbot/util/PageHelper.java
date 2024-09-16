@@ -26,6 +26,7 @@
 package org.geysermc.discordbot.util;
 
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
@@ -48,7 +49,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A utility class for paginating through a list of embeds using buttons in Discord JDA.
  */
-public class PageUtils {
+public class PageHelper {
 
     private final Map<String, Integer> pages;
     private final List<MessageEmbed> embeds;
@@ -64,7 +65,7 @@ public class PageUtils {
      * @param event       The SlashCommandEvent.
      * @param time        The time in milliseconds before the paginator expires (default is 5 minutes).
      */
-    public PageUtils(
+    public PageHelper(
             List<MessageEmbed> embeds,
             SlashCommandEvent event,
             long time
@@ -99,10 +100,10 @@ public class PageUtils {
      * Constructor for Message-based Commands.
      *
      * @param embeds The list of embeds to paginate through.
-     * @param event  The CommandEvent from your command framework.
+     * @param event  The CommandEvent.
      * @param time   The time in milliseconds before the paginator expires (default is 5 minutes).
      */
-    public PageUtils(
+    public PageHelper(
             List<MessageEmbed> embeds,
             CommandEvent event,
             long time
@@ -140,8 +141,8 @@ public class PageUtils {
         boolean isFirstPage = currentPage == 0;
         boolean isLastPage = currentPage == embeds.size() - 1;
 
-        Button prevButton = Button.secondary("prev_page", "⏮️").withDisabled(isFirstPage);
-        Button nextButton = Button.secondary("next_page", "⏭️").withDisabled(isLastPage);
+        Button prevButton = Button.secondary("prev_page", Emoji.fromUnicode("\u23ee")).withDisabled(isFirstPage);
+        Button nextButton = Button.secondary("next_page", Emoji.fromUnicode("\u23ed")).withDisabled(isLastPage);
 
         return ActionRow.of(prevButton, nextButton).getActionComponents();
     }

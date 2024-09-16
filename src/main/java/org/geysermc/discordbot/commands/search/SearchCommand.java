@@ -37,7 +37,7 @@ import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.DocSearchResult;
 import org.geysermc.discordbot.util.MessageHelper;
-import org.geysermc.discordbot.util.PageUtils;
+import org.geysermc.discordbot.util.PageHelper;
 import org.geysermc.discordbot.util.PropertiesManager;
 
 import java.net.URLEncoder;
@@ -111,7 +111,7 @@ public class SearchCommand extends SlashCommand {
                 return;
             }
 
-            new PageUtils(embeds, event, -1);
+            new PageHelper(embeds, event, -1);
         });
 
     }
@@ -138,7 +138,7 @@ public class SearchCommand extends SlashCommand {
                 return;
             }
 
-            new PageUtils(embeds, event, -1);
+            new PageHelper(embeds, event, -1);
         });
     }
 
@@ -267,7 +267,7 @@ public class SearchCommand extends SlashCommand {
             int lastLine = -1;
             for (int i : includedLines) {
                 if (lastLine != -1 && i - lastLine > 1) {
-                    description += "**•••**\n";
+                    description += "**\u2022\u2022\u2022**\n";
                 }
 
                 description += "> " + lines.get(i);
