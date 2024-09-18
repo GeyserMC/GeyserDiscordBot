@@ -25,7 +25,8 @@
 
 package org.geysermc.discordbot.commands.search;
 
-import com.algolia.search.models.indexing.Query;
+import com.algolia.model.search.FacetFilters;
+import com.algolia.model.search.SearchParamsObject;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
@@ -54,7 +55,7 @@ import java.util.stream.Collectors;
 /**
  * A command to search the Geyser wiki for a query.
  */
-public class SearchCommand extends SlashCommand {
+public class WikiCommand extends SlashCommand {
     /**
      * The attributes to retrieve from the Algolia search.
      */
@@ -64,8 +65,8 @@ public class SearchCommand extends SlashCommand {
     /**
      * The facets to filter the Algolia search by.
      */
-    private static final List<List<String>> FACETS = Arrays.asList(Arrays.asList("language:en"),
-            Arrays.asList("docusaurus_tag:default", "docusaurus_tag:docs-default-current"));
+    private static final FacetFilters FACETS = FacetFilters.of("""
+            ["language:en",["docusaurus_tag:default","docusaurus_tag:docs-default-current"]]""");
 
     /**
      * The tag with which to surround exact matches.
@@ -78,15 +79,15 @@ public class SearchCommand extends SlashCommand {
     private static final int MAX_RESULTS = 10;
 
     /**
-     * The constructor for the SearchCommand.
+     * The constructor for the WikiCommand.
      */
-    public SearchCommand() {
-        this.name = "search";
+    public WikiCommand() {
+        this.name = "wiki";
         this.arguments = "<query>";
         this.help = "Search the Geyser wiki for a query";
         this.guildOnly = false;
 
-        this.options = Arrays.asList(new OptionData(OptionType.STRING, "query", "The search query", true));
+        this.options = Collections.singletonList(new OptionData(OptionType.STRING, "query", "The search query", true));
     }
 
     /**
@@ -113,7 +114,6 @@ public class SearchCommand extends SlashCommand {
 
             new PageHelper(embeds, event, -1);
         });
-
     }
 
     /**
@@ -152,13 +152,15 @@ public class SearchCommand extends SlashCommand {
         CompletableFuture<List<MessageEmbed>> future = new CompletableFuture<>();
 
         try {
-            GeyserBot.getAlgolia().searchAsync(new Query(query)
-                    .setHitsPerPage(MAX_RESULTS)
-                    .setHighlightPreTag(HIGHLIGHT_TAG)
-                    .setHighlightPostTag(HIGHLIGHT_TAG)
-                    .setAttributesToSnippet(ATTRIBUTES)
-                    .setAttributesToRetrieve(ATTRIBUTES)
-                    .setFacetFilters(FACETS))
+            GeyserBot.getAlgolia().searchSingleIndexAsync(
+                    PropertiesManager.getAlgoliaIndexName(), new SearchParamsObject()
+                            .setQuery(query)
+                            .setHitsPerPage(MAX_RESULTS)
+                            .setHighlightPreTag(HIGHLIGHT_TAG)
+                            .setHighlightPostTag(HIGHLIGHT_TAG)
+                            .setAttributesToSnippet(ATTRIBUTES)
+                            .setAttributesToRetrieve(ATTRIBUTES)
+                            .setFacetFilters(FACETS), DocSearchResult.class)
                     .whenComplete((results, throwable) -> {
                         if (throwable != null) {
                             GeyserBot.LOGGER.error("An error occurred while searching for `" + query + "`", throwable);
@@ -227,8 +229,9 @@ public class SearchCommand extends SlashCommand {
      * @param hits  The number of hits for the query.
      * @return The see all field body.
      */
-    private String getSeeAllFieldBody(String query, long hits) {
-        return "[See all " + hits + " results](" + PropertiesManager.getAlgoliaSiteSearchUrl() + URLEncoder.encode(query, StandardCharsets.UTF_8) + ")";
+    private String getSeeAllFieldBody(String query, Integer hits) {
+        return "[See all " + hits + " results on the wiki](" + PropertiesManager.getAlgoliaSiteSearchUrl()
+                + URLEncoder.encode(query, StandardCharsets.UTF_8) + ")";
     }
 
     /**
@@ -241,7 +244,7 @@ public class SearchCommand extends SlashCommand {
      */
     private String getDescriptionFieldBody(DocSearchResult result, String query, int max) {
         String header = getHierarchyChain(result.getHierarchy());
-        
+
         DocSearchResult.HighlightResult hr = result.get_highlightResult();
         if (hr != null && hr.getContent() != null && hr.getContent().getValue() != null) {
             String description = "";

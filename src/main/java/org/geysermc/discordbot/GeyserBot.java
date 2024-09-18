@@ -25,8 +25,7 @@
 
 package org.geysermc.discordbot;
 
-import com.algolia.search.DefaultSearchClient;
-import com.algolia.search.SearchIndex;
+import com.algolia.api.SearchClient;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.ContextMenu;
@@ -53,7 +52,6 @@ import org.geysermc.discordbot.tags.TagsListener;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.updates.UpdateManager;
 import org.geysermc.discordbot.util.BotHelpers;
-import org.geysermc.discordbot.util.DocSearchResult;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.geysermc.discordbot.util.RssFeedManager;
 import org.geysermc.discordbot.util.SentryEventManager;
@@ -90,7 +88,7 @@ public class GeyserBot {
     private static JDA jda;
     private static GitHub github;
     private static Server httpServer;
-    private static SearchIndex<DocSearchResult> algolia;
+    private static SearchClient algolia;
 
     static {
         // Gathers all commands from "commands" package.
@@ -166,8 +164,7 @@ public class GeyserBot {
         github = new GitHubBuilder().withOAuthToken(PropertiesManager.getGithubToken()).build();
 
         // Connect to Algolia
-        algolia = DefaultSearchClient.create(PropertiesManager.getAlgoliaApplicationId(), PropertiesManager.getAlgoliaSearchApiKey())
-            .initIndex(PropertiesManager.getAlgoliaIndexName(), DocSearchResult.class);
+        algolia = new SearchClient(PropertiesManager.getAlgoliaApplicationId(), PropertiesManager.getAlgoliaSearchApiKey());
 
         // Initialize the waiter
         EventWaiter waiter = new EventWaiter();
@@ -306,7 +303,7 @@ public class GeyserBot {
         return github;
     }
 
-    public static SearchIndex<DocSearchResult> getAlgolia() {
+    public static SearchClient getAlgolia() {
         return algolia;
     }
 
