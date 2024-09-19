@@ -25,12 +25,12 @@
 
 package org.geysermc.discordbot.commands;
 
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.commands.filter.FilteredSlashCommand;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
@@ -40,7 +40,7 @@ import org.kohsuke.github.GHUser;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class GithubCommand extends SlashCommand {
+public class GithubCommand extends FilteredSlashCommand {
 
     public GithubCommand() {
         this.name = "github";
@@ -54,7 +54,7 @@ public class GithubCommand extends SlashCommand {
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
+    protected void executeFiltered(SlashCommandEvent event) {
         String repository = event.optString("repo", "");
         String owner = event.optString("owner", "");
         event.deferReply(false).queue(interactionHook -> {

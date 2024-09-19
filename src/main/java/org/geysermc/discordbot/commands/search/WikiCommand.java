@@ -28,13 +28,13 @@ package org.geysermc.discordbot.commands.search;
 import com.algolia.model.search.FacetFilters;
 import com.algolia.model.search.SearchParamsObject;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.commands.filter.FilteredSlashCommand;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.DocSearchResult;
 import org.geysermc.discordbot.util.MessageHelper;
@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
 /**
  * A command to search the Geyser wiki for a query.
  */
-public class WikiCommand extends SlashCommand {
+public class WikiCommand extends FilteredSlashCommand {
     /**
      * The attributes to retrieve from the Algolia search.
      */
@@ -96,7 +96,7 @@ public class WikiCommand extends SlashCommand {
      * @param event The SlashCommandEvent.
      */
     @Override
-    protected void execute(SlashCommandEvent event) {
+    protected void executeFiltered(SlashCommandEvent event) {
         String query = event.optString("query", "");
 
         if (query.isEmpty()) {

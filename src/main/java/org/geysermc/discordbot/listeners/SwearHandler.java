@@ -29,14 +29,18 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
+import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -99,7 +103,7 @@ public class SwearHandler extends ListenerAdapter {
     }
 
     @Nullable
-    private Pattern checkString(String input) {
+    public static Pattern checkString(String input) {
         // TODO: Maybe only clean start and end? Then run through the same as normalInput?
         input = input.toLowerCase();
         String cleanInput = CLEAN_PATTERN.matcher(input).replaceAll("");
@@ -200,4 +204,34 @@ public class SwearHandler extends ListenerAdapter {
             event.getMember().modifyNickname(getRandomNick()).queue();
         }
     }
+    
+    // @Override
+    // public void onGenericCommandInteraction(@Nonnull GenericCommandInteractionEvent event) {
+    //     Pattern filterPattern = null;
+    //     for (OptionMapping option: event.getOptions()) {
+    //         if (option.getType() != OptionType.STRING) continue;
+    //         if ((filterPattern = checkString(option.getAsString())) == null) continue;
+    //         break;
+    //     }
+
+    //     if (filterPattern == null) return;
+
+    //     event.reply(event.getUser().getAsMention() + 
+    //             " your command cannot be processed because it contains profanity! Please read our rules for more information.")
+    //             .setEphemeral(true).queue();
+
+    //     if (event.getGuild() == null) return;
+
+    //     @SuppressWarnings("null")
+    //     String channel = event.getChannel() == null ? "Unknown" : event.getChannel().getAsMention();
+
+    //     ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+    //         .setTitle("Profanity removed")
+    //         .setDescription("**Sender:** " + event.getUser().getAsMention() + "\n" +
+    //                 "**Channel:** " + channel + "\n" +
+    //                 "**Regex:** `" + filterPattern + "`\n" +
+    //                 "**Command:** " + event.getCommandString())
+    //         .setColor(BotColors.FAILURE.getColor())
+    //         .build()).queue();
+    // }
 }

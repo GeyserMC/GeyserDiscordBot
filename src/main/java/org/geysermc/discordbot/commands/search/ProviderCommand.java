@@ -26,7 +26,6 @@
 package org.geysermc.discordbot.commands.search;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -34,6 +33,7 @@ import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInterac
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.commands.filter.FilteredSlashCommand;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.DicesCoefficient;
 import org.geysermc.discordbot.util.MessageHelper;
@@ -44,9 +44,8 @@ import pw.chew.chewbotcca.util.RestClient;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class ProviderCommand extends SlashCommand {
+public class ProviderCommand extends FilteredSlashCommand {
     private List<Provider> cache = null;
     private long cacheTime = 0;
 
@@ -63,7 +62,7 @@ public class ProviderCommand extends SlashCommand {
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
+    protected void executeFiltered(SlashCommandEvent event) {
         event.replyEmbeds(handle(event.optString("provider", ""))).queue();
     }
 

@@ -66,6 +66,7 @@ import pw.chew.chewbotcca.util.RestClient;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -116,6 +117,11 @@ public class GeyserBot {
                 if (theClass.getName().contains("SubCommand")) {
                     continue;
                 }
+                // Don't load abstract classes
+                if (Modifier.isAbstract(theClass.getModifiers())) {
+                    continue;
+                }
+
                 slashCommands.add(theClass.getDeclaredConstructor().newInstance());
                 LoggerFactory.getLogger(theClass).debug("Loaded SlashCommand Successfully!");
             }
