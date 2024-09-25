@@ -204,34 +204,4 @@ public class SwearHandler extends ListenerAdapter {
             event.getMember().modifyNickname(getRandomNick()).queue();
         }
     }
-    
-    // @Override
-    // public void onGenericCommandInteraction(@Nonnull GenericCommandInteractionEvent event) {
-    //     Pattern filterPattern = null;
-    //     for (OptionMapping option: event.getOptions()) {
-    //         if (option.getType() != OptionType.STRING) continue;
-    //         if ((filterPattern = checkString(option.getAsString())) == null) continue;
-    //         break;
-    //     }
-
-    //     if (filterPattern == null) return;
-
-    //     event.reply(event.getUser().getAsMention() + 
-    //             " your command cannot be processed because it contains profanity! Please read our rules for more information.")
-    //             .setEphemeral(true).queue();
-
-    //     if (event.getGuild() == null) return;
-
-    //     @SuppressWarnings("null")
-    //     String channel = event.getChannel() == null ? "Unknown" : event.getChannel().getAsMention();
-
-    //     ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-    //         .setTitle("Profanity removed")
-    //         .setDescription("**Sender:** " + event.getUser().getAsMention() + "\n" +
-    //                 "**Channel:** " + channel + "\n" +
-    //                 "**Regex:** `" + filterPattern + "`\n" +
-    //                 "**Command:** " + event.getCommandString())
-    //         .setColor(BotColors.FAILURE.getColor())
-    //         .build()).queue();
-    // }
 }
