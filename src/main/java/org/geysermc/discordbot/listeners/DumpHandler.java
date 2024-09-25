@@ -237,9 +237,31 @@ public class DumpHandler extends ListenerAdapter {
             gitData.append("Ahead by ").append(compare.getAheadBy()).append(" commit").append(compare.getAheadBy() == 1 ? "" : "s").append("\n");
         }
 
-        if (compare != null && compare.getBehindBy() != 0) {
-            String compareUrl = gitUrl + "/compare/" + gitInfo.getString("git.commit.id.abbrev") + "..." + gitInfo.getString("git.branch");
-            gitData.append("Behind by [").append(compare.getBehindBy()).append(" commit").append(compare.getBehindBy() == 1 ? "" : "s").append("](").append(compareUrl).append(")\n");
+        boolean compareByBuildNumber = false;
+        if (!isFork && gitInfo.has("git.build.number")) {
+            try {
+                // Attempt to see how far behind they are not based on commits but CI builds
+                RestClient.RestResponse<JSONObject> restResponse = RestClient.getJsonObject("https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest");
+                JSONObject response = restResponse.body();
+
+                int latestBuildNum = response.getInt("build");
+                int buildNum = Integer.parseInt(gitInfo.getString("git.build.number"));
+                int buildNumDiff = latestBuildNum - buildNum;
+                if (buildNumDiff > 0) {
+                    compareByBuildNumber = true;
+                    String compareUrl = gitUrl + "/compare/" + gitInfo.getString("git.commit.id.abbrev") + "..." + gitInfo.getString("git.branch");
+                    gitData.append("Behind by [").append(buildNumDiff).append(" Run build").append(buildNumDiff == 1 ? "" : "s").append("](").append(compareUrl).append(")\n");
+
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        if (!compareByBuildNumber) {
+            if (compare != null && compare.getBehindBy() != 0) {
+                String compareUrl = gitUrl + "/compare/" + gitInfo.getString("git.commit.id.abbrev") + "..." + gitInfo.getString("git.branch");
+                gitData.append("Behind by [").append(compare.getBehindBy()).append(" commit").append(compare.getBehindBy() == 1 ? "" : "s").append("](").append(compareUrl).append(")\n");
+            }
         }
 
         String versionString = "Unknown";
