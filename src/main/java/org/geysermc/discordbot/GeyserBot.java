@@ -25,6 +25,7 @@
 
 package org.geysermc.discordbot;
 
+import com.algolia.api.SearchClient;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.ContextMenu;
@@ -65,6 +66,7 @@ import pw.chew.chewbotcca.util.RestClient;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -87,6 +89,7 @@ public class GeyserBot {
     private static JDA jda;
     private static GitHub github;
     private static Server httpServer;
+    private static SearchClient algolia;
 
     static {
         // Gathers all commands from "commands" package.
@@ -114,6 +117,11 @@ public class GeyserBot {
                 if (theClass.getName().contains("SubCommand")) {
                     continue;
                 }
+                // Don't load abstract classes
+                if (Modifier.isAbstract(theClass.getModifiers())) {
+                    continue;
+                }
+
                 slashCommands.add(theClass.getDeclaredConstructor().newInstance());
                 LoggerFactory.getLogger(theClass).debug("Loaded SlashCommand Successfully!");
             }
@@ -160,6 +168,9 @@ public class GeyserBot {
 
         // Connect to github
         github = new GitHubBuilder().withOAuthToken(PropertiesManager.getGithubToken()).build();
+
+        // Connect to Algolia
+        algolia = new SearchClient(PropertiesManager.getAlgoliaApplicationId(), PropertiesManager.getAlgoliaSearchApiKey());
 
         // Initialize the waiter
         EventWaiter waiter = new EventWaiter();
@@ -296,6 +307,10 @@ public class GeyserBot {
 
     public static GitHub getGithub() {
         return github;
+    }
+
+    public static SearchClient getAlgolia() {
+        return algolia;
     }
 
     public static ScheduledExecutorService getGeneralThreadPool() {

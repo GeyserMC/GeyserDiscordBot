@@ -26,13 +26,13 @@
 package org.geysermc.discordbot.commands;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.commands.filter.FilteredSlashCommand;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.kohsuke.github.GHFileNotFoundException;
@@ -50,7 +50,7 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class IssueCommand extends SlashCommand {
+public class IssueCommand extends FilteredSlashCommand {
 
     private static final Pattern REPO_PATTERN = Pattern.compile("(^| )([\\w.\\-]+/)?([\\w.\\-]+)( |$)", Pattern.CASE_INSENSITIVE);
     private static final Pattern ISSUE_PATTERN = Pattern.compile("(^| )#?([0-9]+)( |$)", Pattern.CASE_INSENSITIVE);
@@ -69,7 +69,7 @@ public class IssueCommand extends SlashCommand {
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
+    protected void executeFiltered(SlashCommandEvent event) {
         // Issue
         int issue = (int) event.optLong("number", 0);
         // Repo

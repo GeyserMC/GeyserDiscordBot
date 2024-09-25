@@ -12,3 +12,7 @@ github-token: github_oauth_token
 sentry-dsn: https://xxx@xxx.ingest.sentry.io/xxx
 sentry-env: production
 ocr-path: /usr/share/tesseract-ocr/4.00/tessdata
+algolia-application-id: 0DTHI9QFCH
+algolia-search-api-key: 3cc0567f76d2ed3ffdb4cc94f0ac9815
+algolia-index-name: geysermc
+algolia-site-search-url: https://geysermc.org/search?q=

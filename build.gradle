@@ -89,6 +89,9 @@ dependencies {
     // Image processing and OCR
     implementation 'net.sourceforge.tess4j:tess4j:5.12.0'
     implementation 'org.imgscalr:imgscalr-lib:4.2'
+
+    // Agolia Search (For Wiki)
+    implementation 'com.algolia:algoliasearch:4.3.2'
 }
 
 jar {

@@ -75,7 +75,7 @@ public class MessageHelper {
                 .setEphemeral(true) // Only show error to the user
                 .queue();
         } else {
-            throw new IllegalArgumentException("Event must be one of CommandEvent, SlashCommandEvent");
+            throw new IllegalArgumentException("Event must be one of CommandEvent, SlashCommandEvent; got: " + event.getClass().getName());
         }
 
         return null;

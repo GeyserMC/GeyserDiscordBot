@@ -25,13 +25,13 @@
 
 package org.geysermc.discordbot.commands;
 
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.commands.filter.FilteredSlashCommand;
 import org.geysermc.discordbot.tags.SlashTag;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.BotColors;
@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TagCommand extends SlashCommand {
+public class TagCommand extends FilteredSlashCommand {
 
     public TagCommand() {
         this.name = "tag";
@@ -56,7 +56,7 @@ public class TagCommand extends SlashCommand {
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
+    protected void executeFiltered(SlashCommandEvent event) {
         String tagName = event.getOption("name").getAsString();
         SlashTag tag = null;
 

@@ -25,11 +25,11 @@
 
 package org.geysermc.discordbot.commands;
 
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.commands.filter.FilteredSlashCommand;
 import org.geysermc.discordbot.util.BotColors;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
@@ -39,7 +39,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.UUID;
 
-public class FloodgateUuidCommand extends SlashCommand {
+public class FloodgateUuidCommand extends FilteredSlashCommand {
 
     public FloodgateUuidCommand() {
         this.name = "uuid";
@@ -54,7 +54,7 @@ public class FloodgateUuidCommand extends SlashCommand {
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
+    protected void executeFiltered(SlashCommandEvent event) {
         // get bedrock username, replace char in case they include Floodgate prefix.
         String username = event.optString("bedrock-username", "").replace(".", "");
         EmbedBuilder builder = new EmbedBuilder();

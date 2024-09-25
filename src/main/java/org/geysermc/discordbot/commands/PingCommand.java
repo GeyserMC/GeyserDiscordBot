@@ -30,7 +30,6 @@ import br.com.azalim.mcserverping.MCPingOptions;
 import br.com.azalim.mcserverping.MCPingResponse;
 import br.com.azalim.mcserverping.MCPingUtil;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockPong;
@@ -39,6 +38,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.geysermc.discordbot.commands.filter.FilteredSlashCommand;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class PingCommand extends SlashCommand {
+public class PingCommand extends FilteredSlashCommand {
     private static final int TIMEOUT = 1250; // in ms, has to stay below 1500 (1.5s for each platform, total of 3s)
 
     public PingCommand() {
@@ -71,7 +71,7 @@ public class PingCommand extends SlashCommand {
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
+    protected void executeFiltered(SlashCommandEvent event) {
         // Defer to wait for us to load a response and allows for files to be uploaded
         InteractionHook interactionHook = event.deferReply().complete();
 
