@@ -46,7 +46,7 @@ public class ProvidersTest {
 
     @Test
     public void testSimilarProviders() {
-        assertEquals("MCProHosting", command.potentialProviders("mcrory").get(0).name());
+        assertEquals("EnviroMC", command.potentialProviders("mcrory").get(0).name());
         assertEquals("Cloud Nord", command.potentialProviders("cloud").get(0).name());
     }
 
