@@ -78,7 +78,7 @@ public class BotCommandListener implements CommandListener {
 
         io.sentry.protocol.User user = new io.sentry.protocol.User();
         user.setId(author.getId());
-        user.setUsername(author.getAsTag());
+        user.setUsername(author.getName());
         sentryEvent.setUser(user);
 
         sentryEvent.setExtra("guild_id", server == null ? "null" : server.getId());
