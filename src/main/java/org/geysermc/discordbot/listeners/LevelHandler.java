@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -90,11 +90,14 @@ public class LevelHandler extends ListenerAdapter {
         if (levelInfo.getXpToNextLevel() <= 0) {
             levelInfo.setLevel(levelInfo.getNextLevel());
 
-            event.getMessage().replyEmbeds(new EmbedBuilder()
-                    .setTitle("Level Up!")
-                    .setDescription("You leveled up to level " + levelInfo.getLevel() + "!")
-                    .setColor(BotColors.SUCCESS.getColor())
-                    .build()).queue();
+            // Only show the level up message if we are level 5 or above
+            if (levelInfo.getLevel() >= 5) {
+                event.getMessage().replyEmbeds(new EmbedBuilder()
+                        .setTitle("Level Up!")
+                        .setDescription("You leveled up to level " + levelInfo.getLevel() + "!")
+                        .setColor(BotColors.SUCCESS.getColor())
+                        .build()).queue();
+            }
         }
 
         // Update the level
