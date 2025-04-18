@@ -37,8 +37,8 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.3'
 
     // JDA
-    implementation 'net.dv8tion:JDA:5.0.1'
-    implementation 'pw.chew:jda-chewtils:2.0'
+    implementation 'net.dv8tion:JDA:5.3.2'
+    implementation 'pw.chew:jda-chewtils:2.1'
 
     // Logging
     implementation 'ch.qos.logback:logback-classic:1.5.6'

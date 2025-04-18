@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,7 @@ import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.api.events.message.GenericMessageEvent;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
@@ -230,6 +231,8 @@ public class LogHandler extends ListenerAdapter {
         } catch (IllegalArgumentException ignored) { }
 
         putCacheMessage(event.getGuild(), event.getMessage());
+
+        filterInvites(event.getMessage());
     }
 
     @Override
@@ -245,29 +248,7 @@ public class LogHandler extends ListenerAdapter {
         // Do this before the invite log just incase its removed
         putCacheMessage(event.getGuild(), event.getMessage());
 
-        for (String inviteCode : event.getMessage().getInvites()) {
-            try {
-                Invite invite = Invite.resolve(event.getJDA(), inviteCode, true).complete();
-
-                try {
-                    ServerSettings.getLogChannel(event.getGuild()).sendMessageEmbeds(new EmbedBuilder()
-                            .setAuthor(event.getAuthor().getAsTag(), null, event.getAuthor().getAvatarUrl())
-                            .setDescription("**Invite posted for " + invite.getGuild().getName() + "** " + event.getChannel().getAsMention() + "\n" + invite.getUrl())
-                            .addField("Inviter", invite.getInviter() != null ? invite.getInviter().getAsTag() : "Unknown", true)
-                            .addField("Channel", invite.getChannel() != null ? invite.getChannel().getName() : "Group", true)
-                            .addField("Members", invite.getGuild().getOnlineCount() + "/" + invite.getGuild().getMemberCount(), true)
-                            .setFooter("ID: " + event.getAuthor().getId())
-                            .setTimestamp(Instant.now())
-                            .setColor(BotColors.NEUTRAL.getColor())
-                            .build()).queue();
-                } catch (IllegalArgumentException ignored) { }
-
-                // Bypass for users with MESSAGE_MANAGE permission
-                if (event.getMember() != null && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE) && !ServerSettings.getList(event.getGuild().getIdLong(), "allowed-invites").contains(invite.getGuild().getId())) {
-                    event.getMessage().delete().complete();
-                }
-            } catch (ErrorResponseException ignored) { }
-        }
+        filterInvites(event.getMessage());
     }
 
     @Override
@@ -340,5 +321,36 @@ public class LogHandler extends ListenerAdapter {
                     .setColor((isJoin || isMove) ? BotColors.SUCCESS.getColor() : BotColors.FAILURE.getColor())
                     .build()).queue();
         } catch (IllegalArgumentException ignored) { }
+    }
+
+    /**
+     * Filter invites from messages
+     *
+     * @param message Message to filter
+     */
+    private void filterInvites(Message message) {
+        for (String inviteCode : message.getInvites()) {
+            try {
+                Invite invite = Invite.resolve(message.getJDA(), inviteCode, true).complete();
+
+                try {
+                    ServerSettings.getLogChannel(message.getGuild()).sendMessageEmbeds(new EmbedBuilder()
+                            .setAuthor(message.getAuthor().getAsTag(), null, message.getAuthor().getAvatarUrl())
+                            .setDescription("**Invite posted for " + invite.getGuild().getName() + "** " + message.getChannel().getAsMention() + "\n" + invite.getUrl())
+                            .addField("Inviter", invite.getInviter() != null ? invite.getInviter().getAsTag() : "Unknown", true)
+                            .addField("Channel", invite.getChannel() != null ? invite.getChannel().getName() : "Group", true)
+                            .addField("Members", invite.getGuild().getOnlineCount() + "/" + invite.getGuild().getMemberCount(), true)
+                            .setFooter("ID: " + message.getAuthor().getId())
+                            .setTimestamp(Instant.now())
+                            .setColor(BotColors.NEUTRAL.getColor())
+                            .build()).queue();
+                } catch (IllegalArgumentException ignored) { }
+
+                // Bypass for users with MESSAGE_MANAGE permission
+                if (message.getMember() != null && !message.getMember().hasPermission(Permission.MESSAGE_MANAGE) && !ServerSettings.getList(message.getGuild().getIdLong(), "allowed-invites").contains(invite.getGuild().getId())) {
+                    message.delete().complete();
+                }
+            } catch (ErrorResponseException ignored) { }
+        }
     }
 }
