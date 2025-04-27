@@ -33,66 +33,48 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.12.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.12.2'
+    testImplementation libs.junit.api
+    testRuntimeOnly libs.junit.engine
 
-    // JDA
-    // implementation 'net.dv8tion:JDA:5.4.1'
-    implementation 'com.github.discord-jda:JDA:cdcc28071b' // Using hash to fix link detection issues, should be in 5.4.1
-    implementation 'pw.chew:jda-chewtils:2.1'
+    implementation libs.bundles.jda
 
-    // Logging
-    implementation 'ch.qos.logback:logback-classic:1.5.18'
-    implementation 'org.slf4j:slf4j-api:2.0.17'
-
-    // Error logging
-    implementation 'io.sentry:sentry-logback:8.10.0'
+    implementation libs.bundles.logging
 
     // Json for web requests
-    implementation 'org.json:json:20250107'
+    implementation libs.json
 
-    // Database implementations
-    implementation 'com.mysql:mysql-connector-j:9.2.0'
-    implementation 'org.xerial:sqlite-jdbc:3.49.1.0'
+    implementation libs.bundles.database
 
     // Pinging java and bedrock servers
-    implementation 'com.github.rtm516:minecraft-server-ping:c61c496104'
-    implementation 'com.nukkitx.protocol:bedrock-common:2.9.17-SNAPSHOT'
+    implementation libs.bundles.ping
 
-    implementation 'org.reflections:reflections:0.10.2'
-    implementation 'org.ocpsoft.prettytime:prettytime:5.0.9.Final'
-    implementation 'commons-net:commons-net:3.11.1'
+    implementation libs.reflections
+    implementation libs.prettytime
+    implementation libs.commonsnet
 
     // Parsing HTML
-    implementation 'org.jsoup:jsoup:1.19.1'
+    implementation libs.jsoup
 
     // Github API
-    implementation 'org.kohsuke:github-api:1.327'
+    implementation libs.github
 
     // Basic HTML templating engine
-    implementation 'org.freemarker:freemarker:2.3.34'
+    implementation libs.freemarker
 
     // SVG parsing
-    implementation 'org.apache.xmlgraphics:batik-util:1.18'
-    implementation 'org.apache.xmlgraphics:batik-anim:1.18'
-    implementation 'org.apache.xmlgraphics:batik-transcoder:1.18'
-    implementation 'org.apache.xmlgraphics:batik-rasterizer:1.18'
+    implementation libs.bundles.batik
 
     // Parses stack traces from text
-    implementation 'com.rtm516:StackParser:1.0.0'
-
-    // For adding users to the user cache in JDA
-    implementation 'net.sf.trove4j:core:3.1.0'
+    implementation libs.stackparser
 
     // Reading RSS feeds
-    implementation 'com.rometools:rome:2.1.0'
+    implementation libs.rome
 
     // Image processing and OCR
-    implementation 'net.sourceforge.tess4j:tess4j:5.15.0'
-    implementation 'org.imgscalr:imgscalr-lib:4.2'
+    implementation libs.bundles.ocr
 
     // Agolia Search (For Wiki)
-    implementation 'com.algolia:algoliasearch:4.15.4'
+    implementation libs.algolia
 }
 
 jar {

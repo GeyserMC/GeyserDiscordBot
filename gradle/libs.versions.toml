@@ -1,0 +1,100 @@
+[versions]
+junit = "5.12.2"
+jda = "5.4.1"
+chewtils = "2.1"
+trove4j = "3.1.0"
+logback = "1.5.18"
+slf4j = "2.0.17"
+sentry = "8.10.0"
+json = "20250107"
+mysql = "9.2.0"
+sqlite = "3.49.1.0"
+java-ping = "c61c496104"
+protocol = "2.9.17-SNAPSHOT"
+reflections = "0.10.2"
+prettytime = "5.0.9.Final"
+commons-net = "3.11.1"
+jsoup = "1.19.1"
+github = "1.327"
+freemarker = "2.3.34"
+batik = "1.18"
+stackparser = "1.0.0"
+rome = "2.1.0"
+tess4j = "5.15.0"
+imgscalr = "4.2"
+algolia = "4.15.4"
+
+[libraries]
+junit-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
+junit-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
+
+#jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda" }
+jda = { group = "com.github.discord-jda", name = "JDA", version = "cdcc28071b" } # Using hash to fix link detection issues, should be in 5.4.1
+chewtils = { group = "pw.chew", name = "jda-chewtils", version.ref = "chewtils" }
+trove4j = { group = "net.sf.trove4j", name = "core", version.ref = "trove4j" }
+
+slf4j = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
+logback = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
+sentry-logback = { group = "io.sentry", name = "sentry-logback", version.ref = "sentry" }
+
+json = { group = "org.json", name = "json", version.ref = "json" }
+
+mysql = { group = "com.mysql", name = "mysql-connector-j", version.ref = "mysql" }
+sqlite = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqlite" }
+
+java-ping = { group = "com.github.rtm516", name = "minecraft-server-ping", version.ref = "java-ping" }
+bedrock-common = { group = "com.nukkitx.protocol", name = "bedrock-common", version.ref = "protocol" }
+
+reflections = { group = "org.reflections", name = "reflections", version.ref = "reflections" }
+prettytime = { group = "org.ocpsoft.prettytime", name = "prettytime", version.ref = "prettytime" }
+commonsnet = { group = "commons-net", name = "commons-net", version.ref = "commons-net" }
+
+jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
+
+github = { group = "org.kohsuke", name = "github-api", version.ref = "github" }
+
+freemarker = { group = "org.freemarker", name = "freemarker", version.ref = "freemarker" }
+
+batik-util = { group = "org.apache.xmlgraphics", name = "batik-util", version.ref = "batik" }
+batik-anim = { group = "org.apache.xmlgraphics", name = "batik-anim", version.ref = "batik" }
+batik-transcoder = { group = "org.apache.xmlgraphics", name = "batik-transcoder", version.ref = "batik" }
+batik-rasterizer = { group = "org.apache.xmlgraphics", name = "batik-rasterizer", version.ref = "batik" }
+
+stackparser = { group = "com.rtm516", name = "StackParser", version.ref = "stackparser" }
+
+rome = { group = "com.rometools", name = "rome", version.ref = "rome" }
+
+tess4j = { group = "net.sourceforge.tess4j", name = "tess4j", version.ref = "tess4j" }
+imgscalr = { group = "org.imgscalr", name = "imgscalr-lib", version.ref = "imgscalr" }
+
+algolia = { group = "com.algolia", name = "algoliasearch", version.ref = "algolia" }
+
+[bundles]
+jda = [
+    "jda",
+    "chewtils",
+    "trove4j",
+]
+logging = [
+    "slf4j",
+    "logback",
+    "sentry-logback",
+]
+database = [
+    "mysql",
+    "sqlite",
+]
+ping = [
+    "java-ping",
+    "bedrock-common",
+]
+batik = [
+    "batik-util",
+    "batik-anim",
+    "batik-transcoder",
+    "batik-rasterizer",
+]
+ocr = [
+    "tess4j",
+    "imgscalr",
+]
