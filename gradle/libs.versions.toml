@@ -20,7 +20,7 @@ freemarker = "2.3.34"
 batik = "1.18"
 stackparser = "1.0.0"
 rome = "2.1.0"
-tess4j = "5.15.0"
+tess4j = "5.14.0" # 5.15.0 breaks the jar
 imgscalr = "4.2"
 algolia = "4.15.4"
 
