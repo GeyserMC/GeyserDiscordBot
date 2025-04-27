@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'application'
-    id 'io.sentry.jvm.gradle' version '3.13.0'
+    id 'io.sentry.jvm.gradle' version '5.4.0'
 }
 
 group 'org.geysermc.discordbot'
@@ -33,26 +33,27 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.12.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.12.2'
 
     // JDA
-    implementation 'net.dv8tion:JDA:5.3.2'
+    // implementation 'net.dv8tion:JDA:5.4.1'
+    implementation 'com.github.discord-jda:JDA:cdcc28071b' // Using hash to fix link detection issues, should be in 5.4.1
     implementation 'pw.chew:jda-chewtils:2.1'
 
     // Logging
-    implementation 'ch.qos.logback:logback-classic:1.5.6'
-    implementation 'org.slf4j:slf4j-api:2.0.13'
+    implementation 'ch.qos.logback:logback-classic:1.5.18'
+    implementation 'org.slf4j:slf4j-api:2.0.17'
 
     // Error logging
-    implementation 'io.sentry:sentry-logback:7.11.0'
+    implementation 'io.sentry:sentry-logback:8.10.0'
 
     // Json for web requests
-    implementation 'org.json:json:20240303'
+    implementation 'org.json:json:20250107'
 
     // Database implementations
-    implementation 'com.mysql:mysql-connector-j:9.0.0'
-    implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
+    implementation 'com.mysql:mysql-connector-j:9.2.0'
+    implementation 'org.xerial:sqlite-jdbc:3.49.1.0'
 
     // Pinging java and bedrock servers
     implementation 'com.github.rtm516:minecraft-server-ping:c61c496104'
@@ -63,19 +64,19 @@ dependencies {
     implementation 'commons-net:commons-net:3.11.1'
 
     // Parsing HTML
-    implementation 'org.jsoup:jsoup:1.18.1'
+    implementation 'org.jsoup:jsoup:1.19.1'
 
     // Github API
-    implementation 'org.kohsuke:github-api:1.323'
+    implementation 'org.kohsuke:github-api:1.327'
 
     // Basic HTML templating engine
-    implementation 'org.freemarker:freemarker:2.3.33'
+    implementation 'org.freemarker:freemarker:2.3.34'
 
     // SVG parsing
-    implementation 'org.apache.xmlgraphics:batik-util:1.17'
-    implementation 'org.apache.xmlgraphics:batik-anim:1.17'
-    implementation 'org.apache.xmlgraphics:batik-transcoder:1.17'
-    implementation 'org.apache.xmlgraphics:batik-rasterizer:1.17'
+    implementation 'org.apache.xmlgraphics:batik-util:1.18'
+    implementation 'org.apache.xmlgraphics:batik-anim:1.18'
+    implementation 'org.apache.xmlgraphics:batik-transcoder:1.18'
+    implementation 'org.apache.xmlgraphics:batik-rasterizer:1.18'
 
     // Parses stack traces from text
     implementation 'com.rtm516:StackParser:1.0.0'
@@ -87,11 +88,11 @@ dependencies {
     implementation 'com.rometools:rome:2.1.0'
 
     // Image processing and OCR
-    implementation 'net.sourceforge.tess4j:tess4j:5.12.0'
+    implementation 'net.sourceforge.tess4j:tess4j:5.15.0'
     implementation 'org.imgscalr:imgscalr-lib:4.2'
 
     // Agolia Search (For Wiki)
-    implementation 'com.algolia:algoliasearch:4.3.2'
+    implementation 'com.algolia:algoliasearch:4.15.4'
 }
 
 jar {
@@ -110,6 +111,31 @@ jar {
         )
     }
 }
+
+/*
+ * Copyright (c) 2025 GeyserMC. http://geysermc.org
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @author GeyserMC
+ * @link https://github.com/GeyserMC/GeyserDiscordBot
+ */
 
 // Allow running with `./gradlew run` task
 application {
