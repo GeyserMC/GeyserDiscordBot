@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,14 +25,14 @@
 
 package org.geysermc.discordbot.util;
 
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
@@ -79,7 +79,7 @@ public class PageHelper {
         this.pages.put(userId, 0);
 
         event.replyEmbeds(this.embeds.get(this.pages.get(userId)))
-                .addActionRow(getRow())
+                .addComponents(ActionRow.of(getRow()))
                 .setEphemeral(false)
                 .queue(response -> {
                     response.retrieveOriginal().queue(msg -> {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,9 @@
 package org.geysermc.discordbot.tags;
 
 import com.jagrosh.jdautilities.command.Command;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.components.buttons.Button;
 import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 
 import java.io.IOException;
@@ -129,9 +130,14 @@ public class TagsManager {
 
                                 switch (lineParts[0]) { // intentional fallthrough
                                     case "type", "aliases" -> tagData.put(lineParts[0], lineParts[1].trim().toLowerCase());
-                                    case "image" -> tagData.put(lineParts[0], lineParts[1].trim());
+                                    case "title", "image" -> tagData.put(lineParts[0], lineParts[1].trim());
                                     case "issues" -> issueTriggers = lineParts[1].split("\\|\\|");
                                     case "help" -> selfHelpTrigger = lineParts[1].split("\\|\\|");
+                                    case "color" -> {
+                                        try {
+                                            tagData.put(lineParts[0], BotColors.valueOf(lineParts[1].trim().toUpperCase()).name());
+                                        } catch (IllegalArgumentException ignored) {}
+                                    }
                                     case "button" -> {
                                         String[] data = lineParts[1].trim().replace("[", "").replace(")", "").split("]\\(");
                                         buttons.add(Button.link(data[1], data[0]));
@@ -144,18 +150,18 @@ public class TagsManager {
                             switch (tagData.get("type")) {
                                 case "text":
                                     try {
-                                        TAGS.add(new EmbedTag(tagName, content.toString().trim(), tagData.get("image"), tagData.get("aliases"), buttons));
-                                        SLASH_TAGS.add(new SlashTag(tagName, content.toString().trim(), tagData.get("image"), tagData.get("aliases"), buttons, 0));
+                                        TAGS.add(new EmbedTag(tagName, tagData.get("title"), content.toString().trim(), tagData.get("color"), tagData.get("image"), tagData.get("aliases"), buttons));
+                                        SLASH_TAGS.add(new SlashTag(tagName, tagData.get("title"), content.toString().trim(), tagData.get("color"), tagData.get("image"), tagData.get("aliases"), buttons, 0));
                                     } catch (IllegalArgumentException e) {
                                         GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
                                         continue;
                                     }
                                     break;
 
-                                case "text-raw":
+                                case "raw":
                                     try {
                                         TAGS.add(new RawTag(tagName, content.toString().trim(), tagData.get("aliases"), buttons));
-                                        SLASH_TAGS.add(new SlashTag(tagName, content.toString().trim(), null,  tagData.get("aliases"), buttons, 1));
+                                        SLASH_TAGS.add(new SlashTag(tagName, null, content.toString().trim(), null, null,  tagData.get("aliases"), buttons, 1));
                                     } catch (IllegalArgumentException e) {
                                         GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
                                         continue;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 GeyserMC. http://geysermc.org
+ * Copyright (c) 2024-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,12 +26,13 @@
 package org.geysermc.discordbot.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
@@ -92,13 +93,13 @@ public class PreviewHandler extends ListenerAdapter {
                         .setImage("https://opengraph.githubassets.com/1/GeyserMC/" + repo + "/pull/" + pr)
                         .setTimestamp(Instant.now())
                         .build()))
-                .addActionRow(
+                .addComponents(ActionRow.of(
                         Button.link(String.valueOf(pullRequest.getHtmlUrl()), "Discuss on GitHub")
                                 .withEmoji(Emoji.fromUnicode("\ud83d\udcac")),
                         Button.link(pullRequest.getHtmlUrl() + "/files", "View Changes")
                                 .withEmoji(Emoji.fromUnicode("\ud83d\udcdd")),
                         Button.link(pullRequest.getHtmlUrl() + "/checks", "Download Artifacts")
-                                .withEmoji(Emoji.fromUnicode("\ud83d\udce6")))
+                                .withEmoji(Emoji.fromUnicode("\ud83d\udce6"))))
                 .queue(forumPost -> {
                     // Reply to the original message with the link to the forum post
                     event.getMessage().replyEmbeds(new EmbedBuilder()

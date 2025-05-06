@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,10 +28,13 @@ package org.geysermc.discordbot.commands;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
-import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.separator.Separator;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.geysermc.discordbot.http.Server;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
@@ -45,32 +48,34 @@ public class LeaderboardCommand extends SlashCommand {
 
     @Override
     protected void execute(CommandEvent event) {
-        event.getMessage().replyEmbeds(getEmbed(event.getGuild()))
-            .addActionRow(Button.link(Server.getUrl(event.getGuild().getIdLong()), "Leaderboard"))
+        event.getMessage().replyComponents(getComponent(event.getGuild()))
+            .useComponentsV2()
             .queue();
     }
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        event.replyEmbeds(getEmbed(event.getGuild()))
-            .addActionRow(Button.link(Server.getUrl(event.getGuild().getIdLong()), "Leaderboard"))
+        event.replyComponents(getComponent(event.getGuild()))
+            .useComponentsV2()
             .queue();
     }
 
-    private MessageEmbed getEmbed(Guild guild) {
+    private Container getComponent(Guild guild) {
         if (ServerSettings.serverLevelsDisabled(guild)) {
-            return new EmbedBuilder()
-                    .setTitle("Levels disabled")
-                    .setDescription("Levels are disabled for this server!")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build();
+            return Container.of(
+                    TextDisplay.of("## Levels disabled"),
+                    Separator.createDivider(Separator.Spacing.SMALL),
+                    TextDisplay.of("Levels are disabled for this server!")
+                )
+                .withAccentColor(BotColors.FAILURE.getColor());
         }
 
-        return new EmbedBuilder()
-                .setTitle("Level leaderboard for " + guild.getName(), Server.getUrl(guild.getIdLong()))
-                .setDescription("Click the button below for the level leaderboard!")
-                .setThumbnail(guild.getIconUrl())
-                .setColor(BotColors.SUCCESS.getColor())
-                .build();
+        return Container.of(
+                TextDisplay.of("## Level leaderboard for " + guild.getName()),
+                Separator.createDivider(Separator.Spacing.SMALL),
+                TextDisplay.of("Click the button below for the level leaderboard!"),
+                ActionRow.of(Button.link(Server.getUrl(guild.getIdLong()), "View the leaderboard").withEmoji(Emoji.fromUnicode("\uD83D\uDCC8")))
+            )
+            .withAccentColor(BotColors.SUCCESS.getColor());
     }
 }

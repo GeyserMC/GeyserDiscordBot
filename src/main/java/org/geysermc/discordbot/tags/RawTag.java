@@ -27,8 +27,8 @@ package org.geysermc.discordbot.tags;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import org.geysermc.discordbot.listeners.SwearHandler;
 
 import javax.annotation.Nonnull;

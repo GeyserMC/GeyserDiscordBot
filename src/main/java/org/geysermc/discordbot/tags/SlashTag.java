@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,23 +27,33 @@ package org.geysermc.discordbot.tags;
 
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.container.ContainerChildComponent;
+import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
+import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem;
+import net.dv8tion.jda.api.components.separator.Separator;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import org.geysermc.discordbot.util.BotColors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SlashTag {
     private final String name;
+    private final String title;
     private final String content;
+    private final Color color;
     private final String image;
     private final String aliases;
-    private final List<Button> buttonList;
+    private final List<Button> buttons;
     private final int type;
 
-    public SlashTag(@Nonnull String name, @Nullable String content, @Nullable String image, @Nullable String aliases, @Nonnull List<Button> buttons, int type) {
+    public SlashTag(@Nonnull String name, @Nullable String title, @Nullable String content, @Nullable String color, @Nullable String image, @Nullable String aliases, @Nonnull List<Button> buttons, int type) {
         //Type #0 is an EmbedTag, Type #1 is a RawTag
         this.type = type;
 
@@ -64,32 +74,43 @@ public class SlashTag {
         }
 
         this.name = name;
+        this.title = title;
         this.content = content;
+        this.color = color == null || color.isEmpty() ? BotColors.SUCCESS.getColor() : BotColors.valueOf(color).getColor();
         this.image = image;
         this.aliases = aliases;
-        this.buttonList = buttons;
+        this.buttons = buttons;
     }
 
     public void replyWithTag(SlashCommandEvent event) {
         if (type == 0) {
-            EmbedBuilder embed = new EmbedBuilder()
-                    .setColor(BotColors.SUCCESS.getColor())
-                    .setDescription(content);
+
+            List<ContainerChildComponent> components = new ArrayList<>();
+
+            if (title != null && !title.isEmpty()) {
+                components.add(TextDisplay.of("# " + title));
+                components.add(Separator.createDivider(Separator.Spacing.LARGE));
+            }
+
+            components.add(TextDisplay.of(content));
 
             if (image != null && !image.isEmpty()) {
-                embed.setImage(image);
+                components.add(MediaGallery.of(MediaGalleryItem.fromUrl(image)));
             }
 
-            var reply = event.replyEmbeds(embed.build());
-            if (!buttonList.isEmpty()) {
-                reply = reply.setComponents(ActionRow.of(buttonList));
+            if (!buttons.isEmpty()) {
+                components.add(Separator.createDivider(Separator.Spacing.SMALL));
+                components.add(ActionRow.of(buttons));
             }
 
-            reply.queue();
+            event.replyComponents(Container.of(components)
+                    .withAccentColor(color))
+                .useComponentsV2()
+                .queue();
         } else if (type == 1) {
             var reply = event.reply(content);
-            if (!buttonList.isEmpty()) {
-                reply = reply.setComponents(ActionRow.of(buttonList));
+            if (!buttons.isEmpty()) {
+                reply = reply.setComponents(ActionRow.of(buttons));
             }
 
             reply.queue();

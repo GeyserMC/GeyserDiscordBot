@@ -18,6 +18,8 @@ The below lays out the `text` tag type, allows for Markdown to be sent as an emb
 ```markdown
 type: text
 aliases: test1, test2
+title: Test
+color: neutral | success | failure | warning
 image: https://example.com/example.png
 button: [View Rory](https://example.com)
 button: [Floodgate Wiki](https://wiki.geysermc.org/floodgate/)
@@ -27,11 +29,11 @@ button: [Floodgate Wiki](https://wiki.geysermc.org/floodgate/)
 Test
 ```
 
-## Type: Raw Text 
-The below lays out the `text-raw` tag type, allows for Markdown to be sent as a basic message. It also has an optional `aliases` attribute which allows you to define aliases for a tag. The `button` tag is also supported here.
+## Type: Raw 
+The below lays out the `raw` tag type, allows for Markdown to be sent as a basic message. It also has an optional `aliases` attribute which allows you to define aliases for a tag. The `button` tag is also supported here.
 
 ```markdown
-type: text-raw
+type: raw
 
 ---
 

@@ -197,6 +197,7 @@ fabric.properties
 
 .idea/*
 !.idea/copyright/
+!.idea/scopes/
 
 ### NetBeans ###
 **/nbproject/private/
