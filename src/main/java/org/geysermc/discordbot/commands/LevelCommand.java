@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -118,7 +118,6 @@ public class LevelCommand extends SlashCommand {
             // Set the text for the svg fields
             doc.getElementById("level").getFirstChild().setTextContent(String.valueOf(levelInfo.getLevel()));
             doc.getElementById("name").getFirstChild().setTextContent(user.getName());
-            doc.getElementById("discriminator").getFirstChild().setTextContent("#" + user.getDiscriminator());
             doc.getElementById("xp").getFirstChild().setTextContent(BotHelpers.coolFormat(levelInfo.getXp()));
             doc.getElementById("xpnext").getFirstChild().setTextContent(BotHelpers.coolFormat(levelInfo.getXpForNextLevel()));
             doc.getElementById("avatar").setAttributeNS("http://www.w3.org/1999/xlink", "href", user.getAvatarUrl().replace(".gif", ".png"));

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,6 @@ import com.jagrosh.jdautilities.command.UserContextMenuEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.geysermc.discordbot.util.BotColors;
-import pw.chew.chewbotcca.listeners.BotCommandListener;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

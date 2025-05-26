@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -48,7 +48,7 @@ public class SentryEventManager extends InterfacedEventManager {
     private void buildMessageScope(IScope scope, net.dv8tion.jda.api.entities.User author, Guild server, MessageChannel channel, String messageId) {
         User user = new User();
         user.setId(author.getId());
-        user.setUsername(author.getAsTag());
+        user.setUsername(author.getName());
         scope.setUser(user);
 
         scope.setExtra("guild_id", server == null ? "null" : server.getId());
