@@ -70,9 +70,9 @@ public class RankCommand extends SlashCommand {
     protected void execute(CommandEvent event) {
         List<String> args = new ArrayList<>(Arrays.asList(event.getArgs().split(" ")));
 
-        // Check they specified an role
+        // Check they specified a role
         if (args.get(0).isEmpty()) {
-            MessageHelper.errorResponse(event, "Missing role", "Please specify an role to get.");
+            MessageHelper.errorResponse(event, "Missing role", "Please specify a role to get.");
             return;
         }
 
