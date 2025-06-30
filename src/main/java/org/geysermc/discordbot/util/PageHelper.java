@@ -35,12 +35,10 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -79,7 +77,7 @@ public class PageHelper {
         this.pages.put(userId, 0);
 
         event.replyEmbeds(this.embeds.get(this.pages.get(userId)))
-                .addComponents(ActionRow.of(getRow()))
+                .addComponents(getRow())
                 .setEphemeral(false)
                 .queue(response -> {
                     response.retrieveOriginal().queue(msg -> {
@@ -117,7 +115,7 @@ public class PageHelper {
         this.pages.put(userId, 0);
 
         event.getMessage().replyEmbeds(this.embeds.get(this.pages.get(userId)))
-                .setActionRow(getRow())
+                .setComponents(getRow())
                 .queue(msg -> {
                     ButtonInteractionListener listener = new ButtonInteractionListener(msg.getId(), userId);
                     jda.addEventListener(listener);
@@ -136,7 +134,7 @@ public class PageHelper {
      *
      * @return A list containing the ActionRow with navigation buttons.
      */
-    private Collection<? extends ItemComponent> getRow() {
+    private ActionRow getRow() {
         int currentPage = pages.get(userId);
         boolean isFirstPage = currentPage == 0;
         boolean isLastPage = currentPage == embeds.size() - 1;
@@ -144,7 +142,7 @@ public class PageHelper {
         Button prevButton = Button.secondary("prev_page", Emoji.fromUnicode("\u23ee")).withDisabled(isFirstPage);
         Button nextButton = Button.secondary("next_page", Emoji.fromUnicode("\u23ed")).withDisabled(isLastPage);
 
-        return ActionRow.of(prevButton, nextButton).getActionComponents();
+        return ActionRow.of(prevButton, nextButton);
     }
 
     /**
@@ -170,7 +168,7 @@ public class PageHelper {
         }
 
         event.getHook().editOriginalEmbeds(embeds.get(currentPage))
-                .setActionRow(getRow())
+                .setComponents(getRow())
                 .queue();
     }
 
