@@ -1,5 +1,7 @@
 type: text
+title: Outdated Geyser Proxy
 issues: Outdated Geyser proxy
+color: failure
 
 ---
 

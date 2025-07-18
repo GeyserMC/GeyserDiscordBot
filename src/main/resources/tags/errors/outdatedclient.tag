@@ -1,5 +1,7 @@
 type: text
+title: :x: Outdated Bedrock Client
 issues: Outdated Bedrock client
+color: failure
 
 ---
 
