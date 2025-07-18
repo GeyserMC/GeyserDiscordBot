@@ -2,6 +2,7 @@ type: text
 title: How to Know What Mods Are Compatible With Geyser (Excluding Hydraulic)
 color: neutral
 button: [Modrinth](https://modrinth.com/mods/)
+
 ---
 
 *Note: This guide only works for Modrinth because it lists mods as serverside or not (unlike CurseForge for example).*
