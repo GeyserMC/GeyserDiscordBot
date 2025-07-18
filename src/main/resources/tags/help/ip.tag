@@ -1,5 +1,7 @@
 type: text
 aliases: address
+title: Bedrock Server IP
+color: neutral
 
 ---
 
