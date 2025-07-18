@@ -1,6 +1,6 @@
 type: text
 aliases: tp, op
-title: Commands with Bedrock players
+title: :tools: Commands with Bedrock players
 color: neutral
 
 ---

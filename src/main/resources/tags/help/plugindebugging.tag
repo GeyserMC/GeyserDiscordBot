@@ -1,6 +1,6 @@
 type: text
 aliases: moddebugging
-title: Finding Plugin/Mod Conflicts with Geyser
+title: :tools: Finding Plugin/Mod Conflicts with Geyser
 color: warning
 
 ---
