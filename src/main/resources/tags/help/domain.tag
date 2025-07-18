@@ -1,9 +1,11 @@
 type: text
 aliases: domains, srv, srvrecord, dns, domain
+title: Domain Guide
+color: warning
+button: [Cloudflare](https://domains.cloudflare.com/)
 
 ---
-Domain guide: 
-First, configure Geyser, so that you are able to connect with the **numeric IP + port** (see the usual setup guide on https://wiki.geysermc.org/geyser/setup/) 
+First, configure Geyser, so that you are able to connect with the **numeric IP + port** (see the usual setup guide on https://wiki.geysermc.org/geyser/setup/)
 When that is done & you are able to connect with the numeric IP + port, proceed with setting up the domain:
 
 1. Get a domain (e.g. via Cloudflare)

@@ -1,4 +1,6 @@
 type: text
+title: Downloading from a PR
+color: neutral
 image: https://i.ibb.co/tCcB1Qp/PR1.png
 
 ---
