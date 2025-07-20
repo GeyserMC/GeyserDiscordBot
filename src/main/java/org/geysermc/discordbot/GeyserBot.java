@@ -155,11 +155,43 @@ public class GeyserBot {
         prop.load(new FileInputStream("bot.properties"));
         PropertiesManager.loadProperties(prop);
 
+        // Setup sentry.io
+        if (PropertiesManager.getSentryDsn() != null) {
+            LOGGER.info("Loading sentry.io...");
+            Sentry.init(options -> {
+                options.setDsn(PropertiesManager.getSentryDsn());
+                options.setEnvironment(PropertiesManager.getSentryEnv());
+                options.setEnabled(true);
+                LOGGER.info("Sentry.io loaded");
+            });
+        }
+
+        // Connect to github
+        github = new GitHubBuilder().withOAuthToken(PropertiesManager.getGithubToken()).build();
+
+        // Connect to Algolia
+        algolia = new SearchClient(PropertiesManager.getAlgoliaApplicationId(), PropertiesManager.getAlgoliaSearchApiKey());
+
         // Initialize the waiter
         EventWaiter waiter = new EventWaiter();
 
         // Load filters
         SwearHandler.loadFilters();
+
+        // Load the db
+        StorageType storageType = StorageType.getByName(PropertiesManager.getDatabaseType());
+        if (storageType == StorageType.UNKNOWN) {
+            LOGGER.error("Invalid database type! '" + PropertiesManager.getDatabaseType() + "'");
+            System.exit(1);
+        }
+
+        try {
+            storageManager = storageType.getStorageManager().getDeclaredConstructor().newInstance();
+            storageManager.setupStorage();
+        } catch (Exception e) {
+            LOGGER.error("Unable to create database link!", e);
+            System.exit(1);
+        }
 
         // Setup the main client
         CommandClientBuilder client = new CommandClientBuilder();
@@ -230,8 +262,19 @@ public class GeyserBot {
         // Register listeners
         jda.addEventListener();
 
+        // Setup the http server
+        if (PropertiesManager.enableWeb()) {
+            try {
+                httpServer = new Server();
+                httpServer.start();
+            } catch (Exception e) {
+                // TODO
+                e.printStackTrace();
+            }
+        }
+
         // Setup the update check scheduler
-        UpdateManager.setup();
+//        UpdateManager.setup();
 
         // Setup the health check scheduler
         HealthCheckerManager.setup();
@@ -262,8 +305,20 @@ public class GeyserBot {
         return jda;
     }
 
+    public static GitHub getGithub() {
+        return github;
+    }
+
+    public static SearchClient getAlgolia() {
+        return algolia;
+    }
+
     public static ScheduledExecutorService getGeneralThreadPool() {
         return generalThreadPool;
+    }
+
+    public static Server getHttpServer() {
+        return httpServer;
     }
 
     public static void shutdown() {
@@ -271,6 +326,8 @@ public class GeyserBot {
         storageManager.closeStorage();
         GeyserBot.LOGGER.info("Shutting down thread pool...");
         generalThreadPool.shutdown();
+        GeyserBot.LOGGER.info("Shutting http server...");
+        httpServer.stop();
         GeyserBot.LOGGER.info("Finished shutdown, exiting!");
         System.exit(0);
     }
