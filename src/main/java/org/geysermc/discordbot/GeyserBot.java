@@ -31,22 +31,33 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.command.ContextMenu;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
+import io.sentry.Sentry;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.api.utils.messages.MessageRequest;
+import org.geysermc.discordbot.health_checker.HealthCheckerManager;
+import org.geysermc.discordbot.http.Server;
+import org.geysermc.discordbot.listeners.*;
+import org.geysermc.discordbot.storage.AbstractStorageManager;
+import org.geysermc.discordbot.storage.SlowModeInfo;
+import org.geysermc.discordbot.storage.StorageType;
 import org.geysermc.discordbot.tags.TagsListener;
 import org.geysermc.discordbot.tags.TagsManager;
+import org.geysermc.discordbot.updates.UpdateManager;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.PropertiesManager;
+import org.geysermc.discordbot.util.RssFeedManager;
 import org.geysermc.discordbot.util.SentryEventManager;
 import org.json.JSONArray;
 import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,10 +82,13 @@ public class GeyserBot {
     public static final List<SlashCommand> SLASH_COMMANDS;
     public static final List<ContextMenu> CONTEXT_MENUS;
 
+    public static AbstractStorageManager storageManager;
+
     private static ScheduledExecutorService generalThreadPool;
 
     private static JDA jda;
     private static GitHub github;
+    private static Server httpServer;
     private static SearchClient algolia;
 
     static {
@@ -144,6 +158,9 @@ public class GeyserBot {
         // Initialize the waiter
         EventWaiter waiter = new EventWaiter();
 
+        // Load filters
+        SwearHandler.loadFilters();
+
         // Setup the main client
         CommandClientBuilder client = new CommandClientBuilder();
         client.setActivity(null);
@@ -153,6 +170,8 @@ public class GeyserBot {
         client.addCommands(COMMANDS.toArray(new Command[0]));
         client.addSlashCommands(SLASH_COMMANDS.toArray(new SlashCommand[0]));
         client.addContextMenus(CONTEXT_MENUS.toArray(new ContextMenu[0]));
+        client.setListener(new CommandErrorHandler());
+        client.setCommandPreProcessBiFunction((event, command) -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
 
         // Setup the tag client
         CommandClientBuilder tagClient = new CommandClientBuilder();
@@ -164,6 +183,7 @@ public class GeyserBot {
         tagClient.useHelpBuilder(false);
         tagClient.addCommands(TagsManager.getTags().toArray(new Command[0]));
         tagClient.setListener(new TagsListener());
+        tagClient.setCommandPreProcessBiFunction((event, command) -> !SwearHandler.filteredMessages.contains(event.getMessage().getIdLong()));
         tagClient.setManualUpsert(true);
 
         // Disable pings on replies
@@ -185,6 +205,20 @@ public class GeyserBot {
                     .setEnableShutdownHook(true)
                     .setEventManager(new SentryEventManager())
                     .addEventListeners(waiter,
+                            new LogHandler(),
+                            new SwearHandler(),
+                            new PersistentRoleHandler(),
+                            new FileHandler(),
+                            new LevelHandler(),
+                            new DumpHandler(),
+                            new ErrorAnalyzer(),
+                            new ShutdownHandler(),
+                            new VoiceGroupHandler(),
+                            new BadLinksHandler(),
+                            new HelpHandler(),
+                            new DeleteHandler(),
+                            new PreviewHandler(),
+                            new AutoModHandler(),
                             client.build(),
                             tagClient.build())
                     .build();
@@ -195,6 +229,24 @@ public class GeyserBot {
 
         // Register listeners
         jda.addEventListener();
+
+        // Setup the update check scheduler
+        UpdateManager.setup();
+
+        // Setup the health check scheduler
+        HealthCheckerManager.setup();
+
+        // Setup the rss feed check scheduler
+        RssFeedManager.setup();
+
+        // Setup all slow mode handlers
+        generalThreadPool.schedule(() -> {
+            for (Guild guild : jda.getGuilds()) {
+                for (SlowModeInfo info : storageManager.getSlowModeChannels(guild)) {
+                    jda.addEventListener(new SlowmodeHandler(info.getChannel(), info.getDelay()));
+                }
+            }
+        }, 5, TimeUnit.SECONDS);
 
         // Start the bStats tracking thread
         generalThreadPool.scheduleAtFixedRate(() -> {
@@ -215,6 +267,8 @@ public class GeyserBot {
     }
 
     public static void shutdown() {
+        GeyserBot.LOGGER.info("Shutting down storage...");
+        storageManager.closeStorage();
         GeyserBot.LOGGER.info("Shutting down thread pool...");
         generalThreadPool.shutdown();
         GeyserBot.LOGGER.info("Finished shutdown, exiting!");

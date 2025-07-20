@@ -29,6 +29,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
+import org.geysermc.discordbot.listeners.SwearHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -66,6 +67,10 @@ public class RawTag extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (SwearHandler.filteredMessages.contains(event.getMessage().getIdLong())) {
+            return;
+        }
+
         var reply = event.getMessage().reply(content);
         if (!buttons.isEmpty()) {
             reply = reply.setComponents(ActionRow.of(buttons));

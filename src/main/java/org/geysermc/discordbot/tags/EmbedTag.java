@@ -35,6 +35,7 @@ import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
 import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem;
 import net.dv8tion.jda.api.components.separator.Separator;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
+import org.geysermc.discordbot.listeners.SwearHandler;
 import org.geysermc.discordbot.util.BotColors;
 
 import javax.annotation.Nonnull;
@@ -87,6 +88,10 @@ public class EmbedTag extends Command {
 
     @Override
     protected void execute(CommandEvent event) {
+        if (SwearHandler.filteredMessages.contains(event.getMessage().getIdLong())) {
+            return;
+        }
+
         List<ContainerChildComponent> components = new ArrayList<>();
 
         if (title != null && !title.isEmpty()) {
