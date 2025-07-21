@@ -2,7 +2,7 @@ type: text
 title: :tools: Test your Server's Port Forwarding
 color: neutral
 image: https://i.ibb.co/7J0HhZF/Portforward.png
-button: [IPFingerPrints](https://www.ipfingerprints.com/portscan.php)
+button: [Port Scanner Tool](https://www.ipfingerprints.com/portscan.php)
 
 ---
 

@@ -2,7 +2,7 @@ type: text
 aliases: extension, geyserextension, ext
 title: Geyser Extensions
 color: neutral
-button: [List of community extensions](https://github.com/GeyserMC/GeyserExtensionList/)
+button: [List of Community Extensions](https://github.com/GeyserMC/GeyserExtensionList/)
 
 ---
 

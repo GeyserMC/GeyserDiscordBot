@@ -3,7 +3,7 @@ aliases: help
 help: help
 title: :tools: Geyser Help
 color: neutral
-button: [Wiki Page](https://wiki.geysermc.org/)
+button: [Wiki](https://wiki.geysermc.org/)
 button: [Bot Command & Usage](https://wiki.geysermc.org/other/discord-bot-usage/)
 
 ---

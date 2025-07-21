@@ -2,8 +2,8 @@ type: text
 aliases: optionalpack
 title: GeyserOptionalPack
 color: neutral
-button: [Wiki](https://github.com/GeyserMC/GeyserExtensionList/)
+button: [Wiki Page](https://geysermc.org/wiki/other/geyseroptionalpack/)
 
 ---
 
-Optional Bedrock resource pack to extend Geyser functionality. Learn more on its wiki page below.
+Optional Bedrock resource pack to extend Geyser functionality. Run `!download geyseroptionalpack` to download. Learn more on its wiki page below.
