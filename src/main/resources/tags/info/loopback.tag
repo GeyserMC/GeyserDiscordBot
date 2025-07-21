@@ -1,7 +1,10 @@
 type: text
 aliases: loopback, windows
+title: Joining a Geyser Server When Hosted on the Same Windows Machine
+color: neutral
 
 ---
+
 This only affects people trying to join Geyser from Windows Edition with Geyser hosted on the same Windows machine.
 
 This is an issue caused by Loopback restrictions not being lifted. By default, Microsoft Apps have this restriction on all their apps for local connections. Geyser will attempt to resolve this automatically; however, if you're still having connection problems, you can lift it by typing the following in Windows PowerShell in administrator mode:

@@ -1,6 +1,9 @@
 type: text
 aliases: lp
 issues: is not a valid username/uuid
+title: :tools: LuckPerms Not Recognizing Bedrock Players
+color: warning
+image: https://ibb.co/0jfyb65J
 
 ---
 

@@ -1,5 +1,7 @@
 type: text
+title: :newspaper: Geyser News
 aliases: geysernews
+color: success
 
 ---
 

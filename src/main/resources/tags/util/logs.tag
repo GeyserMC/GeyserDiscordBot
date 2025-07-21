@@ -1,9 +1,18 @@
 type: text
 aliases: log, mclogs
+color: success
+title: :scroll: Minecraft Server Logs
+button: [MCLogs](https://mclo.gs/)
 
 ---
 
-An entire log file is a very useful way of debugging any issues with plugins. Sometimes a snippet of a log doesn't tell the whole story!
+A full log file is very good at giving us the information needed to debug an issue, a snippet usually does not give us enough information!
 
-You can upload your log file into this channel, or you can use https://mclo.gs/ to censor all IPs present in your log.
-For BungeeCord (not Waterfall) there is a `proxy.log.0` file in the root and for everything else it is `latest.log` in `logs` folder.
+MCLogs censors all IPs present in your log and improves mobile readability. Please upload your log using the MCLogs link below. After uploading your log to MCLogs, please share the link here.
+You can find your log file in the following locations:
+
+NeoForge, Fabric, Spigot/Paper, Standalone, Velocity, ViaProxy:
+`latest.log`
+
+Bungeecord (Not Waterfall):
+`proxy.log.0`

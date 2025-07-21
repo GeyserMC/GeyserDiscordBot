@@ -1,7 +1,10 @@
 type: text
 aliases: portforwarding
 help: portforward
+title: :tools: Port Forwarding Guide
+color: neutral
+button: [Port Forwarding](https://wiki.geysermc.org/geyser/port-forwarding/)
 
 ---
 
-[Here](https://wiki.geysermc.org/geyser/port-forwarding/) you can find a guide on how to set up port forwarding. Geyser uses the UDP protocol and the default Minecraft Bedrock port is `19132`.
+Using the link below, you can find a guide on how to set up port forwarding. Geyser uses the UDP protocol and the default Minecraft Bedrock port is `19132`.

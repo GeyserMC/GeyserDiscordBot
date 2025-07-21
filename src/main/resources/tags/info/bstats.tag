@@ -1,5 +1,7 @@
 type: text
 aliases: stats, statistics
+title: Geyser bStats Page
+color: neutral
 
 ---
 
