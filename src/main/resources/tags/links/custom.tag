@@ -1,13 +1,18 @@
 type: text
 aliases: customblocks, customitems, skulls
+color: success
+title: :link: Custom Items, Blocks, and Player Heads
+button: [Custom Items](https://wiki.geysermc.org/geyser/custom-items/)
+button: [Custom Blocks](https://wiki.geysermc.org/geyser/custom-blocks/)
+button: [Player Heads](https://wiki.geysermc.org/geyser/custom-skulls/)
 
 ---
 
 Geyser has support for custom items and custom blocks! Player heads can also be registered to show up in the Bedrock player inventory.
 
-For information on custom items, see [here](https://wiki.geysermc.org/geyser/custom-items/).
-For custom blocks, see [here](https://wiki.geysermc.org/geyser/custom-blocks/).
-For player heads, see [here](https://wiki.geysermc.org/geyser/custom-skulls/).
+For information on custom items, use the custom items link below.
+For custom blocks, use the custom blocks link below.
+For player heads, use the player heads link below.
 
 Some conversions must be done manually. For example:
 - [Converting glyphs or rank icons](https://wiki.bedrock.dev/concepts/emojis.html)
