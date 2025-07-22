@@ -5,5 +5,5 @@ color: failure
 
 ---
 
-This error is probably caused by a connection error. Upload your logs to [MCLogs](https://mclo.gs/) using the link below. After your logs are uploaded, share the MCLogs link here.
+This error is probably caused by a connection error. Upload your logs to [MCLogs](https://mclo.gs/). After your logs are uploaded, share the MCLogs link here.
 If you are getting this error on a proxy server such as Velocity or BungeeCord, check your backend server logs for errors.
