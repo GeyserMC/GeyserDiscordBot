@@ -12,4 +12,4 @@ Rainbow is a client-side Minecraft mod for the Fabric modloader to generate Geys
 **Downloads:**
 - [Rainbow.jar](https://download.geysermc.org/v2/projects/rainbow/versions/latest/builds/latest/downloads/rainbow)
 
-More info can be found on the Github page linked below.
+**Usage guides and more info can be found on the Github page linked below.**
