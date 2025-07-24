@@ -1,5 +1,5 @@
 type: text
-title: Rainbow
+title: :rainbow: Rainbow
 color: neutral
 button: [Downloads](https://geysermc.org/download?project=other-projects&rainbow=expanded)
 

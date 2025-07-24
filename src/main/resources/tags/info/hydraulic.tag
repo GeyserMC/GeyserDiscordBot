@@ -1,5 +1,5 @@
 type: text
-title: Hydraulic
+title: :hydraulic: Hydraulic
 color: neutral
 button: [Downloads](https://geysermc.org/download?project=other-projects&hydraulic=expanded)
 

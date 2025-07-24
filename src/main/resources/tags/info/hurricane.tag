@@ -1,5 +1,5 @@
 type: text
-title: Hurricane
+title: :cyclone: Hurricane
 color: neutral
 
 ---

@@ -1,6 +1,6 @@
 type: text
 aliases: optionalpack
-title: GeyserOptionalPack
+title: :geyser_winter: GeyserOptionalPack
 color: neutral
 button: [Wiki Page](https://geysermc.org/wiki/other/geyseroptionalpack/)
 
