@@ -246,7 +246,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         }
 
         // Add any errors from stacktraces
-        if (exceptions.size() != 0) {
+        if (!exceptions.isEmpty()) {
             // Get the github trees for fetching the file paths
             String branch = "master";
             Matcher branchMatcher = BRANCH_PATTERN.matcher(error);
@@ -288,14 +288,9 @@ public class ErrorAnalyzer extends ListenerAdapter {
             }
         }
 
-        boolean hasResponses = embedBuilder.getFields().size() > 0;
-        if (exceptions.size() > 0 || hasResponses) {
+        if (!embedBuilder.getFields().isEmpty()) {
             // Set the description accordingly if nothing Geyser related was found
-            if (hasResponses) {
-                MessageHelper.truncateFields(embedBuilder);
-            } else {
-                embedBuilder.setDescription("We don't currently have automated responses for the detected errors!");
-            }
+            MessageHelper.truncateFields(embedBuilder);
             event.getMessage().replyEmbeds(embedBuilder.build()).queue();
         }
     }
