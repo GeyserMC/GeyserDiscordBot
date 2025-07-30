@@ -56,7 +56,7 @@ public class DownloadCommand extends SlashCommand {
         this.optionsToRepository = ImmutableMap.<String, DownloadOption>builder()
                 .put("geyser", this.defaultDownloadOption)
                 .put("floodgate", new GeyserDownloadOption("Floodgate", "https://geysermc.org/download#floodgate"))
-                .put("geyseroptionalpack", new GeyserDownloadOption("GeyserOptionalPack", "https://download.geysermc.org/v2/projects/geyseroptionalpack/versions/latest/builds/latest/downloads/geyseroptionalpack"))
+                .put("geyseroptionalpack", new GeyserDownloadOption("GeyserOptionalPack", "https://geysermc.org/download/?project=other-projects&geyseroptionalpack=expanded"))
                 .put("floodgate-fabric", new FabricDownloadOption("Floodgate-Fabric", "https://modrinth.com/mod/floodgate"))
                 .put("paper", new DownloadOption("Paper", "https://papermc.io/downloads", "https://github.com/PaperMC.png"))
                 .put("viaversion", new DownloadOption("ViaVersion", "https://ci.viaversion.com/job/ViaVersion/", "https://github.com/ViaVersion.png"))
