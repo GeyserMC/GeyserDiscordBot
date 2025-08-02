@@ -16,3 +16,4 @@ Use the link below or run `!download geyseroptionalpack`. Then, put the file in 
 - NeoForge: `config/Geyser-Fabric/packs`
 - Velocity: `plugins/Geyser-Velocity/packs`
 - Bungeecord: `plugins/Geyser-Bungeecord/packs`
+- ViaProxy: `plugins/Geyser-ViaProxy/packs`
