@@ -57,9 +57,11 @@ public class DownloadCommand extends SlashCommand {
                 .put("geyser", this.defaultDownloadOption)
                 .put("floodgate", new GeyserDownloadOption("Floodgate", "https://geysermc.org/download#floodgate"))
                 .put("geyseroptionalpack", new GeyserDownloadOption("GeyserOptionalPack", "https://geysermc.org/download/?project=other-projects&geyseroptionalpack=expanded"))
-                .put("floodgate-fabric", new FabricDownloadOption("Floodgate-Fabric", "https://modrinth.com/mod/floodgate"))
+                .put("floodgate-modded", new GeyserDownloadOption("Floodgate Modded", "https://modrinth.com/mod/floodgate"))
                 .put("paper", new DownloadOption("Paper", "https://papermc.io/downloads", "https://github.com/PaperMC.png"))
                 .put("viaversion", new DownloadOption("ViaVersion", "https://ci.viaversion.com/job/ViaVersion/", "https://github.com/ViaVersion.png"))
+                .put("hydraulic", new GeyserDownloadOption("Hydraulic (Beta)", "https://geysermc.org/download?project=other-projects&hydraulic=expanded"))
+                .put("rainbow", new GeyserDownloadOption("Rainbow (Beta)", "https://geysermc.org/download?project=other-projects&rainbow=expanded"))
                 .build();
 
         List<Command.Choice> choices = new ArrayList<>();
@@ -120,12 +122,6 @@ public class DownloadCommand extends SlashCommand {
     private static class GeyserDownloadOption extends DownloadOption {
         public GeyserDownloadOption(String friendlyName, String downloadUrl) {
             super(friendlyName, downloadUrl, "https://github.com/GeyserMC.png");
-        }
-    }
-
-    private static class FabricDownloadOption extends DownloadOption {
-        public FabricDownloadOption(String friendlyName, String downloadUrl) {
-            super(friendlyName, downloadUrl, "https://github.com/FabricMC.png");
         }
     }
 }
