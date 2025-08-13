@@ -62,6 +62,7 @@ public class DownloadCommand extends SlashCommand {
                 .put("viaversion", new DownloadOption("ViaVersion", "https://ci.viaversion.com/job/ViaVersion/", "https://github.com/ViaVersion.png"))
                 .put("hydraulic", new GeyserDownloadOption("Hydraulic (Beta)", "https://geysermc.org/download?project=other-projects&hydraulic=expanded"))
                 .put("rainbow", new GeyserDownloadOption("Rainbow (Beta)", "https://geysermc.org/download?project=other-projects&rainbow=expanded"))
+                .put("thunder", new GeyserDownloadOption("Thunder (Beta)", "https://geysermc.org/download?project=other-projects&thunder=expanded"))
                 .build();
 
         List<Command.Choice> choices = new ArrayList<>();
