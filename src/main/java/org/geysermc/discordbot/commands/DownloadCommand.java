@@ -29,7 +29,14 @@ import com.google.common.collect.ImmutableMap;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
-import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.section.Section;
+import net.dv8tion.jda.api.components.separator.Separator;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
+import net.dv8tion.jda.api.components.thumbnail.Thumbnail;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -52,17 +59,17 @@ public class DownloadCommand extends SlashCommand {
         this.help = "Sends a link to download the latest version of Geyser or another program";
         this.guildOnly = false;
 
-        this.defaultDownloadOption = new GeyserDownloadOption("Geyser", "https://geysermc.org/download");
+        this.defaultDownloadOption = new GeyserDownloadOption("Geyser", "A proxy which allows Bedrock Edition clients to join Java Edition servers.", "https://geysermc.org/download");
         this.optionsToRepository = ImmutableMap.<String, DownloadOption>builder()
                 .put("geyser", this.defaultDownloadOption)
-                .put("floodgate", new GeyserDownloadOption("Floodgate", "https://geysermc.org/download#floodgate"))
-                .put("geyseroptionalpack", new GeyserDownloadOption("GeyserOptionalPack", "https://geysermc.org/download/?project=other-projects&geyseroptionalpack=expanded"))
-                .put("floodgate-modded", new GeyserDownloadOption("Floodgate Modded", "https://modrinth.com/mod/floodgate"))
-                .put("paper", new DownloadOption("Paper", "https://papermc.io/downloads", "https://github.com/PaperMC.png"))
-                .put("viaversion", new DownloadOption("ViaVersion", "https://ci.viaversion.com/job/ViaVersion/", "https://github.com/ViaVersion.png"))
-                .put("hydraulic", new GeyserDownloadOption("Hydraulic (Beta)", "https://geysermc.org/download?project=other-projects&hydraulic=expanded"))
-                .put("rainbow", new GeyserDownloadOption("Rainbow (Beta)", "https://geysermc.org/download?project=other-projects&rainbow=expanded"))
-                .put("thunder", new GeyserDownloadOption("Thunder (Beta)", "https://geysermc.org/download?project=other-projects&thunder=expanded"))
+                .put("floodgate", new GeyserDownloadOption("Floodgate", "A plugin which allows Bedrock Edition clients to join Java edition servers without a Java Edition account.", "https://geysermc.org/download#floodgate"))
+                .put("geyseroptionalpack", new GeyserDownloadOption("GeyserOptionalPack", "A Bedrock Edition resource pack which provides some fixes and parity changes to Geyser.", "https://geysermc.org/download/?project=other-projects&geyseroptionalpack=expanded"))
+                .put("floodgate-modded", new GeyserDownloadOption("Floodgate Modded", "A mod which allows Bedrock Edition clients to join Java edition servers without a Java Edition account.", "https://modrinth.com/mod/floodgate"))
+                .put("paper", new DownloadOption("Paper", "Paper is a server software based on Spigot with better performance and more modern features.", "https://papermc.io/downloads", "https://github.com/PaperMC.png"))
+                .put("viaversion", new DownloadOption("ViaVersion", "ViaVersion is a plugin which allows modern clients to join older Java Edition servers.", "https://ci.viaversion.com/job/ViaVersion/", "https://github.com/ViaVersion.png"))
+                .put("hydraulic", new GeyserDownloadOption("Hydraulic (Beta)", "A companion mod to Geyser which allows for Bedrock players to join modded Java Edition servers.", "https://geysermc.org/download?project=other-projects&hydraulic=expanded"))
+                .put("rainbow", new GeyserDownloadOption("Rainbow (Beta)", "A Minecraft mod to generate Geyser item mappings and bedrock resourcepacks for use with Geyser's custom item API (v2). ", "https://geysermc.org/download?project=other-projects&rainbow=expanded"))
+                .put("thunder", new GeyserDownloadOption("Thunder (Beta)", "A java application to convert simple Java Edition resource packs to Bedrock Edition ones.", "https://geysermc.org/download?project=other-projects&thunder=expanded"))
                 .build();
 
         List<Command.Choice> choices = new ArrayList<>();
@@ -86,12 +93,20 @@ public class DownloadCommand extends SlashCommand {
 
         DownloadOption downloadOption = optionsToRepository.getOrDefault(program.toLowerCase(Locale.ROOT), this.defaultDownloadOption);
 
-        event.getMessage().replyEmbeds(new EmbedBuilder()
-                .setTitle("Download " + downloadOption.friendlyName)
-                .setDescription("Download at " + downloadOption.downloadUrl)
-                .setThumbnail(downloadOption.imageUrl)
-                .setColor(BotColors.SUCCESS.getColor())
-                .build()).queue();
+        event.getMessage().replyComponents(
+                        Container.of(
+                                        Section.of(
+                                                Thumbnail.fromUrl(downloadOption.imageUrl),
+                                                TextDisplay.of("## " + downloadOption.friendlyName),
+                                                TextDisplay.of(downloadOption.description)
+                                        ),
+                                        Separator.createDivider(Separator.Spacing.LARGE),
+                                        ActionRow.of(Button.of(ButtonStyle.LINK, downloadOption.downloadUrl, "Download"))
+                                )
+                                .withAccentColor(BotColors.SUCCESS.getColor())
+        )
+        .useComponentsV2()
+        .queue();
     }
 
     @Override
@@ -100,29 +115,39 @@ public class DownloadCommand extends SlashCommand {
 
         DownloadOption downloadOption = optionsToRepository.getOrDefault(program.toLowerCase(Locale.ROOT), this.defaultDownloadOption);
 
-        event.replyEmbeds(new EmbedBuilder()
-                .setTitle("Download " + downloadOption.friendlyName)
-                .setDescription("Download at " + downloadOption.downloadUrl)
-                .setThumbnail(downloadOption.imageUrl)
-                .setColor(BotColors.SUCCESS.getColor())
-                .build()).queue();
+        event.replyComponents(
+                        Container.of(
+                                        Section.of(
+                                                Thumbnail.fromUrl(downloadOption.imageUrl),
+                                                TextDisplay.of("## " + downloadOption.friendlyName),
+                                                TextDisplay.of(downloadOption.description)
+                                        ),
+                                        Separator.createDivider(Separator.Spacing.LARGE),
+                                        ActionRow.of(Button.of(ButtonStyle.LINK, downloadOption.downloadUrl, "Download"))
+                                )
+                                .withAccentColor(BotColors.SUCCESS.getColor())
+                )
+                .useComponentsV2()
+                .queue();
     }
 
     private static class DownloadOption {
         private final String friendlyName;
+        private final String description;
         private final String downloadUrl;
         private final String imageUrl;
 
-        public DownloadOption(String friendlyName, String downloadUrl, String imageUrl) {
+        public DownloadOption(String friendlyName, String description, String downloadUrl, String imageUrl) {
             this.friendlyName = friendlyName;
+            this.description = description;
             this.downloadUrl = downloadUrl;
             this.imageUrl = imageUrl;
         }
     }
 
     private static class GeyserDownloadOption extends DownloadOption {
-        public GeyserDownloadOption(String friendlyName, String downloadUrl) {
-            super(friendlyName, downloadUrl, "https://github.com/GeyserMC.png");
+        public GeyserDownloadOption(String friendlyName, String description, String downloadUrl) {
+            super(friendlyName, description, downloadUrl, "https://github.com/GeyserMC.png");
         }
     }
 }
