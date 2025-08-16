@@ -94,19 +94,11 @@ public class DownloadCommand extends SlashCommand {
         DownloadOption downloadOption = optionsToRepository.getOrDefault(program.toLowerCase(Locale.ROOT), this.defaultDownloadOption);
 
         event.getMessage().replyComponents(
-                        Container.of(
-                                        Section.of(
-                                                Thumbnail.fromUrl(downloadOption.imageUrl),
-                                                TextDisplay.of("## " + downloadOption.friendlyName),
-                                                TextDisplay.of(downloadOption.description)
-                                        ),
-                                        Separator.createDivider(Separator.Spacing.LARGE),
-                                        ActionRow.of(Button.of(ButtonStyle.LINK, downloadOption.downloadUrl, "Download"))
-                                )
+                        getEmbedContainer(downloadOption)
                                 .withAccentColor(BotColors.SUCCESS.getColor())
-        )
-        .useComponentsV2()
-        .queue();
+                )
+                .useComponentsV2()
+                .queue();
     }
 
     @Override
@@ -116,19 +108,23 @@ public class DownloadCommand extends SlashCommand {
         DownloadOption downloadOption = optionsToRepository.getOrDefault(program.toLowerCase(Locale.ROOT), this.defaultDownloadOption);
 
         event.replyComponents(
-                        Container.of(
-                                        Section.of(
-                                                Thumbnail.fromUrl(downloadOption.imageUrl),
-                                                TextDisplay.of("## " + downloadOption.friendlyName),
-                                                TextDisplay.of(downloadOption.description)
-                                        ),
-                                        Separator.createDivider(Separator.Spacing.LARGE),
-                                        ActionRow.of(Button.of(ButtonStyle.LINK, downloadOption.downloadUrl, "Download"))
-                                )
-                                .withAccentColor(BotColors.SUCCESS.getColor())
+                getEmbedContainer(downloadOption)
+                        .withAccentColor(BotColors.SUCCESS.getColor())
                 )
                 .useComponentsV2()
                 .queue();
+    }
+
+    private Container getEmbedContainer(DownloadOption downloadOption) {
+        return Container.of(
+                Section.of(
+                        Thumbnail.fromUrl(downloadOption.imageUrl),
+                        TextDisplay.of("## " + downloadOption.friendlyName),
+                        TextDisplay.of(downloadOption.description)
+                ),
+                Separator.createDivider(Separator.Spacing.LARGE),
+                ActionRow.of(Button.of(ButtonStyle.LINK, downloadOption.downloadUrl, "Download"))
+        );
     }
 
     private static class DownloadOption {
