@@ -50,7 +50,6 @@ import org.geysermc.discordbot.storage.SlowModeInfo;
 import org.geysermc.discordbot.storage.StorageType;
 import org.geysermc.discordbot.tags.TagsListener;
 import org.geysermc.discordbot.tags.TagsManager;
-import org.geysermc.discordbot.updates.UpdateManager;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.PropertiesManager;
 import org.geysermc.discordbot.util.RssFeedManager;
@@ -251,6 +250,7 @@ public class GeyserBot {
                             new DeleteHandler(),
                             new PreviewHandler(),
                             new AutoModHandler(),
+                            new ExploitHandler(),
                             client.build(),
                             tagClient.build())
                     .build();
