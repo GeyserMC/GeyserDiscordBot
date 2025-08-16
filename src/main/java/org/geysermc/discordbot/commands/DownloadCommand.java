@@ -93,10 +93,7 @@ public class DownloadCommand extends SlashCommand {
 
         DownloadOption downloadOption = optionsToRepository.getOrDefault(program.toLowerCase(Locale.ROOT), this.defaultDownloadOption);
 
-        event.getMessage().replyComponents(
-                        getEmbedContainer(downloadOption)
-                                .withAccentColor(BotColors.SUCCESS.getColor())
-                )
+        event.getMessage().replyComponents(getEmbedContainer(downloadOption))
                 .useComponentsV2()
                 .queue();
     }
@@ -107,10 +104,7 @@ public class DownloadCommand extends SlashCommand {
 
         DownloadOption downloadOption = optionsToRepository.getOrDefault(program.toLowerCase(Locale.ROOT), this.defaultDownloadOption);
 
-        event.replyComponents(
-                getEmbedContainer(downloadOption)
-                        .withAccentColor(BotColors.SUCCESS.getColor())
-                )
+        event.replyComponents(getEmbedContainer(downloadOption))
                 .useComponentsV2()
                 .queue();
     }
@@ -124,7 +118,7 @@ public class DownloadCommand extends SlashCommand {
                 ),
                 Separator.createDivider(Separator.Spacing.LARGE),
                 ActionRow.of(Button.of(ButtonStyle.LINK, downloadOption.downloadUrl, "Download"))
-        );
+        ).withAccentColor(BotColors.SUCCESS.getColor());
     }
 
     private static class DownloadOption {
