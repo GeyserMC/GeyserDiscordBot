@@ -2,7 +2,7 @@ type: text
 title: :rainbow: Rainbow
 color: neutral
 button: [Downloads](https://geysermc.org/download?project=other-projects&rainbow=expanded)
-button: [Github Page](https://github.com/GeyserMC/Rainbow/)
+button: [Wiki Page](https://geysermc.org/wiki/other/rainbow/)
 
 ---
 
@@ -10,4 +10,4 @@ Rainbow is a client-side Minecraft mod for the Fabric modloader to generate Geys
 
 **Note: Rainbow is currently experimental!**
 
-**Usage guides and more info can be found on the Github page below**
+**Usage guides and more info can be found on the Wiki page below**
