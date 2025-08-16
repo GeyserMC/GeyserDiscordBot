@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -254,5 +254,13 @@ public class ServerSettings {
         }
 
         return guild.getForumChannelById(channel);
+    }
+
+    public static TextChannel getExploitReportsNotifyChannel(@NotNull Guild guild) throws IllegalArgumentException {
+        String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "exploit-reports-notify-channel");
+        if (channel == null || channel.isEmpty()) {
+            return null;
+        }
+        return guild.getTextChannelById(channel);
     }
 }
