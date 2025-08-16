@@ -7,5 +7,5 @@ button: [Downloads](https://geysermc.org/download?project=other-projects&hydraul
 
 Hydraulic is a server-side mod, which allows for Bedrock players to join modded Minecraft: Java Edition servers (with clientside mods). This project works alongside Geyser to make this possible.
 
-**Note: Hydraulic is not production ready and can cause bugs or crashes!**
+**:warning:Caution: Hydraulic is still in very early development and should not be used on production setups!**
 You'll need the latest minecraft version for hydraulic to work.
