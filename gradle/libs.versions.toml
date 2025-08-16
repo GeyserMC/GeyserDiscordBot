@@ -1,6 +1,6 @@
 [versions]
 junit = "5.12.2"
-jda = "5.4.1"
+jda = "6.0.0-rc.2"
 chewtils = "2.1"
 trove4j = "3.1.0"
 logback = "1.5.18"
@@ -30,8 +30,7 @@ sentry-gradle = "5.4.0"
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
 junit-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 
-#jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda" }
-jda = { group = "com.github.freya022", name = "JDA", version = "6b0df014ee" }
+jda = { group = "net.dv8tion", name = "JDA", version.ref = "jda" }
 chewtils = { group = "pw.chew", name = "jda-chewtils", version.ref = "chewtils" }
 trove4j = { group = "net.sf.trove4j", name = "core", version.ref = "trove4j" }
 
