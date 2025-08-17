@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -203,7 +203,7 @@ public class ForumPostCommand extends SlashCommand {
 
             ThreadChannelManager manager = event.getChannel().asThreadChannel().getManager();
             event.reply("Closing post...").queue(
-                    reply -> manager.setArchived(true).queue(
+                    reply -> manager.setLocked(true).setArchived(true).queue(
                             unused -> reply.editOriginal("Post is closed").queue(),
                             error -> reply.editOriginal("Could not close post").queue()
                     ));
@@ -376,7 +376,7 @@ public class ForumPostCommand extends SlashCommand {
                 OffsetDateTime channelCreated = channel.getTimeCreated();
                 OffsetDateTime closeTime = OffsetDateTime.now().minusDays(days);
                 if (channelCreated.isBefore(closeTime)) {
-                    channel.getManager().setArchived(true).queue();
+                    channel.getManager().setLocked(true).setArchived(true).queue();
                     count++;
                 }
             }
