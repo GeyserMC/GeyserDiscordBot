@@ -1,7 +1,7 @@
 type: text
 aliases: limitations
 title: :link: Geyser Limitations
-color: success
+color: links
 button: [Current Limitations](https://wiki.geysermc.org/geyser/current-limitations/)
 button: [Future Fixes & Features](https://github.com/GeyserMC/Geyser#whats-left-to-be-addedfixed)
 

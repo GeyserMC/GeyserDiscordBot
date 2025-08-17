@@ -1,7 +1,7 @@
 type: text
 aliases: bungeecord, velocity, proxies
 title: Geyser APIs
-color: neutral
+color: info
 
 ---
 

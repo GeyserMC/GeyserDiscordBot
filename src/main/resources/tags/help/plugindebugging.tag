@@ -1,7 +1,7 @@
 type: text
 aliases: moddebugging
 title: :tools: Finding Plugin/Mod Conflicts with Geyser
-color: warning
+color: help
 
 ---
 

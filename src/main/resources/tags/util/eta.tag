@@ -1,6 +1,6 @@
 type: text
 title: :timer: ETA
-color: success
+color: util
 
 ---
 

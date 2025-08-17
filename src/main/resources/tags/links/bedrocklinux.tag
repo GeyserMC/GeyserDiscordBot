@@ -1,6 +1,6 @@
 type: text
 title: :penguin: Minecraft: Bedrock Edition on Linux
-color: success
+color: links
 button: [Getting Started](https://mcpelauncher.readthedocs.io/en/latest/getting_started.html)
 
 ---

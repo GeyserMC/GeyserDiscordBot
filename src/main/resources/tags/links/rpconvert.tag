@@ -1,6 +1,6 @@
 type: text
 title: Converting Java Resource Packs to Bedrock
-color: neutral
+color: links
 
 ---
 

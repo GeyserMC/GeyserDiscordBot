@@ -1,6 +1,6 @@
 type: text
 title: :zap: Spark Performance Monitoring
-color: success
+color: util
 button: [Download Spark](https://spark.lucko.me/download)
 
 ---

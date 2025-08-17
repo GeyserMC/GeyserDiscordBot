@@ -1,7 +1,7 @@
 type: text
 aliases: ban, bans, hypixel
 title: Geyser Interference with Anticheat on Large Servers
-color: warning
+color: warns
 
 ---
 

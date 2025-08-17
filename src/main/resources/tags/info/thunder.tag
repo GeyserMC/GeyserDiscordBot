@@ -1,6 +1,6 @@
 type: text
 title: :thunder_cloud_rain: Thunder
-color: neutral
+color: info
 button: [Downloads](https://geysermc.org/download?project=other-projects&thunder=expanded)
 button: [Wiki Page](https://geysermc.org/wiki/other/thunder/)
 

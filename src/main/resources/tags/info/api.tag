@@ -1,7 +1,7 @@
 type: text
 aliases: forms, bedrockforms, cumulus
 title: Geyser APIs
-color: neutral
+color: info
 
 ---
 

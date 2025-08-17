@@ -1,6 +1,6 @@
 type: text
 title: :gear: Geyser Logs Dump
-color: success
+color: util
 
 ---
 

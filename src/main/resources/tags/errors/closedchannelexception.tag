@@ -1,7 +1,7 @@
 type: text
 title: :x: ClosedChannelException
 issues: ClosedChannelException
-color: failure
+color: errors
 
 ---
 

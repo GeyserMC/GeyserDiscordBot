@@ -1,7 +1,7 @@
 type: text
 title: :x: Outdated Server
 issues: Outdated server
-color: failure
+color: errors
 
 ---
 

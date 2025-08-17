@@ -1,6 +1,6 @@
 type: text
 title: :link: Geyser Config Options
-color: success
+color: links
 button: [Config Options](https://wiki.geysermc.org/geyser/understanding-the-config/)
 
 ---

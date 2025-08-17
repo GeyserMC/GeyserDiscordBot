@@ -1,7 +1,7 @@
 type: text
 aliases: commonissues
 title: :link: Common Issues with Geyser
-color: success
+color: links
 button: [Common Issues](https://wiki.geysermc.org/geyser/common-issues/)
 
 ---

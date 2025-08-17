@@ -1,6 +1,6 @@
 type: text
 title: :axo_bowl: Custom items on 1.21.4 and above
-color: neutral
+color: info
 button: [Custom item API v2](https://github.com/GeyserMC/Geyser/pull/5189)
 button: [Rainbow](https://github.com/GeyserMC/rainbow/)
 

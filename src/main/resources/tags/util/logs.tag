@@ -1,6 +1,6 @@
 type: text
 aliases: log, mclogs
-color: success
+color: util
 title: :scroll: Minecraft Server Logs
 button: [MCLogs](https://mclo.gs/)
 

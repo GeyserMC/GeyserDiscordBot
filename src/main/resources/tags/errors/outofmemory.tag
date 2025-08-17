@@ -1,7 +1,7 @@
 type: issue-only
 title: :x: Out of Memory
 issues: java.lang.OutOfMemoryError
-color: failure
+color: errors
 
 ---
 

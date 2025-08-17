@@ -1,7 +1,7 @@
 type: text
 aliases: floodgate, openthefloodgates
 help: floodgate
-color: success
+color: links
 title: :link: Floodgate
 button: [Setup Guide](https://wiki.geysermc.org/floodgate/setup/)
 

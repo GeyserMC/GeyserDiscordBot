@@ -1,7 +1,7 @@
 type: text
 aliases: offline, offlinemode, cracked
 title: Cracked/Offline Mode Servers will NOT Get Support with Geyser
-color: warning
+color: warns
 
 ---
 

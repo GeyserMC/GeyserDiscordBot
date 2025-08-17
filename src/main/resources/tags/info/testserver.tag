@@ -1,6 +1,6 @@
 type: text
 title: GeyserMC Test Server
-color: neutral
+color: info
 button: [GeyserMC Test Server Details](https://wiki.geysermc.org/other/test-server/)
 
 ---

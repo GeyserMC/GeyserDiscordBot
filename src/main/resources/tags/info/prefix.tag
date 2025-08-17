@@ -1,6 +1,6 @@
 type: text
 title: Floodgate Prefix
-color: neutral
+color: info
 
 ---
 

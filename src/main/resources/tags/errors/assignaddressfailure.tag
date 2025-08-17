@@ -1,5 +1,6 @@
 type: issue-only
 issues: java.net.BindException: Cannot assign requested address
+color: errors
 
 ---
 

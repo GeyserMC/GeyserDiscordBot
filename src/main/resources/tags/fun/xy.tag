@@ -1,6 +1,6 @@
 type: text
 title: :thinking: The XY Problem
-color: success
+color: fun
 button: [XY Problem](https://xyproblem.info/)
 
 ---

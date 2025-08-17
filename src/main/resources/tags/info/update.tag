@@ -2,7 +2,7 @@ type: text
 aliases: updategeyser
 help: update || updating
 title: Updating Geyser/Floodgate
-color: neutral
+color: info
 
 ---
 

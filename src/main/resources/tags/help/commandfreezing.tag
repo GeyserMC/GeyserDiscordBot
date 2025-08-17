@@ -1,6 +1,6 @@
 type: text
 title: :tools: Command Freezing
-color: neutral
+color: help
 button: [HideCommands](https://github.com/Redned235/HideCommands)
 
 ---

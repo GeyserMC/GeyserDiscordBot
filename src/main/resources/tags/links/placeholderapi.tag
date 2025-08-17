@@ -1,6 +1,6 @@
 type: text
 aliases: placeholder-api, papi
-color: success
+color: links
 title: :link: FloodgatePlaceholders Plugin
 button: [FloodgatePlaceholders](https://github.com/rtm516/FloodgatePlaceholders)
 

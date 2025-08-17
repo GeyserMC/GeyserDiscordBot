@@ -1,7 +1,7 @@
 type: issue-only
 title: :x: Connection Timed Out
 issues: AnnotatedConnectException: Connection timed out
-color: failure
+color: errors
 
 ---
 

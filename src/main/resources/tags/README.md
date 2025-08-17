@@ -19,7 +19,8 @@ The below lays out the `text` tag type, allows for Markdown to be sent as an emb
 type: text
 aliases: test1, test2
 title: Test
-color: neutral | success | failure | warning
+colors: errors | fun | help | info | links | roles | util
+legacy colors: neutral | success | failure | warning
 image: https://example.com/example.png
 button: [View Rory](https://example.com)
 button: [Floodgate Wiki](https://wiki.geysermc.org/floodgate/)

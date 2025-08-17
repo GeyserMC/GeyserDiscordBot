@@ -1,6 +1,6 @@
 type: text
 aliases: customblocks, customitems, skulls
-color: success
+color: links
 title: :link: Custom Items, Blocks, and Player Heads
 button: [Custom Items](https://wiki.geysermc.org/geyser/custom-items/)
 button: [Custom Blocks](https://wiki.geysermc.org/geyser/custom-blocks/)

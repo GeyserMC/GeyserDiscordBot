@@ -1,6 +1,6 @@
 type: text
 title: Spigot Movement Fix
-color: neutral
+color: info
 
 ---
 

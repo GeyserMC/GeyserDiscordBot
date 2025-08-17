@@ -1,7 +1,7 @@
 type: text
 title: :x: IP Forwarding Error
 issues: please enable it in your BungeeCord config as well
-color: failure
+color: errors
 
 ---
 

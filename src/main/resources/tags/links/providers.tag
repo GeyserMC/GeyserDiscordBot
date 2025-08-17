@@ -1,6 +1,6 @@
 type: text
 title: :link: GeyserMC Hosting Providers
-color: success
+color: links
 button: [Supported Hosting Providers](https://wiki.geysermc.org/geyser/supported-hosting-providers/)
 
 ---

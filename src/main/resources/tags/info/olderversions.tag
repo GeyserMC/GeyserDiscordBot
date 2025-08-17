@@ -2,7 +2,7 @@ type: text
 aliases: oldversion, oldversions, olderversion, 1.8
 help: 1.8
 title: Using Old Versions of Minecraft with Geyser
-color: neutral
+color: info
 button: [Which version of Minecraft should your server use?](https://madelinemiller.dev/blog/which-minecraft-version/)
 
 ---

@@ -1,6 +1,6 @@
 type: text
 title: PaperMC
-color: neutral
+color: info
 button: [PaperMC Download](https://papermc.io/downloads/paper/)
 
 ---

@@ -1,7 +1,7 @@
 type: text
 title: :test_tube: Geyser Testers
 aliases: testers, testing
-color: success
+color: roles
 
 ---
 

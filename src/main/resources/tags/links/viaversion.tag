@@ -1,6 +1,6 @@
 type: text
 aliases: vv
-color: success
+color: links
 title: :link: ViaVersion
 button: [Download/Update Viaversion](https://ci.viaversion.com/job/ViaVersion/)
 

@@ -1,6 +1,6 @@
 type: text
 title: :link: Geyser Feature Request
-color: success
+color: links
 button: [Feature Request](https://github.com/GeyserMC/Geyser/issues/new?assignees=&labels=Feature+Request&template=feature_request.yml)
 
 ---

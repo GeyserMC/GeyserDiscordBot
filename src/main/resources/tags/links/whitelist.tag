@@ -1,5 +1,6 @@
 type: text
 aliases: whitelisting, howtowhitelist
+color: links
 
 ---
 

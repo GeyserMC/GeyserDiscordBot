@@ -1,7 +1,7 @@
 type: text
 aliases: pings, pinging
 title: :no_bell: No Pinging
-color: warning
+color: warns
 
 ---
 

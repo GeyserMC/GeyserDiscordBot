@@ -1,7 +1,7 @@
 type: text
 aliases: linkaccount, globallinking
 title: Account Linking
-color: neutral
+color: info
 
 ---
 

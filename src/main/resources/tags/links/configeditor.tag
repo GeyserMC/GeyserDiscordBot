@@ -1,6 +1,6 @@
 type: text
 title: :link: Geyser Config Editor
-color: success
+color: links
 button: [Config Editor](https://geysermc.org/utilities/config-editor)
 
 ---

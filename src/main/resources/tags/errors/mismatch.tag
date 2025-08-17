@@ -1,7 +1,7 @@
 type: text
 title: :x: Floodgate Key Mismatch
 issues: Please connect through the official Geyser
-color: failure
+color: errors
 
 ---
 

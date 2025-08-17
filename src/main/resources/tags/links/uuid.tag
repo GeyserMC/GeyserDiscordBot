@@ -1,6 +1,6 @@
 type: text
 aliases: xuid, floodgateuuid, bedrockuuid
-color: success
+color: links
 title: :link: Floodgate UUID
 button: [MCProfile](https://mcprofile.io)
 

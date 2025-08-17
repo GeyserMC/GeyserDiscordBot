@@ -1,6 +1,6 @@
 type: text
 title: :tools: Downloading from a PR
-color: neutral
+color: help
 image: https://i.ibb.co/tCcB1Qp/PR1.png
 
 ---

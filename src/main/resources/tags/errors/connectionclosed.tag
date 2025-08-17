@@ -1,7 +1,7 @@
 type: text
 title: :x: Connection Closed
 issues: Connection closed
-color: failure
+color: errors
 
 ---
 

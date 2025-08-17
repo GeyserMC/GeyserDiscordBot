@@ -1,7 +1,7 @@
 type: text
 aliases: betas, preview
 title: :tools: Beta/Preview Versions
-color: warning
+color: warns
 button: [Guide](https://help.minecraft.net/hc/en-us/articles/360040841471-How-to-Join-and-leave-a-Minecraft-Beta/)
 
 ---

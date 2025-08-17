@@ -1,7 +1,7 @@
 type: text
 aliases: gc
 title: GeyserConnect
-color: neutral
+color: info
 
 ---
 

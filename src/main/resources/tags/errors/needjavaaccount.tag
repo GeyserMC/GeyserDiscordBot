@@ -1,7 +1,7 @@
 type: text
 title: :x: Need Java Edition Account
 issues: you need a java edition account to play on this server
-color: failure
+color: errors
 button: [Floodgate](https://wiki.geysermc.org/floodgate/setup/)
 
 ---

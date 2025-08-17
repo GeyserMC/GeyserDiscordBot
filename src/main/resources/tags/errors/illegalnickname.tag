@@ -1,7 +1,7 @@
 type: text
 title: :x: Invalid Nickname
 issues: invalid nickname
-color: failure
+color: errors
 button: [Floodgate](https://wiki.geysermc.org/floodgate/setup/)
 
 ---

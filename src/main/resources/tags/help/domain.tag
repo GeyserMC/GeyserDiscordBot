@@ -1,7 +1,7 @@
 type: text
 aliases: domains, srv, srvrecord, dns, domain
 title: :tools: Domain Guide
-color: warning
+color: help
 button: [Setup Guide](https://wiki.geysermc.org/geyser/setup/)
 
 ---

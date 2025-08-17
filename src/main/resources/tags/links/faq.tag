@@ -1,6 +1,6 @@
 type: text
 title: :link: Frequently Asked Questions
-color: success
+color: links
 button: [FAQ](https://wiki.geysermc.org/geyser/faq/)
 
 ---

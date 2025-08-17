@@ -2,7 +2,7 @@ type: text
 title: :x: Address already in use
 issues: Address already in use
 aliases: bind, failedtobind, bindissue, addressalreadyinuse
-color: failure
+color: errors
 
 ---
 

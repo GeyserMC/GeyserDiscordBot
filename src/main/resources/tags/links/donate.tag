@@ -1,7 +1,7 @@
 type: text
 aliases: donating, howtodonate
 title: :money_with_wings: How to Donate to GeyserMC
-color: success
+color: links
 button: [Open Collective Page](https://opencollective.com/geysermc)
 
 ---

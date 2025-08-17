@@ -1,7 +1,7 @@
 type: text
 title: :x: Unable to connect to world
 issues: Unable to connect to world
-color: failure
+color: errors
 
 ---
 

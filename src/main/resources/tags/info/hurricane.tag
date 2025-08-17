@@ -1,6 +1,6 @@
 type: text
 title: :cyclone: Hurricane
-color: neutral
+color: info
 
 ---
 

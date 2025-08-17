@@ -1,6 +1,6 @@
 type: text
 aliases: bedrockconnect, ps4, ps5, xbox, switch
-color: success
+color: links
 title: :link: Connecting Consoles to Geyser
 button: [Wiki Page](https://wiki.geysermc.org/geyser/using-geyser-with-consoles/)
 

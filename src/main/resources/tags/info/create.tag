@@ -1,6 +1,6 @@
 type: text
 title: Creating a Tag for the Discord Bot
-color: neutral
+color: info
 
 ---
 

@@ -1,6 +1,6 @@
 type: text
 title: Fixing 'Coming Soon' on Bedrock
-color: neutral
+color: info
 
 ---
 

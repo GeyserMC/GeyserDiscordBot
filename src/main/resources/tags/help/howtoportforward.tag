@@ -2,7 +2,7 @@ type: text
 aliases: portforwarding
 help: portforward
 title: :tools: Port Forwarding Guide
-color: neutral
+color: help
 button: [Port Forwarding](https://wiki.geysermc.org/geyser/port-forwarding/)
 
 ---

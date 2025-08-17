@@ -1,7 +1,7 @@
 type: text
 aliases: skin, skins
 title: Bedrock Skins with Floodgate
-color: neutral
+color: info
 
 ---
 

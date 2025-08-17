@@ -1,6 +1,6 @@
 type: text
 title: :rainbow: Rainbow
-color: neutral
+color: info
 button: [Downloads](https://geysermc.org/download?project=other-projects&rainbow=expanded)
 button: [Wiki Page](https://geysermc.org/wiki/other/rainbow/)
 

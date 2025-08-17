@@ -1,5 +1,6 @@
 type: raw
 aliases: ask
+color: util
 
 ---
 

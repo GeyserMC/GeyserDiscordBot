@@ -1,6 +1,6 @@
 type: text
 title: :link: Geyser Standalone Startup Script
-color: success
+color: links
 button: [Startup Script Guide](https://wiki.geysermc.org/geyser/creating-a-startup-script/)
 
 ---
