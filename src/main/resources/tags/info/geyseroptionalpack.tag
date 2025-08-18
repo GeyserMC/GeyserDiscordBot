@@ -11,10 +11,7 @@ Optional Bedrock resource pack to extend Geyser functionality. Learn more on its
 
 **Downloads:**
 Use the link below or run `!download geyseroptionalpack`. Then, put the file in following location depending on your platform:
-- Paper/Spigot: `plugins/Geyser-Spigot/packs`
-- Fabric: `config/Geyser-Fabric/packs`
-- NeoForge: `config/Geyser-Fabric/packs`
-- Standalone: `packs`
-- Velocity: `plugins/Geyser-Velocity/packs`
-- Bungeecord: `plugins/Geyser-Bungeecord/packs`
-- ViaProxy: `plugins/Geyser-ViaProxy/packs`
+
+- **Fabric/NeoForge**: `/config/Geyser-<platform>/packs/`
+- **Geyser Standalone**: `/packs/` at the root directory
+- **Other platforms**: `/plugins/Geyser-<platform>/packs/`
