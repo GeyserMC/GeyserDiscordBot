@@ -1,4 +1,6 @@
 type: text
+title: :tools: Network Debugging
+color: help
 
 ---
 

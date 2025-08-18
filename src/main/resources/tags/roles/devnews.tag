@@ -1,4 +1,6 @@
 type: text
+title: :newspaper: Dev News
+color: roles
 
 ---
 

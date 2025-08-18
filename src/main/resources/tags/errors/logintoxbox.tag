@@ -1,5 +1,7 @@
 type: text
+title: :x: Login to Xbox
 issues: Please log into Xbox to join this server.
+color: errors
 
 ---
 
