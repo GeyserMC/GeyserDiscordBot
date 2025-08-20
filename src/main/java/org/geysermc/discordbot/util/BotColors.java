@@ -35,10 +35,10 @@ public enum BotColors {
     INFO("#5BC0EB"),
     LINKS("#A569BD"),
     ROLES("#FF8000"),
-    UTIL("#6F00FF"),
+    UTIL("#1E90FF"),
     WARNS("#FFBF00"),
 
-    // Internal Stuff
+    // Everything else
     NEUTRAL("#2B5797"),
     SUCCESS("#4CAF50"),
     FAILURE("#FF0000"),
