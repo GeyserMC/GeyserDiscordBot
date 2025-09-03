@@ -107,6 +107,18 @@ public class ServerSettings {
     }
 
     /**
+     * Get the donation feeds channel for the selected guild
+     *
+     * @param guild ID of the guild to get the channel for
+     * @return The {@link TextChannel} for logs
+     * @throws IllegalArgumentException If the channel is null or invalid
+     */
+    public static TextChannel getDonationFeedsChannel(@NotNull Guild guild) throws IllegalArgumentException {
+        String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "donation-feeds-channel");
+        return guild.getTextChannelById(channel);
+    }
+
+    /**
      * Get the update channel for the selected guild
      *
      * @param guild ID of the guild to get the channel for
