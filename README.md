@@ -36,3 +36,4 @@ Most of these are lists which values are seperated by `,` and a few are seperate
 | `preview-feeds-channel` | News channel ID for preview feeds                                                    | `614877230811709474`                                        |
 | `preview-feeds`         | Forum channel ID for preview feeds                                                   | `614877230811709474`                                        |
 | `exploit-reports-notify-channel` | Channel ID to notify when an exploit report is made                         | `614877230811709474`                                        |
+| `donation-feeds-channel` | Channel ID in which webhook messages from Open Collective are posted                | `873968290836385792`                                        |
