@@ -1,5 +1,5 @@
 type: text
-title: :newspaper: Dev News
+title: :computer: Dev News
 color: roles
 
 ---

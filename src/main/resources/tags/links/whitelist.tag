@@ -1,6 +1,7 @@
 type: text
 aliases: whitelisting, howtowhitelist
 color: links
+title: :link: Whitelisting Bedrock Players
 
 ---
 

@@ -1,5 +1,5 @@
 type: text
-title: Fixing 'Coming Soon' on Bedrock
+title: :information_source: Fixing 'Coming Soon' on Bedrock
 color: info
 
 ---

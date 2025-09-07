@@ -1,6 +1,6 @@
 type: text
 aliases: oci, oracle
-title: Using Old Versions of Minecraft with Geyser
+title: :information_source: Specific Firewall Instructions for OVH, SoYouStart and Oracle Cloud (OCI)
 color: info
 button: [Wiki](https://wiki.geysermc.org/geyser/port-forwarding/#ovh-and-soyoustart)
 

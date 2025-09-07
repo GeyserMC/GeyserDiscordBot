@@ -1,7 +1,7 @@
 type: text
 aliases: updategeyser
 help: update || updating
-title: Updating Geyser/Floodgate
+title: :information_source: Updating Geyser/Floodgate
 color: info
 
 ---

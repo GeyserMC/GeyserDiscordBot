@@ -1,5 +1,6 @@
 type: text
 color: links
+title: :link: Geyser Setup Using Termux
 
 ---
 

@@ -1,6 +1,6 @@
 type: text
 aliases: bungeecord, velocity, proxies
-title: Geyser APIs
+title: :information_source: Proxy Setups
 color: info
 
 ---

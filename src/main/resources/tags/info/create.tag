@@ -1,5 +1,5 @@
 type: text
-title: Creating a Tag for the Discord Bot
+title: :information_source: Creating a Tag for the Discord Bot
 color: info
 
 ---

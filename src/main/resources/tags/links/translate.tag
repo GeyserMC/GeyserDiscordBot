@@ -5,4 +5,4 @@ button: [Crowdin](https://translate.geysermc.org/)
 
 ---
 
-One way of contributing to Geyser is by translating it to your language on the Crowdin linked below.
+Want to contribute to Geyser? One way of contributing to Geyser is by translating it to your language on the Crowdin linked below.

@@ -1,6 +1,6 @@
 type: text
 aliases: learnjava, contribute, contributing
-title: Contributing to Geyser
+title: :information_source: Contributing to Geyser
 color: info
 button: [Contribute](https://wiki.geysermc.org/other/developer-guide/)
 

@@ -1,6 +1,6 @@
 type: text
 aliases: skin, skins
-title: Bedrock Skins with Floodgate
+title: :information_source: Bedrock Skins with Floodgate
 color: info
 
 ---

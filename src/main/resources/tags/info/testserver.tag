@@ -1,5 +1,5 @@
 type: text
-title: GeyserMC Test Server
+title: :geyser: GeyserMC Test Server
 color: info
 button: [GeyserMC Test Server Details](https://wiki.geysermc.org/other/test-server/)
 

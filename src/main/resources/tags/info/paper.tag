@@ -1,5 +1,5 @@
 type: text
-title: PaperMC
+title: :information_source: PaperMC
 color: info
 button: [PaperMC Download](https://papermc.io/downloads/paper/)
 

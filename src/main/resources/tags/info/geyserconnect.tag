@@ -1,6 +1,6 @@
 type: text
 aliases: gc
-title: GeyserConnect
+title: :information_source: GeyserConnect
 color: info
 
 ---

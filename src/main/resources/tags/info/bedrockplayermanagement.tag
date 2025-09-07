@@ -1,6 +1,6 @@
 type: text
 aliases: anticheat-bypass, bedrock-player-management, bedrockplayermanager
-title: Geyser APIs
+title: :information_source: Geyser APIs
 color: info
 
 ---

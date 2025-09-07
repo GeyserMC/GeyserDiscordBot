@@ -5,5 +5,5 @@ button: [Supported Hosting Providers](https://wiki.geysermc.org/geyser/supported
 
 ---
 
-See the list of supported providers, use the link below.
+To see the list of supported providers, use the link below.
 To search for a specific provider, use `/provider <provider>`.
