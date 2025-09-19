@@ -1,7 +1,7 @@
 type: text
 aliases: offline, offlinemode, cracked
 title: :no_entry_sign: Offline Mode
-color: info
+color: warning
 button: [Floodgate](https://geysermc.org/wiki/floodgate/setup/)
 
 ---

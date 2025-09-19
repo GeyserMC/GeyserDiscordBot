@@ -1,7 +1,7 @@
 type: text
 aliases: reloading
 help: reload
-title: :warning: Using the /reload Command
+title: :arrows_clockwise: Avoid Using the /reload Command
 color: warns
 button: [Problem with Reload](https://madelinemiller.dev/blog/problem-with-reload/)
 
