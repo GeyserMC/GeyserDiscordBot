@@ -3,7 +3,7 @@ aliases: playit.gg, playitgg
 color: links
 title: :link: playit.gg Setup
 help: geyser
-button: [playit.gg Setup Guide](https://geysermc.org/wiki/geyser/playit-gg/)
+button: [Setup Guide](https://geysermc.org/wiki/geyser/playit-gg/)
 
 ---
 
