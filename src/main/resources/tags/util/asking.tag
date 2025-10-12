@@ -1,4 +1,4 @@
-type: text
+type: raw
 aliases: ask
 
 ---
