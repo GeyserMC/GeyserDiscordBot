@@ -5,6 +5,4 @@ color: errors
 
 ---
 
-This error is caused by a Floodgate key.pem mismatch, most likely between your proxy and your backend servers.
-Make sure that the key.pem file in every Floodgate config folder is the same file.
-If this still doesn't work and you're using an FTP client, try using the [WinSCP](https://winscp.net/eng/index.php) client.
+This error happens when the Floodgate key.pem files don’t match between your proxy and backend servers. Ensure every Floodgate config folder has the same key.pem. If issues persist and you’re using an FTP client, try switching to [WinSCP](https://winscp.net/eng/index.php).

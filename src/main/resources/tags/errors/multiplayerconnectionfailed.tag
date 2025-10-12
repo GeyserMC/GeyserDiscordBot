@@ -1,15 +1,14 @@
 type: text
-aliases: mpconnectionfailed, mpconnect, unabletoconnect, unabletoconnecttoworld
+aliases: mpconnectionfailed, mpconnectfailed, mpconnectfail, mpconnect, unabletoconnect, unabletoconnecttoworld
 title: :x: Multiplayer Connection Failed
-issues: Unable to connect to world, Multiplayer connection failed
+issues: Multiplayer connection failed || Unable to connect to world
 color: errors
 
 ---
 
-This means that the Bedrock client cannot reach the server. This is a network issue and typically caused by improper port forwarding, entering the wrong port in geyser config, or when joining.
-Note that if `clone-remote-port=true` in geyser config, then your bedrock port will be ignored and will be the java port instead.
-- If you are using a hosting provider, run `/provider` followed by your host in https://discord.com/channels/613163671870242838/613194762249437245.
-    - If your host is not in the list, run `!!networkdebug` instead.
-- If you are self-hosting, we recommend using playit.gg which can be used to bypass port forwarding.
-    - If you are already using playit.gg, the most common issue is confusing the Geyser and playit.gg ports, which are entirely separate. If you changed the bedrock port to match playit.gg, change it back to the default of 19132 and make sure that `clone-remote-port=false`. Join with playit.gg's IP and port.
-Additionally, there are various fixes for this on our wiki, which you can get to using the [Wiki page](https://wiki.geysermc.org/geyser/fixing-unable-to-connect-to-world/).
+This means the Bedrock client cannot reach the server. This is a network issue usually caused by improper port forwarding, entering the wrong port in the Geyser config, or entering the wrong port when adding the Geyser server to your server list. To resolve this error, try the following:
+- If you are using a hosting provider, run `/provider` followed by your host in <#613194762249437245>.
+ㅤ└> If your host is not in the list, run `!!networkdebug` instead.
+- If you are self-hosting and cannot get port forwarding to work, use playit.gg which is a alternative to port forwarding.
+ㅤ└> If you are having issues with playit.gg, run `!!playitdebug`
+- If you are still facing this error, please check out this [Geyser Wiki Page](https://wiki.geysermc.org/geyser/fixing-unable-to-connect-to-world/) for additional fixes for this error.

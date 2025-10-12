@@ -5,4 +5,4 @@ button: [XY Problem](https://xyproblem.info/)
 
 ---
 
-Asking about your attempted solution rather than your actual problem
+Asking about your attempted solution rather than your actual problem.

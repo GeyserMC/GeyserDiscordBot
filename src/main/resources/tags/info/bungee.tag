@@ -2,13 +2,10 @@ type: text
 aliases: bungeecord, velocity, proxies
 title: :information_source: Proxy Setups
 color: info
+button: [Floodgate Proxy Setup Guide](https://geysermc.org/wiki/floodgate/setup/?platform=proxy-servers)
 
 ---
 
-The Geyser and Floodgate BungeeCord/Velocity plugins only need to be installed on the BungeeCord/Velocity proxy unless you intend to use the Floodgate API. That way, you need Floodgate on the "backend" servers too.
-Installing Floodgate on the backend servers also makes it so that Bedrock players don't have to switch backend servers for their skins to start displaying.
-
-To properly set up Floodgate on the proxy <-> Floodgate on the backend connection, follow the guide linked below. Do note that enabling "send-floodgate-data" in the Floodgate config requires having Floodgate on ALL backend servers.
-https://wiki.geysermc.org/floodgate/setup/#installing-floodgate-also-on-spigot-servers-behind-bungeecord-or-velocity
-
-Run `!!api` in <#613194762249437245> for more information regarding the Floodgate API.
+**Install Geyser and Floodgate on BungeeCord/Velocity only.** You will only need Floodgate on backend servers for one of two reasons:
+1. You want to use the Floodgate API (run `!!api` in <#613194762249437245> for more information regarding the Floodgate API.)
+2. You want Bedrock players to not have to switch backend servers for their skins to start displaying.

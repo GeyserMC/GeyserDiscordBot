@@ -1,14 +1,12 @@
 type: text
 aliases: learnjava, contribute, contributing
-title: :information_source: Contributing to Geyser
+title: :information_source: Contributing To Geyser
 color: info
-button: [Contribute](https://wiki.geysermc.org/other/developer-guide/)
+button: [GeyserMC Developer Guide](https://wiki.geysermc.org/other/developer-guide/)
+button: [Oracle Java Tutorial](https://docs.oracle.com/javase/tutorial/)
+button: [Codecademy Java Course](https://www.codecademy.com/learn/learn-java)
+button: [MOOC.fi Programming Part 1](http://mooc.fi/courses/2013/programming-part-1/)
 
 ---
 
-You want to contribute to Geyser? You can find some useful things to start contributing to Geyser and links to some of the tools we use by clicking the button below.
-
-And here are some useful Java guides:
- - https://docs.oracle.com/javase/tutorial/
- - https://www.codecademy.com/learn/learn-java
- - http://mooc.fi/courses/2013/programming-part-1/
+You want to contribute to Geyser? The GeyserMC Developer Guide has useful things and links to get you started with contributing to Geyser! Need to learn Java? We have links for that too!

@@ -1,5 +1,4 @@
 type: raw
-color: util
 
 ---
 

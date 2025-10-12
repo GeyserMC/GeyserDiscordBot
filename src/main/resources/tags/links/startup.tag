@@ -5,4 +5,4 @@ button: [Startup Script Guide](https://wiki.geysermc.org/geyser/creating-a-start
 
 ---
 
-If you wish to create a startup script for Geyser standalone, please follow the startup script guide linked below.
+If you wish to create a startup script for Geyser Standalone, please follow the startup script guide linked below.

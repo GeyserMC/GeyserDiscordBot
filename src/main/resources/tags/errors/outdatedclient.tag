@@ -5,4 +5,4 @@ color: errors
 
 ---
 
-Your issue is caused by your Bedrock client being outdated, please update it.
+This error is caused by your Bedrock client being outdated, please update it.

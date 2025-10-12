@@ -1,8 +1,8 @@
 type: issue-only
-title: :x: Connection Timed Out
 issues: AnnotatedConnectException: Connection timed out
-color: errors
 
 ---
 
-The Geyser instance cannot connect to your Java server. This can happen for a variety of reasons. It's best to check whether you configured Geyser and its ports properly and whether you have plugin/mod conflicts, run !!plugindebugging for more info.
+The Geyser instance cannot connect to your Java server, and since this can occur for several reasons, please follow the steps below to identify the issue:
+1. Check whether you configured Geyser and its ports properly
+2. Check if you have plugin/mod conflicts (run !!plugindebugging for more info)

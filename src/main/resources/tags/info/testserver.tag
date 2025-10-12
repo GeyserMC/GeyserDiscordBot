@@ -5,4 +5,4 @@ button: [GeyserMC Test Server Details](https://wiki.geysermc.org/other/test-serv
 
 ---
 
-Geyser has a test server available; you can find more info below
+GeyserMC provides a test server for Geyser. More information can be found below.

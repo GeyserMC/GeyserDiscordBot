@@ -1,6 +1,6 @@
 type: text
 color: links
-title: :link: Setup Geyser
+title: :link: Geyser Setup Guide
 help: geyser
 button: [Setup Guide](https://wiki.geysermc.org/geyser/setup/)
 

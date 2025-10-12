@@ -32,17 +32,14 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.geysermc.discordbot.util.BotColors;
-import org.geysermc.discordbot.util.MessageHelper;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
 
-import java.time.Instant;
-
-public class RoryCommand extends SlashCommand {
-    public RoryCommand() {
-        this.name = "rory";
-        this.help = "Shows a random rory image from rory.cat";
-        this.aliases = new String[]{ "rory", "car" };
+public class SupportedVersionsCommand extends SlashCommand {
+    public SupportedVersionsCommand() {
+        this.name = "supportedversions";
+        this.help = "Shows what Minecraft versions Geyser supports";
+        this.aliases = new String[]{ "versions", "supportedversions" };
         this.guildOnly = false;
     }
 
@@ -58,21 +55,14 @@ public class RoryCommand extends SlashCommand {
     }
 
     protected MessageEmbed handle() {
-        JSONObject result = RestClient.get("https://rory.cat/purr").asJSONObject();
+        JSONObject result = RestClient.get("https://raw.githubusercontent.com/GeyserMC/GeyserWebsite/master/src/data/versions.json").asJSONObject();
 
-        if (!result.has("url") || !result.has("id")) {
-            return MessageHelper.errorResponse(
-                    null,
-                    "Couldn't find a random Rory image!",
-                    "Unable to fetch a valid image url from rory.cat!"
-            );
-        }
+        String javaVersion = result.getJSONObject("java").getString("supported");
+        String bedrockVersion = result.getJSONObject("bedrock").getString("supported");
 
         return new EmbedBuilder()
-                .setTitle(":cat: Here’s A Random Rory Image:")
-                .setImage(result.getString("url"))
-                .setFooter("Cat ID: " + result.getInt("id") + " • Powered by rory.cat")
-                .setTimestamp(Instant.now())
+                .setTitle(":geyser: Geyser Supported Versions")
+                .setDescription("Currently, Geyser supports Minecraft Bedrock " + bedrockVersion + " and Minecraft Java " + javaVersion + ".")
                 .setColor(BotColors.SUCCESS.getColor())
                 .build();
     }

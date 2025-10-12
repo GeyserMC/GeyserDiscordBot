@@ -6,4 +6,4 @@ button: [Common Issues](https://wiki.geysermc.org/geyser/common-issues/)
 
 ---
 
-The link below contains fixes for a lot of the issues you may come across while using Geyser.
+The common issues wiki page contains fixes for a lot of the issues you may come across while using Geyser.

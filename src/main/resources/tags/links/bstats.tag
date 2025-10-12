@@ -6,4 +6,4 @@ button: [bStats Page](https://bstats.org/plugin/server-implementation/GeyserMC/5
 
 ---
 
-You can check our bStats page with the link below.
+Geyser has a bStats page which you can check out using link below.

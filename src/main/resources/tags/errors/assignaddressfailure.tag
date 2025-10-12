@@ -1,8 +1,6 @@
 type: issue-only
-title: :x: Assign Address Failure
 issues: java.net.BindException: Cannot assign requested address
-color: errors
 
 ---
 
-This means the IP your server is trying to use is unavailable or disallowed by the system or firewall.
+Your server is trying to use an IP address that isn't available or is being blocked by the operating system or firewall.
