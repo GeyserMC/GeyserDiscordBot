@@ -1,7 +1,5 @@
 type: text
-title: :thinking: How To Ask For Help
 aliases: ask
-color: util
 
 ---
 
