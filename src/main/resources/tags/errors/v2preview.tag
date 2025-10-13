@@ -1,7 +1,7 @@
 type: text
 aliases: previewv2
 title: :x: Please use the Custom Item API V2 Preview
-issues: java.lang.nosuchmethod || java.lang.NoClassDefFoundError
+issues: java.lang.nosuchmethod || java.lang.NoClassDefFoundError || java.util.ServiceConfigurationError: org.geysermc.hydraulic.pack.PackModule
 color: errors
 
 ---
