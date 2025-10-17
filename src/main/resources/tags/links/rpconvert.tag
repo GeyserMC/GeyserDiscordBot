@@ -20,7 +20,7 @@ For the following tools you'll need to use the **Custom Item API V2 Preview buil
 - **For general Java resource packs** (only changing vanilla textures) use Thunder.
 As an alternative, you will have to manually convert with either Custom Item API V1 or Custom Item API V2. See the pinned messages in https://discord.com/channels/613163671870242838/1139296287179677857 for more info.
 
-**Custom GUIs on Bedrock**
+**Custom GUIs on Bedrock:**
 Custom GUIs on Bedrock need to be done using JSON UI, however, you can use this tool to upload your GUI pngs & their unicodes and convert them into a Bedrock resource pack to use in Geyser's `packs` folder: https://abishekbhusal.com/j2b_gui/
 
 If you'd like to manually convert custom GUIs using JSON UI, here are some helpful links:
