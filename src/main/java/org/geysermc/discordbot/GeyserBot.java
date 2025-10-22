@@ -244,7 +244,6 @@ public class GeyserBot {
                             new DumpHandler(),
                             new ErrorAnalyzer(),
                             new ShutdownHandler(),
-                            new VoiceGroupHandler(),
                             new BadLinksHandler(),
                             new HelpHandler(),
                             new DeleteHandler(),

@@ -131,18 +131,6 @@ public class ServerSettings {
     }
 
     /**
-     * Get the voice role for the selected guild
-     *
-     * @param guild  ID of the guild to get the channel for
-     * @return The {@link Role} for users in the voice channel
-     * @throws IllegalArgumentException If the role is null or invalid
-     */
-    public static Role getVoiceRole(@NotNull Guild guild) throws IllegalArgumentException {
-        String role = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "voice-role");
-        return guild.getRoleById(role);
-    }
-
-    /**
      * Check if the given channel should be excluded from logs
      *
      * @param channel The {@link MessageChannel} to check
