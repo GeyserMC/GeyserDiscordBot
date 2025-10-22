@@ -31,9 +31,11 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.PermissionOverride;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.attribute.ICategorizableChannel;
 import net.dv8tion.jda.api.entities.channel.attribute.IPermissionContainer;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
@@ -172,10 +174,12 @@ public class SwearHandler extends ListenerAdapter {
             return;
         }
 
-        if (message.getChannel() instanceof TextChannel textChannel) {
+        if (message.getChannel() instanceof ICategorizableChannel channel) {
             Role everyoneRole = message.getGuild().getPublicRole();
-            boolean canEveryoneSee = canViewChannel(everyoneRole, textChannel.getParentCategory(), textChannel.getPermissionOverride(everyoneRole));
+            boolean canEveryoneSee = canViewChannel(everyoneRole, channel.getParentCategory(), channel.getPermissionOverride(everyoneRole));
             if (!canEveryoneSee) return;
+        } else if (message.getChannel() instanceof ThreadChannel thread) {
+            if (!thread.isPublic()) return;
         }
 
         String disableFilter = GeyserBot.storageManager.getServerPreference(message.getGuild().getIdLong(), "disable-filter");
