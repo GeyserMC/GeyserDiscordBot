@@ -155,7 +155,7 @@ public class SwearHandler extends ListenerAdapter {
     private boolean canViewChannel(Role role, @Nullable IPermissionContainer parent, PermissionOverride permissionOverride) {
         if (permissionOverride == null) {
             if (parent != null) return canViewChannel(role, null, parent.getPermissionOverride(role));
-            else return true;
+            else return role.getPermissions().contains(Permission.VIEW_CHANNEL);
         }
 
         if (permissionOverride.getInherit().contains(Permission.VIEW_CHANNEL)) {
