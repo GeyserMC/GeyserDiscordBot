@@ -155,18 +155,14 @@ public class SwearHandler extends ListenerAdapter {
 //    }
 
     private boolean canViewChannel(Role role, @Nullable IPermissionContainer parent, PermissionOverride permissionOverride) {
-        if (permissionOverride == null) {
-            if (parent != null) return canViewChannel(role, null, parent.getPermissionOverride(role));
-            else return role.getPermissions().contains(Permission.VIEW_CHANNEL);
-        }
-
-        if (permissionOverride.getInherit().contains(Permission.VIEW_CHANNEL)) {
+        if (permissionOverride == null || permissionOverride.getInherit().contains(Permission.VIEW_CHANNEL)) {
             if (parent != null) {
                 return canViewChannel(role, null, parent.getPermissionOverride(role));
-            } else {
-                return role.getPermissions().contains(Permission.VIEW_CHANNEL);
             }
-        } else return !permissionOverride.getDenied().contains(Permission.VIEW_CHANNEL);
+            return role.getPermissions().contains(Permission.VIEW_CHANNEL);
+        }
+
+        return !permissionOverride.getDenied().contains(Permission.VIEW_CHANNEL);
     }
 
     private void handleMessageEvent(Message message, boolean notifyUser) {
