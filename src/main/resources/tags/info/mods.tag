@@ -5,7 +5,7 @@ button: [Modrinth](https://modrinth.com/mods/)
 
 ---
 
-**Geyser only works with server-sided mods**, meaning mods that allow a vanilla client to join without install. On Modrinth, you can filter by **"Server"** to only show serverside mods.
+**Geyser only works with server-sided mods**, meaning mods that allow a vanilla client to join. On Modrinth (link below), you can filter by **"Server"** to only show serverside mods.
 
 An example of a set of server-sided mods are Polymer mods which either work, partially don't work, or just don't work at all.
 └> You can try checking if Geyser/Bedrock support is listed on the mod page.
