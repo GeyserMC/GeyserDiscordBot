@@ -75,7 +75,6 @@ public class SettingsCommand extends SlashCommand {
                         .addChoice("Roles", "roles")
                         .addChoice("RSS Feeds", "rss-feeds")
                         .addChoice("Update channel", "update-channel")
-                        .addChoice("Voice Role", "voice-role")
                         .addChoice("Exploit reports notify channel", "exploit-reports-notify-channel")
                         .addChoice("Donation feeds channel", "donation-feeds-channel"),
 
