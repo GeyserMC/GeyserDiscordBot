@@ -6,7 +6,8 @@ button: [Setup Guide](https://wiki.geysermc.org/geyser/setup/)
 
 ---
 
-Before doing this domain guide, please make sure you have configured Geyser to allow you to be able connect with the **Numeric IP + Port** using the Geyser setup guide. To setup a domain for Geyser:
+Before starting this domain guide, please make sure you have configured Geyser to allow you to be able connect with the **Numeric IP + Port** using the Geyser setup guide.
+To setup a domain for Geyser:
 1. Get a domain (e.g. via [Cloudflare](https://domains.cloudflare.com/))
 2. Add an A-Record:
 └> Bedrock doesn't work with SRV DNS records, so you'll have to use an A record instead.
