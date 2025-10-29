@@ -9,7 +9,7 @@ If you are unable to connect to your server, it may be because you are using the
 - Check if there is a setup guide for your host on the Geyser setup guide.
 - Enable `clone-remote-port` in the Geyser config, restart, and try join with your Java IP and port.
 - In your panel, look for a section for allocating ports, create a new allocation, and use that port in the Geyser config.
-‍     └> If you can't find a section for this, skip this step.
-‍     └> Please ensure `clone-remote-port=false` before doing this.
+└> If you can't find a section for this, skip this step.
+└> Please ensure you have disabled `clone-remote-port` in the Geyser config before doing this.
 - Contact your host and ask about getting a UDP port allocation.
-‍     └> If you don't know how to explain that, ask for a port to run Geyser.
+└> If you don't know how to explain that, ask for a port to run Geyser.
