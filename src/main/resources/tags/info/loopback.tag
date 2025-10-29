@@ -1,6 +1,6 @@
 type: text
 aliases: loopback, windows
-title: :information_source: Joining A Geyser Server When Hosted On The Same Windows Machine
+title: :microjang: Joining A Geyser Server When Hosted On The Same Windows Machine
 color: info
 
 ---
