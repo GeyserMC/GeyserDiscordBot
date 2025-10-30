@@ -26,7 +26,16 @@
 package org.geysermc.discordbot.listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.PermissionOverride;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.attribute.ICategorizableChannel;
+import net.dv8tion.jda.api.entities.channel.attribute.IPermissionContainer;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionEvent;
@@ -145,9 +154,28 @@ public class SwearHandler extends ListenerAdapter {
 //        handleMessageEvent(event.getMessage(), false);
 //    }
 
+    private boolean canViewChannel(Role role, @Nullable IPermissionContainer parent, PermissionOverride permissionOverride) {
+        if (permissionOverride == null || permissionOverride.getInherit().contains(Permission.VIEW_CHANNEL)) {
+            if (parent != null) {
+                return canViewChannel(role, null, parent.getPermissionOverride(role));
+            }
+            return role.getPermissions().contains(Permission.VIEW_CHANNEL);
+        }
+
+        return !permissionOverride.getDenied().contains(Permission.VIEW_CHANNEL);
+    }
+
     private void handleMessageEvent(Message message, boolean notifyUser) {
         if (message.getAuthor().isBot() || !message.isFromGuild()) {
             return;
+        }
+
+        if (message.getChannel() instanceof ICategorizableChannel channel) {
+            Role everyoneRole = message.getGuild().getPublicRole();
+            boolean canEveryoneSee = canViewChannel(everyoneRole, channel.getParentCategory(), channel.getPermissionOverride(everyoneRole));
+            if (!canEveryoneSee) return;
+        } else if (message.getChannel() instanceof ThreadChannel thread) {
+            if (!thread.isPublic()) return;
         }
 
         String disableFilter = GeyserBot.storageManager.getServerPreference(message.getGuild().getIdLong(), "disable-filter");
