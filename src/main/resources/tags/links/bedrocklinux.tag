@@ -6,4 +6,4 @@ button: [Download Unofficial Minecraft Bedrock Launcher](https://flathub.org/app
 ---
 
 If you wish to run Minecraft: Bedrock Edition on Linux, you can download the unofficial Minecraft Bedrock Launcher on Linux linked below.
-:warning: **You must own Minecraft on the Google Play Store to use the launcher.**
+:warning: **You must own Minecraft on the Google Play Store to use this launcher.**
