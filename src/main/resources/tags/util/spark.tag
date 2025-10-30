@@ -5,7 +5,7 @@ button: [Download Spark](https://spark.lucko.me/download)
 
 ---
 
-Spark is a plugin that helps you monitor performance for your server. The download link for Spark can be found below.
+Spark is a plugin/mod that helps you monitor performance for your server. The download link for Spark can be found below.
 
 To record performance on your server use `/spark profiler --thread * --timeout 60`.
 └> On Velocity, replace `/spark` with `/sparkv`.
