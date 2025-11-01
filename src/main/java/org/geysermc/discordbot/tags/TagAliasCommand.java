@@ -81,7 +81,7 @@ public class TagAliasCommand extends Command {
         if (foundTag.getAliases().length > 0) {
             embed.setTitle("Aliases for " + foundTag.getName() + " (" + foundTag.getAliases().length + ")");
             embed.setDescription("`" + String.join("`, `", foundTag.getAliases()) + "`");
-            embed.setFooter("Use `" + PropertiesManager.getPrefix() + "tag <name>` to show a tag");
+            embed.setFooter("Use `" + PropertiesManager.getPrefix() + "<name>` to show a tag");
             embed.setColor(BotColors.SUCCESS.getColor());
         } else {
             embed.setTitle("No aliases for " + foundTag.getName());
