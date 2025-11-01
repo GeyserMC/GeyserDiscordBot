@@ -1,6 +1,6 @@
 type: text
 aliases: offline, offlinemode, cracked
-title: :no_entry_sign: Cracked/Offline Servers Do Not Receive Support
+title: :no_entry_sign: Cracked/Offline Servers
 color: warning
 button: [Floodgate](https://geysermc.org/wiki/floodgate/setup/)
 
