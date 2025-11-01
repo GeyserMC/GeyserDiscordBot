@@ -97,7 +97,7 @@ public class TagsCommand extends FilteredSlashCommand {
             embed.setColor(BotColors.SUCCESS.getColor());
             embed.setTitle("Tags (" + tagNames.size() + ")");
             embed.setDescription("`" + String.join("`, `", tagNames) + "`");
-            embed.setFooter("Use `" + PropertiesManager.getPrefix() + "<name>` to show a tag");
+            embed.setFooter("Use `" + PropertiesManager.getPrefix() + PropertiesManager.getPrefix() + "<name>` to show a tag");
         }
 
         return embed.build();
