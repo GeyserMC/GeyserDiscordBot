@@ -1,6 +1,6 @@
 type: text
 aliases: packs, texturepacks, resourcepack, resourcepacks, rp, texturepack
-title: :information_source: Adding Resource Packs To Geyser
+title: :package: Adding Resource Packs To Geyser
 color: info
 
 ---
