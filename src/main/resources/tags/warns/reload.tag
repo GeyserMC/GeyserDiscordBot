@@ -3,7 +3,7 @@ aliases: reloading
 help: reload
 title: :arrows_clockwise: Avoid Using The /reload Command
 color: warns
-button: [Problem with Reload](https://madelinemiller.dev/blog/problem-with-reload/)
+button: [The Problem with /reload](https://madelinemiller.dev/blog/problem-with-reload/)
 
 ---
 
