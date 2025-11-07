@@ -11,5 +11,5 @@ This means the Bedrock client cannot reach the server. This is a network issue u
 └> If your host is not in the list, run `!!networkdebug` instead.
 - If you are self-hosting and cannot get port forwarding to work, use playit.gg which is a alternative to port forwarding.
 └> If you are having issues with playit.gg, run `!!playitdebug`.
-- Having voicechat plugins/mod on the same port as Geyser can also cause this error.
+- Having voicechat plugins/mods on the same port as Geyser can also cause this error.
 - If you are still facing this error, please check out this [Geyser Wiki Page](https://wiki.geysermc.org/geyser/fixing-unable-to-connect-to-world/) for additional fixes for this error.
