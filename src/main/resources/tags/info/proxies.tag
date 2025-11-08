@@ -1,5 +1,5 @@
 type: text
-aliases: bungeecord, velocity, proxies
+aliases: bungeecord, bungee, velocity
 title: :information_source: Proxy Setups
 color: info
 button: [Floodgate Proxy Setup Guide](https://geysermc.org/wiki/floodgate/setup/?platform=proxy-servers)
