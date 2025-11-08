@@ -61,7 +61,7 @@ public class IntegrityDumpIssueCheck extends AbstractDumpIssueCheck {
         String versionNumber = matcher.group(1);
         String buildNumber = matcher.group(2);
 
-        String sha256Hash = dump.getJSONObject("hashInfo").getString("sha256Hash");
+        String sha256Hash = dump.getString("hash");
 
         // https://download.geysermc.org/v2/projects/geyser/versions/2.9.0/builds/979
 
