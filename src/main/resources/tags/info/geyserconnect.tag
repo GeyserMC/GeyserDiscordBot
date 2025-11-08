@@ -14,4 +14,4 @@ There is an **unofficial** public GeyserConnect instance running. More informati
 - United States: `us.geyserconnect.net`
 - Europe: `eu.geyserconnect.net`
 
-**Warning:** Due to Geyser handling certain things different to a vanilla Java client you may get banned using this (see `!tag anticheat` for more info). As well as this, if you use online mode you are sending your Java account credentials to a third party.
+:warning:**Warning:** Due to Geyser handling certain things different to a vanilla Java client you may get banned using this (see `!tag anticheat` for more info). As well as this, if you use online mode you are sending your Java account credentials to a third party.
