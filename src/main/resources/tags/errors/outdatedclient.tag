@@ -1,4 +1,5 @@
 type: text
+aliases: client
 title: :x: Outdated Bedrock Client
 issues: Outdated Bedrock client
 color: errors
