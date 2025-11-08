@@ -1,5 +1,5 @@
 type: text
-aliases: oldversion, oldversions, olderversion, 1.8
+aliases: oldversion, oldversions, olderversion, 1.8, vv, viaversion
 help: 1.8
 title: :information_source: Using Old Versions Of Minecraft With Geyser
 color: info
