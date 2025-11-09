@@ -9,6 +9,6 @@ button: [Modrinth - Geyser Extensions](https://github.com/GeyserMC/GeyserExtensi
 Geyser Extensions are similar to plugins, but specifically for Geyser, regardless of where Geyser runs on.
 To install Geyser Extensions:
 1. Download the Geyser Extension from Modrinth (link below).
-└> To apply the Geyser Extension filter yourself. Just go to the **"Plugins"** tab on Modrinth then set **"Geyser Extension"** as your platform.
+└> To filter by Geyser Extensions manually. Go to the **"Plugins"** tab on Modrinth then set **"Geyser Extension"** as your platform.
 2. Put the Geyser Extension .jar file in Geyser's `extensions` folder.
 3. Restart the server.
