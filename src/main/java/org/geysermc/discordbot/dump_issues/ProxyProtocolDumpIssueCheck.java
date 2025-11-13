@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,16 +36,17 @@ public class ProxyProtocolDumpIssueCheck extends AbstractDumpIssueCheck {
     @NotNull
     @Override
     public List<String> checkIssues(JSONObject dump) {
-        JSONObject configRemote = dump.getJSONObject("config").getJSONObject("remote");
-        JSONObject configBedrock = dump.getJSONObject("config").getJSONObject("bedrock");
+        JSONObject configAdvanced = dump.getJSONObject("config").getJSONObject("advanced");
+        JSONObject configJava = configAdvanced.getJSONObject("java");
+        JSONObject configBedrock = configAdvanced.getJSONObject("bedrock");
 
         List<String> warnings = new ArrayList<>();
 
-        if (configBedrock.getBoolean("enable-proxy-protocol")) {
-            warnings.add("- `enable-proxy-protocol` should ONLY be enabled if you run a reverse UDP proxy in front of Geyser.");
+        if (configBedrock.getBoolean("use-haproxy-protocol")) {
+            warnings.add("- `advanced.bedrock.use-haproxy-protocol` should ONLY be enabled if you run a reverse UDP proxy in front of Geyser that supports HAPROXY protocol.");
         }
-        if (configRemote.getBoolean("use-proxy-protocol")) {
-            warnings.add("- `use-proxy-protocol` should ONLY be enabled if either of these apply:\n\u00A0\u00A0\u00A0\u00A01. Your server supports PROXY protocol (this has nothing to do with if you're using BungeeCord or Velocity).\n\u00A0\u00A0\u00A0\u00A02. You have the exact same option enabled in your BungeeCord/Velocity config (it is off by default).");
+        if (configJava.getBoolean("use-haproxy-protocol")) {
+            warnings.add("- `advanced.java.use-haproxy-protocol` should ONLY be enabled if either of these apply:\n\u00A0\u00A0\u00A0\u00A01. Your server supports HAPROXY protocol (this has nothing to do with if you're using BungeeCord or Velocity).\n\u00A0\u00A0\u00A0\u00A02. You have the exact same option enabled in your BungeeCord/Velocity config (it is off by default).");
         }
 
         return warnings;

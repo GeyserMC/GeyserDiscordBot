@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@ public class FloodgateDumpIssueCheck extends AbstractDumpIssueCheck {
     @Override
     public List<String> checkIssues(JSONObject dump) {
         JSONObject bootstrapInfo = dump.getJSONObject("bootstrapInfo");
-        JSONObject configRemote = dump.getJSONObject("config").getJSONObject("remote");
+        JSONObject configRemote = dump.getJSONObject("config").getJSONObject("java");
 
         List<String> problems = new ArrayList<>();
 
