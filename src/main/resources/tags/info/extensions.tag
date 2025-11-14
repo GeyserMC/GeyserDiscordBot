@@ -1,6 +1,6 @@
 type: text
 aliases: extension, geyserextension, ext
-title: :information_source: Geyser Extensions
+title: :geyser: Geyser Extensions
 color: info
 button: [Modrinth](https://modrinth.com/plugins)
 
