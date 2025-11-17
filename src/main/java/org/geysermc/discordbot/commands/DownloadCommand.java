@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -63,7 +63,6 @@ public class DownloadCommand extends SlashCommand {
         this.optionsToRepository = ImmutableMap.<String, DownloadOption>builder()
                 .put("geyser", this.defaultDownloadOption)
                 .put("floodgate", new GeyserDownloadOption("Floodgate", "A plugin which allows Bedrock Edition clients to join Java edition servers without a Java Edition account.", "https://geysermc.org/download#floodgate"))
-                .put("geyseroptionalpack", new GeyserDownloadOption("GeyserOptionalPack", "A Bedrock Edition resource pack which provides some fixes and parity changes to Geyser.", "https://geysermc.org/download/?project=other-projects&geyseroptionalpack=expanded"))
                 .put("floodgate-modded", new GeyserDownloadOption("Floodgate Modded", "A mod which allows Bedrock Edition clients to join Java edition servers without a Java Edition account.", "https://modrinth.com/mod/floodgate"))
                 .put("paper", new DownloadOption("Paper", "Paper is a server software based on Spigot with better performance and more modern features.", "https://papermc.io/downloads", "https://github.com/PaperMC.png"))
                 .put("viaversion", new DownloadOption("ViaVersion", "ViaVersion is a plugin which allows modern clients to join older Java Edition servers.", "https://ci.viaversion.com/job/ViaVersion/", "https://github.com/ViaVersion.png"))
