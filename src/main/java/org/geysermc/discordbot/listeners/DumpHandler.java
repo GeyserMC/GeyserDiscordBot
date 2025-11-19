@@ -128,7 +128,7 @@ public class DumpHandler extends ListenerAdapter {
             // Check for the dump parts
             JSONObject config = dump.getJSONObject("config");
             config.getJSONObject("bedrock");
-            config.getJSONObject("remote");
+            config.getJSONObject("java");
             dump.getJSONObject("gitInfo");
             dump.getJSONObject("bootstrapInfo");
 
@@ -252,7 +252,10 @@ public class DumpHandler extends ListenerAdapter {
         String versionString = "Unknown";
 
         // Ping java server
-        String javaAddrText = getJavaServerText(configJava.getString("address"), configJava.getInt("port"));
+        String javaAddrText = "Direct connection";
+        if (configJava.has("address")) {
+            javaAddrText = getJavaServerText(configJava.getString("address"), configJava.getInt("port"));
+        }
 
         // Ping bedrock server
         String bedrockAddrText = getBedrockServerText(configBedrock.getString("address"), configBedrock.getInt("port"));
