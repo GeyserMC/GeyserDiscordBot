@@ -2,7 +2,7 @@ type: text
 aliases: minecraftxboxbroadcast, mcxb
 color: links
 title: :link: MCXboxBroadcast
-button: [Support Server](https://discord.gg/SDDfsuCcBX/)
+button: [Support Server](https://discord.gg/Tp3tA2kdCN/)
 button: [Download MCXboxBroadcast](https://github.com/MCXboxBroadcast/Broadcaster/)
 
 ---
