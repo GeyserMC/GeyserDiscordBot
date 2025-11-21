@@ -1,6 +1,6 @@
 type: text
 aliases: minecraftxboxbroadcast, mcxb
-button: [Support Server](https://discord.gg/SDDfsuCcBX/)
+button: [Support Server](https://discord.gg/Tp3tA2kdCN)
 button: [Download](https://github.com/MCXboxBroadcast/Broadcaster/)
 
 ---
