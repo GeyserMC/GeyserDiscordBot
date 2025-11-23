@@ -59,23 +59,26 @@ public class IntegrityDumpIssueCheck extends AbstractDumpIssueCheck {
 
         // Get the version and build numbers
         String versionNumber = matcher.group(1);
-        String buildNumber = matcher.group(2);
+        int buildNumber = Integer.parseInt(matcher.group(2));
 
         String sha256Hash = dump.getString("hash");
 
-        // https://download.geysermc.org/v2/projects/geyser/versions/2.9.0/builds/979
+        // Get hashes for the current build number and one either side
+        // this prevents a wrong hash being flagged when a race condition in the build system occurs
 
-        JSONObject response = RestClient.get("https://download.geysermc.org/v2/projects/geyser/versions/" + versionNumber + "/builds/" + buildNumber).asJSONObject();
+        List<String> hashes = new ArrayList<>();
 
-        // Couldnt find the build
-        if (response.has("error")) {
+        hashes.addAll(getHashesForBuild(versionNumber, buildNumber - 1));
+        hashes.addAll(getHashesForBuild(versionNumber, buildNumber));
+        hashes.addAll(getHashesForBuild(versionNumber, buildNumber + 1));
+
+        // Couldnt find any hashes
+        if (hashes.isEmpty()) {
             return issues;
         }
 
-        for (String downloadKey : response.getJSONObject("downloads").keySet()) {
-            JSONObject download = response.getJSONObject("downloads").getJSONObject(downloadKey);
-
-            if (download.getString("sha256").equals(sha256Hash)) {
+        for (String hash : hashes) {
+            if (hash.equals(sha256Hash)) {
                 return issues; // All good
             }
         }
@@ -84,5 +87,24 @@ public class IntegrityDumpIssueCheck extends AbstractDumpIssueCheck {
         issues.add("- Your Geyser jar is corrupt or has been tampered with. Please re-download it [from the website](https://geysermc.org/download/).");
 
         return issues;
+    }
+
+    private List<String> getHashesForBuild(String versionNumber, int buildNumber) {
+        List<String> hashes = new ArrayList<>();
+
+        JSONObject response = RestClient.get("https://download.geysermc.org/v2/projects/geyser/versions/" + versionNumber + "/builds/" + buildNumber).asJSONObject();
+
+        // Couldnt find the build
+        if (response.has("error")) {
+            return hashes;
+        }
+
+        for (String downloadKey : response.getJSONObject("downloads").keySet()) {
+            JSONObject download = response.getJSONObject("downloads").getJSONObject(downloadKey);
+
+            hashes.add(download.getString("sha256"));
+        }
+
+        return hashes;
     }
 }
