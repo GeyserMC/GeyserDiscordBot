@@ -16,7 +16,7 @@ button: [Thunder](https://geysermc.org/download?project=other-projects&thunder=e
 **Packs for 1.21.4 and above**
 Requires **Custom Item API V2 Preview Geyser** see [here](https://github.com/GeyserMC/Geyser/pull/5189) for info and downloads.
 └> :warning: Caution: Both the Geyser Preview and these converters are experimental!
-- **For packs with CustomModelData** (datapack textures, ItemsAdder, etc.): Use Rainbow.
+- **For converting custom items**: Use Rainbow.
 - **For general Java resource packs** (vanilla textures only): Use Thunder.
 - **For manual conversion** with API V1/V2: See the pinned messages in https://discord.com/channels/613163671870242838/1139296287179677857.
 
