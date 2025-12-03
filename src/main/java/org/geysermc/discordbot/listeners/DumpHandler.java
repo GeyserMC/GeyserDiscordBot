@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -128,7 +128,7 @@ public class DumpHandler extends ListenerAdapter {
             // Check for the dump parts
             JSONObject config = dump.getJSONObject("config");
             config.getJSONObject("bedrock");
-            config.getJSONObject("remote");
+            config.getJSONObject("java");
             dump.getJSONObject("gitInfo");
             dump.getJSONObject("bootstrapInfo");
 
@@ -149,7 +149,7 @@ public class DumpHandler extends ListenerAdapter {
         JSONObject bootstrapInfo;
         JSONObject gitInfo;
         JSONObject dump;
-        JSONObject configRemote;
+        JSONObject configJava;
         JSONObject configBedrock;
         JSONObject config;
         try {
@@ -162,10 +162,17 @@ public class DumpHandler extends ListenerAdapter {
                 return;
             }
 
-            // Setup some helper vars for quicker access
             config = dump.getJSONObject("config");
+
+            // Check for the pre configurate dump format
+            if (config.has("remote")) {
+                MessageHelper.errorResponse(event, "Old dump", "The dump you linked was for an old version of geyser before the configuration overhaul. Please update geyser and provide a new dump.");
+                return;
+            }
+
+            // Setup some helper vars for quicker access
             configBedrock = config.getJSONObject("bedrock");
-            configRemote = config.getJSONObject("remote");
+            configJava = config.getJSONObject("java");
             gitInfo = dump.getJSONObject("gitInfo");
             bootstrapInfo = dump.getJSONObject("bootstrapInfo");
         } catch (JSONException ignored) {
@@ -245,7 +252,10 @@ public class DumpHandler extends ListenerAdapter {
         String versionString = "Unknown";
 
         // Ping java server
-        String javaAddrText = getJavaServerText(configRemote.getString("address"), configRemote.getInt("port"));
+        String javaAddrText = "Direct connection";
+        if (configJava.has("address")) {
+            javaAddrText = getJavaServerText(configJava.getString("address"), configJava.getInt("port"));
+        }
 
         // Ping bedrock server
         String bedrockAddrText = getBedrockServerText(configBedrock.getString("address"), configBedrock.getInt("port"));
@@ -268,9 +278,8 @@ public class DumpHandler extends ListenerAdapter {
                 .addField("Platform", platformNamePretty, true)
                 .addField("Listen address", bedrockAddrText, true)
                 .addField("Remote address", javaAddrText, true)
-                .addField("Auth type", configRemote.getString("auth-type"), true)
+                .addField("Auth type", configJava.getString("auth-type"), true)
                 .addField("Server version", versionString, true)
-                .addField("Autoconfigured remote?", (config.getBoolean("autoconfiguredRemote")) ? "Yes" : "No", true)
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor());
 
