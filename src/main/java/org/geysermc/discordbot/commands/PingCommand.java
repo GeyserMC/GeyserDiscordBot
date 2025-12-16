@@ -76,7 +76,8 @@ public class PingCommand extends FilteredSlashCommand {
         InteractionHook interactionHook = event.deferReply().complete();
 
         String ip = event.getOption("ip").getAsString();
-        Integer port = event.getOption("port") != null ? event.getOption("port").getAsInt() : null;
+        String portString = event.getOption("port") != null ? event.getOption("port").getAsString() : null;
+        Integer port = portString != null ? Integer.parseInt(portString.replaceAll("[^0-9]", "")) : null;
 
         interactionHook.editOriginalEmbeds(handle(ip, port)).queue();
     }
@@ -92,7 +93,8 @@ public class PingCommand extends FilteredSlashCommand {
         }
 
         String ip = args.get(0);
-        Integer port = args.size() > 1 ? Integer.parseInt(args.get(1)) : null;
+        String portString = args.size() > 1 ? args.get(1) : null;
+        Integer port = portString != null ? Integer.parseInt(portString.replaceAll("[^0-9]", "")) : null;
 
         event.getMessage().replyEmbeds(handle(ip, port)).queue();
     }
