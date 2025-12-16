@@ -93,8 +93,7 @@ public class PingCommand extends FilteredSlashCommand {
         }
 
         String ip = args.get(0);
-        String portString = args.size() > 1 ? args.get(1) : null;
-        Integer port = portString != null ? Integer.parseInt(portString.replaceAll("[^0-9]", "")) : null;
+        Integer port = args.size() > 1 ? Integer.parseInt(args.get(1).replaceAll("[^0-9]", "")) : null;
 
         event.getMessage().replyEmbeds(handle(ip, port)).queue();
     }
