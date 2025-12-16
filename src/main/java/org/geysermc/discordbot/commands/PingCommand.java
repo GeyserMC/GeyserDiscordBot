@@ -43,6 +43,8 @@ import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.util.NetworkUtils;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -179,5 +181,17 @@ public class PingCommand extends FilteredSlashCommand {
                 .addField("Bedrock (" + bePort + ")", bedrockInfo, false)
                 .setColor(success ? BotColors.SUCCESS.getColor() : BotColors.FAILURE.getColor())
                 .build();
+    }
+    private Integer cleanPort(String portString) {
+        if (portString == null) {
+            return null;
+        }
+
+        // Remove non-numeric characters using the compiled pattern
+        Matcher matcher = PORT_PATTERN.matcher(portString);
+        String cleaned = matcher.replaceAll("");
+
+        // Parse the cleaned string into an Integer
+        return cleaned.isEmpty() ? null : Integer.parseInt(cleaned);
     }
 }
