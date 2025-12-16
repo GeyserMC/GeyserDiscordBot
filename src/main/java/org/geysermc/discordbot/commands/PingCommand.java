@@ -55,6 +55,7 @@ import java.util.concurrent.TimeUnit;
 public class PingCommand extends FilteredSlashCommand {
     private static final int TIMEOUT = 1250; // in ms, has to stay below 1500 (1.5s for each platform, total of 3s)
 
+    private static final Pattern PORT_PATTERN = Pattern.compile("[^0-9]");
     public PingCommand() {
         this.name = "ping";
         this.aliases = new String[] { "status" };
@@ -77,7 +78,7 @@ public class PingCommand extends FilteredSlashCommand {
 
         String ip = event.getOption("ip").getAsString();
         String portString = event.getOption("port") != null ? event.getOption("port").getAsString() : null;
-        Integer port = portString != null ? Integer.parseInt(portString.replaceAll("[^0-9]", "")) : null;
+        Integer port = cleanPort(portString);
 
         interactionHook.editOriginalEmbeds(handle(ip, port)).queue();
     }
@@ -93,7 +94,8 @@ public class PingCommand extends FilteredSlashCommand {
         }
 
         String ip = args.get(0);
-        Integer port = args.size() > 1 ? Integer.parseInt(args.get(1).replaceAll("[^0-9]", "")) : null;
+        String portString = args.size() > 1 ? args.get(1) : null;
+        Integer port = cleanPort(portString);
 
         event.getMessage().replyEmbeds(handle(ip, port)).queue();
     }
