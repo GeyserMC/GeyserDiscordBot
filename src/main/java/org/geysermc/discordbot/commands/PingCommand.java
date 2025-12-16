@@ -43,6 +43,8 @@ import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 import org.geysermc.discordbot.util.MessageHelper;
 import org.geysermc.discordbot.util.NetworkUtils;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -54,6 +56,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PingCommand extends FilteredSlashCommand {
     private static final int TIMEOUT = 1250; // in ms, has to stay below 1500 (1.5s for each platform, total of 3s)
+    private static final Pattern PORT_PATTERN = Pattern.compile("[^0-9]");
 
     public PingCommand() {
         this.name = "ping";
@@ -76,7 +79,7 @@ public class PingCommand extends FilteredSlashCommand {
         InteractionHook interactionHook = event.deferReply().complete();
 
         String ip = event.getOption("ip").getAsString();
-        Integer port = event.getOption("port") != null ? event.getOption("port").getAsInt() : null;
+        Integer port = cleanPort(event.getOption("port") != null ? event.getOption("port").getAsString() : null);
 
         interactionHook.editOriginalEmbeds(handle(ip, port)).queue();
     }
@@ -92,7 +95,7 @@ public class PingCommand extends FilteredSlashCommand {
         }
 
         String ip = args.get(0);
-        Integer port = args.size() > 1 ? Integer.parseInt(args.get(1)) : null;
+        Integer port = cleanPort(args.size() > 1 ? args.get(1) : null);
 
         event.getMessage().replyEmbeds(handle(ip, port)).queue();
     }
@@ -176,5 +179,18 @@ public class PingCommand extends FilteredSlashCommand {
                 .addField("Bedrock (" + bePort + ")", bedrockInfo, false)
                 .setColor(success ? BotColors.SUCCESS.getColor() : BotColors.FAILURE.getColor())
                 .build();
+    }
+
+    private Integer cleanPort(String portString) {
+        if (portString == null) {
+            return null;
+        }
+
+        // Remove non-numeric characters using the compiled pattern
+        Matcher matcher = PORT_PATTERN.matcher(portString);
+        String cleaned = matcher.replaceAll("");
+
+        // Parse the cleaned string into an Integer
+        return cleaned.isEmpty() ? null : Integer.parseInt(cleaned);
     }
 }
