@@ -1,6 +1,6 @@
 type: text
 issues: Please connect through the official Geyser
-aliases: ctog
+aliases: ctog, cttog
 
 ---
 
