@@ -222,11 +222,18 @@ public class DumpHandler extends ListenerAdapter {
         // Can be null for unpublished commits
         if (compare != null) {
             // Set the latest info based on the returned comparison
-            if (compare.getBehindBy() != 0 || compare.getAheadBy() != 0) {
-                gitData.append("**Latest:** No\n");
-                problems.add("- You aren't on the latest Geyser version! Please [download](https://geysermc.org/download) the latest version.");
+            if (compare.getBehindBy() != 0) {
+                gitData.append("**Up to date:** No\n");
             } else {
-                gitData.append("**Latest:** Yes\n");
+                gitData.append("**Up to date:** Yes\n");
+            }
+
+            if (compare.getBehindBy() != 0 && compare.getAheadBy() != 0) {
+                problems.add("- You are using an outdated branch! Consider downloading the [latest build](https://geysermc.org/download).");
+            } else if (compare.getBehindBy() != 0) {
+                problems.add("- You aren't on the latest Geyser version! Please [download](https://geysermc.org/download) the latest version.");
+            } else if (compare.getAheadBy() != 0) {
+                problems.add("- You are using a branch of Geyser! Try the [latest build](https://geysermc.org/download) and ensure the issue is also present there.");
             }
         }
 
