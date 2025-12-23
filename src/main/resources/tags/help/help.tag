@@ -1,5 +1,5 @@
 type: text
-aliases: help
+aliases: help, notworking, nw
 help: help
 
 ---
