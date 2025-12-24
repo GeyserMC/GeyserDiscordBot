@@ -1,6 +1,7 @@
 type: text
 title: :x: Floodgate Key Mismatch
 issues: Please connect through the official Geyser
+aliases: ctog, cttog
 color: errors
 
 ---
