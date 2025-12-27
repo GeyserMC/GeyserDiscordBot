@@ -77,7 +77,7 @@ public class PlatformVersionDumpIssueCheck extends AbstractDumpIssueCheck {
             problems.add("- Your version of %s is out of date, please consider updating your server software.".formatted(softwareName));
         }
 
-        if (platformName.equals("Spigot")) {
+        if (platformName.equals("Spigot") || platformName.equals("CraftBukkit")) {
             problems.add("- You are running Geyser on Spigot, please consider switching to Paper for a more optimal experience.");
         }
 
