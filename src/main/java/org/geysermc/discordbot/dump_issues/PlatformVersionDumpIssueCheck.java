@@ -31,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,6 +45,8 @@ public class PlatformVersionDumpIssueCheck extends AbstractDumpIssueCheck {
     @NotNull
     @Override
     public List<String> checkIssues(JSONObject dump) throws JSONException {
+        List<String> problems = new ArrayList<>();
+
         JSONObject bootstrapInfo = dump.getJSONObject("bootstrapInfo");
         String platformName = bootstrapInfo.getString("platformName");
         String platformVersion = bootstrapInfo.getString("platformVersion");
@@ -70,9 +73,15 @@ public class PlatformVersionDumpIssueCheck extends AbstractDumpIssueCheck {
             default -> true;
         };
 
-        if (isLatest) return List.of();
+        if (!isLatest) {
+            problems.add("- Your version of %s is out of date, please consider updating your server software.".formatted(softwareName));
+        }
 
-        return List.of("- Your version of %s is out of date, please consider updating your server software.".formatted(softwareName));
+        if (platformName.equals("Spigot")) {
+            problems.add("- You are running Geyser on Spigot, please consider switching to Paper for a more optimal experience.");
+        }
+
+        return problems;
     }
 
     private static boolean isLatestFillBuild(String project, String projectVersion, int build) {
