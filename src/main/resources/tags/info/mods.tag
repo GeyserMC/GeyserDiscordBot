@@ -1,7 +1,7 @@
 type: text
 title: :information_source: Mod Compatibility With Geyser
 color: info
-button: [Modrinth](https://modrinth.com/mods/)
+button: [Modrinth](https://modrinth.com/discover/mods)
 
 ---
 
