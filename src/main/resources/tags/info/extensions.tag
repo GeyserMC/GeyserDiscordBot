@@ -2,7 +2,7 @@ type: text
 aliases: extension, geyserextension, ext
 title: :geyser: Geyser Extensions
 color: info
-button: [Modrinth](https://modrinth.com/plugins)
+button: [Modrinth](https://modrinth.com/discover/plugins)
 
 ---
 
