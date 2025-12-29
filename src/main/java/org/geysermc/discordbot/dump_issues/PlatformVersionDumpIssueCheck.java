@@ -66,10 +66,10 @@ public class PlatformVersionDumpIssueCheck extends AbstractDumpIssueCheck {
                         Integer.parseInt(build.replace(")", ""))
                 );
             }
-            case "fabric" -> {
-                softwareName = "Fabric Loader";
-                yield isLatestFabricLoader(platformVersion);
-            }
+//            case "fabric" -> {
+//                softwareName = "Fabric Loader";
+//                yield isLatestFabricLoader(platformVersion);
+//            }
             default -> true;
         };
 
