@@ -77,50 +77,42 @@ public class PlatformVersionDumpIssueCheck extends AbstractDumpIssueCheck {
             problems.add("- Your version of %s is out of date, please consider updating your server software.".formatted(softwareName));
         }
 
-        if (platformName.equals("Spigot") || platformName.equals("CraftBukkit")) {
-            problems.add("- You are running Geyser on Spigot, please consider switching to Paper for a more optimal experience.");
-        }
-
         return problems;
     }
 
     private static boolean isLatestFillBuild(String project, String projectVersion, int build) {
         RestClient.Response response = RestClient.get("https://fill.papermc.io/v3/projects/%s/versions/%s".formatted(project, projectVersion));
 
-        if (response.success()) {
-            JSONObject fillData = response.asJSONObject();
+        if (!response.success()) return true; // Assume all is fine
 
-            JSONArray buildsArray = fillData.getJSONArray("builds");
+        JSONObject fillData = response.asJSONObject();
 
-            int latestBuild = (Integer) buildsArray.get(0);
+        JSONArray buildsArray = fillData.getJSONArray("builds");
 
-            return latestBuild <= build;
-        }
+        int latestBuild = (Integer) buildsArray.get(0);
 
-        return true; // Assume all is fine
+        return latestBuild <= build;
     }
 
     private static boolean isLatestFabricLoader(String currentFabricLoader) {
         RestClient.Response response = RestClient.get("https://meta.fabricmc.net/v2/versions/loader");
 
-        if (response.success()) {
-            JSONArray buildsArray = response.asJSONArray();
+        if (!response.success()) return true; // Assume all is fine
 
-            JSONObject latestData = buildsArray.getJSONObject(0);
+        JSONArray buildsArray = response.asJSONArray();
 
-            String separator = latestData.getString("separator");
-            if (!separator.equals(".")) return false;
+        JSONObject latestData = buildsArray.getJSONObject(0);
 
-            List<Integer> latestVersionParts = Arrays.stream(latestData.getString("version").split("\\."))
-                    .map(Integer::parseInt).toList();
-            List<Integer> currentVersionParts = Arrays.stream(currentFabricLoader.split("\\."))
-                    .map(Integer::parseInt).toList();
+        String separator = latestData.getString("separator");
+        if (!separator.equals(".")) return false;
 
-            if (currentVersionParts.get(0) < latestVersionParts.get(0)) return false;
-            if (currentVersionParts.get(1) < latestVersionParts.get(1)) return false;
-            return currentVersionParts.get(2) >= latestVersionParts.get(2);
-        }
+        List<Integer> latestVersionParts = Arrays.stream(latestData.getString("version").split("\\."))
+                .map(Integer::parseInt).toList();
+        List<Integer> currentVersionParts = Arrays.stream(currentFabricLoader.split("\\."))
+                .map(Integer::parseInt).toList();
 
-        return true; // Assume all is fine
+        if (currentVersionParts.get(0) < latestVersionParts.get(0)) return false;
+        if (currentVersionParts.get(1) < latestVersionParts.get(1)) return false;
+        return currentVersionParts.get(2) >= latestVersionParts.get(2);
     }
 }
