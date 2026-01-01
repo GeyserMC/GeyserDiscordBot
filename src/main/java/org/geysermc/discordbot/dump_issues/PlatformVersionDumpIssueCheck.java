@@ -57,6 +57,10 @@ public class PlatformVersionDumpIssueCheck extends AbstractDumpIssueCheck {
                 String[] versionParts = platformVersion.split("-");
                 yield isLatestFillBuild("paper", versionParts[0], Integer.parseInt(versionParts[1]));
             }
+            case "Purpur" -> {
+                String[] versionParts = platformVersion.split("-");
+                yield isLatestPurpurBuild(versionParts[0], Integer.parseInt(versionParts[1]));
+            }
             case "Velocity" -> {
                 String[] versionParts = platformVersion.split("-b");
                 String build = versionParts[versionParts.length-1];
@@ -90,6 +94,19 @@ public class PlatformVersionDumpIssueCheck extends AbstractDumpIssueCheck {
         JSONArray buildsArray = fillData.getJSONArray("builds");
 
         int latestBuild = (Integer) buildsArray.get(0);
+
+        return latestBuild <= build;
+    }
+
+    private static boolean isLatestPurpurBuild(String minecraftVersion, int build) {
+        RestClient.Response response = RestClient.get("https://api.purpurmc.org/v2/purpur/%s".formatted(minecraftVersion));
+
+        if (!response.success()) return true; // Assume all is fine
+
+        JSONObject responseData = response.asJSONObject();
+        JSONObject builds = responseData.getJSONObject("builds");
+
+        int latestBuild = Integer.parseInt(builds.getString("latest"));
 
         return latestBuild <= build;
     }
