@@ -257,6 +257,7 @@ public class DumpHandler extends ListenerAdapter {
         }
 
         String versionString = "Unknown";
+        String serverPlatformName = "Unknown";
 
         // Ping java server
         String javaAddrText = "Direct connection";
@@ -272,6 +273,11 @@ public class DumpHandler extends ListenerAdapter {
             versionString = bootstrapInfo.getString("platformVersion");
         }
 
+        // Get the server platform string from the dump if it exists @hasankayra04
+        if (bootstrapInfo.has("platformName")) {
+            serverPlatformName = bootstrapInfo.getString("platformName");
+        }
+
         // Get the platform name and format it to title case (Xxxxxx)
         String platformNamePretty = platform.substring(0, 1).toUpperCase() +
                 platform.substring(1).toLowerCase();
@@ -282,11 +288,11 @@ public class DumpHandler extends ListenerAdapter {
                 .setTitle("<:geyser:723981877773598771> Geyser " + platformNamePretty, cleanURL)
                 .setDescription(problems.size() != 0 ? "**Possible problems:**\n" + problems.stream().map(Object::toString).collect(Collectors.joining("\n")) : "")
                 .addField("Git info", gitData.toString(), false)
-                .addField("Platform", platformNamePretty, true)
+                //.addField("Platform", platformNamePretty, true) //Platform field removed due to the Server platform being added. @hasankayra04
                 .addField("Listen address", bedrockAddrText, true)
                 .addField("Remote address", javaAddrText, true)
                 .addField("Auth type", configJava.getString("auth-type"), true)
-                .addField("Server version", versionString, true)
+                .addField("Server platform", serverPlatformName + " " + versionString, true) //Server version changed to Server platform. @hasankayr04
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.SUCCESS.getColor());
 
