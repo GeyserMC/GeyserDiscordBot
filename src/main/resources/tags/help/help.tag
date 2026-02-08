@@ -1,7 +1,7 @@
 type: text
 aliases: help
 help: help
-title: :tools: Geyser Help
+title: :geyser: Geyser Help
 color: help
 button: [GeyserMC Wiki](https://wiki.geysermc.org/)
 button: [GeyserMC Bot Commands & Usage](https://wiki.geysermc.org/other/discord-bot-usage/)

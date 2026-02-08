@@ -1,5 +1,5 @@
 type: text
-title: :tools: Command Freezing
+title: :geyser: Command Freezing
 color: help
 button: [HideCommands](https://modrinth.com/mod/hidecommands)
 

@@ -1,5 +1,5 @@
 type: text
-title: :tools: Plugin Debugging
+title: :geyser: Plugin Debugging
 color: help
 aliases: pd
 

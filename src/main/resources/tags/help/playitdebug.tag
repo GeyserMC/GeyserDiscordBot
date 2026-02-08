@@ -1,6 +1,6 @@
 type: text
 aliases: playit.ggdebug, playitggdebug
-title: :tools: playit.gg Debugging
+title: :geyser: playit.gg Debugging
 color: help
 button: [playit.gg Setup Guide](https://geysermc.org/wiki/geyser/playit-gg/)
 

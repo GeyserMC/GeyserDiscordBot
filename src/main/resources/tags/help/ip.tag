@@ -1,6 +1,6 @@
 type: text
 aliases: address
-title: :tools: Bedrock Server IP
+title: :geyser: Bedrock Server IP
 color: help
 
 ---

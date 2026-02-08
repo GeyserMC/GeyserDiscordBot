@@ -1,5 +1,5 @@
 type: text
-title: :tools: Downloading A PR
+title: :geyser: Downloading A PR
 aliases: pr
 color: help
 image: https://i.ibb.co/tCcB1Qp/PR1.png

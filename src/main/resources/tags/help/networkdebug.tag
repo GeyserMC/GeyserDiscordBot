@@ -1,5 +1,5 @@
 type: text
-title: :tools: Network Debug
+title: :geyser: Network Debug
 color: help
 aliases: nd
 

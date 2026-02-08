@@ -1,7 +1,7 @@
 type: text
 aliases: lp
 issues: is not a valid username/uuid
-title: :tools: LuckPerms Not Recognizing Bedrock Players
+title: :geyser: LuckPerms Not Recognizing Bedrock Players
 color: help
 
 ---
