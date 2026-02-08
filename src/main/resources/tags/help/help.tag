@@ -1,5 +1,4 @@
 type: text
-aliases: help
 help: help
 title: :geyser: Geyser Help
 color: help
