@@ -7,5 +7,4 @@ button: [MCProfile](https://mcprofile.io/)
 
 ---
 
-See the whitelist command link below for information about adding Bedrock players to the whitelist.
-└> If whitelisting using the username does not work, you can get the Bedrock player's Floodgate UUID using MCProfile and whitelist it instead.
+See the whitelist command link below for information about adding Bedrock players to the whitelist. If whitelisting using the username does not work, you can get the Bedrock player's Floodgate UUID using MCProfile and whitelist it instead.

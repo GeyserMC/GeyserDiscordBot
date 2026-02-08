@@ -1,7 +1,7 @@
 type: text
 aliases: stats, statistics
 title: :link: Geyser bStats Page
-color: info
+color: links
 button: [bStats Page](https://bstats.org/plugin/server-implementation/GeyserMC/5273)
 
 ---

@@ -1,8 +1,8 @@
 type: text
 aliases: commonissues
-title: :link: Common Issues with Geyser
+title: :link: Common Issues With Geyser
 color: links
-button: [Common Issues](https://wiki.geysermc.org/geyser/common-issues/)
+button: [Wiki Page](https://wiki.geysermc.org/geyser/common-issues/)
 
 ---
 

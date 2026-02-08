@@ -1,8 +1,8 @@
 type: text
-title: :link: Frequently Asked Questions
+title: :question: Frequently Asked Questions
 color: links
-button: [FAQ](https://wiki.geysermc.org/geyser/faq/)
+button: [FAQ Wiki Page](https://wiki.geysermc.org/geyser/faq/)
 
 ---
 
-The link below contains some frequently asked questions and answers to them.
+The wiki page below contains some frequently asked questions and answers to them.
