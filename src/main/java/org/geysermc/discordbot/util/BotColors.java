@@ -28,7 +28,7 @@ package org.geysermc.discordbot.util;
 import java.awt.Color;
 
 public enum BotColors {
-    // Tags
+    // Tags Colors:
     ERRORS("#FF4C4C"),
     FUN("#FF6B81"),
     HELP("#2ECC71"),
@@ -38,7 +38,7 @@ public enum BotColors {
     UTIL("#1E90FF"),
     WARNS("#FFBF00"),
 
-    // Everything else
+    // Regular Embed Colors:
     NEUTRAL("#2B5797"),
     SUCCESS("#4CAF50"),
     FAILURE("#FF0000"),
