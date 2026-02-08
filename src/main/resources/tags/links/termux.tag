@@ -1,6 +1,6 @@
 type: text
 color: links
-title: :link: Geyser Setup Using Termux
+title: :geyser: Geyser Setup Using Termux
 button: [Setup Guide](https://geysermc.org/wiki/geyser/setup/?host=self&platform=standalone#running-geyser-standalone-on-android)
 
 ---

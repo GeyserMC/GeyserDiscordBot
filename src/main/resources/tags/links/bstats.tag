@@ -1,6 +1,6 @@
 type: text
 aliases: stats, statistics
-title: :link: Geyser bStats Page
+title: :bar_chart: Geyser bStats Page
 color: links
 button: [bStats Page](https://bstats.org/plugin/server-implementation/GeyserMC/5273)
 

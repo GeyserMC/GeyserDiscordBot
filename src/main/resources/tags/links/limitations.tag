@@ -1,6 +1,6 @@
 type: text
 aliases: currentlimitations
-title: :link: Geyser Limitations
+title: :geyser: Geyser Limitations
 color: links
 button: [Current Limitations Wiki Page](https://wiki.geysermc.org/geyser/current-limitations/)
 

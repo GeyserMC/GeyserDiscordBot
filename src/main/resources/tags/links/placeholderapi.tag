@@ -1,7 +1,7 @@
 type: text
 aliases: placeholder-api, papi
 color: links
-title: :link: FloodgatePlaceholders
+title: :ocean: FloodgatePlaceholders
 button: [FloodgatePlaceholders](https://github.com/rtm516/FloodgatePlaceholders)
 
 ---
