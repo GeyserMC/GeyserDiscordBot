@@ -1,5 +1,5 @@
 type: text
-title: :gear: Geyser Full Dump
+title: :geyser: Geyser Full Dump
 color: util
 
 ---
