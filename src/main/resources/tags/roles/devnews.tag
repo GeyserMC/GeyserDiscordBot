@@ -1,4 +1,6 @@
 type: text
+title: :computer: Dev News
+color: roles
 
 ---
 
