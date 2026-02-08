@@ -1,6 +1,4 @@
 type: text
-title: :tools: Plugin Debugging
-color: help
 aliases: pd
 
 ---
