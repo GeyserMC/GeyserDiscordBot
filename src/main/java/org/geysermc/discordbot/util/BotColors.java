@@ -28,6 +28,17 @@ package org.geysermc.discordbot.util;
 import java.awt.Color;
 
 public enum BotColors {
+    // Tags
+    ERRORS("#FF4C4C"),
+    FUN("#FF6B81"),
+    HELP("#2ECC71"),
+    INFO("#5BC0EB"),
+    LINKS("#A569BD"),
+    ROLES("#FF8000"),
+    UTIL("#1E90FF"),
+    WARNS("#FFBF00"),
+
+    // Everything else
     NEUTRAL("#2B5797"),
     SUCCESS("#4CAF50"),
     FAILURE("#FF0000"),
