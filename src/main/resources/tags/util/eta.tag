@@ -1,5 +1,5 @@
 type: text
-title: :timer: ETA
+title: :alarm_clock: ETA
 color: util
 
 ---

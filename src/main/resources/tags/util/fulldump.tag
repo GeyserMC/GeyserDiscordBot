@@ -4,5 +4,6 @@ color: util
 
 ---
 
-Run `geyser dump full` from server console, or `/geyser dump full` via in‑game chat on your Geyser instance or server. Then copy the link it gives you and paste it here.
-└> This will show all IPs on your dump so we can correctly identify your issue.
+A Geyser full dump is a way of providing us with a bunch of useful information about your server and Geyser config with all IPs.
+- Run `geyser dump full` in the server console or `/geyser dump full` in the in‑game chat.
+- Then, copy the Geyser dump link it gives you and paste it here.
