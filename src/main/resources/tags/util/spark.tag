@@ -5,7 +5,7 @@ button: [Download Spark](https://spark.lucko.me/download)
 
 ---
 
-Spark is a plugin/mod that helps you monitor performance for your server. Paper has spark built-in and does not need to be installed manually. The download link for Spark can be found below.
+Spark is a plugin/mod that helps you monitor performance for your server. Spark does not require manual installation on Paper as Paper has Spark built-in. The download link for Spark can be found below.
 
 To record performance on your server use `/spark profiler --thread * --timeout 60`.
 - This will run for 60 seconds and then automatically stop.
