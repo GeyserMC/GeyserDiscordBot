@@ -1,6 +1,7 @@
 type: text
-title: :x: Connection Closed
-issues: Connection closed
+aliases: closechannelexception, closedchannelexc, closedchannel
+title: :x: ClosedChannelException
+issues: ClosedChannelException
 color: errors
 
 ---

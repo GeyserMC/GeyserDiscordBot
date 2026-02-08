@@ -3,4 +3,6 @@ issues: java.lang.OutOfMemoryError
 
 ---
 
-This means your server ran out of memory while running. You could allocate more RAM to it or it could be caused by a memory leak.
+This error means your server ran out of memory for one of two reasons:
+- The server doesn’t have enough RAM allocated.
+- There’s a memory leak.

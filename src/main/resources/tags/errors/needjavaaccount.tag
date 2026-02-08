@@ -1,7 +1,8 @@
 type: text
+title: :x: Need Java Edition Account
 issues: you need a java edition account to play on this server
+color: errors
 
 ---
 
-If you are getting a form with 'You need a Java Edition Account to play on this server' and you do not have a Java account, then you will need to install Floodgate.
-Run !download floodgate in <#613194762249437245> for additional information or see the setup guide: https://wiki.geysermc.org/floodgate/setup/
+If you are getting a form with "You need a Java Edition account to play on this server", you will either need to link a Java Edition account everytime you join the Geyser server or install [Floodgate](https://geysermc.org/wiki/floodgate/setup/) which allows Bedrock players without a Minecraft Java Edition account on your Geyser server.
