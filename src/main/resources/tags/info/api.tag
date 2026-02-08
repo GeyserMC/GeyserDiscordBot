@@ -1,6 +1,6 @@
 type: text
 aliases: forms, bedrockforms, cumulus
-title: :information_source: Geyser APIs
+title: :geyser: Geyser APIs
 color: info
 button: [Floodgate API](https://wiki.geysermc.org/floodgate/api/)
 button: [Geyser API](https://wiki.geysermc.org/geyser/api/)

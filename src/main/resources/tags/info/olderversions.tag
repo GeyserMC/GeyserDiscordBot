@@ -1,7 +1,7 @@
 type: text
 aliases: oldversion, oldversions, olderversion, 1.8, vv, viaversion, version, versions
 help: 1.8
-title: :information_source: Using Old Versions Of Minecraft With Geyser
+title: :geyser: Using Old Versions Of Minecraft With Geyser
 color: info
 button: [Which version of Minecraft should your server use?](https://madelinemiller.dev/blog/which-minecraft-version/)
 button: [ViaVersion](https://ci.viaversion.com/job/ViaVersion/)

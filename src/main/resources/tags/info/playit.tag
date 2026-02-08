@@ -1,7 +1,7 @@
 type: text
 aliases: playit.gg, playitgg
 color: info
-title: :information_source: playit.gg Setup Guide For Geyser
+title: :geyser: playit.gg Setup Guide For Geyser
 button: [playit.gg Setup Guide](https://geysermc.org/wiki/geyser/playit-gg/)
 
 ---

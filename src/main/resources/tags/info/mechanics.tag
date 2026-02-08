@@ -1,6 +1,6 @@
 type: text
 aliases: javamechanics, pvp, redstone
-title: :information_source: Game Mechanics When On A Geyser Server
+title: :geyser: Game Mechanics When On A Geyser Server
 color: info
 
 ---

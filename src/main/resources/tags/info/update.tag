@@ -1,7 +1,7 @@
 type: text
 aliases: updategeyser, updatefloodgate
 help: update || updating
-title: :information_source: Updating Geyser Or Floodgate
+title: :geyser: Updating Geyser Or Floodgate
 color: info
 button: [GeyserUpdater](https://www.spigotmc.org/resources/geyserupdater.88555/)
 

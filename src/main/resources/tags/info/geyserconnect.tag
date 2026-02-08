@@ -1,6 +1,6 @@
 type: text
 aliases: gc
-title: :information_source: GeyserConnect
+title: :geyser: GeyserConnect
 color: info
 button: [GeyserConnect GitHub](https://github.com/GeyserMC/GeyserConnect)
 button: [Public GeyserConnect Website](https://www.geyserconnect.net)
