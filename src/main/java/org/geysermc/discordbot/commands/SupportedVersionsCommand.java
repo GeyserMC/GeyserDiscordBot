@@ -62,7 +62,7 @@ public class SupportedVersionsCommand extends SlashCommand {
 
         return new EmbedBuilder()
                 .setTitle(":geyser: Geyser Supported Versions")
-                .setDescription("Currently, Geyser supports Minecraft Bedrock " + bedrockVersion + " and Minecraft Java " + javaVersion + ".")
+                .setDescription("Currently, Geyser supports Minecraft: Bedrock Edition " + bedrockVersion + " and Minecraft: Java Edition " + javaVersion + ".")
                 .setColor(BotColors.SUCCESS.getColor())
                 .build();
     }
