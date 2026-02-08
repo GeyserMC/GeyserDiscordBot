@@ -6,4 +6,4 @@ color: help
 
 ---
 
-To fix issues with luckperms not recognizing Bedrock players, set `allow-invalid-usernames` to `true` in LuckPerms’s config.
+To fix issues with LuckPerms not recognizing Bedrock players, set `allow-invalid-usernames` to `true` in LuckPerms’s config.

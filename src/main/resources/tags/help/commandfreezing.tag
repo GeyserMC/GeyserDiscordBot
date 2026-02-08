@@ -1,7 +1,7 @@
 type: text
 title: :tools: Command Freezing
 color: help
-button: [HideCommands](https://github.com/Redned235/HideCommands)
+button: [HideCommands](https://modrinth.com/mod/hidecommands)
 
 ---
 
