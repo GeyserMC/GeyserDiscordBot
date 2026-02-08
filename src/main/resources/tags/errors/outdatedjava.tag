@@ -1,5 +1,5 @@
 type: text
-aliases: j17, java17, latestjava, unsupportedclassversion, updatejava, openjdk, javadownload, java
+aliases: latestjava, unsupportedclassversion, updatejava, openjdk, javadownload
 issues: java.lang.UnsupportedClassVersionError
 title: :x: Geyser Java Requirements
 color: errors
