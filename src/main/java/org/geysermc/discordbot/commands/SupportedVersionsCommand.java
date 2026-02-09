@@ -30,7 +30,6 @@ import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.geysermc.discordbot.util.BotColors;
 import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
@@ -45,8 +44,8 @@ public class SupportedVersionsCommand extends SlashCommand {
 
     @Override
     protected void execute(SlashCommandEvent event) {
-        InteractionHook interactionHook = event.deferReply().complete();
-        interactionHook.editOriginalEmbeds(handle()).queue();
+        event.deferReply().queue();
+        event.getHook().editOriginalEmbeds(handle()).queue();
     }
 
     @Override
