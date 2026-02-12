@@ -8,6 +8,3 @@ Geyser Extensions are similar to plugins, but specifically for Geyser, regardles
 **Installing extensions**:
 - Put the .jar file in Geyser`s 'extensions' folder
 - Restart the server.
-
-**List of community extensions**:
-https://github.com/GeyserMC/GeyserExtensionList
