@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025-2026 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,8 +34,11 @@ import pw.chew.chewbotcca.util.RestClient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PlatformVersionDumpIssueCheck extends AbstractDumpIssueCheck {
+    private static final Pattern PAPER_OLD_VERSION = Pattern.compile("git-Paper-(\\d+) \\(MC: (\\d+\\.\\d+(?:\\.\\d+)?)\\)");
 
     @Override
     public boolean compatiblePlatform(String platform) {
@@ -54,8 +57,18 @@ public class PlatformVersionDumpIssueCheck extends AbstractDumpIssueCheck {
 
         boolean isLatest = switch (platformName) {
             case "Paper" -> {
-                String[] versionParts = platformVersion.split("-");
-                yield isLatestFillBuild("paper", versionParts[0], Integer.parseInt(versionParts[1]));
+                if (platformVersion.startsWith("git-Paper")) {
+                    // Parse the old version format, e.g. "git-Paper-318 (MC: 1.20.2)"
+                    Matcher matcher = PAPER_OLD_VERSION.matcher(platformVersion);
+                    if (matcher.matches()) {
+                        yield isLatestFillBuild("paper", matcher.group(2), Integer.parseInt(matcher.group(1)));
+                    } else {
+                        yield true; // Assume all is fine if we can't parse the version
+                    }
+                } else {
+                    String[] versionParts = platformVersion.split("-");
+                    yield isLatestFillBuild("paper", versionParts[0], Integer.parseInt(versionParts[1]));
+                }
             }
             case "Purpur" -> {
                 String[] versionParts = platformVersion.split("-");
