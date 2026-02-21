@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2024 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2026 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,6 +40,7 @@ public class DeleteHandler extends ListenerAdapter {
         for (Message message : closeMessages.getRetrievedHistory()) {
             if (message.getType() == MessageType.INLINE_REPLY
                 && message.getAuthor() == event.getJDA().getSelfUser()
+                && message.getMessageReference() != null
                 && message.getMessageReference().getMessageId().equals(event.getMessageId())) {
                 try {
                     message.delete().complete();
