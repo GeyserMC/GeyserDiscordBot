@@ -251,6 +251,7 @@ public class GeyserBot {
                             new AutoModHandler(),
                             new ExploitHandler(),
                             new WebhookLinkPreviewHandler(),
+                            new ReadyListener(),
                             client.build(),
                             tagClient.build())
                     .build();
