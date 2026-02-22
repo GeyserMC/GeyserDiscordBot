@@ -48,6 +48,7 @@ import java.util.regex.Pattern;
 
 public class PreviewHandler extends ListenerAdapter {
     private static final Pattern GH_PR_PATTERN = Pattern.compile("https://github\\.com/GeyserMC/(.+)/pull/(\\d+)");
+    private static final String DOWNLOAD_LINK_TEMPLATE = "https://download.geysermc.org/v2/projects/geyserpreview/versions/pr.%s/builds/latest/downloads/%s";
 
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
@@ -101,13 +102,47 @@ public class PreviewHandler extends ListenerAdapter {
                         Button.link(pullRequest.getHtmlUrl() + "/checks", "Download Artifacts")
                                 .withEmoji(Emoji.fromUnicode("\ud83d\udce6"))))
                 .queue(forumPost -> {
+                    // Make an ActionRow containing all downloads
+                    Emoji downloadEmoji = Emoji.fromUnicode("\u2b07\ufe0f");
+
+                    ActionRow downloads = ActionRow.of(
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "bungeecord"), "Bungeecord")
+                                    .withEmoji(downloadEmoji),
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "fabric"), "Fabric")
+                                    .withEmoji(downloadEmoji),
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "neoforge"), "NeoForge")
+                                    .withEmoji(downloadEmoji),
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "spigot"), "Spigot")
+                                    .withEmoji(downloadEmoji),
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "standalone"), "Standalone")
+                                    .withEmoji(downloadEmoji),
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "velocity"), "Velocity")
+                                    .withEmoji(downloadEmoji),
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "viaproxy"), "ViaProxy")
+                                    .withEmoji(downloadEmoji)
+                    );
+
                     // Reply to the original message with the link to the forum post
                     event.getMessage().replyEmbeds(new EmbedBuilder()
                             .setColor(BotColors.SUCCESS.getColor())
                             .setDescription("The above preview can be discussed in:\n### <#"
                                     + forumPost.getMessage().getId() + ">")
                             .setTimestamp(Instant.now())
-                            .build()).queue();
+                            .build())
+                            .addComponents(downloads)
+                            .queue();
+
+                    // Send a message containing the download links and then pin it
+                    forumPost.getMessage().replyEmbeds(new EmbedBuilder()
+                            .setColor(BotColors.SUCCESS.getColor())
+                            .setTitle("Downloads")
+                            .setDescription("The download links for this preview can be found below:")
+                            .setTimestamp(Instant.now())
+                            .build())
+                            .addComponents(downloads)
+                            .queue(message -> {
+                                forumPost.getThreadChannel().pinMessageById(message.getIdLong());
+                            });
                 });
 
         // Remove embeds from the original message
