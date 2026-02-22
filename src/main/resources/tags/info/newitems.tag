@@ -6,7 +6,7 @@ button: [Rainbow](https://geysermc.org/wiki/other/rainbow)
 
 ---
 
-Geyser's custom item system has been updated to support the 1.21.4 item format which has predicates, custom components and more.
+Geyser's custom item system has been updated to support the 1.21.4 item format which supports predicates, custom components and more.
 
 Documentation is available below. The custom item API v2 format can still support custom model data from older servers below 1.21.4.
 
