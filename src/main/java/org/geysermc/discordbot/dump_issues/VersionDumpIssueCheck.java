@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2026 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@ public class VersionDumpIssueCheck extends AbstractDumpIssueCheck {
     @Override
     public List<String> checkIssues(JSONObject dump) {
         JSONObject bootstrapInfo = dump.getJSONObject("bootstrapInfo");
-        String platform = bootstrapInfo.getString("platform");
+        String platform = bootstrapInfo.getJSONObject("platform").getString("platformName");
         JSONObject jsonSupportedMinecraft = dump.getJSONObject("versionInfo").getJSONObject("mcInfo");
         List<String> supportedMinecraft;
         if (jsonSupportedMinecraft.get("javaVersions") instanceof JSONArray array) {

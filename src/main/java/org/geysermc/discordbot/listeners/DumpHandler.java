@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2026 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -194,7 +194,9 @@ public class DumpHandler extends ListenerAdapter {
             if (issueCheck.compatiblePlatform(platform)) {
                 try {
                     problems.addAll(issueCheck.checkIssues(dump));
-                } catch (JSONException ignored) { }
+                } catch (Exception e) {
+                    GeyserBot.LOGGER.error("Error while checking dump for issues with " + issueCheck.getClass().getSimpleName(), e);
+                }
             }
         }
 
