@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2026 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ public class FloodgateDumpIssueCheck extends AbstractDumpIssueCheck {
                 JSONObject plugin = plugins.getJSONObject(i);
 
                 // Check if floodgate is installed
-                if (plugin.getString("name").toLowerCase().contains("floodgate")) {
+                if (plugin.has("name") && plugin.getString("name").toLowerCase().contains("floodgate")) {
                     // Check if its enabled
                     if (plugin.getBoolean("enabled")) {
                         needsFloodgate = false;
