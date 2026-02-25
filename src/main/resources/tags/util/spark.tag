@@ -1,11 +1,14 @@
 type: text
+title: :zap: Spark Performance Monitoring
+color: util
+button: [Download Spark](https://spark.lucko.me/download)
 
 ---
 
-Spark is a plugin that helps you monitor performance for you server.
-<https://spark.lucko.me/download>
+Spark is a plugin/mod that helps you monitor performance for your server. Spark does not require manual installation on Paper as Paper has Spark built-in. The download link for Spark can be found below.
 
-To record performance on your server use:
-`/spark profiler --thread * --timeout 60`. This will run for 60 seconds then it will automatically stop.
-(On Velocity, replace `/spark` with `/sparkv`; on BungeeCord, replace with `sparkb`)
-It'll probably lag the server a good deal but it'll give us a link we might be able to process.
+To record performance on your server use `/spark profiler --thread * --timeout 60`.
+- This will run for 60 seconds and then automatically stop.
+- It'll probably lag the server a good deal while it runs, but it'll give us a link we might be able to process.
+- On Velocity, replace `/spark` with `/sparkv`.
+- On BungeeCord, replace `/spark` with `/sparkb`.

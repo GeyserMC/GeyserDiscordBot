@@ -1,23 +1,26 @@
 type: text
+title: :arrows_counterclockwise: Converting Java Resource Packs To Bedrock
+color: links
+button: [Kastle's Converter](https://github.com/Kas-tle/java2bedrock.sh)
+button: [JavaTextureToBedrock](https://rtm516.github.io/ConvertJavaTextureToBedrock/)
+button: [Rainbow](https://geysermc.org/download?project=other-projects&rainbow=expanded)
+button: [Thunder](https://geysermc.org/download?project=other-projects&thunder=expanded)
 
 ---
 
-**Converting general resource packs**
-Use this tool to convert your Java resource pack into a Bedrock resource pack to use in Geyser's `packs` folder.
-https://rtm516.github.io/ConvertJavaTextureToBedrock/
-Unfortunately, this tool is not updated to support packs for versions newer than 1.17.
+**Resource Packs for 1.21.3 and below:**
+- For packs with CustomModelData (datapack textures, ItemsAdder, etc.), use Kastle’s Converter.
+- For general Java resource packs (vanilla textures only), use JavaTextureToBedrock. Only updated up to 1.17, may still work on later versions.
+- For manual conversion, see the pinned messages <#1139296287179677857>.
 
-**Packs with CustomModelData**
-To convert a resource pack with CustomModelData, use the following converter: https://github.com/Kas-tle/java2bedrock.sh 
-For more info on how to use it, see the pinned messages in <#1139296287179677857>. Be advised: Converting a pack to make it Bedrock compatible, especially with CustomModelData isn't always an automated process. If you need help, ask in the aforementioned channel!
-Helpful links to get started with CustomModelData:
-https://wiki.geysermc.org/geyser/custom-items/
-https://github.com/GeyserCustomModelData
+**Resource Packs for 1.21.4 and above: **
+- For converting custom items, use Rainbow.
+- For general Java resource packs (vanilla textures only), use Thunder.
+- For manual conversion with API V1/V2, see the pinned messages in <#1139296287179677857>.
 
-**Custom GUIs on Bedrock**
-Custom GUIs on Bedrock need to be done using JsonUI, however, you can use this tool to upload your GUI pngs & their unicodes 
-and convert them into a Bedrock resource pack to use in Geyser's `packs` folder:
-https://abishekbhusal.com/j2b_gui/
-If you'd like to manually convert custom GUIs using JsonUI, here are some helpful links:
-https://wiki.bedrock.dev/json-ui/json-ui-documentation
-https://github.com/ofunny/ofunnysBedrockExamples/tree/main/geysermc.chestBackgroundExample
+**Custom GUIs on Bedrock:**
+Use [this tool](https://abishekbhusal.com/j2b_gui/) to upload GUI pngs + unicodes and convert them into a Bedrock pack for Geyser.
+
+Alternatively, here are resources for manually converting using JSON UI:
+- [Bedrock JSON UI docs](https://wiki.bedrock.dev/json-ui/json-ui-documentation)
+- [ofunny's Bedrock Examples - Custom Inventory Menu](https://github.com/ofunny/ofunnysBedrockExamples/tree/main/geysermc.chestBackgroundExample)

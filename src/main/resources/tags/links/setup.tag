@@ -1,7 +1,9 @@
 type: text
+color: links
+title: :geyser: Geyser Setup Guide
 help: geyser
+button: [Setup Guide](https://wiki.geysermc.org/geyser/setup/)
 
 ---
 
-Please read this page on how to setup Geyser for any supported platform.
-https://wiki.geysermc.org/geyser/setup/
+Please read the setup guide linked below to setup Geyser for any supported platform.

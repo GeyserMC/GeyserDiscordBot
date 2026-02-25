@@ -1,4 +1,6 @@
 type: text
+title: :alarm_clock: ETA
+color: util
 
 ---
 

@@ -1,7 +1,8 @@
 type: text
+title: :thinking: The XY Problem
+color: fun
+button: [XY Problem](https://xyproblem.info/)
 
 ---
 
-**The XY Problem**
-Asking about your attempted solution rather than your actual problem
-http://xyproblem.info/
+Asking about your attempted solution rather than your actual problem.

@@ -1,5 +1,9 @@
 type: text
+title: :geyser: Geyser Dump
+color: util
 
 ---
 
-Run `geyser dump` (server console) / `/geyser dump` (ingame chat) on your Geyser instance or server, then copy the link it will give you and paste it here. A Geyser dump is a way of providing us with a bunch of useful information about your server and Geyser config. This doesn't include any IPs or sensitive data.
+A Geyser dump is a way of providing us with a bunch of useful information about your server and Geyser config without giving us any IPs or sensitive data.
+- Run `geyser dump` in the server console or `/geyser dump` in the in‑game chat.
+- Then, copy the Geyser dump link it gives you and paste it here.
