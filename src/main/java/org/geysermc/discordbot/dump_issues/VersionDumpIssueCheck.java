@@ -44,7 +44,7 @@ public class VersionDumpIssueCheck extends AbstractDumpIssueCheck {
     @Override
     public List<String> checkIssues(JSONObject dump) {
         JSONObject bootstrapInfo = dump.getJSONObject("bootstrapInfo");
-        String platform = bootstrapInfo.getJSONObject("platform").getString("platformName");
+        String platform = bootstrapInfo.getJSONObject("platform").getString("platformName").toUpperCase();
         JSONObject jsonSupportedMinecraft = dump.getJSONObject("versionInfo").getJSONObject("mcInfo");
         List<String> supportedMinecraft;
         if (jsonSupportedMinecraft.get("javaVersions") instanceof JSONArray array) {
@@ -54,7 +54,7 @@ public class VersionDumpIssueCheck extends AbstractDumpIssueCheck {
         }
 
         boolean isOldVersion = false;
-        if (!(platform.equals("BUNGEECORD") || platform.equals("VELOCITY") || platform.equals("FABRIC") || platform.equals("ANDROID"))) {
+        if (!(platform.equals("BUNGEECORD") || platform.equals("VELOCITY") || platform.equals("FABRIC"))) {
             for (String version : supportedMinecraft) {
                 isOldVersion = !bootstrapInfo.getString("platformVersion").contains(version);
                 if (!isOldVersion) {
@@ -72,7 +72,7 @@ public class VersionDumpIssueCheck extends AbstractDumpIssueCheck {
                 JSONObject plugin = plugins.getJSONObject(i);
 
                 // Check if VV is installed
-                if (plugin.getString("name").equals("ViaVersion") && plugin.getBoolean("enabled")) {
+                if (plugin.has("name") && plugin.getString("name").equals("ViaVersion") && plugin.getBoolean("enabled")) {
                     isOldVersion = false;
                     break;
                 }

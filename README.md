@@ -8,7 +8,7 @@
 A bot for the GeyserMC Discord server
 
 # How to run
-- Download the latest build from the CI ([here](https://ci.opencollab.dev/job/GeyserMC/job/GeyserDiscordBot/job/master/lastSuccessfulBuild/artifact/target/GeyserBot.jar))
+- Download the latest build from [GitHub Actions](https://github.com/GeyserMC/GeyserDiscordBot/actions/workflows/build.yml) or build it yourself with `./gradlew build`
 - Configure a `bot.properties` file based on the example
 - Start the bot with `java -jar GeyserBot.jar` or put the systemd unit file into `/etc/systemd/system/` and `sudo systemctl daemon-reload && sudo systemctl enable --now geyserbot`
 

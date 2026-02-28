@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2026 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class BukkitDumpIssueCheck extends AbstractDumpIssueCheck {
+
+    @Override
+    public boolean compatiblePlatform(String platform) {
+        return platform.equals("SPIGOT");
+    }
 
     @NotNull
     @Override
