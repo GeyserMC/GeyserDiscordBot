@@ -84,8 +84,13 @@ public class PreviewHandler extends ListenerAdapter {
             return;
         }
 
+        String title = pullRequest.getTitle();
+        if (title.length() > 100) {
+            title = title.substring(0, 97) + "...";
+        }
+
         previewChannel.createForumPost(
-                pullRequest.getTitle(),
+                title,
                 MessageCreateData.fromEmbeds(new EmbedBuilder()
                         .setTitle(pullRequest.getTitle())
                         .setColor(BotColors.SUCCESS.getColor())

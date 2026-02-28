@@ -30,29 +30,27 @@ import net.dv8tion.jda.api.entities.emoji.ApplicationEmoji;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 import java.util.EnumMap;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 public enum BotEmojis {
-    // Platforms // TODO add the real emoji IDs
-    FABRIC("1475218517400879346"),
-    GEYSER("1475218518432809010"),
-    NEOFORGE("1475218519720198317"),
-    PAPER("1475218520945070202"),
-    VELOCITY("1475218521884459182"),
-    VIAPROXY("1475218523042353417"),
-    WATERFALL("1475218524116090970");
+    // Platforms
+    FABRIC,
+    GEYSER,
+    NEOFORGE,
+    PAPER,
+    VELOCITY,
+    VIAPROXY,
+    WATERFALL;
 
     private static final EnumMap<BotEmojis, ApplicationEmoji> EMOJI_MAP = new EnumMap<>(BotEmojis.class);
 
     public static void init(JDA jda) {
-        for (BotEmojis emoji : values()) {
-            jda.retrieveApplicationEmojiById(emoji.emojiId).queue(e -> EMOJI_MAP.put(emoji, e));
-        }
-    }
-
-    private final String emojiId;
-
-    BotEmojis(String emojiId) {
-        this.emojiId = emojiId;
+        jda.retrieveApplicationEmojis().queue(emojis -> {
+            for (BotEmojis emoji : values()) {
+                EMOJI_MAP.put(emoji, emojis.stream().filter(e -> e.getName().equals(emoji.name().toLowerCase(Locale.ROOT))).findFirst().get());
+            }
+        });
     }
 
     public Emoji get() {
