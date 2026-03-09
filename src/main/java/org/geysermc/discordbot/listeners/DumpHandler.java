@@ -275,7 +275,7 @@ public class DumpHandler extends ListenerAdapter {
             if (bootstrapInfo.has("platformName")
                 && "fabric".equals(bootstrapInfo.getString("platformName"))
                 && bootstrapInfo.has("minecraftVersion")) {
-            serverPlatformName = bootstrapInfo.getString("platformVersion")
+            versionString = bootstrapInfo.getString("platformVersion")
                     + " (MC: " + bootstrapInfo.getString("minecraftVersion") + ")";
             } else {
                 versionString = bootstrapInfo.getString("platformVersion");
