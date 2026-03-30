@@ -37,6 +37,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
+import org.geysermc.discordbot.util.BotEmojis;
 import org.kohsuke.github.GHPullRequest;
 
 import javax.annotation.Nonnull;
@@ -48,6 +49,7 @@ import java.util.regex.Pattern;
 
 public class PreviewHandler extends ListenerAdapter {
     private static final Pattern GH_PR_PATTERN = Pattern.compile("https://github\\.com/GeyserMC/(.+)/pull/(\\d+)");
+    private static final String DOWNLOAD_LINK_TEMPLATE = "https://download.geysermc.org/v2/projects/geyserpreview/versions/pr.%s/builds/latest/downloads/%s";
 
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
@@ -82,8 +84,13 @@ public class PreviewHandler extends ListenerAdapter {
             return;
         }
 
+        String title = pullRequest.getTitle();
+        if (title.length() > 100) {
+            title = title.substring(0, 97) + "...";
+        }
+
         previewChannel.createForumPost(
-                pullRequest.getTitle(),
+                title,
                 MessageCreateData.fromEmbeds(new EmbedBuilder()
                         .setTitle(pullRequest.getTitle())
                         .setColor(BotColors.SUCCESS.getColor())
@@ -101,13 +108,48 @@ public class PreviewHandler extends ListenerAdapter {
                         Button.link(pullRequest.getHtmlUrl() + "/checks", "Download Artifacts")
                                 .withEmoji(Emoji.fromUnicode("\ud83d\udce6"))))
                 .queue(forumPost -> {
+                    // Make the ActionRows containing all downloads
+                    ActionRow downloadRow1 = ActionRow.of(
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "bungeecord"), "Bungeecord")
+                                    .withEmoji(BotEmojis.WATERFALL.get()),
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "fabric"), "Fabric")
+                                    .withEmoji(BotEmojis.FABRIC.get()),
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "neoforge"), "NeoForge")
+                                    .withEmoji(BotEmojis.NEOFORGE.get()),
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "spigot"), "Spigot")
+                                    .withEmoji(BotEmojis.PAPER.get()),
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "standalone"), "Standalone")
+                                    .withEmoji(BotEmojis.GEYSER.get())
+                    );
+
+                    ActionRow downloadRow2 = ActionRow.of(
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "velocity"), "Velocity")
+                                    .withEmoji(BotEmojis.VELOCITY.get()),
+                            Button.link(DOWNLOAD_LINK_TEMPLATE.formatted(pr, "viaproxy"), "ViaProxy")
+                                    .withEmoji(BotEmojis.VIAPROXY.get())
+                    );
+
                     // Reply to the original message with the link to the forum post
                     event.getMessage().replyEmbeds(new EmbedBuilder()
                             .setColor(BotColors.SUCCESS.getColor())
                             .setDescription("The above preview can be discussed in:\n### <#"
                                     + forumPost.getMessage().getId() + ">")
                             .setTimestamp(Instant.now())
-                            .build()).queue();
+                            .build())
+                            .addComponents(downloadRow1, downloadRow2)
+                            .queue();
+
+                    // Send a message containing the download links and then pin it
+                    forumPost.getMessage().replyEmbeds(new EmbedBuilder()
+                            .setColor(BotColors.SUCCESS.getColor())
+                            .setTitle("Downloads")
+                            .setDescription("The download links for this preview can be found below")
+                            .setTimestamp(Instant.now())
+                            .build())
+                            .addComponents(downloadRow1, downloadRow2)
+                            .queue(message ->
+                                    forumPost.getThreadChannel().pinMessageById(message.getIdLong()).queue()
+                            );
                 });
 
         // Remove embeds from the original message
