@@ -1,5 +1,5 @@
 type: raw
-aliases: support, nst
+aliases: support, nst, nsp
 
 ---
 
