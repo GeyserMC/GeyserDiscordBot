@@ -1,7 +1,10 @@
 type: text
+title: :x: Connection Closed
 issues: Connection closed
+color: errors
 
 ---
 
-This error is probably caused by a connection error. Upload your logs with http://mclo.gs/ and paste the URL here.
-If you are getting this error on a proxy server such as Velocity or BungeeCord, check your backend server logs for errors.
+We require server logs to assist you further. Please follow the instructions below:
+1. Upload your logs to [MCLogs](https://mclo.gs/).
+2. Share the MCLogs link in <#613168464634576897> or <#1038995448100306964>.
