@@ -209,7 +209,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         if (error) {
             embedBuilder.setColor(BotColors.FAILURE.getColor());
-            embedBuilder.addField("Error","Something went wrong wile reading the image.", false);
+            embedBuilder.addField("Error","Something went wrong while reading the image.", false);
             embedBuilder.setDescription(content);
             event.getMessage().replyEmbeds(embedBuilder.build()).queue();
         } else {
