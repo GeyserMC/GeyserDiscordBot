@@ -62,7 +62,7 @@ public class PingCommand extends FilteredSlashCommand {
         this.name = "ping";
         this.aliases = new String[] { "status" };
         this.arguments = "<ip> [port]";
-        this.help = "Ping a server to check if its accessible";
+        this.help = "Ping a server to check if it's accessible";
         this.guildOnly = false;
 
         this.options = List.of(
