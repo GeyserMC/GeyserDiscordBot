@@ -1,4 +1,6 @@
 type: text
+title: :geyser: Plugin Debugging
+color: help
 aliases: pd
 
 ---

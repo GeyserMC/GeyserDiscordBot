@@ -1,6 +1,9 @@
 type: text
 aliases: commonissues
+title: :geyser: Common Issues With Geyser
+color: links
+button: [Wiki Page](https://wiki.geysermc.org/geyser/common-issues/)
 
 ---
 
-This link contains fixes for a lot of the issues you may come across using Geyser. https://wiki.geysermc.org/geyser/common-issues/
+The common issues wiki page contains fixes for a lot of the issues you may come across while using Geyser.
