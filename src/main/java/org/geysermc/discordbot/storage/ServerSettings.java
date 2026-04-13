@@ -107,6 +107,18 @@ public class ServerSettings {
     }
 
     /**
+     * Get the moderation channel for the selected guild
+     *
+     * @param guild ID of the guild to get the channel for
+     * @return The {@link TextChannel} for moderation actions
+     * @throws IllegalArgumentException If the channel is null or invalid
+     */
+    public static TextChannel getModChannel(@NotNull Guild guild) throws IllegalArgumentException {
+        String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "moderation-channel");
+        return guild.getTextChannelById(channel);
+    }
+
+    /**
      * Get the donation feeds channel for the selected guild
      *
      * @param guild ID of the guild to get the channel for
