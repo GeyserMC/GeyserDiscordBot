@@ -1,5 +1,12 @@
 type: text
+title: :geyser: Mod Compatibility With Geyser
+color: info
+button: [Modrinth](https://modrinth.com/discover/mods)
 
 ---
 
-Geyser emulates a vanilla Java Edition game client. If the mods installed on the server allow a full vanilla client to connect, then a Geyser player can. (Conversely, if a player must install mods, a Geyser player can not join.)
+**Geyser only works with server-sided mods by default**, meaning mods that allow a vanilla client to join. On Modrinth (link below), you can filter by **server** to only show server-sided mods. Hydraulic which is a companion mod to Geyser can allow Bedrock players to join modded Minecraft: Java Edition servers and use client-sided mods.
+
+**Polymer-based mods are an exception.** Although server-sided, some work, partially don't work, or just don't work at all. You can try checking if Geyser/Bedrock support is listed on the mod page. If not, your best option is to try it and see.
+
+Mods labelled as **Client or server** will partially or not affect bedrock players at all. Keep in mind the limitations of Geyser which can cause issues with some functionality. Run `!!limitations` for more information.

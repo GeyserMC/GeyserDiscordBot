@@ -1,12 +1,9 @@
 type: text
+title: :ocean: Floodgate Prefix
+color: info
 
 ---
 
-The prefix is added by Floodgate to indicate that the player is Bedrock; and more importantly, to minimize the possibility of player name conflict issues.
+We strongly recommend that you **do not remove** the prefix, but instead change it. **Without a prefix, things could break, usernames would cause conflicts in commands and the users could lose their data!**
 
-We strongly recommend that you **do not remove** the prefix, but instead change it. **Should a Java player and a Bedrock player with the exact same name join your server at the same time, things could break and the users could lose their data!**
-
-You can change the prefix (`.`) in players' names by editing the option in Floodgate's config.yml file. Characters that a Java player cannot normally choose to be part of their names are recommended.
-Our recommend prefixes are: `.` `+` and `-`.
-
-**Using "*" as a prefix while on Windows will cause issues**, as some plugins store player data by username - Windows does not allow files to start with "*".
+You can change the prefix in players' names by editing the option in Floodgate's config.yml file. We recommend characters that a Java player cannot normally use to avoid conflicts. Our recommended prefixes are: `.` (default), `+`, and `-`. **Using `*` as a prefix while on Windows will cause issues with some plugins.**

@@ -1,6 +1,9 @@
 type: text
+title: :geyser: GeyserMC Hosting Providers
+color: links
+button: [Supported Hosting Providers Wiki Page](https://wiki.geysermc.org/geyser/supported-hosting-providers/)
 
 ---
 
-See the list of supported providers [here](https://wiki.geysermc.org/geyser/supported-hosting-providers/).
-To search for a specific provider, use `/provider <provider>`.
+- To see the list of supported providers, use the wiki page link below.
+- To search for a specific provider, use `/provider <provider>` in <#613194762249437245>.

@@ -1,8 +1,9 @@
 type: text
-issues: invalid nickname
+title: :x: Illegal Nickname
+issues: illegal nickname || invalid nickname
+aliases: invalidnickname, invalidnick, illegalnick
+color: errors
 
 ---
 
-This "error" is caused by a login plugin such as AuthMe which is not supported with Geyser.
-
-If you are simply just wanting Bedrock players to be able to join your Java server without a Java account, we recommend using our plugin [Floodgate](https://wiki.geysermc.org/floodgate/setup/) which allows them to join the server with it being in online mode. If you did not mean to set your server to offline mode or don't understand what it means, please set your server to online mode to receive support further.
+This error is caused by a login plugin such as AuthMe which Geyser does not support. Since login plugins indicate offline mode, we will not provide Geyser support. Run `!!offline` for more information.
