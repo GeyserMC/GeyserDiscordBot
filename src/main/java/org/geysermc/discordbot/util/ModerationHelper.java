@@ -36,18 +36,12 @@ import org.geysermc.discordbot.storage.ServerSettings;
 import javax.annotation.Nullable;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ModerationHelper {
     private ModerationHelper() {}
 
     public static void quarantineMember(Member user, Guild guild, String reason, boolean automatic, @Nullable Member staffMember) {
-        if (GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "quarantine-role") == null) return;
-
-        Role quarantineRole = guild.getRoleById(GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "quarantine-role"));
-        if (quarantineRole == null) return;
-
         if (staffMember == null) staffMember = guild.getSelfMember();
 
         String title;
@@ -71,8 +65,8 @@ public class ModerationHelper {
             channel.sendMessageEmbeds(embed).queue();
         });
 
-        guild.addRoleToMember(user, quarantineRole).queue();
-        GeyserBot.storageManager.addPersistentRole(user, quarantineRole);
+        Duration duration = Duration.ofSeconds(60 * 60 * 24 * 28); // 28 days
+        user.timeoutFor(duration).queue();
 
         // Send a message in the mod chat with buttons to take action
         ActionRow row1 = ActionRow.of(
@@ -89,7 +83,7 @@ public class ModerationHelper {
 
         MessageEmbed modChatEmbed = new EmbedBuilder()
                 .setTitle("Quarantined user")
-                .setDescription(user.getAsMention() + " has been quarantined. Select an action below to take.")
+                .setDescription(user.getAsMention() + " has been quarantined. Select an action below to take. Quarantine expires in <t:%d:R>.".formatted(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 28))
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.FAILURE.getColor())
                 .build();
@@ -99,19 +93,18 @@ public class ModerationHelper {
                         .setContent(user.getAsMention())
                         .setEmbeds(modChatEmbed)
                         .build()
-        ).addComponents(row1, row2).queue();
+        ).addComponents(row1, row2).queue(message -> {
+            String moderationRoleId = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "moderation-role");
+            if (moderationRoleId != null) {
+                Role moderationRole = guild.getRoleById(moderationRoleId);
 
-        String moderationRoleId = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "moderation-role");
-        if (moderationRoleId != null) {
-            Role moderationRole = guild.getRoleById(moderationRoleId);
-
-            if (moderationRole != null) {
-                ServerSettings.getModChannel(guild)
-                        .sendMessage(moderationRole.getAsMention())
-                        .setAllowedMentions(null) // Allows the ping, null means all confusingly
-                        .queue();
+                if (moderationRole != null) {
+                    message.reply(moderationRole.getAsMention())
+                            .setAllowedMentions(null) // Allows the ping, null means all confusingly
+                            .queue();
+                }
             }
-        }
+        });
 
         // Now log it!
         int id = GeyserBot.storageManager.addLog(staffMember, "quarantine", user, reason);

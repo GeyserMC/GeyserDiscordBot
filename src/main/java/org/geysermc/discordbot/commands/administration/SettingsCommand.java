@@ -75,7 +75,6 @@ public class SettingsCommand extends SlashCommand {
                         .addChoice("Preview Channel", "preview-channel")
                         .addChoice("Preview Feeds Channel", "preview-feeds-channel")
                         .addChoice("Punishment Message", "punishment-message")
-                        .addChoice("Quarantine Role", "quarantine-role")
                         .addChoice("Roles", "roles")
                         .addChoice("RSS Feeds", "rss-feeds")
                         .addChoice("Update channel", "update-channel")

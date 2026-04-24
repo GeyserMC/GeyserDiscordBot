@@ -67,15 +67,13 @@ public class QuarantineHandler extends ListenerAdapter {
 
             switch (buttonId) {
                 case "unquarantine" -> {
-                    Role quarantineRole = event.getGuild().getRoleById(GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), "quarantine-role"));
-
-                    event.getGuild().removeRoleFromMember(member, quarantineRole).queue(v -> {
+                    member.removeTimeout().queue(v -> {
                         event.replyEmbeds(
                                 new EmbedBuilder()
                                         .setTitle("Unquarantined member")
                                         .setDescription("Unquarantined " + member.getAsMention() + ".")
                                         .build()
-                        );
+                        ).queue();
 
                         member.getUser().openPrivateChannel().queue((channel) -> {
                             EmbedBuilder embedBuilder = new EmbedBuilder()
@@ -92,40 +90,32 @@ public class QuarantineHandler extends ListenerAdapter {
                                         .setTitle("Error")
                                         .setDescription("Issue unquaranting " + member.getAsMention() + ".")
                                         .build()
-                        );
+                        ).queue();
                     });
-
-                    GeyserBot.storageManager.removePersistentRole(member, quarantineRole);
                 }
                 case "misuse", "timeout" -> {
                     String reason = buttonId.equals("misuse") ? "Honey pot channel misuse." : "Timed out from quarantine.";
                     int days = buttonId.equals("misuse") ? 1 : 7;
-                    Role quarantineRole = event.getGuild().getRoleById(GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), "quarantine-role"));
 
-                    event.replyEmbeds(ModerationHelper.timeoutUser(member, event.getMember(), event.getGuild(), Duration.ofDays(days), false, reason)).queue();
-                    event.getGuild().removeRoleFromMember(member, quarantineRole).queue(v -> {
-                        event.reply("Timed out member.").queue();
+                    member.removeTimeout().queue(v -> {
+                        event.replyEmbeds(ModerationHelper.timeoutUser(member, event.getMember(), event.getGuild(), Duration.ofDays(days), false, reason)).queue();
                     }, throwable -> {
-                        event.reply("Member was timed out, but the quarantine role could not be removed.").queue();
+                        event.replyEmbeds(
+                                new EmbedBuilder()
+                                        .setTitle("Error")
+                                        .setDescription("Issue when changing timeout time for " + member.getAsMention() + ".")
+                                        .build()
+                        ).queue();
                     });
-
-                    GeyserBot.storageManager.removePersistentRole(member, quarantineRole);
                 }
                 case "kick" -> {
-                    Role quarantineRole = event.getGuild().getRoleById(GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), "quarantine-role"));
-
                     event.replyEmbeds(ModerationHelper.kickUser(member, event.getMember(), event.getGuild(), false, "Kicked from quarantine")).queue();
-
-                    GeyserBot.storageManager.removePersistentRole(member, quarantineRole);
                 }
                 case "compromised", "ban" -> {
                     String reason = buttonId.equals("compromised") ? "Scammer or compromised account" : "Banned from quarantine";
                     int days = buttonId.equals("compromised") ? 1 : 7;
-                    Role quarantineRole = event.getGuild().getRoleById(GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), "quarantine-role"));
 
                     event.replyEmbeds(ModerationHelper.banUser(member, event.getMember(), event.getGuild(), days, false, reason)).queue();
-
-                    GeyserBot.storageManager.removePersistentRole(member, quarantineRole);
                 }
             }
         }
