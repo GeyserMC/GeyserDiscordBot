@@ -28,8 +28,6 @@ package org.geysermc.discordbot.context_menus;
 import com.jagrosh.jdautilities.command.UserContextMenu;
 import com.jagrosh.jdautilities.command.UserContextMenuEvent;
 import net.dv8tion.jda.api.Permission;
-import org.geysermc.discordbot.commands.moderation.BanCommand;
-import org.geysermc.discordbot.moderation.BanUtil;
 import org.geysermc.discordbot.util.ModerationHelper;
 
 public class QuickBanUserMenu extends UserContextMenu {

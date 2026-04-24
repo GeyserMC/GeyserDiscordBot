@@ -43,12 +43,6 @@ import java.time.Instant;
 
 public class QuarantineHandler extends ListenerAdapter {
     @Override
-    public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
-        if (event.getAuthor().isBot()) return;
-        if (!event.isFromGuild()) return;
-    }
-
-    @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         if (!event.isFromGuild()) return;
         if (!event.getMember().hasPermission(event.getGuildChannel(), Permission.VIEW_CHANNEL)) return;
