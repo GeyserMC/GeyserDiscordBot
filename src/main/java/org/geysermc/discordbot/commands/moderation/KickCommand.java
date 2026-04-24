@@ -30,18 +30,13 @@ import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.geysermc.discordbot.GeyserBot;
-import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
+import org.geysermc.discordbot.util.ModerationHelper;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -82,7 +77,7 @@ public class KickCommand extends SlashCommand {
         }
 
 
-        event.replyEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
+        event.replyEmbeds(ModerationHelper.kickUser(member, moderator, event.getGuild(), silent, reason)).queue();
     }
 
     @Override
@@ -128,76 +123,6 @@ public class KickCommand extends SlashCommand {
             reason = reasonParts;
         }
 
-        event.getMessage().replyEmbeds(handle(member, moderator, event.getGuild(), silent, reason)).queue();
-    }
-
-    private MessageEmbed handle(Member member, Member moderator, Guild guild, boolean silent, String reason) {
-        // Check user is valid
-        if (member == null) {
-            return new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build();
-        }
-
-        // Check we can target the user
-        if (!BotHelpers.canTarget(moderator, member)) {
-            return new EmbedBuilder()
-                    .setTitle("Higher role")
-                    .setDescription("Either the bot or you cannot target that user.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build();
-        }
-
-        // Get the user from the member
-        User user = member.getUser();
-
-        // Let the user know they're banned if we are not being silent
-        if (!silent) {
-            user.openPrivateChannel().queue((channel) -> {
-                EmbedBuilder embedBuilder = new EmbedBuilder()
-                        .setTitle("You have been kicked from GeyserMC!")
-                        .addField("Reason", reason, false)
-                        .setTimestamp(Instant.now())
-                        .setColor(BotColors.FAILURE.getColor());
-
-                String punishmentMessage = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "punishment-message");
-                if (punishmentMessage != null && !punishmentMessage.isEmpty()) {
-                    embedBuilder.addField("Additional Info", punishmentMessage, false);
-                }
-
-                channel.sendMessageEmbeds(embedBuilder.build()).queue(message -> {
-                    // Kick user
-                    guild.kick(user).reason(reason).queue();
-                }, throwable -> {
-                    // Kick user
-                    guild.kick(user).reason(reason).queue();
-                });
-            }, throwable -> {
-                // Kick user
-                guild.kick(user).reason(reason).queue();
-            });
-        } else {
-            // Kick user
-            guild.kick(user).reason(reason).queue();
-        }
-
-        // Log the change
-        int id = GeyserBot.storageManager.addLog(moderator, "kick", user, reason);
-
-        MessageEmbed kickEmbed = new EmbedBuilder()
-                .setTitle("Kicked user")
-                .addField("User", user.getAsMention(), false)
-                .addField("Staff member", moderator.getAsMention(), false)
-                .addField("Reason", reason, false)
-                .setFooter("ID: " + id)
-                .setTimestamp(Instant.now())
-                .setColor(BotColors.SUCCESS.getColor())
-                .build();
-
-        // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(guild).sendMessageEmbeds(kickEmbed).queue();
-        return kickEmbed;
+        event.getMessage().replyEmbeds(ModerationHelper.kickUser(member, moderator, event.getGuild(), silent, reason)).queue();
     }
 }

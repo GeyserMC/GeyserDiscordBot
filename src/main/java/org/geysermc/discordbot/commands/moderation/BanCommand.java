@@ -30,23 +30,17 @@ import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.geysermc.discordbot.GeyserBot;
-import org.geysermc.discordbot.storage.ServerSettings;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
+import org.geysermc.discordbot.util.ModerationHelper;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class BanCommand extends SlashCommand {
 
@@ -76,7 +70,7 @@ public class BanCommand extends SlashCommand {
         boolean silent = event.optBoolean("silent", false);
         String reason = event.optString("reason", "*None*");
 
-        event.replyEmbeds(handle(member, moderator, event.getGuild(), days, silent, reason)).queue();
+        event.replyEmbeds(ModerationHelper.banUser(member, moderator, event.getGuild(), days, silent, reason)).queue();
     }
 
     @Override
@@ -136,75 +130,6 @@ public class BanCommand extends SlashCommand {
             reason = reasonParts;
         }
 
-        event.getMessage().replyEmbeds(handle(member, moderator, event.getGuild(),delDays, silent, reason)).queue();
-    }
-
-    public static MessageEmbed handle(Member member, Member moderator, Guild guild, int days, boolean silent, String reason) {
-        // Check the user exists
-        if (member == null) {
-            return new EmbedBuilder()
-                    .setTitle("Invalid user")
-                    .setDescription("The user ID specified doesn't link with any valid user in this server.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build();
-        }
-
-        // Check we can target the user
-        if (!BotHelpers.canTarget(moderator, member)) {
-            return new EmbedBuilder()
-                    .setTitle("Higher role")
-                    .setDescription("Either the bot or you cannot target that user.")
-                    .setColor(BotColors.FAILURE.getColor())
-                    .build();
-        }
-
-        User user = member.getUser();
-
-        // Let the user know they're banned if we are not being silent
-        if (!silent) {
-            user.openPrivateChannel().queue((channel) -> {
-                EmbedBuilder embedBuilder = new EmbedBuilder()
-                        .setTitle("You have been banned from GeyserMC!")
-                        .addField("Reason", reason, false)
-                        .setTimestamp(Instant.now())
-                        .setColor(BotColors.FAILURE.getColor());
-
-                String punishmentMessage = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "punishment-message");
-                if (punishmentMessage != null && !punishmentMessage.isEmpty()) {
-                    embedBuilder.addField("Additional Info", punishmentMessage, false);
-                }
-
-                channel.sendMessageEmbeds(embedBuilder.build()).queue(message -> {
-                    // Ban user
-                    guild.ban(user, days, TimeUnit.DAYS).reason(reason).queue();
-                }, throwable -> {
-                    // Ban user
-                    guild.ban(user, days, TimeUnit.DAYS).reason(reason).queue();
-                });
-            }, throwable -> {
-                // Ban user
-                guild.ban(user, days, TimeUnit.DAYS).reason(reason).queue();
-            });
-        } else {
-            // Ban user
-            guild.ban(user, days, TimeUnit.DAYS).reason(reason).queue();
-        }
-
-        // Log the change
-        int id = GeyserBot.storageManager.addLog(moderator, "ban", user, reason);
-
-        MessageEmbed bannedEmbed = new EmbedBuilder()
-                .setTitle("Banned user")
-                .addField("User", user.getAsMention(), false)
-                .addField("Staff member", moderator.getAsMention(), false)
-                .addField("Reason", reason, false)
-                .setFooter("ID: " + id)
-                .setTimestamp(Instant.now())
-                .setColor(BotColors.SUCCESS.getColor())
-                .build();
-
-        // Send the embed as a reply and to the log
-        ServerSettings.getLogChannel(guild).sendMessageEmbeds(bannedEmbed).queue();
-        return bannedEmbed;
+        event.getMessage().replyEmbeds(ModerationHelper.banUser(member, moderator, event.getGuild(), delDays, silent, reason)).queue();
     }
 }
