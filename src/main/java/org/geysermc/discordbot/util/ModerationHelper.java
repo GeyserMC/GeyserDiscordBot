@@ -94,15 +94,11 @@ public class ModerationHelper {
                         .setEmbeds(modChatEmbed)
                         .build()
         ).addComponents(row1, row2).queue(message -> {
-            String moderationRoleId = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "moderation-role");
-            if (moderationRoleId != null) {
-                Role moderationRole = guild.getRoleById(moderationRoleId);
-
-                if (moderationRole != null) {
-                    message.reply(moderationRole.getAsMention())
-                            .setAllowedMentions(null) // Allows the ping, null means all confusingly
-                            .queue();
-                }
+            Role moderationRole = ServerSettings.getModRole(guild);
+            if (moderationRole != null) {
+                message.reply(moderationRole.getAsMention())
+                        .setAllowedMentions(null) // Allows the ping, null means all confusingly
+                        .queue();
             }
         });
 
