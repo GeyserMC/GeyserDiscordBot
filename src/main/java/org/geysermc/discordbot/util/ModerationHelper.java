@@ -90,10 +90,15 @@ public class ModerationHelper {
                 }
 
                 if (referenceMessage != null) {
-                    referenceMessage.forwardTo(message.getChannel()).queue();
-                    if (deleteReferenceMessage) {
-                        referenceMessage.delete().queue();
-                    }
+                    referenceMessage.forwardTo(message.getChannel()).queue(msg -> {
+                        if (deleteReferenceMessage) {
+                            referenceMessage.delete().queue();
+                        }
+                    }, throwable -> {
+                        if (deleteReferenceMessage) {
+                            referenceMessage.delete().queue();
+                        }
+                    });
                 }
             });
 
@@ -154,10 +159,15 @@ public class ModerationHelper {
             }
 
             if (referenceMessage != null) {
-                referenceMessage.forwardTo(message.getChannel()).queue();
-                if (deleteReferenceMessage) {
-                    referenceMessage.delete().queue();
-                }
+                referenceMessage.forwardTo(message.getChannel()).queue(msg -> {
+                    if (deleteReferenceMessage) {
+                        referenceMessage.delete().queue();
+                    }
+                }, throwable -> {
+                    if (deleteReferenceMessage) {
+                        referenceMessage.delete().queue();
+                    }
+                });
             }
         });
 
