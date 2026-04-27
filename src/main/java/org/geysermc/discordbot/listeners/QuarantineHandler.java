@@ -30,8 +30,11 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageEditData;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.ModerationHelper;
@@ -43,16 +46,14 @@ import java.time.Instant;
 
 public class QuarantineHandler extends ListenerAdapter {
     @Override
-    public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+    public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
         if (!event.isFromGuild()) return;
         if (!event.getMember().hasPermission(event.getGuildChannel(), Permission.VIEW_CHANNEL)) return;
 
-        String buttonId = event.getButton().getCustomId();
-        if (buttonId == null) return;
+        String customId = event.getComponentId();
+        if (!customId.equals("quarantine-handler")) return;
 
-        if (!buttonId.startsWith("quarantine-")) return;
-
-        buttonId = buttonId.substring("quarantine-".length());
+        String actionId = event.getInteraction().getCustomId();
 
         String userId = event.getMessage().getContentRaw().substring(2, event.getMessage().getContentRaw().length() - 1);
 
@@ -62,7 +63,19 @@ public class QuarantineHandler extends ListenerAdapter {
             return;
         }
 
-        switch (buttonId) {
+        // Remove the buttons!!!
+        event.getMessage().editMessage(new MessageEditBuilder()
+                .setContent("Handled by: " + event.getUser().getAsMention())
+                .setEmbeds(new EmbedBuilder()
+                        .setTitle("Quarantine action handled.")
+                        .setDescription("This quarantine was handled with action `%s`.".formatted(actionId))
+                        .setTimestamp(Instant.now())
+                        .setColor(BotColors.SUCCESS.getColor())
+                        .build())
+                .setComponents()
+                .build()).queue();
+
+        switch (actionId) {
             case "unquarantine" -> {
                 member.removeTimeout().queue(v -> {
                     event.replyEmbeds(
@@ -90,9 +103,9 @@ public class QuarantineHandler extends ListenerAdapter {
                     ).queue();
                 });
             }
-            case "misuse", "timeout" -> {
-                String reason = buttonId.equals("misuse") ? "Honey pot channel misuse." : "Timed out from quarantine.";
-                int days = buttonId.equals("misuse") ? 1 : 7;
+            case "honeypot-misuse", "timeout" -> {
+                String reason = actionId.equals("honeypot-misuse") ? "Honey pot channel misuse." : "Timed out from quarantine.";
+                int days = actionId.equals("honeypot-misuse") ? 1 : 7;
 
                 member.removeTimeout().queue(v -> {
                     event.replyEmbeds(ModerationHelper.timeoutUser(member, event.getMember(), event.getGuild(), Duration.ofDays(days), false, reason)).queue();
@@ -109,10 +122,13 @@ public class QuarantineHandler extends ListenerAdapter {
                 event.replyEmbeds(ModerationHelper.kickUser(member, event.getMember(), event.getGuild(), false, "Kicked from quarantine")).queue();
             }
             case "compromised", "ban" -> {
-                String reason = buttonId.equals("compromised") ? "Scammer or compromised account" : "Banned from quarantine";
-                int days = buttonId.equals("compromised") ? 1 : 7;
+                String reason = actionId.equals("compromised") ? "Scammer or compromised account" : "Banned from quarantine";
+                int days = actionId.equals("compromised") ? 1 : 7;
 
                 event.replyEmbeds(ModerationHelper.banUser(member, event.getMember(), event.getGuild(), days, false, reason)).queue();
+            }
+            default -> {
+                event.reply("Invalid action ID %s.".formatted(actionId)).queue();
             }
         }
     }

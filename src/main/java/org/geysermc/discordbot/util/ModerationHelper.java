@@ -27,10 +27,9 @@ package org.geysermc.discordbot.util;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
-import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.utils.TimeFormat;
-import net.dv8tion.jda.api.utils.Timestamp;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
@@ -119,16 +118,16 @@ public class ModerationHelper {
         user.timeoutFor(duration).queue();
 
         // Send a message in the mod chat with buttons to take action
-        ActionRow row1 = ActionRow.of(
-                Button.success("quarantine-unquarantine", "Unquarantine"),
-                Button.primary("quarantine-misuse", "Honey pot misuse"),
-                Button.danger("quarantine-compromise", "Compromised account"),
-                Button.primary("quarantine-timeout", "Timeout (1 week)"),
-                Button.secondary("quarantine-kick", "Kick")
-        );
-
-        ActionRow row2 = ActionRow.of(
-                Button.danger("quarantine-ban", "Ban (1 week)")
+        ActionRow row = ActionRow.of(
+                StringSelectMenu.create("quarantine-handler")
+                        .setPlaceholder("Select an action")
+                        .addOption("Unquarantine", "unquarantine", "Unquarantine the user.")
+                        .addOption("Honey pot misuse", "honeypot-misuse", "Punish the user for misuse of the honeypot channel.")
+                        .addOption("Compromised account", "compromise", "Temporarily ban the user for compromised account.")
+                        .addOption("Kick", "timeout", "Kick the user.")
+                        .addOption("Timeout (1 week)", "kick", "Timeout the user for 1 week.")
+                        .addOption("Ban (1 week)", "ban", "Ban the user for 1 week.")
+                        .build()
         );
 
         String timestamp = TimeFormat.RELATIVE.format(LocalDateTime.now().plusDays(28));
@@ -145,7 +144,7 @@ public class ModerationHelper {
                         .setContent(user.getAsMention())
                         .setEmbeds(modChatEmbed)
                         .build()
-        ).addComponents(row1, row2).queue(message -> {
+        ).addComponents(row).queue(message -> {
             Role moderationRole = ServerSettings.getModRole(guild);
             if (moderationRole != null) {
                 message.reply(moderationRole.getAsMention())
