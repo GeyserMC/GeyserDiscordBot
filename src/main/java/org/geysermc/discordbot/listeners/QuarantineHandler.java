@@ -53,7 +53,7 @@ public class QuarantineHandler extends ListenerAdapter {
         String customId = event.getComponentId();
         if (!customId.equals("quarantine-handler")) return;
 
-        String actionId = event.getInteraction().getCustomId();
+        String actionId = event.getValues().getFirst();
 
         String userId = event.getMessage().getContentRaw().substring(2, event.getMessage().getContentRaw().length() - 1);
 

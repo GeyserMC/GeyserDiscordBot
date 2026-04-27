@@ -135,7 +135,7 @@ public class ModerationHelper {
 
         MessageEmbed modChatEmbed = new EmbedBuilder()
                 .setTitle("Quarantined user")
-                .setDescription(user.getAsMention() + " has been quarantined. Select an action below to take. Quarantine expires in %s.".formatted(timestamp))
+                .setDescription(user.getAsMention() + " has been quarantined. Select an action below to take. Quarantine expires %s.".formatted(timestamp))
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.FAILURE.getColor())
                 .build();
