@@ -104,7 +104,7 @@ public class QuarantineHandler extends ListenerAdapter {
                 });
             }
             case "honeypot-misuse", "timeout" -> {
-                String reason = actionId.equals("honeypot-misuse") ? "Honey pot channel misuse." : "Timed out from quarantine.";
+                String reason = actionId.equals("honeypot-misuse") ? "Honey pot channel misuse." : "Timed out while in quarantine.";
                 int days = actionId.equals("honeypot-misuse") ? 1 : 7;
 
                 member.removeTimeout().queue(v -> {
@@ -119,13 +119,33 @@ public class QuarantineHandler extends ListenerAdapter {
                 });
             }
             case "kick" -> {
-                event.replyEmbeds(ModerationHelper.kickUser(member, event.getMember(), event.getGuild(), false, "Kicked from quarantine")).queue();
+                member.removeTimeout().queue(v -> {
+                    event.replyEmbeds(ModerationHelper.kickUser(member, event.getMember(), event.getGuild(), false, "Kicked from quarantine")).queue();
+                }, throwable -> {
+                    event.replyEmbeds(ModerationHelper.kickUser(member, event.getMember(), event.getGuild(), false, "Kicked from quarantine")).queue();
+                    event.replyEmbeds(
+                            new EmbedBuilder()
+                                    .setTitle("Error")
+                                    .setDescription("Issue when kicking " + member.getAsMention() + ", couldn't remove timeout.")
+                                    .build()
+                    ).queue();
+                });
             }
             case "compromised", "ban" -> {
-                String reason = actionId.equals("compromised") ? "Scammer or compromised account" : "Banned from quarantine";
-                int days = actionId.equals("compromised") ? 1 : 7;
+                String reason = actionId.equals("compromised") ? "Scammer or compromised account" : "Banned while in quarantine";
+                int days = actionId.equals("compromised") ? 0 : 7;
 
-                event.replyEmbeds(ModerationHelper.banUser(member, event.getMember(), event.getGuild(), days, false, reason)).queue();
+                member.removeTimeout().queue(v -> {
+                    event.replyEmbeds(ModerationHelper.banUser(member, event.getMember(), event.getGuild(), days, false, reason)).queue();
+                }, throwable -> {
+                    event.replyEmbeds(ModerationHelper.banUser(member, event.getMember(), event.getGuild(), days, false, reason)).queue();
+                    event.replyEmbeds(
+                            new EmbedBuilder()
+                                    .setTitle("Error")
+                                    .setDescription("Issue when kicking " + member.getAsMention() + ", couldn't remove timeout.")
+                                    .build()
+                    ).queue();
+                });
             }
             default -> {
                 event.reply("Invalid action ID %s.".formatted(actionId)).queue();

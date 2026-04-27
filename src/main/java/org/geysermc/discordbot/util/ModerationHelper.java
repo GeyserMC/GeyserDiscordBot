@@ -132,7 +132,7 @@ public class ModerationHelper {
                         .addOption("Compromised account", "compromise", "Temporarily ban the user for compromised account.")
                         .addOption("Kick", "kick", "Kick the user.")
                         .addOption("Timeout (1 week)", "timeout", "Timeout the user for 1 week.")
-                        .addOption("Ban (1 week)", "ban", "Ban the user for 1 week.")
+                        .addOption("Ban", "ban", "Ban the user.")
                         .build()
         );
 
