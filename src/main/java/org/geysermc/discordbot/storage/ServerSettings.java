@@ -27,10 +27,12 @@ package org.geysermc.discordbot.storage;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.geysermc.discordbot.GeyserBot;
@@ -116,6 +118,17 @@ public class ServerSettings {
     public static TextChannel getModChannel(@NotNull Guild guild) throws IllegalArgumentException {
         String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "moderation-channel");
         return guild.getTextChannelById(channel);
+    }
+
+    /**
+     * Check if the channel is the mod channel
+     *
+     * @param messageChannel ID of the channel
+     * @return The {@code boolean} for if this is the mod channel
+     */
+    public static boolean isModChannel(@NotNull Guild guild, @NotNull Channel messageChannel) {
+        String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "moderation-channel");
+        return messageChannel.getId().equals(channel);
     }
 
     /**

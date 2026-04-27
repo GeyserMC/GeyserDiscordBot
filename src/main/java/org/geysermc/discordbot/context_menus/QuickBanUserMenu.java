@@ -40,6 +40,6 @@ public class QuickBanUserMenu extends UserContextMenu {
 
     @Override
     protected void execute(UserContextMenuEvent event) {
-        event.replyEmbeds(ModerationHelper.banUser(event.getTargetMember(), event.getMember(), event.getGuild(), 1, false, "Scammer or compromised account")).setEphemeral(true).queue();
+        event.replyEmbeds(ModerationHelper.banUser(event.getTargetMember(), event.getMember(), event.getGuild(), 1, false, "Scammer or compromised account", null)).setEphemeral(true).queue();
     }
 }

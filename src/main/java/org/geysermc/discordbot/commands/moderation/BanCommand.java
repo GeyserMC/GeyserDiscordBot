@@ -70,7 +70,7 @@ public class BanCommand extends SlashCommand {
         boolean silent = event.optBoolean("silent", false);
         String reason = event.optString("reason", "*None*");
 
-        event.replyEmbeds(ModerationHelper.banUser(member, moderator, event.getGuild(), days, silent, reason)).queue();
+        event.replyEmbeds(ModerationHelper.banUser(member, moderator, event.getGuild(), days, silent, reason, event.getChannel())).queue();
     }
 
     @Override
@@ -130,6 +130,6 @@ public class BanCommand extends SlashCommand {
             reason = reasonParts;
         }
 
-        event.getMessage().replyEmbeds(ModerationHelper.banUser(member, moderator, event.getGuild(), delDays, silent, reason)).queue();
+        event.getMessage().replyEmbeds(ModerationHelper.banUser(member, moderator, event.getGuild(), delDays, silent, reason, event.getChannel())).queue();
     }
 }

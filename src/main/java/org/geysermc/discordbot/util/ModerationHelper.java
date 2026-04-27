@@ -29,6 +29,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.Channel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.utils.TimeFormat;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.geysermc.discordbot.GeyserBot;
@@ -266,7 +268,7 @@ public class ModerationHelper {
         return timedOutEmbed;
     }
 
-    public static MessageEmbed kickUser(Member member, Member moderator, Guild guild, boolean silent, String reason) {
+    public static MessageEmbed kickUser(Member member, Member moderator, Guild guild, boolean silent, String reason, @Nullable Channel originChannel) {
         if (moderator == null) moderator = guild.getSelfMember();
 
         // Check the user exists
@@ -334,11 +336,13 @@ public class ModerationHelper {
 
         // Send the embed as a reply and to the log
         ServerSettings.getLogChannel(guild).sendMessageEmbeds(kickedEmbed).queue();
-        ServerSettings.getModChannel(guild).sendMessageEmbeds(kickedEmbed).queue();
+        if (originChannel == null || !ServerSettings.isModChannel(guild, originChannel)) {
+            ServerSettings.getModChannel(guild).sendMessageEmbeds(bannedEmbed).queue();
+        }
         return kickedEmbed;
     }
 
-    public static MessageEmbed banUser(Member member, Member moderator, Guild guild, int days, boolean silent, String reason) {
+    public static MessageEmbed banUser(Member member, Member moderator, Guild guild, int days, boolean silent, String reason, @Nullable Channel originChannel) {
         if (moderator == null) moderator = guild.getSelfMember();
 
         // Check the user exists
@@ -406,7 +410,9 @@ public class ModerationHelper {
 
         // Send the embed as a reply and to the log
         ServerSettings.getLogChannel(guild).sendMessageEmbeds(bannedEmbed).queue();
-        ServerSettings.getModChannel(guild).sendMessageEmbeds(bannedEmbed).queue();
+        if (originChannel == null || !ServerSettings.isModChannel(guild, originChannel)) {
+            ServerSettings.getModChannel(guild).sendMessageEmbeds(bannedEmbed).queue();
+        }
         return bannedEmbed;
     }
 }

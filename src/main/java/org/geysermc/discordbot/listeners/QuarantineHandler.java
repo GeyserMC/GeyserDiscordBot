@@ -120,9 +120,9 @@ public class QuarantineHandler extends ListenerAdapter {
             }
             case "kick" -> {
                 member.removeTimeout().queue(v -> {
-                    event.replyEmbeds(ModerationHelper.kickUser(member, event.getMember(), event.getGuild(), false, "Kicked from quarantine")).queue();
+                    event.replyEmbeds(ModerationHelper.kickUser(member, event.getMember(), event.getGuild(), false, "Kicked from quarantine", event.getChannel())).queue();
                 }, throwable -> {
-                    event.replyEmbeds(ModerationHelper.kickUser(member, event.getMember(), event.getGuild(), false, "Kicked from quarantine")).queue();
+                    event.replyEmbeds(ModerationHelper.kickUser(member, event.getMember(), event.getGuild(), false, "Kicked from quarantine", event.getChannel())).queue();
                     event.replyEmbeds(
                             new EmbedBuilder()
                                     .setTitle("Error")
@@ -136,9 +136,9 @@ public class QuarantineHandler extends ListenerAdapter {
                 int days = actionId.equals("compromised") ? 0 : 7;
 
                 member.removeTimeout().queue(v -> {
-                    event.replyEmbeds(ModerationHelper.banUser(member, event.getMember(), event.getGuild(), days, false, reason)).queue();
+                    event.replyEmbeds(ModerationHelper.banUser(member, event.getMember(), event.getGuild(), days, false, reason, event.getChannel())).queue();
                 }, throwable -> {
-                    event.replyEmbeds(ModerationHelper.banUser(member, event.getMember(), event.getGuild(), days, false, reason)).queue();
+                    event.replyEmbeds(ModerationHelper.banUser(member, event.getMember(), event.getGuild(), days, false, reason, event.getChannel())).queue();
                     event.replyEmbeds(
                             new EmbedBuilder()
                                     .setTitle("Error")
