@@ -337,7 +337,7 @@ public class ModerationHelper {
         // Send the embed as a reply and to the log
         ServerSettings.getLogChannel(guild).sendMessageEmbeds(kickedEmbed).queue();
         if (originChannel == null || !ServerSettings.isModChannel(guild, originChannel)) {
-            ServerSettings.getModChannel(guild).sendMessageEmbeds(bannedEmbed).queue();
+            ServerSettings.getModChannel(guild).sendMessageEmbeds(kickedEmbed).queue();
         }
         return kickedEmbed;
     }
