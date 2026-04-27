@@ -38,6 +38,7 @@ import javax.annotation.Nullable;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.concurrent.TimeUnit;
 
 public class ModerationHelper {
@@ -130,7 +131,7 @@ public class ModerationHelper {
                         .build()
         );
 
-        String timestamp = TimeFormat.RELATIVE.format(LocalDateTime.now().plusDays(28));
+        String timestamp = TimeFormat.RELATIVE.format(LocalDateTime.now().plusDays(28).toInstant(ZoneOffset.UTC));
 
         MessageEmbed modChatEmbed = new EmbedBuilder()
                 .setTitle("Quarantined user")
