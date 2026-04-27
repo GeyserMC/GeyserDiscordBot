@@ -80,6 +80,6 @@ public class AutoModHandler extends ListenerAdapter {
         Member member = event.getGuild().getMemberById(userId);
         if (member == null) return;
 
-        ModerationHelper.quarantineMember(member, event.getGuild(), "Suspected account compromise", true, null, null, true);
+        ModerationHelper.quarantineMember(member, event.getGuild(), "Suspected account compromise (Automod detection)", true, null, null, true);
     }
 }

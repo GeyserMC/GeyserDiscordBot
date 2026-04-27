@@ -27,6 +27,7 @@ package org.geysermc.discordbot.listeners;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import it.unimi.dsi.fastutil.Pair;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.util.ModerationHelper;
@@ -35,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
 
 public class SpamHandler extends ListenerAdapter {
-    private final Cache<Long, Integer> messageCache;
+    private final Cache<Long, Pair<Integer, Long>> messageCache;
 
     public SpamHandler() {
         this.messageCache = CacheBuilder.newBuilder()
@@ -50,16 +51,18 @@ public class SpamHandler extends ListenerAdapter {
 
         long userId = event.getAuthor().getIdLong();
 
-        Integer messages = this.messageCache.getIfPresent(userId);
+        Pair<Integer, Long> messages = this.messageCache.getIfPresent(userId);
 
         if (messages == null) {
-            messages = 0;
+            messages = Pair.of(0, event.getChannel().getIdLong());
+        } else if (event.getChannel().getIdLong() != messages.right()) { // Only increment if in a different channel
+            messages = Pair.of(messages.left() + 1, event.getChannel().getIdLong());
         }
 
-        this.messageCache.put(userId, ++messages);
+        this.messageCache.put(userId, messages);
 
-        if (messages >= 8) {
-            // 8 or more messages, really really fast... we'll quarantine
+        if (messages.left() >= 8) {
+            // 8 or more messages, in different channels, really really fast... we'll quarantine
             messageCache.invalidate(userId);
             ModerationHelper.quarantineMember(event.getMember(), event.getGuild(), "Suspected account compromise (Message spamming)", true, null, event.getMessage(), false);
         }
