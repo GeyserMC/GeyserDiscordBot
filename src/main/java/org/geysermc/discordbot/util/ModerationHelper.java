@@ -47,6 +47,14 @@ public class ModerationHelper {
     public static void quarantineMember(Member user, Guild guild, String reason, boolean automatic, @Nullable Member staffMember, @Nullable Message referenceMessage, boolean deleteReferenceMessage) {
         if (staffMember == null) staffMember = guild.getSelfMember();
 
+        Member checkMember = guild.getMemberById(user.getId());
+        if (checkMember == null) {
+            if (referenceMessage != null && deleteReferenceMessage) {
+                referenceMessage.delete().queue();
+            }
+            return;
+        }
+
         String title;
 
         if (automatic) {

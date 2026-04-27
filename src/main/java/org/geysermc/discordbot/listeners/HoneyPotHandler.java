@@ -26,6 +26,7 @@
 package org.geysermc.discordbot.listeners;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -33,6 +34,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.ModerationHelper;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class HoneyPotHandler extends ListenerAdapter {
     @Override
@@ -53,6 +56,10 @@ public class HoneyPotHandler extends ListenerAdapter {
                             This is a honey pot channel designed to catch scam accounts. Sending a message here will lead to a quarantine of your account.
                             """).queue();
                 }
+
+                messages.stream().filter(m -> !m.getAuthor().getId().equals(guild.getSelfMember().getId())).forEach(message -> {
+                    ModerationHelper.quarantineMember(message.getMember(), message.getGuild(), "Messaged in the honey pot channel.", false, null, message, true);
+                });
             });
         }
     }
