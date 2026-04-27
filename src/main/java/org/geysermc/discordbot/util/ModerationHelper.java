@@ -138,8 +138,8 @@ public class ModerationHelper {
                         .addOption("Unquarantine", "unquarantine", "Unquarantine the user.")
                         .addOption("Honey pot misuse", "honeypot-misuse", "Punish the user for misuse of the honeypot channel.")
                         .addOption("Compromised account", "compromise", "Temporarily ban the user for compromised account.")
-                        .addOption("Kick", "kick", "Kick the user.")
                         .addOption("Timeout (1 week)", "timeout", "Timeout the user for 1 week.")
+                        .addOption("Kick", "kick", "Kick the user.")
                         .addOption("Ban", "ban", "Ban the user.")
                         .build()
         );
