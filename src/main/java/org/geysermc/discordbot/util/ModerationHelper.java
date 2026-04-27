@@ -29,6 +29,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.utils.TimeFormat;
+import net.dv8tion.jda.api.utils.Timestamp;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.storage.ServerSettings;
@@ -36,6 +38,7 @@ import org.geysermc.discordbot.storage.ServerSettings;
 import javax.annotation.Nullable;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 public class ModerationHelper {
@@ -128,9 +131,11 @@ public class ModerationHelper {
                 Button.danger("quarantine-ban", "Ban (1 week)")
         );
 
+        String timestamp = TimeFormat.RELATIVE.format(LocalDateTime.now().plusDays(28));
+
         MessageEmbed modChatEmbed = new EmbedBuilder()
                 .setTitle("Quarantined user")
-                .setDescription(user.getAsMention() + " has been quarantined. Select an action below to take. Quarantine expires in <t:%d:R>.".formatted(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 28))
+                .setDescription(user.getAsMention() + " has been quarantined. Select an action below to take. Quarantine expires in %s.".formatted(timestamp))
                 .setTimestamp(Instant.now())
                 .setColor(BotColors.FAILURE.getColor())
                 .build();
