@@ -66,8 +66,7 @@ public class HoneyPotHandler extends ListenerAdapter {
         if (honeyPotChannelId == null) return;
 
         if (event.getChannel().getId().equals(honeyPotChannelId)) {
-            event.getMessage().delete().queue();
-            ModerationHelper.quarantineMember(event.getMember(), event.getGuild(), "Messaged in the honey pot channel.", false, null);
+            ModerationHelper.quarantineMember(event.getMember(), event.getGuild(), "Messaged in the honey pot channel.", false, null, event.getMessage(), true);
         }
     }
 }

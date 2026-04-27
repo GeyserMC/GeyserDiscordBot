@@ -41,15 +41,15 @@ import java.util.concurrent.TimeUnit;
 public class ModerationHelper {
     private ModerationHelper() {}
 
-    public static void quarantineMember(Member user, Guild guild, String reason, boolean automatic, @Nullable Member staffMember) {
+    public static void quarantineMember(Member user, Guild guild, String reason, boolean automatic, @Nullable Member staffMember, @Nullable Message referenceMessage, boolean deleteReferenceMessage) {
         if (staffMember == null) staffMember = guild.getSelfMember();
 
         String title;
 
         if (automatic) {
-            title = "You have been automatically quarantined from " + guild.getName() + "!";
+            title = "You have been automatically quarantined in " + guild.getName() + "!";
         } else {
-            title = "You have been quarantined from " + guild.getName() + "!";
+            title = "You have been quarantined in " + guild.getName() + "!";
         }
 
         user.getUser().openPrivateChannel().queue((channel) -> {
@@ -64,6 +64,53 @@ public class ModerationHelper {
 
             channel.sendMessageEmbeds(embed).queue();
         });
+
+        if (!staffMember.canInteract(user)) {
+            MessageEmbed modChatEmbed = new EmbedBuilder()
+                    .setTitle("Unactioned quarantine.")
+                    .setDescription(user.getAsMention() + " cannot be quarantined as I do not have permission to timeout the user. Please take manual action!")
+                    .setTimestamp(Instant.now())
+                    .setColor(BotColors.FAILURE.getColor())
+                    .build();
+
+            ServerSettings.getModChannel(guild).sendMessage(
+                    new MessageCreateBuilder()
+                            .setContent(user.getAsMention())
+                            .setEmbeds(modChatEmbed)
+                            .build()
+            ).queue(message -> {
+                Role moderationRole = ServerSettings.getModRole(guild);
+                if (moderationRole != null) {
+                    message.reply(moderationRole.getAsMention())
+                            .setAllowedMentions(null) // Allows the ping, null means all confusingly
+                            .queue();
+                }
+
+                if (referenceMessage != null) {
+                    referenceMessage.forwardTo(message.getChannel()).queue();
+                    if (deleteReferenceMessage) {
+                        referenceMessage.delete().queue();
+                    }
+                }
+            });
+
+            // Now log it!
+            int id = GeyserBot.storageManager.addLog(staffMember, "quarantine", user, reason);
+
+            MessageEmbed quarantinedEmbed = new EmbedBuilder()
+                    .setTitle("Quarantined user (Unactioned!)")
+                    .addField("User", user.getAsMention(), false)
+                    .addField("Staff member", staffMember.getAsMention(), false)
+                    .addField("Reason", reason, false)
+                    .setFooter("ID: " + id)
+                    .setTimestamp(Instant.now())
+                    .setColor(BotColors.WARNING.getColor())
+                    .build();
+
+            ServerSettings.getLogChannel(guild).sendMessageEmbeds(quarantinedEmbed).queue();
+
+            return;
+        }
 
         Duration duration = Duration.ofSeconds(60 * 60 * 24 * 28); // 28 days
         user.timeoutFor(duration).queue();
@@ -99,6 +146,13 @@ public class ModerationHelper {
                 message.reply(moderationRole.getAsMention())
                         .setAllowedMentions(null) // Allows the ping, null means all confusingly
                         .queue();
+            }
+
+            if (referenceMessage != null) {
+                referenceMessage.forwardTo(message.getChannel()).queue();
+                if (deleteReferenceMessage) {
+                    referenceMessage.delete().queue();
+                }
             }
         });
 
