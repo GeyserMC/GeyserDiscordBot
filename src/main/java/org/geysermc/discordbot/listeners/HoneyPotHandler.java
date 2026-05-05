@@ -53,7 +53,7 @@ public class HoneyPotHandler extends ListenerAdapter {
                     channel.sendMessage("""
                             # DO NOT POST ANY MESSAGES HERE
                             
-                            This is a honey pot channel designed to catch scam accounts. Sending a message here will lead to a quarantine of your account.
+                            This is a honey pot channel designed to catch scam accounts. Sending a message here will lead to a temporary restriction of your account in this server.
                             """).queue();
                 }
 

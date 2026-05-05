@@ -61,8 +61,8 @@ public class SpamHandler extends ListenerAdapter {
 
         this.messageCache.put(userId, messages);
 
-        if (messages.left() >= 8) {
-            // 8 or more messages, in different channels, really really fast... we'll quarantine
+        if (messages.left() >= 5) {
+            // 5 or more messages, in different channels, really really fast... we'll quarantine
             messageCache.invalidate(userId);
             ModerationHelper.quarantineMember(event.getMember(), event.getGuild(), "Suspected account compromise (Message spamming)", true, null, event.getMessage(), false);
         }

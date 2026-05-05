@@ -60,9 +60,9 @@ public class ModerationHelper {
         String title;
 
         if (automatic) {
-            title = "You have been automatically quarantined in " + guild.getName() + "!";
+            title = "You have been automatically timed out in " + guild.getName() + "!";
         } else {
-            title = "You have been quarantined in " + guild.getName() + "!";
+            title = "You have been timed out in " + guild.getName() + "!";
         }
 
         user.getUser().openPrivateChannel().queue((channel) -> {
@@ -70,7 +70,7 @@ public class ModerationHelper {
                     .setTitle(title)
                     .addField("Reason", reason, false)
                     .addField("Recommended Actions", "Change your Discord password, enable 2FA, and scan your computer for malware. See [Discord's article](https://support.discord.com/hc/en-us/articles/24160905919511-My-Discord-Account-was-Hacked-or-Compromised) for more info.", false)
-                    .addField("Information", "If you believe this quarantine was an accident or a false flag, please reach out to a member of staff in order to get this sorted.", false)
+                    .addField("Information", "If you believe this was an accident or a false flag, please reach out to a member of staff in order to get this sorted.", false)
                     .setTimestamp(Instant.now())
                     .setColor(BotColors.WARNING.getColor())
                     .build();
@@ -139,7 +139,7 @@ public class ModerationHelper {
                         .setPlaceholder("Select an action")
                         .addOption("Unquarantine", "unquarantine", "Unquarantine the user.")
                         .addOption("Honey pot misuse", "honeypot-misuse", "Punish the user for misuse of the honeypot channel.")
-                        .addOption("Compromised account", "compromise", "Temporarily ban the user for compromised account.")
+                        .addOption("Compromised account", "compromise", "Ban the user for compromised account.")
                         .addOption("Timeout (1 week)", "timeout", "Timeout the user for 1 week.")
                         .addOption("Kick", "kick", "Kick the user.")
                         .addOption("Ban", "ban", "Ban the user.")
