@@ -133,7 +133,7 @@ public class QuarantineHandler extends ListenerAdapter {
             }
             case "compromised", "ban" -> {
                 String reason = actionId.equals("compromised") ? "Scammer or compromised account" : "Banned while in quarantine";
-                int days = actionId.equals("compromised") ? 0 : 7;
+                int days = actionId.equals("compromised") ? 1 : 0;
 
                 member.removeTimeout().queue(v -> {
                     event.replyEmbeds(ModerationHelper.banUser(member, event.getMember(), event.getGuild(), days, false, reason, event.getChannel())).queue();
