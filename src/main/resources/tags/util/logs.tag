@@ -2,15 +2,15 @@ type: text
 aliases: log, mclogs
 color: util
 title: :scroll: Logs
-button: [MCLogs](https://mclo.gs/)
+button: [mclo.gs](https://mclo.gs/)
 
 ---
 
 A full log file is essential for debugging any issues. Snippets rarely tell the whole story.
-MCLogs censors IPs and improves readability, making it the best way to share logs.
+mclo.gs censors IPs and improves readability, making it the best way to share logs.
 
-Upload your log file to MCLogs (linked below) and share the link here.
+Upload your log file to mclo.gs (linked below) and share the link here.
 
-Log file locations:
-- NeoForge, Fabric, Spigot/Paper, Standalone, Velocity, ViaProxy: `logs/latest.log`
-- BungeeCord: `proxy.log.0`
+You can file your log file here:
+- On NeoForge, Fabric, Spigot/Paper, Standalone, Velocity, and, ViaProxy: `logs/latest.log`.
+- On BungeeCord: `proxy.log.0`.
