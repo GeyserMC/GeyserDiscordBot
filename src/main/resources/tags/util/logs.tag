@@ -11,6 +11,6 @@ mclo.gs censors IPs and improves readability, making it the best way to share lo
 
 Upload your log file to mclo.gs (linked below) and share the link here.
 
-You can file your log file here:
+You can find your log file here:
 - On NeoForge, Fabric, Spigot/Paper, Standalone, Velocity, and, ViaProxy: `logs/latest.log`.
 - On BungeeCord: `proxy.log.0`.
