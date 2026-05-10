@@ -4,4 +4,4 @@ color: info
 
 ---
 
-You are currently using an outdated version of a third‑party program, such as BedrockConnect or BedrockTogether, to join Geyser servers on consoles. Please update to the latest version!
+You are using an outdated version of a third‑party program, such as MCXboxBroadcast, BedrockConnect, or BedrockTogether, to join Geyser servers on consoles. Please update to the latest version!

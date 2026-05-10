@@ -8,3 +8,4 @@ color: info
 When a Bedrock player joins a server that is using Geyser:
 - All mechanics are like Java for Bedrock players, as they are on a Java server.
 - The axes will do Java amounts of damage, doing damage has a cooldown, and redstone is like Java as well.
+- As such, when looking up contraptions like mob farms, look up those for Java. Farms and other contraptions made specifically for Bedrock will not work.
