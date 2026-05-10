@@ -1,5 +1,5 @@
 type: text
-title: :geyser: Reporting Issues For Geyser Or Floodgate
+title: :geyser: Reporting Issues for Geyser or Floodgate
 color: links
 button: [Create Geyser Issue](https://github.com/GeyserMC/Geyser/issues/new?assignees=&labels=&template=bug_report.yml)
 button: [Create Floodgate Issue](https://github.com/GeyserMC/Floodgate/issues/new)

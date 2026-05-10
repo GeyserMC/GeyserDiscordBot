@@ -6,5 +6,4 @@ button: [FloodgatePlaceholders](https://github.com/rtm516/FloodgatePlaceholders)
 
 ---
 
-Geyser does not natively support Placeholder API.
-- Please install rtm516's FloodgatePlaceholders with PlaceholderAPI for PlaceholderAPI support.
+Geyser does not natively support the Placeholder API, please install rtm516's FloodgatePlaceholders for PlaceholderAPI support.

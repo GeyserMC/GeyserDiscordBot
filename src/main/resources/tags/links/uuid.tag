@@ -5,11 +5,12 @@ title: :ocean: Floodgate UUID
 button: [MCProfile](https://mcprofile.io)
 
 ---
+You can obtain a Bedrock player's Floodgate UUID through one of the following methods:
 
 Automatic method:
 - Use MCProfile (linked below) to look up your Floodgate UUID with your Xbox Gamertag.
 - Alternatively, use the `/uuid` command in <#613194762249437245>.
 
 You can manually format a hexadecimal Bedrock XUID to a Floodgate UUID:
-- XUID Search Result: 000901F82546F8F0
-- Floodgate UUID: 00000000-0000-0000-0009-01F82546F8F0
+- XUID Search Result: `000901F82546F8F0`.
+- Floodgate UUID: `00000000-0000-0000-0009-01F82546F8F0`.

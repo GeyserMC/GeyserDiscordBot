@@ -1,5 +1,5 @@
 type: text
-aliases: whitelisting, howtowhitelist
+aliases: whitelisting, howtowhitelist, fwhitelist
 color: links
 title: :link: Whitelisting Bedrock Players
 button: [Whitelist Command](https://wiki.geysermc.org/floodgate/features/#whitelist-command)
