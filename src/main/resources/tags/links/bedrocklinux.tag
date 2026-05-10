@@ -1,5 +1,5 @@
 type: text
-title: :penguin: Minecraft: Bedrock Edition On Linux
+title: :penguin: Minecraft: Bedrock Edition on Linux
 color: links
 button: [Unofficial Minecraft Bedrock Launcher](https://flathub.org/apps/io.mrarm.mcpelauncher)
 
