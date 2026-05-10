@@ -27,10 +27,12 @@ package org.geysermc.discordbot.storage;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import org.apache.commons.lang3.StringUtils;
 import org.geysermc.discordbot.GeyserBot;
@@ -104,6 +106,41 @@ public class ServerSettings {
     public static TextChannel getLogChannel(@NotNull Guild guild) throws IllegalArgumentException {
         String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "log-channel");
         return guild.getTextChannelById(channel);
+    }
+
+    /**
+     * Get the moderation channel for the selected guild
+     *
+     * @param guild ID of the guild to get the channel for
+     * @return The {@link TextChannel} for moderation actions
+     * @throws IllegalArgumentException If the channel is null or invalid
+     */
+    public static TextChannel getModChannel(@NotNull Guild guild) throws IllegalArgumentException {
+        String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "moderation-channel");
+        return guild.getTextChannelById(channel);
+    }
+
+    /**
+     * Check if the channel is the mod channel
+     *
+     * @param messageChannel ID of the channel
+     * @return The {@code boolean} for if this is the mod channel
+     */
+    public static boolean isModChannel(@NotNull Guild guild, @NotNull Channel messageChannel) {
+        String channel = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "moderation-channel");
+        return messageChannel.getId().equals(channel);
+    }
+
+    /**
+     * Get the moderation role for the selected guild
+     *
+     * @param guild ID of the guild to get the role for
+     * @return The {@link Role} to ping for moderation action
+     * @throws IllegalArgumentException If the role is null or invalid
+     */
+    public static Role getModRole(@NotNull Guild guild) throws IllegalArgumentException {
+        String role = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "moderation-role");
+        return guild.getRoleById(role);
     }
 
     /**
