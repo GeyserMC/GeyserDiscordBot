@@ -8,7 +8,7 @@ color: errors
 
 This is a network issue usually caused by improper port forwarding. To resolve this error, try the following:
 - If you're using a hosting provider, specific instructions may be available. Try running `/provider` followed by your hosting provider's name in <#613194762249437245>.
-- Follow `!!networkdebug` instructions if your server hosting is not listed in `/provider`.
-- Follow `!!playitdebug` instructions if your playit.gg for port forwarding.
+- Follow the instructions listed in `!!networkdebug` if you are self-hosting or your hosting provider is not listed in `/provider`.
+- Follow the instructions listed in `!!playitdebug` if you're using playit.gg for port forwarding.
 - Make sure Geyser is not running on the same port as a voice chat plugin or mod.
-- Check out this [Geyser Wiki Page](https://wiki.geysermc.org/geyser/fixing-unable-to-connect-to-world/) for additional fixes for this error.
+- Check out [our wiki](https://wiki.geysermc.org/geyser/fixing-unable-to-connect-to-world/) for additional fixes for this error.
