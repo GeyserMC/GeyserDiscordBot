@@ -5,8 +5,8 @@ color: errors
 
 ---
 
-Your Geyser is outdated, please update Geyser by following the steps below:
-1. Shut down your Geyser server.
-2. Download the new [Geyser](https://geysermc.org/download) jar file.
+Your Geyser instance is outdated, please update Geyser by following the steps below:
+1. Shut down your Geyser instance.
+2. Download the new [Geyser](https://geysermc.org/download) JAR file for your platform.
 3. Replace your current Geyser JAR file with the Geyser JAR file you just downloaded.
 **You do not need to remove or modify your config when updating Geyser.**
