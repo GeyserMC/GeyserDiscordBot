@@ -52,7 +52,7 @@ public class ModerationHelper {
         Member checkMember = guild.getMemberById(user.getId());
         if (checkMember == null) {
             if (referenceMessage != null && deleteReferenceMessage) {
-                referenceMessage.delete().queue();
+                referenceMessage.delete().queue(v -> {}, throwable -> {});
             }
             return;
         }
@@ -102,11 +102,11 @@ public class ModerationHelper {
                 if (referenceMessage != null) {
                     referenceMessage.forwardTo(message.getChannel()).queue(msg -> {
                         if (deleteReferenceMessage) {
-                            referenceMessage.delete().queue();
+                            referenceMessage.delete().queue(v -> {}, throwable -> {});
                         }
                     }, throwable -> {
                         if (deleteReferenceMessage) {
-                            referenceMessage.delete().queue();
+                            referenceMessage.delete().queue(v -> {}, throwable -> {});
                         }
                     });
                 }
@@ -171,11 +171,11 @@ public class ModerationHelper {
             if (referenceMessage != null) {
                 referenceMessage.forwardTo(message.getChannel()).queue(msg -> {
                     if (deleteReferenceMessage) {
-                        referenceMessage.delete().queue();
+                        referenceMessage.delete().queue(v -> {}, throwable -> {});
                     }
                 }, throwable -> {
                     if (deleteReferenceMessage) {
-                        referenceMessage.delete().queue();
+                        referenceMessage.delete().queue(v -> {}, throwable2 -> {});
                     }
                 });
             }
