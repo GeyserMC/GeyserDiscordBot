@@ -1,5 +1,5 @@
 type: text
-aliases: linkaccount, globallinking, link, linking
+aliases: linkaccount, globallinking, link, linking, globalink, globallink
 title: :information_source: Account Linking
 color: info
 
