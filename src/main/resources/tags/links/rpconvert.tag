@@ -9,7 +9,7 @@ button: [Thunder](https://geysermc.org/download?project=other-projects&thunder=e
 
 **Resource Packs for Java 1.21.3 and below:**
 - For packs with CustomModelData (datapack textures, ItemsAdder, etc.), use Kastle’s Converter.
-- For general Java resource packs (vanilla textures only), use JavaTextureToBedrock. Only updated up to 1.17, may still work on later versions.
+- For general Java resource packs (vanilla textures only), use Thunder.
 - For manual conversion, see the pinned messages in <#1139296287179677857>.
 
 **Resource Packs for Java 1.21.4 and above: **
