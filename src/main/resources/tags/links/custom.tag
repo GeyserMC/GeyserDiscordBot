@@ -13,7 +13,7 @@ Geyser has support for custom items and custom blocks! Player heads can also be 
 Some conversions must be done manually. For example:
 - [Converting glyphs or rank icons](https://wiki.bedrock.dev/concepts/emojis.html).
 - [Custom sounds](https://wiki.bedrock.dev/concepts/sounds.html). Note: Custom sounds should be registered under a custom namespace!
-- [Armor textures](https://wiki.bedrock.dev/items/custom-armor.html). Note: Rainbow can automatically convert armor textures.
+- [Armor textures](https://wiki.bedrock.dev/items/custom-armor.html). Note: [Rainbow](https://modrinth.com/mod/rainbow-mod) can automatically convert armor textures.
 - JSON UI can be used to create inventory menus, change scoreboard titles, and overall beautify your Minecraft Bedrock UI experience. See [JSON UI](https://wiki.bedrock.dev/json-ui/json-ui-intro.html) for more information.
 
 For help with Minecraft: Bedrock Edition resource packs, <#1139296287179677857> features useful information in the pinned messages.
