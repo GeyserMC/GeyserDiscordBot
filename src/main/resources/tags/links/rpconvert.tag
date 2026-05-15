@@ -2,7 +2,6 @@ type: text
 title: :arrows_counterclockwise: Converting Java Resource Packs To Bedrock
 color: links
 button: [Kastle's Converter](https://github.com/Kas-tle/java2bedrock.sh)
-button: [JavaTextureToBedrock](https://rtm516.github.io/ConvertJavaTextureToBedrock/)
 button: [Rainbow](https://geysermc.org/download?project=other-projects&rainbow=expanded)
 button: [Thunder](https://geysermc.org/download?project=other-projects&thunder=expanded)
 
