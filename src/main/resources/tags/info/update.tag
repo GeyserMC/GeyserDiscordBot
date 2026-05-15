@@ -6,7 +6,6 @@ color: info
 button: [GeyserUpdater](https://www.spigotmc.org/resources/geyserupdater.88555/)
 
 ---
-**You do not need to remove or modify your config when updating Geyser or Floodgate.**
 
 To update Geyser or Floodgate:
 1. Shut down your Geyser instance.
@@ -14,3 +13,5 @@ To update Geyser or Floodgate:
 3. Replace your current JAR file with the new version from the link.
 
 To automatically keep Geyser updated, you can use a third-party plugin, such as GeyserUpdater.
+
+**You do not need to remove or modify your config when updating Geyser or Floodgate.**
