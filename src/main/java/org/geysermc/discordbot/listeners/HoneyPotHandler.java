@@ -26,7 +26,7 @@
 package org.geysermc.discordbot.listeners;
 
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -34,8 +34,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.GeyserBot;
 import org.geysermc.discordbot.util.ModerationHelper;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class HoneyPotHandler extends ListenerAdapter {
     @Override
@@ -69,11 +67,16 @@ public class HoneyPotHandler extends ListenerAdapter {
         if (event.getAuthor().isBot()) return;
         if (!event.isFromGuild()) return;
 
-        String honeyPotChannelId = GeyserBot.storageManager.getServerPreference(event.getGuild().getIdLong(), "honey-pot-channel");
-        if (honeyPotChannelId == null) return;
-
-        if (event.getChannel().getId().equals(honeyPotChannelId)) {
+        if (isHoneyPot(event.getGuild(), event.getChannel())) {
             ModerationHelper.quarantineMember(event.getMember(), event.getGuild(), "Messaged in the honey pot channel.", false, null, event.getMessage(), true);
         }
+    }
+
+    public static boolean isHoneyPot(Guild guild, Channel channel) {
+        String honeyPotChannelId = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "honey-pot-channel");
+        if (honeyPotChannelId == null) {
+            return false;
+        }
+        return channel.getId().equals(honeyPotChannelId);
     }
 }
