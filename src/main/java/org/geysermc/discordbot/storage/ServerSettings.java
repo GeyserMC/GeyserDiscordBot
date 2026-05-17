@@ -194,8 +194,15 @@ public class ServerSettings {
      * @return If we should exclude the channel
      */
     public static boolean shouldNotCheckError(MessageChannel channel) {
+        Guild server = getGuild(channel);
 
-        if (getGuild(channel) == null) {
+        if (server == null) {
+            return true;
+        }
+
+        // Ignore file handling in Honeypot channels
+        String honeyPotChannelId = GeyserBot.storageManager.getServerPreference(server.getIdLong(), "honey-pot-channel");
+        if (honeyPotChannelId != null && honeyPotChannelId.equals(channel.getId())) {
             return true;
         }
 
