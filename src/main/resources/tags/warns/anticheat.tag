@@ -1,5 +1,5 @@
 type: text
-aliases: ban, bans, hypixel
+aliases: ban, bans, hypixel, ac
 title: :warning: Anticheat on Large Servers
 color: warns
 
