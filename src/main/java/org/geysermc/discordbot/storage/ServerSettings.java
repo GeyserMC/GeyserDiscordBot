@@ -25,6 +25,9 @@
 
 package org.geysermc.discordbot.storage;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.Channel;
@@ -67,6 +70,26 @@ public class ServerSettings {
         }
 
         return new ArrayList<>(Arrays.asList(listData.split(",").clone()));
+    }
+
+    /**
+     * Get a preference as a list of strings delimited by `,`, for each server with this preference
+     *
+     * @param key The preference key to get
+     * @return Per guild the preference value as a list
+     */
+    @NotNull
+    public static Long2ObjectMap<List<String>> getListForAllServers(String key) {
+        Long2ObjectMap<String> listData = GeyserBot.storageManager.getPreferenceForAllServers(key);
+        if (listData == null) {
+            return Long2ObjectMaps.emptyMap();
+        }
+
+        Long2ObjectMap<List<String>> map = new Long2ObjectOpenHashMap<>();
+        listData.long2ObjectEntrySet().forEach(entry ->
+            map.put(entry.getLongKey(), new ArrayList<>(Arrays.asList(entry.getValue().split(",").clone())))
+        );
+        return map;
     }
 
     public static void setList(long serverID, String key, List<String> data) {

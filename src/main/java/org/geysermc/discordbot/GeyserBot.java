@@ -42,6 +42,7 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.api.utils.messages.MessageRequest;
+import org.geysermc.discordbot.background.SecurityActionsApplier;
 import org.geysermc.discordbot.health_checker.HealthCheckerManager;
 import org.geysermc.discordbot.http.Server;
 import org.geysermc.discordbot.listeners.*;
@@ -301,6 +302,9 @@ public class GeyserBot {
             int playerCount = players.getJSONArray(players.length() - 1).getInt(1);
             jda.getPresence().setActivity(Activity.playing(BotHelpers.coolFormat(serverCount) + " servers, " + BotHelpers.coolFormat(playerCount) + " players"));
         }, 5, 60 * 5, TimeUnit.SECONDS);
+
+        // Start the Security Actions applier
+        generalThreadPool.scheduleAtFixedRate(new SecurityActionsApplier(), 5,  60 * 60, TimeUnit.SECONDS);
     }
 
     public static JDA getJDA() {
