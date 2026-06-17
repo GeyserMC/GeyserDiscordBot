@@ -88,6 +88,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
+        if (HoneyPotHandler.isHoneyPot(event.getGuild(), event.getChannel())) return;
 
         // exclude certain channels.
         if (ServerSettings.shouldNotCheckError(event.getChannel())) {

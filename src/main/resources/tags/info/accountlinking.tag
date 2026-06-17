@@ -1,5 +1,5 @@
 type: text
-aliases: linkaccount, globallinking
+aliases: linkaccount, globallinking, link, linking, globalink, globallink
 
 ---
 
