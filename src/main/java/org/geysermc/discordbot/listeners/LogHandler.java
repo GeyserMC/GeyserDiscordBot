@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2026 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -343,7 +343,7 @@ public class LogHandler extends ListenerAdapter {
 
                 // Bypass for users with MESSAGE_MANAGE permission
                 if (message.getMember() != null && !message.getMember().hasPermission(Permission.MESSAGE_MANAGE) && !ServerSettings.getList(message.getGuild().getIdLong(), "allowed-invites").contains(invite.getGuild().getId())) {
-                    message.delete().complete();
+                    message.delete().queue();
                 }
             } catch (ErrorResponseException ignored) { }
         }

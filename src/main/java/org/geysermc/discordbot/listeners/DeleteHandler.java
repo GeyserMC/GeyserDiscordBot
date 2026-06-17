@@ -42,11 +42,9 @@ public class DeleteHandler extends ListenerAdapter {
                 && message.getAuthor() == event.getJDA().getSelfUser()
                 && message.getMessageReference() != null
                 && message.getMessageReference().getMessageId().equals(event.getMessageId())) {
-                try {
-                    message.delete().complete();
-                } catch (Exception ignored) {
+                message.delete().queue(ignored -> {}, error -> {
                     // If this fails then the message is already deleted
-                }
+                });
             }
         }
     }

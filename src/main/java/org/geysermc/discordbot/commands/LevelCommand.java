@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2026 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -74,10 +74,10 @@ public class LevelCommand extends SlashCommand {
         Member member = event.optMember("member", event.getMember());
 
         // Defer to wait for us to load a response and allows for files to be uploaded
-        InteractionHook interactionHook = event.deferReply().complete();
-
-        File levelFile = handle(member);
-        interactionHook.editOriginalAttachments(FileUpload.fromData(levelFile)).queue(message -> levelFile.delete());
+        event.deferReply().queue(interactionHook -> {
+            File levelFile = handle(member);
+            interactionHook.editOriginalAttachments(FileUpload.fromData(levelFile)).queue(message -> levelFile.delete());
+        });
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2025 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2026 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -235,6 +235,7 @@ public class GeyserBot {
                     .setActivity(Activity.playing("Booting..."))
                     .setEnableShutdownHook(true)
                     .setEventManager(new SentryEventManager())
+                    .setMaxReconnectDelay(60)
                     .addEventListeners(waiter,
                             new LogHandler(),
                             new SwearHandler(),
@@ -252,6 +253,9 @@ public class GeyserBot {
                             new ExploitHandler(),
                             new WebhookLinkPreviewHandler(),
                             new ReadyListener(),
+                            new HoneyPotHandler(),
+                            new QuarantineHandler(),
+                            new SpamHandler(),
                             client.build(),
                             tagClient.build())
                     .build();
@@ -273,9 +277,6 @@ public class GeyserBot {
                 e.printStackTrace();
             }
         }
-
-        // Setup the update check scheduler
-//        UpdateManager.setup();
 
         // Setup the health check scheduler
         HealthCheckerManager.setup();

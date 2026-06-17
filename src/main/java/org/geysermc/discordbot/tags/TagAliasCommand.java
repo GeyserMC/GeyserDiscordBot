@@ -85,7 +85,7 @@ public class TagAliasCommand extends Command {
             embed.setColor(BotColors.SUCCESS.getColor());
         } else {
             embed.setTitle("No aliases for " + foundTag.getName());
-            embed.setDescription("No aliases where found for the tag with the name `" + foundTag.getName() + "`.");
+            embed.setDescription("No aliases were found for the tag with the name `" + foundTag.getName() + "`.");
             embed.setColor(BotColors.FAILURE.getColor());
         }
 

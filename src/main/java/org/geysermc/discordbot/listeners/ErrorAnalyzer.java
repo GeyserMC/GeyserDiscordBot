@@ -88,6 +88,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
+        if (HoneyPotHandler.isHoneyPot(event.getGuild(), event.getChannel())) return;
 
         // exclude certain channels.
         if (ServerSettings.shouldNotCheckError(event.getChannel())) {
@@ -209,7 +210,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         if (error) {
             embedBuilder.setColor(BotColors.FAILURE.getColor());
-            embedBuilder.addField("Error","Something went wrong wile reading the image.", false);
+            embedBuilder.addField("Error","Something went wrong while reading the image.", false);
             embedBuilder.setDescription(content);
             event.getMessage().replyEmbeds(embedBuilder.build()).queue();
         } else {
