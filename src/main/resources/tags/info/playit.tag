@@ -7,8 +7,8 @@ playit.gg is a simple tunneling service that lets Minecraft servers using the Ge
 
 Please follow one of the two tutorials below to set up playit.gg
 
-The one made by us GeyserMC:
+GeyserMC Setup Guide:
 https://geysermc.org/wiki/geyser/playit-gg/
 
-The one made by playit.gg which has two guides, one for fabric and one for paper:
+Playit.gg Setup Guide(Paper & Fabric):
 https://playit.gg/support/use-geyser-with-playit/
