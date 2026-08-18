@@ -32,7 +32,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpigotDumpIssueCheck extends AbstractDumpIssueCheck {
+public class OfflineIssueCheck extends AbstractDumpIssueCheck {
 
     @Override
     public boolean compatiblePlatform(String platform) {
