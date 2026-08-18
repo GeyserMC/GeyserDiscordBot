@@ -34,11 +34,6 @@ import java.util.List;
 
 public class OfflineIssueCheck extends AbstractDumpIssueCheck {
 
-    @Override
-    public boolean compatiblePlatform(String platform) {
-        return platform.equals("SPIGOT");
-    }
-
     @NotNull
     @Override
     public List<String> checkIssues(JSONObject dump) throws JSONException {
