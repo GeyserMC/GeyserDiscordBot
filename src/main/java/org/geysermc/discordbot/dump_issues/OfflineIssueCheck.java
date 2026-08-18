@@ -26,13 +26,32 @@
 package org.geysermc.discordbot.dump_issues;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class OfflineIssueCheck extends AbstractDumpIssueCheck {
+
+    private static final Set<String> POPULAR_FABRIC_AUTH_MODS = Set.of(
+            "easyauth",
+            "authmc",
+            "sessionguard"
+    );
+
+    private static final Set<String> POPULAR_SPIGOT_AUTH_PLUGINS = Set.of(
+            "authme",
+            "authmereloaded",
+            "nlogin",
+            "loginsecurity",
+            "oauthenticator",
+            "ultimatelogin",
+            "locklogin",
+            "fastlogin"
+    );
 
     @NotNull
     @Override
@@ -43,8 +62,39 @@ public class OfflineIssueCheck extends AbstractDumpIssueCheck {
 
         if (isOffline) {
             problems.add("- We do not support offline mode servers, please see `!!offline`.");
+        } else {
+            if (bootstrapInfo.has("platform")) {
+                JSONObject platform = bootstrapInfo.getJSONObject("platform");
+                if (platform.has("platformName")) {
+                    String platformName = platform.getString("platformName");
+
+                    String foundAuthAddon = null;
+                    if ("Fabric".equalsIgnoreCase(platformName) && bootstrapInfo.has("mods")) {
+                        foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("mods"), POPULAR_FABRIC_AUTH_MODS);
+                    } else if ("Spigot".equalsIgnoreCase(platformName) && bootstrapInfo.has("plugins")) {
+                        foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("plugins"), POPULAR_SPIGOT_AUTH_PLUGINS);
+                    }
+
+                    if (foundAuthAddon != null) {
+                        problems.add("- Server is in online mode, but authentication plugin/mod `" + foundAuthAddon + "` was found. This may interfere with authentication.");
+                    }
+                }
+            }
         }
 
         return problems;
+    }
+
+    private String findAuthAddon(JSONArray addons, Set<String> knownAuthAddons) {
+        for (int i = 0; i < addons.length(); i++) {
+            JSONObject addon = addons.getJSONObject(i);
+            if (addon.optBoolean("enabled", true) && addon.has("name")) {
+                String name = addon.getString("name");
+                if (knownAuthAddons.contains(name.toLowerCase())) {
+                    return name;
+                }
+            }
+        }
+        return null;
     }
 }
