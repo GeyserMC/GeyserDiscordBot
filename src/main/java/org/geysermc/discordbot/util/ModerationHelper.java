@@ -153,7 +153,7 @@ public class ModerationHelper {
                         .setContent(user.getAsMention())
                         .setEmbeds(modChatEmbed)
                         .build()
-        ).addComponents(row).queue(message -> 
+        ).addComponents(row).queue(message -> {
             if (referenceMessage != null) {
                 referenceMessage.forwardTo(message.getChannel()).queue(msg -> {
                     if (deleteReferenceMessage) {
