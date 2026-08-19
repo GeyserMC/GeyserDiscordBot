@@ -1,5 +1,5 @@
 type: text
-image: https://i.ibb.co/tCcB1Qp/PR1.png
+image: https://raw.githubusercontent.com/GeyserMC/GeyserDiscordBot/master/src/main/resources/assets/pr_download.png
 
 ---
 
