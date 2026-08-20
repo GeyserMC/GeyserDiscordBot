@@ -26,6 +26,9 @@
 package org.geysermc.discordbot.storage;
 
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import java.sql.PreparedStatement;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -97,6 +100,24 @@ public class MySQLStorageManager extends AbstractStorageManager {
         } catch (SQLException ignored) { }
 
         return null;
+    }
+
+    @Override
+    public Long2ObjectMap<String> getPreferenceForAllServers(String preference) {
+        checkConnection();
+        try (PreparedStatement statement = connection.prepareStatement("SELECT server, value FROM preferences WHERE key = ?")) {
+            statement.setString(1, preference);
+
+            Long2ObjectMap<String> map = new Long2ObjectOpenHashMap<>();
+            try (ResultSet result = statement.executeQuery()) {
+                while (result.next()) {
+                    map.put(result.getLong(1),  result.getString(2));
+                }
+            }
+            return map;
+        } catch (SQLException ignored) {
+            return null;
+        }
     }
 
     @Override
