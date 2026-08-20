@@ -154,13 +154,6 @@ public class ModerationHelper {
                         .setEmbeds(modChatEmbed)
                         .build()
         ).addComponents(row).queue(message -> {
-            Role moderationRole = ServerSettings.getModRole(guild);
-            if (moderationRole != null) {
-                message.reply(moderationRole.getAsMention())
-                        .setAllowedMentions(null) // Allows the ping, null means all confusingly
-                        .queue();
-            }
-
             if (referenceMessage != null) {
                 referenceMessage.forwardTo(message.getChannel()).queue(msg -> {
                     if (deleteReferenceMessage) {
