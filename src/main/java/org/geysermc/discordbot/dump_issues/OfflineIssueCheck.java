@@ -64,7 +64,7 @@ public class OfflineIssueCheck extends AbstractDumpIssueCheck {
             if (bootstrapInfo.has("mods")) {
                 foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("mods"));
             } 
-            if (bootstrapInfo.has("plugins")) {
+            if (foundAuthAddon == null && bootstrapInfo.has("plugins")) {
                 foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("plugins"));
             }
 
