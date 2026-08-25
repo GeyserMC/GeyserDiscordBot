@@ -48,7 +48,7 @@ public class OfflineIssueCheck extends AbstractDumpIssueCheck {
         "ultimatelogin",
         "locklogin",
         "fastlogin"
-);
+    );
 
     @NotNull
     @Override
@@ -60,16 +60,16 @@ public class OfflineIssueCheck extends AbstractDumpIssueCheck {
         if (isOffline) {
             problems.add("- We do not support offline mode servers, please see `!!offline`.");
         } else {
-                    String foundAuthAddon = null;
-                    if (bootstrapInfo.has("mods")) {
-                        foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("mods"));
-                    } else if (bootstrapInfo.has("plugins")) {
-                        foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("plugins"));
-                    }
+            String foundAuthAddon = null;
+            if (bootstrapInfo.has("mods")) {
+                foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("mods"));
+            } else if (bootstrapInfo.has("plugins")) {
+                foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("plugins"));
+            }
 
-                    if (foundAuthAddon != null) {
-                        problems.add("- Server is in online mode, but authentication plugin/mod `" + foundAuthAddon + "` was found. This may interfere with authentication.");
-                    }
+            if (foundAuthAddon != null) {
+                problems.add("- Server is in online mode, but authentication plugin/mod `" + foundAuthAddon + "` was found. This may interfere with authentication.");
+            }
         }
 
         return problems;
