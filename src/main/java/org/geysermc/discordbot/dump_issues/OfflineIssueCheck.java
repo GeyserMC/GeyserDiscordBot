@@ -62,9 +62,9 @@ public class OfflineIssueCheck extends AbstractDumpIssueCheck {
         } else {
                     String foundAuthAddon = null;
                     if (bootstrapInfo.has("mods")) {
-                        foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("mods"), POPULAR_AUTH_PLUGINS_MODS);
+                        foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("mods"));
                     } else if (bootstrapInfo.has("plugins")) {
-                        foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("plugins"), POPULAR_AUTH_PLUGINS_MODS);
+                        foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("plugins"));
                     }
 
                     if (foundAuthAddon != null) {
@@ -75,12 +75,12 @@ public class OfflineIssueCheck extends AbstractDumpIssueCheck {
         return problems;
     }
 
-    private String findAuthAddon(JSONArray addons, Set<String> knownAuthAddons) {
+    private String findAuthAddon(JSONArray addons) {
         for (int i = 0; i < addons.length(); i++) {
             JSONObject addon = addons.getJSONObject(i);
             if (addon.optBoolean("enabled", true) && addon.has("name")) {
                 String name = addon.getString("name");
-                if (knownAuthAddons.contains(name.toLowerCase())) {
+                if (POPULAR_AUTH_PLUGINS_MODS.contains(name.toLowerCase())) {
                     return name;
                 }
             }
