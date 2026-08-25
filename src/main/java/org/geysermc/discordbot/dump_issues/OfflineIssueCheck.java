@@ -36,22 +36,19 @@ import java.util.Set;
 
 public class OfflineIssueCheck extends AbstractDumpIssueCheck {
 
-    private static final Set<String> POPULAR_FABRIC_AUTH_MODS = Set.of(
-            "easyauth",
-            "authmc",
-            "sessionguard"
-    );
-
-    private static final Set<String> POPULAR_SPIGOT_AUTH_PLUGINS = Set.of(
-            "authme",
-            "authmereloaded",
-            "nlogin",
-            "loginsecurity",
-            "oauthenticator",
-            "ultimatelogin",
-            "locklogin",
-            "fastlogin"
-    );
+    private static final Set<String> POPULAR_AUTH_PLUGINS_MODS = Set.of(
+        "easyauth",
+        "authmc",
+        "sessionguard",
+        "authme",
+        "authmereloaded",
+        "nlogin",
+        "loginsecurity",
+        "oauthenticator",
+        "ultimatelogin",
+        "locklogin",
+        "fastlogin"
+);
 
     @NotNull
     @Override
@@ -63,23 +60,16 @@ public class OfflineIssueCheck extends AbstractDumpIssueCheck {
         if (isOffline) {
             problems.add("- We do not support offline mode servers, please see `!!offline`.");
         } else {
-            if (bootstrapInfo.has("platform")) {
-                JSONObject platform = bootstrapInfo.getJSONObject("platform");
-                if (platform.has("platformName")) {
-                    String platformName = platform.getString("platformName");
-
                     String foundAuthAddon = null;
-                    if ("Fabric".equalsIgnoreCase(platformName) && bootstrapInfo.has("mods")) {
-                        foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("mods"), POPULAR_FABRIC_AUTH_MODS);
-                    } else if ("Spigot".equalsIgnoreCase(platformName) && bootstrapInfo.has("plugins")) {
-                        foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("plugins"), POPULAR_SPIGOT_AUTH_PLUGINS);
+                    if (bootstrapInfo.has("mods")) {
+                        foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("mods"), POPULAR_AUTH_PLUGINS_MODS);
+                    } else if (bootstrapInfo.has("plugins")) {
+                        foundAuthAddon = findAuthAddon(bootstrapInfo.getJSONArray("plugins"), POPULAR_AUTH_PLUGINS_MODS);
                     }
 
                     if (foundAuthAddon != null) {
                         problems.add("- Server is in online mode, but authentication plugin/mod `" + foundAuthAddon + "` was found. This may interfere with authentication.");
                     }
-                }
-            }
         }
 
         return problems;
