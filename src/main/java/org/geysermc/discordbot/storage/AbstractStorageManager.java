@@ -25,10 +25,10 @@
 
 package org.geysermc.discordbot.storage;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
@@ -54,6 +54,14 @@ public abstract class AbstractStorageManager {
      * @return The string value of the preference
      */
     public abstract String getServerPreference(long serverID, String preference);
+
+    /**
+     * Get a preference from the database, for all servers
+     *
+     * @param preference Key of the requested preference
+     * @return The value for each server that has configured this preference.
+     */
+    public abstract Long2ObjectMap<String> getPreferenceForAllServers(String preference);
 
     /**
      * Set a preference in the database
