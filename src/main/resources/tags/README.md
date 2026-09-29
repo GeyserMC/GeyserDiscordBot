@@ -39,3 +39,30 @@ type: raw
 
 Test
 ```
+
+## Type: Issue only
+The below lays out the `issue-only` tag type. This tag will not be registered as a tag that users can run, and only exists to
+register responses for issues. It follows the rules that `Issue responses` below sets out.
+
+```markdown
+type: issue-only
+issues: <issue1> || <issue2> || <issue 3> ...
+
+---
+
+Text
+```
+
+## Issue responses
+Issue responses work with `text`, `text-raw` and `issue-only` types. Any issues listed are registered to have the content of the tag as the issue response.
+Different issues are delimited by `||`, allowing differently worded issues to have the same response.
+When a message or log file is shared, it will be scanned to check if it contains any known issues. Responses to the issues found will be sent in a single embed.
+`text` and `text-raw` types with issues listed can still be called with the tag command; they do not lose their functionality.
+```markdown
+type: text
+issues: <issue1> || <issue2> || <issue 3> ...
+
+---
+
+Text
+```
