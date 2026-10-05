@@ -7,6 +7,7 @@ logback = "1.5.18"
 slf4j = "2.0.17"
 sentry = "8.10.0"
 json = "20250107"
+hikari = "7.0.2"
 mysql = "9.2.0"
 sqlite = "3.49.1.0"
 java-ping = "c61c496104"
@@ -40,6 +41,7 @@ sentry-logback = { group = "io.sentry", name = "sentry-logback", version.ref = "
 
 json = { group = "org.json", name = "json", version.ref = "json" }
 
+hikari = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikari" }
 mysql = { group = "com.mysql", name = "mysql-connector-j", version.ref = "mysql" }
 sqlite = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqlite" }
 
@@ -85,6 +87,7 @@ logging = [
     "sentry-logback",
 ]
 database = [
+    "hikari",
     "mysql",
     "sqlite",
 ]
