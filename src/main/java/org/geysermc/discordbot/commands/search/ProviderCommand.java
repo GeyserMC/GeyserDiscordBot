@@ -37,22 +37,28 @@ import org.geysermc.discordbot.commands.filter.FilteredSlashCommand;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.DicesCoefficient;
 import org.geysermc.discordbot.util.MessageHelper;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import pw.chew.chewbotcca.util.RestClient;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ProviderCommand extends FilteredSlashCommand {
-    private List<Provider> cache = null;
+    private static final String PROVIDERS_URL = "https://raw.githubusercontent.com/GeyserMC/GeyserWebsite/master/src/data/providers.ts";
+    private static final String NOT_LISTED = "not listed";
+    private static final Pattern NAME_PATTERN = Pattern.compile("name:\\s*(['\"])(.*?)\\1");
+
+    private List<String> cache = null;
     private long cacheTime = 0;
 
     public ProviderCommand() {
         this.name = "provider";
         this.arguments = "<provider>";
-        this.help = "Search the Supported Providers page on the Geyser wiki to see if a provider is supported";
+        this.help = "Search the hosting providers in the Geyser setup guide to find configuration instructions.";
         this.guildOnly = false;
 
         this.options = Collections.singletonList(
@@ -87,43 +93,49 @@ public class ProviderCommand extends FilteredSlashCommand {
      * </ul>
      *
      * @param query The query to search for
-     * @return A list of potential providers
+     * @return A list of potential provider names
      */
-    List<Provider> potentialProviders(String query) {
-        List<Provider> potential = new ArrayList<>();
+    List<String> potentialProviders(String query) {
+        List<String> potential = new ArrayList<>();
 
         // Collect the providers
-        List<Provider> providers = getProviders();
+        List<String> providers = getProviders();
 
         // Search the providers by an exact starting match
-        for (Provider provider : providers) {
-            if (provider.name().toLowerCase().startsWith(query.toLowerCase())) {
+        for (String provider : providers) {
+            if (provider.toLowerCase().startsWith(query.toLowerCase())) {
                 potential.add(provider);
             }
         }
 
         // Find the best similarity
-        for (Provider provider : providers) {
-            double similar = DicesCoefficient.diceCoefficientOptimized(query.toLowerCase(), provider.name().toLowerCase());
+        for (String provider : providers) {
+            double similar = DicesCoefficient.diceCoefficientOptimized(query.toLowerCase(), provider.toLowerCase());
             if (similar > 0.2d) {
                 potential.add(provider);
             }
         }
 
-        // Send a message if we don't know what provider
         return potential;
     }
 
     public MessageEmbed handle(String query) {
-        List<Provider> potential = potentialProviders(query);
+        List<String> potential = potentialProviders(query);
 
-        // Make sure the rating is over 20%
+        EmbedBuilder embed = new EmbedBuilder();
         if (potential.isEmpty()) {
-            // Send a message if we dont know what provider
-            return MessageHelper.errorResponse(null, "Unknown provider", "That provider is not on our GitHub so it is untested!");
+            // Send the generic setup guide if we don't know the provider
+            embed.setTitle("Unknown provider");
+            embed.setColor(BotColors.FAILURE.getColor());
+            embed.setDescription("That provider is not in our list, so it is untested! Try following the [setup guide](" + setupUrl(NOT_LISTED) + ").");
         } else {
-            return sendProviderEmbed(potential.get(0));
+            String provider = potential.get(0);
+            embed.setTitle(provider);
+            embed.setColor(BotColors.SUCCESS.getColor());
+            embed.setDescription("[Setup guide for " + provider + "](" + setupUrl(provider) + ")");
         }
+
+        return embed.build();
     }
 
     @Override
@@ -131,89 +143,51 @@ public class ProviderCommand extends FilteredSlashCommand {
         // Get the query
         String query = event.getFocusedOption().getValue();
 
-        // Get the providers
-        List<Provider> providers = potentialProviders(query);
-
-        event.replyChoices(providers.stream()
+        event.replyChoices(potentialProviders(query).stream()
                 .distinct()
-                .map(provider -> new Command.Choice(provider.name(), provider.name()))
+                .map(provider -> new Command.Choice(provider, provider))
                 .limit(25)
                 .toArray(Command.Choice[]::new))
             .queue();
     }
 
     /**
-     * Build an embed and return it based on the passed provider details
+     * Get the provider names from the website's providers.ts source file
      *
-     * @param provider The provider to use for the embed contents
+     * @return The list of provider names from GitHub
      */
-    MessageEmbed sendProviderEmbed(Provider provider) {
-        EmbedBuilder embed = new EmbedBuilder();
-
-        embed.setTitle(provider.name(), provider.url());
-        embed.setColor(BotColors.SUCCESS.getColor());
-        embed.addField("Category", provider.getCategory(), false);
-        embed.addField("Instructions", provider.instructions(), false);
-
-        return embed.build();
-    }
-
-    /**
-     * Get the providers from the github page
-     * and parse + format the results
-     *
-     * @return The list of {@link Provider} objects from GitHub
-     */
-    List<Provider> getProviders() {
+    List<String> getProviders() {
         // If the cache time is less than an hour (3600 seconds), use the cache
         if (System.currentTimeMillis() - cacheTime < 3600000) {
             return cache;
         }
 
-        // Fetch the search page
-        JSONObject contents = RestClient.get("https://geysermc.org/data/providers.json").asJSONObject();
+        List<String> providers = parseProviders(RestClient.get(PROVIDERS_URL).asString());
 
-        List<Provider> providers = new ArrayList<>();
-
-        for (String category : contents.keySet()) {
-            JSONArray categoryProviders = contents.getJSONArray(category);
-            for (Object providerObj : categoryProviders) {
-                JSONObject provider = (JSONObject) providerObj;
-
-                String description = provider.getString("description").trim();
-
-                providers.add(new Provider(
-                    provider.getString("name"),
-                    provider.getString("url"),
-                    description,
-                    category)
-                );
-            }
-        }
-
-        // Cache the provider and the time it was cached
+        // Cache the providers and the time they were cached
         cache = providers;
         cacheTime = System.currentTimeMillis();
 
-        // Return
         return providers;
     }
 
-    /**
-     * A class to represent a provider
-     * @param name The name of the provider
-     * @param url The url to this provider
-     * @param instructions Geyser installation instructions
-     * @param category The category of the provider
-     */
-    public record Provider(String name, String url, String instructions, String category) {
-        public String getCategory() {
-            return switch (category) {
-                case "built_in" -> "Built-in Geyser";
-                case "support" -> "Support for Geyser";
-                case "no_support" -> "Does not support Geyser";
-                default -> "Unknown";
-            };
+    static List<String> parseProviders(String source) {
+        List<String> providers = new ArrayList<>();
+
+        int dataStart = source.indexOf("providersData");
+        if (dataStart == -1) {
+            return providers;
         }
+
+        Matcher matcher = NAME_PATTERN.matcher(source.substring(dataStart));
+        while (matcher.find()) {
+            providers.add(matcher.group(2));
+        }
+
+        return providers;
+    }
+
+    static String setupUrl(String provider) {
+        return "https://geysermc.org/wiki/geyser/setup?host=provider&provider=" + URLEncoder.encode(provider, StandardCharsets.UTF_8);
     }
 }
