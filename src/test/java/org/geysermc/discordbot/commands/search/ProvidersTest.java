@@ -25,18 +25,41 @@
 package org.geysermc.discordbot.commands.search;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.geysermc.discordbot.util.BotColors;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProvidersTest {
     private final ProviderCommand command = new ProviderCommand();
+
+    @Test
+    public void testParseProviders() {
+        String source = """
+            const ports = { assign: { obtain: translate({ id: 'providers.ports.assign', message: "..." }) } }
+
+            export const providersData: HostingProvider[] = [
+                {
+                    name: 'Akliz',
+                    url: 'https://www.akliz.net/',
+                    config: { udp: ports.assign, confirmed: false }
+                },
+                {
+                    name: "Apex Hosting",
+                    url: null
+                }
+            ]
+            """;
+
+        assertEquals(List.of("Akliz", "Apex Hosting"), ProviderCommand.parseProviders(source));
+    }
+
+    @Test
+    public void testSetupUrl() {
+        assertEquals("https://geysermc.org/wiki/geyser/setup?host=provider&provider=Apex+Hosting", ProviderCommand.setupUrl("Apex Hosting"));
+    }
 
     @Test
     public void testInvalidProviders() {
@@ -46,32 +69,29 @@ public class ProvidersTest {
 
     @Test
     public void testSimilarProviders() {
-        assertEquals("EnviroMC", command.potentialProviders("mcrory").get(0).name());
-        assertEquals("CloudNord", command.potentialProviders("cloud").get(0).name());
+        assertEquals("EnviroMC", command.potentialProviders("mcrory").get(0));
+        assertEquals("CloudNord", command.potentialProviders("cloud").get(0));
     }
 
     @Test
     public void testProviderEmbed() {
-        ProviderCommand.Provider provider = command.potentialProviders("Google Cloud").get(0);
-        MessageEmbed embed = command.sendProviderEmbed(provider);
-
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
-        embedBuilder.setTitle(provider.name(), provider.url());
+        embedBuilder.setTitle("CloudNord");
         embedBuilder.setColor(BotColors.SUCCESS.getColor());
-        embedBuilder.addField("Category", provider.getCategory(), false);
-        embedBuilder.addField("Instructions", provider.instructions(), false);
+        embedBuilder.setDescription("[Setup guide for CloudNord](https://geysermc.org/wiki/geyser/setup?host=provider&provider=CloudNord)");
 
-        assertEquals(embedBuilder.build(), embed);
+        assertEquals(embedBuilder.build(), command.handle("cloud"));
     }
 
     @Test
-    public void testProviderCategories() {
-        List<ProviderCommand.Provider> providers = command.getProviders();
+    public void testUnknownProviderEmbed() {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
 
-        List<String> validCategories = Arrays.asList("Built-in Geyser", "Support for Geyser", "Does not support Geyser");
-        for (ProviderCommand.Provider provider : providers) {
-            assertTrue(validCategories.contains(provider.getCategory()));
-        }
+        embedBuilder.setTitle("Unknown provider");
+        embedBuilder.setColor(BotColors.FAILURE.getColor());
+        embedBuilder.setDescription("That provider is not in our list, so it is untested! Try following the [setup guide](https://geysermc.org/wiki/geyser/setup?host=provider&provider=not+listed).");
+
+        assertEquals(embedBuilder.build(), command.handle("ifgjnerifejefwifoewjrgeri"));
     }
 }
