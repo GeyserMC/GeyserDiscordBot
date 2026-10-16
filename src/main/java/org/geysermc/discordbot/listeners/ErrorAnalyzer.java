@@ -233,7 +233,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 break;
             }
 
-            if (error.contains(issue)) {
+            if (error.toLowerCase().contains(issue.toLowerCase())) {
                 String title = BotHelpers.trim(issue, MessageEmbed.TITLE_MAX_LENGTH);
 
                 if (MessageHelper.similarFieldExists(embedBuilder.getFields(), title)) {
