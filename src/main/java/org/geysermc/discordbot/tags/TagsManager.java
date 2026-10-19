@@ -28,6 +28,7 @@ package org.geysermc.discordbot.tags;
 import com.jagrosh.jdautilities.command.Command;
 import net.dv8tion.jda.api.components.buttons.Button;
 import org.geysermc.discordbot.GeyserBot;
+import org.geysermc.discordbot.listeners.ErrorAnalyzer;
 import org.geysermc.discordbot.util.BotColors;
 import org.geysermc.discordbot.util.BotHelpers;
 
@@ -42,7 +43,7 @@ public class TagsManager {
 
     private static final List<Command> TAGS = new ArrayList<>();
     private static final List<SlashTag> SLASH_TAGS = new ArrayList<>(); // TODO Remove this to save memory
-    private static final Map<String, String> ISSUE_RESPONSES = new HashMap<>();
+    private static final Map<String, IssueTag> ISSUE_RESPONSES = new HashMap<>();
     private static final Map<String, String> SELF_HELP = new HashMap<>();
     private static boolean tagsLoaded = false;
 
@@ -67,7 +68,7 @@ public class TagsManager {
      *
      * @return The issue to response Map.
      */
-    public static Map<String, String> getIssueResponses() {
+    public static Map<String, IssueTag> getIssueResponses() {
         if (!tagsLoaded) {
             loadTags();
         }
@@ -189,8 +190,9 @@ public class TagsManager {
 
                             if (issueTriggers != null) {
                                 // allow any tag with issues listed to be an issue response
+                                IssueTag tag = new IssueTag(tagData.getOrDefault("title", issueTriggers[0]), content.toString().trim());
                                 for (String issue : issueTriggers) {
-                                    ISSUE_RESPONSES.put(issue.trim(), content.toString().trim());
+                                    ISSUE_RESPONSES.put(ErrorAnalyzer.filterIssueForProcessing(issue), tag);
                                 }
                             }
 

@@ -40,6 +40,7 @@ import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.tags.IssueTag;
 import org.geysermc.discordbot.tags.TagsManager;
 import org.geysermc.discordbot.util.*;
 import org.imgscalr.Scalr;
@@ -223,6 +224,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
 
     private void errorHandler(String error, EmbedBuilder embedBuilder, MessageReceivedEvent event) {
         List<StackException> exceptions = Parser.parse(error);
+        String filteredError = filterIssueForProcessing(error);
 
         int embedLength = embedBuilder.length();
 
@@ -233,14 +235,15 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 break;
             }
 
-            if (error.contains(issue)) {
-                String title = BotHelpers.trim(issue, MessageEmbed.TITLE_MAX_LENGTH);
+            if (filteredError.contains(issue)) {
+                IssueTag tag = TagsManager.getIssueResponses().get(issue);
+                String title = BotHelpers.trim(tag.title(), MessageEmbed.TITLE_MAX_LENGTH);
 
                 if (MessageHelper.similarFieldExists(embedBuilder.getFields(), title)) {
                     continue;
                 }
 
-                String fix = BotHelpers.trim(TagsManager.getIssueResponses().get(issue), MessageEmbed.VALUE_MAX_LENGTH);
+                String fix = BotHelpers.trim(tag.content(), MessageEmbed.VALUE_MAX_LENGTH);
                 embedBuilder.addField(title, fix, false);
                 embedLength += title.length() + fix.length();
             }
@@ -305,30 +308,34 @@ public class ErrorAnalyzer extends ListenerAdapter {
      * Will return -2 if the issue was already listed. Will return -1 if the issue was not already listed and no fix was found.
      */
     private int addFixIfPresent(String issue, EmbedBuilder embedBuilder) {
-        // Cut down the issue so that comparisons to existing fields work
-        String fieldTitle = BotHelpers.trim(issue, MessageEmbed.TITLE_MAX_LENGTH);
-
-        if (MessageHelper.similarFieldExists(embedBuilder.getFields(), fieldTitle)) {
-            return -2;
-        }
-
-        String lowerCaseIssue = issue.toLowerCase();
-        String fix = null;
+        String filteredIssue = filterIssueForProcessing(issue);
+        IssueTag tag = null;
         for (String key : TagsManager.getIssueResponses().keySet()) {
-            String lowerCaseKey = key.toLowerCase();
-            if (lowerCaseIssue.contains(lowerCaseKey)) {
-                fix = TagsManager.getIssueResponses().get(key);
+            if (filteredIssue.contains(key)) {
+                tag = TagsManager.getIssueResponses().get(key);
                 break;
             }
         }
 
-        if (fix == null) {
+        if (tag == null) {
             return -1;
         } else {
-            String response = BotHelpers.trim(fix, MessageEmbed.VALUE_MAX_LENGTH);
+            String title = BotHelpers.trim(tag.title(), MessageEmbed.TITLE_MAX_LENGTH);
+            if (MessageHelper.similarFieldExists(embedBuilder.getFields(), title)) {
+                return -2;
+            }
+            String response = BotHelpers.trim(tag.content(), MessageEmbed.VALUE_MAX_LENGTH);
 
-            embedBuilder.addField(fieldTitle, response, false);
-            return fieldTitle.length() + response.length();
+            embedBuilder.addField(title, response, false);
+            return title.length() + response.length();
         }
+    }
+
+    public static String filterIssueForProcessing(String issue) {
+        return issue.trim().toLowerCase(Locale.ROOT)
+                .replace("\"", "").replace("'", "")
+                // Weird aaahh quotes OCR detects sometimes
+                .replace("‘", "").replace("’", "")
+                .replace("“", "").replace("”", "");
     }
 }
