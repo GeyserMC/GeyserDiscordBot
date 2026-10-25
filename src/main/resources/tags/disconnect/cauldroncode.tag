@@ -1,13 +1,9 @@
 type: text
-issues: Cauldron for more info || Kelp for more info
-aliases: kelpcode
-title: "Cauldron" and "Kelp" error codes
+issues: Cauldron for more info
+title: "Cauldron" error code
 color: failure
 
 ---
 
-This error appears when the Bedrock client timed out when trying to connect to your server, which could occur due to a variety of reasons.
-If you have not already, follow our [setup instructions](https://wiki.geysermc.org/geyser/setup/). Then, check the server console for any errors.
-To verify Bedrock clients can connect, you can try running the `geyser connectiontest <ip> <port>` command with your server IP and Geyser port.
-
-Additionally, there are various fixes for this on our wiki, please see [our guide](https://wiki.geysermc.org/geyser/fixing-unable-to-connect-to-world/).
+This error appears when the Bedrock client timed out when trying to authenticate with Microsoft's authentication servers.
+Usually this means the authentication servers are down. You may try to resolve this issue by following [Mojang's guide](https://help.minecraft.net/hc/en-us/articles/36735341087629).

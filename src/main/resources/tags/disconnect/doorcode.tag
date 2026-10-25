@@ -1,7 +1,7 @@
 type: text
-issues: Door for more info || NetherNet for more info || Squid for more info
-aliases: nethernetcode, nethercode, squidcode
-title: "Door", "NetherNet", and "Squid" error codes
+issues: Door for more info || NetherNet for more info
+aliases: nethernetcode, nethercode
+title: "Door" and "NetherNet" error codes
 color: failure
 
 ---
