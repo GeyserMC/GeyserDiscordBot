@@ -104,6 +104,18 @@ application {
     mainClass = 'org.geysermc.discordbot.GeyserBot'
 }
 
+tasks {
+    run {
+        doFirst {
+            if (!workingDir.isDirectory()) {
+                workingDir.mkdir()
+            }
+        }
+
+        workingDir = project.layout.projectDirectory.dir("run")
+    }
+}
+
 test {
     useJUnitPlatform()
 }

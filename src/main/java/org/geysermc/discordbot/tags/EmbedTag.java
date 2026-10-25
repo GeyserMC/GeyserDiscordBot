@@ -95,7 +95,7 @@ public class EmbedTag extends Command {
         List<ContainerChildComponent> components = new ArrayList<>();
 
         if (title != null && !title.isEmpty()) {
-            components.add(TextDisplay.of("# " + title));
+            components.add(TextDisplay.of("### " + title));
             components.add(Separator.createDivider(Separator.Spacing.LARGE));
         }
 
