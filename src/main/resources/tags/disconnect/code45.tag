@@ -9,4 +9,4 @@ InitialConnection: `45`
 ClientReason: `NotAllowed`
 ProtocolConstant: `NOT_ALLOWED`
 
-This error occurs when a plugin/extension manually rejects the filter. Geyser itself does not trigger this callback.
+This error code is shown when the signaling server rejects a new connection.
