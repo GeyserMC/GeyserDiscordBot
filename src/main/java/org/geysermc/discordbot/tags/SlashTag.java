@@ -52,10 +52,12 @@ public class SlashTag {
     private final String aliases;
     private final List<Button> buttons;
     private final int type;
+    private final boolean hidden;
 
-    public SlashTag(@Nonnull String name, @Nullable String title, @Nullable String content, @Nullable String color, @Nullable String image, @Nullable String aliases, @Nonnull List<Button> buttons, int type) {
+    public SlashTag(@Nonnull String name, @Nullable String title, @Nullable String content, @Nullable String color, @Nullable String image, @Nullable String aliases, @Nonnull List<Button> buttons, int type, boolean hidden) {
         //Type #0 is an EmbedTag, Type #1 is a RawTag
         this.type = type;
+        this.hidden = hidden;
 
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("name may not be null or empty");
@@ -123,5 +125,9 @@ public class SlashTag {
 
     public String getAliases() {
         return aliases;
+    }
+
+    public boolean isHidden() {
+        return hidden;
     }
 }
