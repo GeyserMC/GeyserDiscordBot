@@ -63,7 +63,7 @@ public class ProvidersTest {
 
     @Test
     public void testInvalidProviders() {
-        assertEquals(0, command.potentialProviders("ifgjnerifejefwifoewjrgeri").size());
+        assertEquals(0, command.potentialProviders("qjzxqjzxqjzx").size());
         assertEquals(0, command.potentialProviders("wenfiughenriougwhnregiureogn").size());
     }
 
@@ -92,6 +92,6 @@ public class ProvidersTest {
         embedBuilder.setColor(BotColors.FAILURE.getColor());
         embedBuilder.setDescription("That provider is not in our list, so it is untested! Try following the [setup guide](https://geysermc.org/wiki/geyser/setup?host=provider&provider=not+listed).");
 
-        assertEquals(embedBuilder.build(), command.handle("ifgjnerifejefwifoewjrgeri"));
+        assertEquals(embedBuilder.build(), command.handle("qjzxqjzxqjzx"));
     }
 }
