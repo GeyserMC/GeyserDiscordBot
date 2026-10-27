@@ -9,4 +9,4 @@ InitialConnection: `28`
 ClientReason: `EditionMismatch`
 ProtocolConstant: `EDITION_MISMATCH`
 
-Geyser does not support Minecraft Education Edition and is compatible with the latest stable release of Minecraft Bedrock Edition.
+Geyser does not support Minecraft Education Edition, it only supports the latest stable release of Minecraft: Bedrock Edition.
