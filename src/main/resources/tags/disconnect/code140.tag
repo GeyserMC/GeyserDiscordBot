@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-140
 title: "Goat" error code
 color: failure

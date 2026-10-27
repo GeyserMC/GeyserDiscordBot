@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-76 || TNT for more info
 aliases: tntcode
 title: "TNT" error code

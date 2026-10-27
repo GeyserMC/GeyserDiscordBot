@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-9
 title: "Armor" error code
 color: failure

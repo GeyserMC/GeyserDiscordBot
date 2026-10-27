@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-64
 title: "Lead" error code
 color: failure

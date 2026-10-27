@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-46
 title: "Guardian" error code
 color: failure

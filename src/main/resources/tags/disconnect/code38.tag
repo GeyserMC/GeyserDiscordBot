@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-38
 title: "NetherNet" error code
 color: failure

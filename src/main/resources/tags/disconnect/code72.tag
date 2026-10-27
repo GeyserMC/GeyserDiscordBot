@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-72 || Compass for more info
 aliases: compasscode
 title: "Compass" error code

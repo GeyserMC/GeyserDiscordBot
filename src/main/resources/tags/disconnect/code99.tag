@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-99
 title: "Door" error code
 color: failure

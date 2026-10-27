@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-79
 title: "Boat" error code
 color: failure

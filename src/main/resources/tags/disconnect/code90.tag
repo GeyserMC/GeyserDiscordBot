@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-90
 title: "Block" error code
 color: failure

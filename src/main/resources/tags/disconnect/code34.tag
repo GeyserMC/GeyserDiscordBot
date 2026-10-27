@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-34
 title: "Chain" error code
 color: failure

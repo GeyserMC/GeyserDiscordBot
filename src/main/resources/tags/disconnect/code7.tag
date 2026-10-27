@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-7
 title: "Silverfish" error code
 color: failure

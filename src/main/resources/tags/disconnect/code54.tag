@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-54
 title: "Snowball" error code
 color: failure

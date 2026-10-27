@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-83
 aliases: advertiseaddresses
 title: "Door" error code

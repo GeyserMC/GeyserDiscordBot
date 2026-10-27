@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-78
 title: "Door" error code
 color: failure

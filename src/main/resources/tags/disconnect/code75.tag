@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-75
 title: "Guardian" error code
 color: failure

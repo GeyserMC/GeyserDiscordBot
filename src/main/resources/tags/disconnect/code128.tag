@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-128
 title: "Chest" error code
 color: failure

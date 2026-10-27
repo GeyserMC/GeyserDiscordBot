@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: Cobblestone for more info
 aliases: cobblecode
 title: "Cobblestone" error code

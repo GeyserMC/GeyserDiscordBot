@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: Creeper for more info || InitialConnection-0 || InitialConnection-40
 aliases: code40, creepercode
 title: "Creeper" error code

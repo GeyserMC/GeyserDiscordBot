@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-59
 title: "Rabbit" error code
 color: failure

@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-4 || Fox for more info
 aliases: foxcode
 title: "Fox" error code

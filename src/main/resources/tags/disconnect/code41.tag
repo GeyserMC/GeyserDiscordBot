@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-41 || Bat for more info
 aliases: batcode
 title: "Bat" error code

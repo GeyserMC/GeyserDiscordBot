@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-127
 title: "Terracotta" error code
 color: failure

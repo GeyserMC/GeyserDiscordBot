@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-11
 title: "Gold" error code
 color: failure

@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-28
 title: "Chain" error code
 color: failure

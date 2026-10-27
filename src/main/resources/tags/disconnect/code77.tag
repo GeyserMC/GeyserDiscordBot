@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-77
 title: "Guardian" error code
 color: failure

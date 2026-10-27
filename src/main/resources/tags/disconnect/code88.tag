@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-88
 title: "NetherNet" error code
 color: failure

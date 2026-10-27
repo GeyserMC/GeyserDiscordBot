@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-32 || Kelp for more info
 aliases: kelpcode
 title: "Kelp" error code

@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-107
 title: "Boat" error code
 color: failure

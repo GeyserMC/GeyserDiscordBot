@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-68 || Cobweb for more info
 aliases: cobwebcode
 title: "Cobweb" error code

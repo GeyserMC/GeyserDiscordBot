@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-81
 title: "NetherNet" error code
 color: failure

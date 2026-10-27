@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-80 || Feather for more info
 aliases: feathercode
 title: "Feather" error code

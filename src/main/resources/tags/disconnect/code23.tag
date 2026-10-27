@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-23
 title: "Goat" error code
 color: failure

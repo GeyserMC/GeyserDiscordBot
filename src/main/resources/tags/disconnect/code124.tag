@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-124
 title: "Guardian" error code
 color: failure

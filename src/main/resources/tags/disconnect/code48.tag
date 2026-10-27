@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-48
 title: "Block" error code
 color: failure

@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-134
 title: "Emerald" error code
 color: failure

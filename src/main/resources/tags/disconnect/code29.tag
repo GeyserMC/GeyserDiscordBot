@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-29
 title: "Breeze" error code
 color: failure

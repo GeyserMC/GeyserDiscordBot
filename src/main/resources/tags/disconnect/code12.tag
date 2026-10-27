@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-12
 title: "Panda" error code
 color: failure

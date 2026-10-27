@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: Chain for more info
 title: "Chain" error code
 color: failure

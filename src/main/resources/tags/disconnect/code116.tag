@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-116 || Coal for more info
 aliases: coalcode
 title: "Coal" error code

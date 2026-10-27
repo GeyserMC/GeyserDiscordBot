@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-95
 title: "NetherNet" error code
 color: failure

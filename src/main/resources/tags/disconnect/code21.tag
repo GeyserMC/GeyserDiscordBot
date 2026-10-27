@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-21
 title: "Spyglass" error code
 color: failure

@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-25
 title: "Hopper" error code
 color: failure

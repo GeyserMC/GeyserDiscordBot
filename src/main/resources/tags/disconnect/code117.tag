@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-117 || Honeycomb for more info
 aliases: honeycombcode
 title: "Honeycomb" error code

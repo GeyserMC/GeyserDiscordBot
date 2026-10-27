@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-82
 title: "NetherNet" error code
 color: failure

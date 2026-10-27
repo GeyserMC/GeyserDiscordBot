@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-120 || Bamboo for more info
 aliases: bamboocode
 title: "Bamboo" error code

@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-74 || Echo Shard for more info
 aliases: echoshardcode
 title: "Echo Shard" error code

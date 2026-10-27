@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-73
 title: "NetherNet" error code
 color: failure

@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-97
 title: "NetherNet" error code
 color: failure

@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-112
 title: "Guardian" error code
 color: failure

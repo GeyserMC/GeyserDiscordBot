@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-96
 title: "NetherNet" error code
 color: failure

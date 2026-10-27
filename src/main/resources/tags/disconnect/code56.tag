@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-56
 title: "Evoker" error code
 color: failure

@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: InitialConnection-119
 title: "Arrow" error code
 color: failure
