@@ -8,5 +8,5 @@ InitialConnection: `90`
 ClientReason: `BadPacket`
 ProtocolConstant: `BAD_PACKET`
 
-This error appears when the Bedrock client failed to send or receive data. Please see [Mojang's guide](https://help.minecraft.net/hc/en-us/articles/42462166875405-Troubleshoot-World-Connection-Errors-Caused-by-Character-Creator-Items-in-Minecraft-Bedrock-Edition) on how to resolve this issue.
+This error appears when the Bedrock client failed to send or receive data. Please ensure you are running the latest version of Geyser. Additionally, provide a log dump using !!logsdump. If you are unable to generate a dump, please send your logs using !!logs instead.
 Additional information: This issue occurs when the server sends a malformed or invalid packet.

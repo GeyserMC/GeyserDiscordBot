@@ -8,6 +8,4 @@ InitialConnection: `28`
 ClientReason: `EditionMismatch`
 ProtocolConstant: `EDITION_MISMATCH`
 
-This error appears when a version mismatch occurs. Please make sure that Geyser and your Bedrock client are both up-to-date.
-
-To download the latest build of Geyser, run `/download geyser` in <#613194762249437245>.
+Geyser does not support Minecraft Education Edition and is compatible with the latest stable release of Minecraft Bedrock Edition.
