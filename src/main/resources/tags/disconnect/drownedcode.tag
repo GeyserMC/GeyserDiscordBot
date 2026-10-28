@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: Drowned for more info
 title: "Drowned" error code
 color: failure

@@ -235,7 +235,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
                 break;
             }
 
-            if (filteredError.contains(issue)) {
+            if (containsIssue(filteredError, issue)) {
                 IssueTag tag = TagsManager.getIssueResponses().get(issue);
                 String title = BotHelpers.trim(tag.title(), MessageEmbed.TITLE_MAX_LENGTH);
 
@@ -311,7 +311,7 @@ public class ErrorAnalyzer extends ListenerAdapter {
         String filteredIssue = filterIssueForProcessing(issue);
         IssueTag tag = null;
         for (String key : TagsManager.getIssueResponses().keySet()) {
-            if (filteredIssue.contains(key)) {
+            if (containsIssue(filteredIssue, key)) {
                 tag = TagsManager.getIssueResponses().get(key);
                 break;
             }
@@ -329,6 +329,23 @@ public class ErrorAnalyzer extends ListenerAdapter {
             embedBuilder.addField(title, response, false);
             return title.length() + response.length();
         }
+    }
+
+    /**
+     * Checks if the text contains the issue key, without matching a numeric key
+     * as a prefix of a longer number (e.g. "code-1" inside "code-13").
+     */
+    private static boolean containsIssue(String text, String key) {
+        boolean endsWithDigit = !key.isEmpty() && Character.isDigit(key.charAt(key.length() - 1));
+        int index = text.indexOf(key);
+        while (index >= 0) {
+            int end = index + key.length();
+            if (!endsWithDigit || end >= text.length() || !Character.isDigit(text.charAt(end))) {
+                return true;
+            }
+            index = text.indexOf(key, index + 1);
+        }
+        return false;
     }
 
     public static String filterIssueForProcessing(String issue) {

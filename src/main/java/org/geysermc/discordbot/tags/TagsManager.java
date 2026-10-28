@@ -130,7 +130,7 @@ public class TagsManager {
                                 }
 
                                 switch (lineParts[0]) { // intentional fallthrough
-                                    case "type", "aliases" -> tagData.put(lineParts[0], lineParts[1].trim().toLowerCase());
+                                    case "type", "aliases", "hidden" -> tagData.put(lineParts[0], lineParts[1].trim().toLowerCase());
                                     case "title", "image" -> tagData.put(lineParts[0], lineParts[1].trim());
                                     case "issues" -> issueTriggers = lineParts[1].split("\\|\\|");
                                     case "help" -> selfHelpTrigger = lineParts[1].split("\\|\\|");
@@ -147,12 +147,14 @@ public class TagsManager {
                                 }
                             }
 
+                            boolean hidden = Boolean.parseBoolean(tagData.get("hidden"));
+
                             // Create the tag from the stored data
                             switch (tagData.get("type")) {
                                 case "text":
                                     try {
-                                        TAGS.add(new EmbedTag(tagName, tagData.get("title"), content.toString().trim(), tagData.get("color"), tagData.get("image"), tagData.get("aliases"), buttons));
-                                        SLASH_TAGS.add(new SlashTag(tagName, tagData.get("title"), content.toString().trim(), tagData.get("color"), tagData.get("image"), tagData.get("aliases"), buttons, 0));
+                                        TAGS.add(new EmbedTag(tagName, tagData.get("title"), content.toString().trim(), tagData.get("color"), tagData.get("image"), tagData.get("aliases"), buttons, hidden));
+                                        SLASH_TAGS.add(new SlashTag(tagName, tagData.get("title"), content.toString().trim(), tagData.get("color"), tagData.get("image"), tagData.get("aliases"), buttons, 0, hidden));
                                     } catch (IllegalArgumentException e) {
                                         GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
                                         continue;
@@ -161,8 +163,8 @@ public class TagsManager {
 
                                 case "raw":
                                     try {
-                                        TAGS.add(new RawTag(tagName, content.toString().trim(), tagData.get("aliases"), buttons));
-                                        SLASH_TAGS.add(new SlashTag(tagName, null, content.toString().trim(), null, null,  tagData.get("aliases"), buttons, 1));
+                                        TAGS.add(new RawTag(tagName, content.toString().trim(), tagData.get("aliases"), buttons, hidden));
+                                        SLASH_TAGS.add(new SlashTag(tagName, null, content.toString().trim(), null, null,  tagData.get("aliases"), buttons, 1, hidden));
                                     } catch (IllegalArgumentException e) {
                                         GeyserBot.LOGGER.warn("Failed to create tag: " + e.getMessage());
                                         continue;

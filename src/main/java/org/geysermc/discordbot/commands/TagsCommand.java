@@ -80,7 +80,7 @@ public class TagsCommand extends FilteredSlashCommand {
         // Get tag names based on search
         List<String> tagNames = new ArrayList<>();
         for (Command tag : TagsManager.getTags()) {
-            if (!tag.getName().equals("alias") && tag.getName().contains(search)) {
+            if (!tag.getName().equals("alias") && !tag.isHidden() && tag.getName().contains(search)) {
                 tagNames.add(tag.getName());
             }
         }

@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: Guardian for more info
 title: "Guardian" error code
 color: failure

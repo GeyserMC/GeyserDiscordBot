@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: Cauldron for more info
 title: "Cauldron" error code
 color: failure

@@ -1,4 +1,5 @@
 type: text
+hidden: true
 issues: Block for more info
 title: "Block" error code
 color: failure

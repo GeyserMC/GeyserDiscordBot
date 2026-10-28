@@ -107,6 +107,10 @@ public class TagCommand extends FilteredSlashCommand {
         List<String> potential = new ArrayList<>();
 
         for (SlashTag slashTag : TagsManager.getEmbedTags()) {
+            if (slashTag.isHidden()) {
+                continue;
+            }
+
             // Check if the name starts with the query
             if (slashTag.getName().toLowerCase().startsWith(query.toLowerCase())) {
                 potential.add(slashTag.getName());

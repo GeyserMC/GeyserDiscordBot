@@ -47,10 +47,11 @@ public class RawTag extends Command {
      * @param name The name of the tag to be used when calling it
      * @param content The text content
      * @param aliases Any aliases that can be used to call it
+     * @param hidden Choose if a tag should be left out of the tags list
      * @throws IllegalArgumentException If name or content is null or empty. It would result in a tag with no content.
      */
     @SuppressWarnings("ConstantConditions")
-    public RawTag(@Nonnull String name, @Nonnull String content, @Nullable String aliases, @Nonnull List<Button> buttons) throws IllegalArgumentException {
+    public RawTag(@Nonnull String name, @Nonnull String content, @Nullable String aliases, @Nonnull List<Button> buttons, boolean hidden) throws IllegalArgumentException {
         if (name == null || name.isEmpty() || content == null || content.isEmpty()) {
             throw new IllegalArgumentException("name or content may not be null or empty");
         }
@@ -58,6 +59,7 @@ public class RawTag extends Command {
         this.name = name;
         this.content = content;
         this.guildOnly = false;
+        this.hidden = hidden;
         if (aliases != null && !aliases.isEmpty()) {
             this.aliases = Arrays.stream(aliases.split(",")).map(String::trim).toArray(String[]::new);
         }
