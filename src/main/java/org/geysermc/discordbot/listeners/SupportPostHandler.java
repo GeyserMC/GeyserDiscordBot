@@ -49,6 +49,9 @@ public class SupportPostHandler extends ListenerAdapter {
         ForumChannel forum = ServerSettings.getForumChannel(event.getGuild());
         if (forum == null || thread.getParentChannel().getIdLong() != forum.getIdLong()) return;
 
+        // Posts created by the bot (e.g. via /post create) don't need the help message
+        if (thread.getOwnerIdLong() == event.getJDA().getSelfUser().getIdLong()) return;
+
         String message = ServerSettings.getSupportPostMessage(event.getGuild());
         if (message.isEmpty()) return;
 
