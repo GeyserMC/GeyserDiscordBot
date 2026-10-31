@@ -30,6 +30,7 @@ import com.jagrosh.jdautilities.command.SlashCommandEvent;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
@@ -186,7 +187,6 @@ public class ForumPostCommand extends SlashCommand {
         public ClosePostSubCommand() {
             this.name = "close";
             this.help = "Close post";
-            this.userPermissions = new Permission[] { Permission.CREATE_PUBLIC_THREADS };
         }
 
         @Override
@@ -196,7 +196,14 @@ public class ForumPostCommand extends SlashCommand {
                 return;
             }
 
-            if (event.getChannel().asThreadChannel().isArchived()) {
+            ThreadChannel thread = event.getChannel().asThreadChannel();
+            Member member = event.getMember();
+            if (member == null || !(thread.getOwnerIdLong() == member.getIdLong() || ServerSettings.hasPostCloseRole(member))) {
+                event.reply("Only the post owner or members with a configured role can close this post").setEphemeral(true).queue();
+                return;
+            }
+
+            if (thread.isArchived()) {
                 event.reply("Post is already closed").setEphemeral(true).queue();
                 return;
             }
