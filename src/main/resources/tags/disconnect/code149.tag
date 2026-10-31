@@ -11,4 +11,4 @@ ProtocolConstant: `UNSUPPORTED_TRANSPORT`
 
 This issue occurs when the transport protocol is unsupported. In version 26.60 and later, this message may also appear if the signaling server is unreachable or not running.
 
-Please see <#1564652375300640910>.
+This is most likely a setup issue, please see <#1564652375300640910>.
