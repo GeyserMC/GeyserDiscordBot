@@ -306,9 +306,8 @@ public class ServerSettings {
 
     public static final String DEFAULT_SUPPORT_POST_MESSAGE = """
             Thanks for opening a support post! To help us help you, please include:
-            - Your Geyser version and platform (use `/dump` or `geyser dump` and share the link)
-            - Your server version and any relevant logs or errors
-            - What you expected to happen and what actually happened
+            - A Geyser dump: Run !!dump to learn how to generate one.
+            - A description of the issue: What did you expect to happen, and what actually happened?
 
             Once your issue is resolved, you can close this post with `/post close`.""";
 
