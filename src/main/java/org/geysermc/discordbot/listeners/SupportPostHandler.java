@@ -25,12 +25,14 @@
 
 package org.geysermc.discordbot.listeners;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.geysermc.discordbot.storage.ServerSettings;
+import org.geysermc.discordbot.util.BotColors;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
@@ -51,6 +53,9 @@ public class SupportPostHandler extends ListenerAdapter {
         if (message.isEmpty()) return;
 
         // Delay so the message appears after the user's first message
-        thread.sendMessage(message).queueAfter(2, TimeUnit.SECONDS, null, error -> {});
+        thread.sendMessageEmbeds(new EmbedBuilder()
+                .setDescription(message)
+                .setColor(BotColors.SUCCESS.getColor())
+                .build()).queueAfter(2, TimeUnit.SECONDS, null, error -> {});
     }
 }
