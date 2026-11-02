@@ -52,7 +52,7 @@ public class SupportPostHandler extends ListenerAdapter {
         // Posts created by the bot (e.g. via /post create) don't need the help message
         if (thread.getOwnerIdLong() == event.getJDA().getSelfUser().getIdLong()) return;
 
-        String tagName = ServerSettings.getSupportPostTag(event.getGuild());
+        String tagName = ServerSettings.getForumAutoReplyTag(event.getGuild());
         if (tagName == null) return;
 
         SlashTag tag = TagsManager.getEmbedTags().stream()

@@ -77,7 +77,7 @@ public class SettingsCommand extends SlashCommand {
                         .addChoice("Preview Feeds Channel", "preview-feeds-channel")
                         .addChoice("Punishment Message", "punishment-message")
                         .addChoice("Roles", "roles")
-                        .addChoice("Support post tag", "support-post-tag")
+                        .addChoice("Forum auto-reply tag", "forum-auto-reply-tag")
                         .addChoice("RSS Feeds", "rss-feeds")
                         .addChoice("Update channel", "update-channel")
                         .addChoice("Exploit reports notify channel", "exploit-reports-notify-channel")

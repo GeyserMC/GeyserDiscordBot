@@ -305,11 +305,11 @@ public class ServerSettings {
     }
 
     /**
-     * Get the name of the tag sent in new support posts. Null if not set (feature disabled).
+     * Get the name of the tag sent as an auto-reply in new forum posts. Null if not set (feature disabled).
      */
     @Nullable
-    public static String getSupportPostTag(@NotNull Guild guild) {
-        String tag = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "support-post-tag");
+    public static String getForumAutoReplyTag(@NotNull Guild guild) {
+        String tag = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "forum-auto-reply-tag");
         return tag == null || tag.isBlank() ? null : tag.trim();
     }
 
