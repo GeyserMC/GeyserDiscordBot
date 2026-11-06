@@ -3,7 +3,7 @@ hidden: true
 aliases: indonesian, id
 title: 🇮🇩 Bahasa Indonesia
 color: neutral
-button: [DeepL Translator](https://www.deepl.com/en/translator/l/es/en)
+button: [DeepL Translator](https://www.deepl.com/en/translator)
 
 ---
 

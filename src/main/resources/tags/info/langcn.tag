@@ -3,7 +3,7 @@ hidden: true
 aliases: chinesesimplified, cn
 title: 🇨🇳 简体中文
 color: neutral
-button: [DeepL Translator](https://www.deepl.com/en/translator/l/es/en)
+button: [DeepL Translator](https://www.deepl.com/en/translator)
 
 ---
 

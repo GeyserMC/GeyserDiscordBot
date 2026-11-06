@@ -3,7 +3,7 @@ hidden: true
 aliases: canada, ca
 title: 🇨🇦 Français, Canada
 color: neutral
-button: [DeepL Translator](https://www.deepl.com/en/translator/l/es/en)
+button: [DeepL Translator](https://www.deepl.com/en/translator)
 
 ---
 

@@ -3,7 +3,7 @@ hidden: true
 aliases: chinesetraditional, tw
 title: 🇹🇼 中文（繁體）
 color: neutral
-button: [DeepL Translator](https://www.deepl.com/en/translator/l/es/en)
+button: [DeepL Translator](https://www.deepl.com/en/translator)
 
 ---
 
