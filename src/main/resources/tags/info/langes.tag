@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: spanish, es, mx
+aliases: spanish, es
 title: 🇪🇸 Español
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator/l/es/en)
