@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: turkish, tr
+aliases: turkish, tr, turkey, Türkiye
 title: 🇹🇷 Türkçe
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

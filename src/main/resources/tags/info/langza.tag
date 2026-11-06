@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: afrikaans, za
+aliases: afrikaans, za, southafrica
 title: 🇿🇦 Afrikaans
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

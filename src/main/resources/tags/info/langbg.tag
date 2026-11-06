@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: bulgarian, bg
+aliases: bulgarian, bg, bulgaria
 title: 🇧🇬 Български
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

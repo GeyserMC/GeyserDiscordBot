@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: hungarian, hu
+aliases: hungarian, hu, hungary
 title: 🇭🇺 magyar
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: chinesetraditional, tw
+aliases: chinesetraditional, tw, taiwan
 title: 🇹🇼 中文（繁體）
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

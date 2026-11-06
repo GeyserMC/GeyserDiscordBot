@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: romanian, ro
+aliases: romanian, ro, romania
 title: 🇷🇴 română
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

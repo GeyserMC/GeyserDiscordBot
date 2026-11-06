@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: german, de
+aliases: german, de, germany
 title: 🇩🇪 Deutsch
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

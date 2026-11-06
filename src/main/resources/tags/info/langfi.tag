@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: finnish, fi
+aliases: finnish, fi, finland
 title: 🇫🇮 suomi
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

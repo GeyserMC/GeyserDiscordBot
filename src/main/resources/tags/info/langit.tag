@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: italian, it
+aliases: italian, it, italy
 title: 🇮🇹 italiano
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

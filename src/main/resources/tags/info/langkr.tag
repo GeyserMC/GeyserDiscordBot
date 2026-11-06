@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: korean, kr
+aliases: korean, kr, southkorea
 title: 🇰🇷 한국어
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

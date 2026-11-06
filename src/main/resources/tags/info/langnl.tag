@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: dutch, nl
+aliases: dutch, nl, netherlands
 title: 🇳🇱 Nederlands
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

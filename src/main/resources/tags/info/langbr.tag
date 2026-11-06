@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: brazilian, br
+aliases: brazilian, br, brazil
 title: 🇧🇷 Português (Brasil)
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

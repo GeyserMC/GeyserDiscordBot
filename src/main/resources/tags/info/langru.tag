@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: russian, ru
+aliases: russian, ru, russia
 title: 🇷🇺 Русский
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

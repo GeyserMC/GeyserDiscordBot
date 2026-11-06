@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: portuguese, pt, br
+aliases: portuguese, pt, portugal
 title: 🇵🇹 Português
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

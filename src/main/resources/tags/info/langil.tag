@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: hebrew, il
+aliases: hebrew, il, israel
 title: 🇮🇱 עברית
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: arabic, sa
+aliases: arabic, sa, saudiarabia
 title: 🇸🇦 العربية
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

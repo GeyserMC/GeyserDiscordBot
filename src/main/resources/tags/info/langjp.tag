@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: japanese, jp
+aliases: japanese, jp, japan
 title: 🇯🇵 日本語
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

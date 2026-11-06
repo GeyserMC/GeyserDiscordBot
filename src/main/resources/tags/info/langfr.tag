@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: french, fr
+aliases: french, fr, france
 title: 🇫🇷 Français
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

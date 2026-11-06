@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: swedish, se
+aliases: swedish, se, sweden
 title: 🇸🇪 Svenska
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

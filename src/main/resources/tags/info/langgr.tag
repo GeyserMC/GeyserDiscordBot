@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: greek, gr
+aliases: greek, gr, greece
 title: 🇬🇷 Ελληνικά
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

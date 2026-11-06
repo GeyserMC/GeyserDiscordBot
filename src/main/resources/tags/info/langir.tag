@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: persian, ir
+aliases: persian, ir, iran
 title: 🇮🇷 فارسی
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: slovak, sk
+aliases: slovak, sk, slovakia
 title: 🇸🇰 slovak
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

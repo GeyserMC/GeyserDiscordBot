@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: polish, pl
+aliases: polish, pl, poland
 title: 🇵🇱 polski
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

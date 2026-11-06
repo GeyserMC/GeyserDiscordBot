@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: ukrainian, ua
+aliases: ukrainian, ua, ukraine
 title: 🇺🇦 Українська
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

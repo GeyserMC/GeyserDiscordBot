@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: chinesesimplified, cn
+aliases: chinesesimplified, cn, china
 title: 🇨🇳 简体中文
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

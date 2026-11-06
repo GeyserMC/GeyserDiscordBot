@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: hindi, in
+aliases: hindi, in, india
 title: 🇮🇳 हिंदी
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

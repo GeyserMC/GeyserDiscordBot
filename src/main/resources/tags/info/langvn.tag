@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: vietnamese, vn
+aliases: vietnamese, vn, vietnam
 title: 🇻🇳 Tiếng Việt
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

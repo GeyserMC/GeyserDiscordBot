@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: czech, cz
+aliases: czech, cz, czechia
 title: 🇨🇿 Čeština
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

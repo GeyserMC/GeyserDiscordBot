@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: norwegianbokmal, no
+aliases: norwegianbokmal, no, norway
 title: 🇳🇴 Norsk bokmål
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

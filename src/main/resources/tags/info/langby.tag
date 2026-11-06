@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: belarusian, by
+aliases: belarusian, by, belarus
 title: 🇧🇾 Беларускі
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)

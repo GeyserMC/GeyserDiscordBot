@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: danish, dk
+aliases: danish, dk, denmark
 title: 🇩🇰 Dansk
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)
