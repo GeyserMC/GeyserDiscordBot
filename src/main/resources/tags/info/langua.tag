@@ -3,7 +3,7 @@ hidden: true
 aliases: ukrainian, ua
 title: 🇺🇦 Українська
 color: neutral
-button: [DeepL Translator](https://www.deepl.com/en/translator/l/ua/en)
+button: [DeepL Translator](https://www.deepl.com/en/translator)
 
 ---
 

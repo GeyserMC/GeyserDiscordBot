@@ -3,7 +3,7 @@ hidden: true
 aliases: slovak, sk
 title: 🇸🇰 slovak
 color: neutral
-button: [DeepL Translator](https://www.deepl.com/en/translator/l/sk/en)
+button: [DeepL Translator](https://www.deepl.com/en/translator)
 
 ---
 

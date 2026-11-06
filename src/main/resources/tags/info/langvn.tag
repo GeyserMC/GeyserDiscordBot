@@ -3,7 +3,7 @@ hidden: true
 aliases: vietnamese, vn
 title: 🇻🇳 Tiếng Việt
 color: neutral
-button: [DeepL Translator](https://www.deepl.com/en/translator/l/vi/en)
+button: [DeepL Translator](https://www.deepl.com/en/translator)
 
 ---
 

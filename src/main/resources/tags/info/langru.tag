@@ -3,7 +3,7 @@ hidden: true
 aliases: russian, ru
 title: 🇷🇺 Русский
 color: neutral
-button: [DeepL Translator](https://www.deepl.com/en/translator/l/ru/en)
+button: [DeepL Translator](https://www.deepl.com/en/translator)
 
 ---
 

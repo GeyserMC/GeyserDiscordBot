@@ -3,7 +3,7 @@ hidden: true
 aliases: swedish, se
 title: 🇸🇪 Svenska
 color: neutral
-button: [DeepL Translator](https://www.deepl.com/en/translator/l/se/en)
+button: [DeepL Translator](https://www.deepl.com/en/translator)
 
 ---
 

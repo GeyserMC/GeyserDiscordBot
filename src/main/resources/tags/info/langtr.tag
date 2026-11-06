@@ -3,7 +3,7 @@ hidden: true
 aliases: turkish, tr
 title: 🇹🇷 Türkçe
 color: neutral
-button: [DeepL Translator](https://www.deepl.com/en/translator/l/tr/en)
+button: [DeepL Translator](https://www.deepl.com/en/translator)
 
 ---
 

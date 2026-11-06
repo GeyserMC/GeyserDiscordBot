@@ -3,7 +3,7 @@ hidden: true
 aliases: portuguese, pt, br
 title: 🇵🇹 Português
 color: neutral
-button: [DeepL Translator](https://www.deepl.com/en/translator/l/pt/en)
+button: [DeepL Translator](https://www.deepl.com/en/translator)
 
 ---
 
