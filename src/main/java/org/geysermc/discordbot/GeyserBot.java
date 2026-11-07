@@ -253,6 +253,7 @@ public class GeyserBot {
                             new WebhookLinkPreviewHandler(),
                             new ReadyListener(),
                             new HoneyPotHandler(),
+                            new SupportPostHandler(),
                             new QuarantineHandler(),
                             new SpamHandler(),
                             client.build(),
