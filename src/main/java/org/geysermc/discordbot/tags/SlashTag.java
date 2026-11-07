@@ -37,6 +37,9 @@ import net.dv8tion.jda.api.components.separator.Separator;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import org.geysermc.discordbot.util.BotColors;
 
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.Color;
@@ -86,29 +89,7 @@ public class SlashTag {
 
     public void replyWithTag(SlashCommandEvent event) {
         if (type == 0) {
-
-            List<ContainerChildComponent> components = new ArrayList<>();
-
-            if (title != null && !title.isEmpty()) {
-                components.add(TextDisplay.of("# " + title));
-                components.add(Separator.createDivider(Separator.Spacing.LARGE));
-            }
-
-            components.add(TextDisplay.of(content));
-
-            if (image != null && !image.isEmpty()) {
-                components.add(MediaGallery.of(MediaGalleryItem.fromUrl(image)));
-            }
-
-            if (!buttons.isEmpty()) {
-                components.add(Separator.createDivider(Separator.Spacing.SMALL));
-                components.add(ActionRow.of(buttons));
-            }
-
-            event.replyComponents(Container.of(components)
-                    .withAccentColor(color))
-                .useComponentsV2()
-                .queue();
+            event.replyComponents(buildContainer()).useComponentsV2().queue();
         } else if (type == 1) {
             var reply = event.reply(content);
             if (!buttons.isEmpty()) {
@@ -117,6 +98,37 @@ public class SlashTag {
 
             reply.queue();
         }
+    }
+
+    public MessageCreateAction sendToChannel(MessageChannel channel) {
+        if (type == 0) {
+            return channel.sendMessageComponents(buildContainer()).useComponentsV2();
+        }
+
+        MessageCreateAction action = channel.sendMessage(content);
+        return buttons.isEmpty() ? action : action.setComponents(ActionRow.of(buttons));
+    }
+
+    private Container buildContainer() {
+        List<ContainerChildComponent> components = new ArrayList<>();
+
+        if (title != null && !title.isEmpty()) {
+            components.add(TextDisplay.of("# " + title));
+            components.add(Separator.createDivider(Separator.Spacing.LARGE));
+        }
+
+        components.add(TextDisplay.of(content));
+
+        if (image != null && !image.isEmpty()) {
+            components.add(MediaGallery.of(MediaGalleryItem.fromUrl(image)));
+        }
+
+        if (!buttons.isEmpty()) {
+            components.add(Separator.createDivider(Separator.Spacing.SMALL));
+            components.add(ActionRow.of(buttons));
+        }
+
+        return Container.of(components).withAccentColor(color);
     }
 
     public String getName() {

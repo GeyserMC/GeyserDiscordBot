@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 GeyserMC. http://geysermc.org
+ * Copyright (c) 2020-2026 GeyserMC. http://geysermc.org
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,6 @@
 
 package org.geysermc.discordbot.storage;
 
-
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
@@ -43,8 +42,11 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.geysermc.discordbot.util.PropertiesManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MySQLStorageManager extends AbstractStorageManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MySQLStorageManager.class);
 
     protected HikariDataSource dataSource;
 
@@ -77,7 +79,7 @@ public class MySQLStorageManager extends AbstractStorageManager {
     @Override
     public String getServerPreference(long serverID, String preference) {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT value FROM preferences WHERE server = ? AND `key` = ?")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT `value` FROM `preferences` WHERE `server` = ? AND `key` = ?")) {
                 statement.setLong(1, serverID);
                 statement.setString(2, preference);
 
@@ -87,44 +89,52 @@ public class MySQLStorageManager extends AbstractStorageManager {
                     }
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            LOGGER.error("Failed to get server preference {} for server {}", preference, serverID, e);
+        }
         return null;
     }
 
     @Override
     public void setServerPreference(long serverID, String preference, String value) {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO preferences (server, key, value) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)")) {
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO `preferences` (`server`, `key`, `value`) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)")) {
                 statement.setLong(1, serverID);
                 statement.setString(2, preference);
                 statement.setString(3, value);
                 statement.executeUpdate();
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            LOGGER.error("Failed to set server preference {} for server {}", preference, serverID, e);
+        }
     }
 
     @Override
     public void addPersistentRole(Member member, Role role) {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO persistent_roles (server, user, role) VALUES (?, ?, ?)")) {
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO `persistent_roles` (`server`, `user`, `role`) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE `role` = `role`")) {
                 statement.setLong(1, member.getGuild().getIdLong());
                 statement.setLong(2, member.getIdLong());
                 statement.setLong(3, role.getIdLong());
                 statement.executeUpdate();
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            LOGGER.error("Failed to add persistent role {} for user {} in server {}", role.getIdLong(), member.getIdLong(), member.getGuild().getIdLong(), e);
+        }
     }
 
     @Override
     public void removePersistentRole(Member member, Role role) {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM persistent_roles WHERE server = ? AND user = ? AND role = ?")) {
+            try (PreparedStatement statement = connection.prepareStatement("DELETE FROM `persistent_roles` WHERE `server` = ? AND `user` = ? AND `role` = ?")) {
                 statement.setLong(1, member.getGuild().getIdLong());
                 statement.setLong(2, member.getIdLong());
                 statement.setLong(3, role.getIdLong());
                 statement.executeUpdate();
             }
-        } catch (SQLException ignored) { }
+        } catch (SQLException e) {
+            LOGGER.error("Failed to remove persistent role {} for user {} in server {}", role.getIdLong(), member.getIdLong(), member.getGuild().getIdLong(), e);
+        }
     }
 
     @Override
@@ -132,17 +142,23 @@ public class MySQLStorageManager extends AbstractStorageManager {
         List<Role> roles = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT role FROM persistent_roles WHERE server = ? AND user = ?")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT `role` FROM `persistent_roles` WHERE `server` = ? AND `user` = ?")) {
                 statement.setLong(1, member.getGuild().getIdLong());
                 statement.setLong(2, member.getIdLong());
 
                 try (ResultSet rs = statement.executeQuery()) {
                     while (rs.next()) {
-                        roles.add(member.getGuild().getRoleById(rs.getString(1)));
+                        Role role = member.getGuild().getRoleById(rs.getLong(1));
+                        // Skip roles that have since been deleted from the guild
+                        if (role != null) {
+                            roles.add(role);
+                        }
                     }
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            LOGGER.error("Failed to get persistent roles for user {} in server {}", member.getIdLong(), member.getGuild().getIdLong(), e);
+        }
 
         return roles;
     }
@@ -150,7 +166,7 @@ public class MySQLStorageManager extends AbstractStorageManager {
     @Override
     public int addLog(Member user, String action, UserSnowflake target, String reason) {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO mod_log (server, time, user, action, target, reason) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO `mod_log` (`server`, `time`, `user`, `action`, `target`, `reason`) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
                 long time = Instant.now().getEpochSecond();
 
                 statement.setLong(1, user.getGuild().getIdLong());
@@ -168,7 +184,9 @@ public class MySQLStorageManager extends AbstractStorageManager {
                     }
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            LOGGER.error("Failed to add mod log ({}) for target {} in server {}", action, target.getIdLong(), user.getGuild().getIdLong(), e);
+        }
 
         return -1;
     }
@@ -178,9 +196,10 @@ public class MySQLStorageManager extends AbstractStorageManager {
         List<ModLog> logs = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT id, time, user, action, reason FROM mod_log WHERE server = ? AND target = ? ORDER BY time LIMIT ?")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT `id`, `time`, `user`, `action`, `reason` FROM `mod_log` WHERE `server` = ? AND `target` = ? ORDER BY `time`, `id` LIMIT ?")) {
                 statement.setLong(1, guild.getIdLong());
                 statement.setLong(2, target.getIdLong());
+                statement.setInt(3, limit);
 
                 try (ResultSet rs = statement.executeQuery()) {
                     while (rs.next()) {
@@ -191,7 +210,9 @@ public class MySQLStorageManager extends AbstractStorageManager {
                     }
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            LOGGER.error("Failed to get mod logs for target {} in server {}", target.getIdLong(), guild.getIdLong(), e);
+        }
 
         return logs;
     }
@@ -199,7 +220,7 @@ public class MySQLStorageManager extends AbstractStorageManager {
     @Override
     public ModLog getLog(Guild guild, int id) {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM mod_log WHERE server = ? AND id = ?")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM `mod_log` WHERE `server` = ? AND `id` = ?")) {
                 statement.setLong(1, guild.getIdLong());
                 statement.setInt(2, id);
 
@@ -220,7 +241,9 @@ public class MySQLStorageManager extends AbstractStorageManager {
                     return new ModLog(rs.getInt("id"), time, user, rs.getString("action"), target, rs.getString("reason"));
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            LOGGER.error("Failed to get mod log {} in server {}", id, guild.getIdLong(), e);
+        }
 
         return null;
     }
@@ -228,18 +251,21 @@ public class MySQLStorageManager extends AbstractStorageManager {
     @Override
     public void updateLog(Guild guild, int id, String reason) {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE mod_log SET reason = ? WHERE id = ?")) {
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE `mod_log` SET `reason` = ? WHERE `id` = ? AND `server` = ?")) {
                 statement.setString(1, reason);
-                statement.setLong(2, id);
+                statement.setInt(2, id);
+                statement.setLong(3, guild.getIdLong());
                 statement.executeUpdate();
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            LOGGER.error("Failed to update mod log {} in server {}", id, guild.getIdLong(), e);
+        }
     }
 
     @Override
     public LevelInfo getLevel(Member user) {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT level, xp, messages FROM levels WHERE server = ? AND user = ?")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT `level`, `xp`, `messages` FROM `levels` WHERE `server` = ? AND `user` = ?")) {
                 statement.setLong(1, user.getGuild().getIdLong());
                 statement.setLong(2, user.getIdLong());
 
@@ -249,9 +275,11 @@ public class MySQLStorageManager extends AbstractStorageManager {
                     }
                 }
 
-                return new LevelInfo(0, 0, 0, 0);
+                return new LevelInfo(user.getIdLong(), 0, 0, 0);
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            LOGGER.error("Failed to get level for user {} in server {}", user.getIdLong(), user.getGuild().getIdLong(), e);
+        }
 
         return null;
     }
@@ -259,7 +287,7 @@ public class MySQLStorageManager extends AbstractStorageManager {
     @Override
     public void setLevel(Member user, LevelInfo levelInfo) {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO levels (server, user, level, xp, messages) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE level = VALUES(level), xp = VALUES(xp), messages = VALUES(messages)")) {
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO `levels` (`server`, `user`, `level`, `xp`, `messages`) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE `level` = VALUES(`level`), `xp` = VALUES(`xp`), `messages` = VALUES(`messages`)")) {
                 statement.setLong(1, user.getGuild().getIdLong());
                 statement.setLong(2, user.getIdLong());
                 statement.setInt(3, levelInfo.getLevel());
@@ -267,14 +295,16 @@ public class MySQLStorageManager extends AbstractStorageManager {
                 statement.setInt(5, levelInfo.getMessages());
                 statement.executeUpdate();
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            LOGGER.error("Failed to set level for user {} in server {}", user.getIdLong(), user.getGuild().getIdLong(), e);
+        }
     }
 
     @Override
     public List<LevelInfo> getLevels(long guild) {
         List<LevelInfo> levels = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT user, level, xp, messages FROM levels WHERE server = ? ORDER BY xp DESC LIMIT 100")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT `user`, `level`, `xp`, `messages` FROM `levels` WHERE `server` = ? ORDER BY `xp` DESC LIMIT 100")) {
                 statement.setLong(1, guild);
 
                 try (ResultSet rs = statement.executeQuery()) {
@@ -283,7 +313,9 @@ public class MySQLStorageManager extends AbstractStorageManager {
                     }
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            LOGGER.error("Failed to get levels for server {}", guild, e);
+        }
 
         return levels;
     }
@@ -293,7 +325,7 @@ public class MySQLStorageManager extends AbstractStorageManager {
         List<SlowModeInfo> infos = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT channel, server, delay FROM slow_mode WHERE server = ?")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT `channel`, `server`, `delay` FROM `slow_mode` WHERE `server` = ?")) {
                 statement.setLong(1, guild.getIdLong());
 
                 try (ResultSet rs = statement.executeQuery()) {
@@ -302,7 +334,9 @@ public class MySQLStorageManager extends AbstractStorageManager {
                     }
                 }
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            LOGGER.error("Failed to get slow mode channels for server {}", guild.getIdLong(), e);
+        }
 
         return infos;
     }
@@ -310,12 +344,14 @@ public class MySQLStorageManager extends AbstractStorageManager {
     @Override
     public void setSlowModeChannel(TextChannel channel, int delay) {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO slow_mode (channel, server, delay) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE delay = VALUES(delay)")) {
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO `slow_mode` (`channel`, `server`, `delay`) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE `delay` = VALUES(`delay`)")) {
                 statement.setLong(1, channel.getIdLong());
                 statement.setLong(2, channel.getGuild().getIdLong());
                 statement.setInt(3, delay);
                 statement.executeUpdate();
             }
-        } catch (SQLException ignored) {}
+        } catch (SQLException e) {
+            LOGGER.error("Failed to set slow mode for channel {} in server {}", channel.getIdLong(), channel.getGuild().getIdLong(), e);
+        }
     }
 }

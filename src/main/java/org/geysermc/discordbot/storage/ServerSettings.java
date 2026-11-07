@@ -26,6 +26,7 @@
 package org.geysermc.discordbot.storage;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.ForumChannel;
@@ -301,5 +302,40 @@ public class ServerSettings {
             return null;
         }
         return guild.getTextChannelById(channel);
+    }
+
+    /**
+     * Get the name of the tag sent as an auto-reply in new forum posts. Null if not set (feature disabled).
+     */
+    @Nullable
+    public static String getForumAutoReplyTag(@NotNull Guild guild) {
+        String tag = GeyserBot.storageManager.getServerPreference(guild.getIdLong(), "forum-auto-reply-tag");
+        return tag == null || tag.isBlank() ? null : tag.trim();
+    }
+
+    /**
+     * Get the roles (names or IDs) that may close any forum post. Empty if not set.
+     * <p>
+     * To restore the old hardcoded roles, run for each one (e.g. helpful, contributor, collaborator,
+     * triage, moderator, advisor, developer, project lead):
+     * {@code /settings action:add key:post-close-roles value:<role name>}
+     */
+    @NotNull
+    public static List<String> getPostCloseRoles(@NotNull Guild guild) {
+        List<String> roles = getList(guild.getIdLong(), "post-close-roles");
+        roles.removeIf(String::isBlank);
+        return roles;
+    }
+
+    /**
+     * Check if the member may close any forum post. Everyone may if no roles are configured.
+     */
+    public static boolean hasPostCloseRole(@NotNull Member member) {
+        List<String> allowed = getPostCloseRoles(member.getGuild());
+        if (allowed.isEmpty()) {
+            return true;
+        }
+        return member.getRoles().stream().anyMatch(role -> allowed.stream()
+                .anyMatch(entry -> entry.trim().equalsIgnoreCase(role.getName()) || entry.trim().equals(role.getId())));
     }
 }

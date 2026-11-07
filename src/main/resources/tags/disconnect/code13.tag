@@ -10,3 +10,5 @@ ClientReason: `LegacyDisconnect`
 ProtocolConstant: `LEGACY_DISCONNECT`
 
 The client attempts to connect via NetherNet first, then falls back to RakNet if the initial connection probe fails. This error is displayed if both attempts time out.
+
+This is most likely a setup issue, please see <#1564652375300640910>.
