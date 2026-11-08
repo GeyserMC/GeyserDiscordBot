@@ -37,11 +37,13 @@ Most preferences are comma-separated lists. Map-style preferences use comma-sepa
 | `moderation-role` | Role ID pinged for moderation actions | `856161072507518986` |
 | `post-close-roles` | Roles (names or IDs) allowed to close any forum post; if unset, no extra role restriction is applied | `moderator,856161072507518986` |
 | `preview-channel` | Forum channel ID where preview posts are created | `614877230811709474` |
+| `preview-feeds` | Forum channel ID for preview feeds | `614877230811709474` |
 | `preview-feeds-channel` | News channel ID monitored for pull request preview links | `614877230811709474` |
 | `punishment-message` | Message appended to punishment DMs | `If you wish to appeal your punishment, contact an admin.` |
 | `roles` | Role names and IDs available through the `role`/`rank` command | `GeyserNews\|613169070367309834,Tester\|775083359101517884` |
 | `rss-feeds` | Channel IDs and RSS feed URLs to announce new posts | `916482484122824704\|https://blog.geysermc.org/feed.xml` |
 | `update-channel` | Channel ID for Minecraft update notifications | `618189671259832320` |
+| `voice-role` | Role granted to users when they join a voice channel | `856161072507518986` |
 
 ## Forum and preview tools
 Configure `forum-channel` to enable the `/post` tools for creating, renaming, tagging, and closing support posts, including bulk-closing old posts. `post-close-roles` optionally limits who can close posts, and `forum-auto-reply-tag` selects the embed tag automatically sent in new support posts.
