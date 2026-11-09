@@ -18,7 +18,7 @@ These allow customisation of the bot on a per-guild basis. Use `/settings` with 
 Most preferences are comma-separated lists. Map-style preferences use comma-separated `key|value` pairs.
 
 | Preference | Description | Example value |
-|---|---|---|
+| --- | --- | --- |
 | `allowed-invites` | Guild IDs for allowed invites | `613163671870242838,393465748535640064` |
 | `banned-domains` | Domains whose links are removed from messages | `dlscord-nitro.click,discord-airdrop.com` |
 | `banned-ips` | IPs that cause a message to be removed when a linked domain resolves to them | `95.181.163.44,95.181.163.46` |
