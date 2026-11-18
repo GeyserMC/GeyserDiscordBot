@@ -1,6 +1,6 @@
 type: text
 hidden: true
-aliases: french, fr, france
+aliases: french, fr, france, frenchcanadian, frca, canada, ca
 title: 🇫🇷 Français
 color: neutral
 button: [DeepL Translator](https://www.deepl.com/en/translator)
