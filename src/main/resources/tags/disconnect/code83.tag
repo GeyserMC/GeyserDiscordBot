@@ -10,4 +10,4 @@ InitialConnection: `83`
 ClientReason: `NetherNetICE`
 ProtocolConstant: `CONN_ICE`
 
-This error usually occurs when your Geyser server is running behind a NAT setup. Please try adding your public IP address to the `advertise-addresses` config option, then restart your server.
+This error usually occurs when your Geyser server is running behind a NAT setup. Please make sure `stun_discovery` is enabled, if you are still getting the same error try adding your public IP address to the `advertise-addresses` config option, then restart your server.
