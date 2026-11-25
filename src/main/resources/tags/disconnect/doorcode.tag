@@ -1,8 +1,8 @@
 type: text
 hidden: true
-issues: Door for more info || NetherNet for more info
-aliases: nethernetcode, nethercode
-title: "Door" and "NetherNet" error codes
+issues: Door for more info || NetherNet for more info || Terracotta for more info
+aliases: nethernetcode, nethercode, terracottacode
+title: "Door", "NetherNet", "Terracotta" error codes
 color: failure
 
 ---
